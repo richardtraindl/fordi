@@ -64,4 +64,8 @@ sqlcreates = (
        Datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
        Diagnose VARCHAR(255), \
        Behandlung VARCHAR(1000));""")
+    """CREATE TABLE tierhaltung (id SERIAL PRIMARY KEY, \
+       person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
+       tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
+       Anlagedatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);""")
 

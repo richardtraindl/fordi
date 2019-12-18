@@ -23,31 +23,45 @@ sqlcreates = (
        Vorname VARCHAR(40), \
        Notiz VARCHAR(200), \
        Kunde BOOLEAN NOT NULL DEFAULT true);""",
+    """CREATE TABLE adresse (id SERIAL PRIMARY KEY, \
+       person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
+       Strasse VARCHAR(40), \
+       Postleitzahl VARCHAR(10), \
+       Ort VARCHAR(40));""",
+    """CREATE TABLE kontakt (id SERIAL PRIMARY KEY, \
+       person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
+       KontaktartCode INTEGER NOT NULL, \
+       Kontakt VARCHAR(50), \
+       Kontakt_Intern VARCHAR(50));""",
     """CREATE TABLE tier (id SERIAL PRIMARY KEY, \
-       Tiername 
-       AnredeartCode INTEGER NOT NULL, \
-       Titel VARCHAR(40), \
-       Familienname VARCHAR(40), \
-       Vorname VARCHAR(40), \
-       Notiz VARCHAR(200), \
-       Kunde BOOLEAN NOT NULL DEFAULT true);""",
+       Tiername VARCHAR(30), \
+       Tierart VARCHAR(30), \
+       Rasse VARCHAR(30), \
+       Farbe VARCHAR(30), \
+       Viren VARCHAR(30), \
+       Merkmal VARCHAR(50), \
+       Geburtsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       GeschlechtsartCode INTEGER NOT NULL, \
+       Chip_Nummer VARCHAR(30), \
+       EU_Passnummer VARCHAR(30), \
+       Patient BOOLEAN NOT NULL DEFAULT true);""",
+    """CREATE TABLE behandlung (id SERIAL PRIMARY KEY, \
+       tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
+       Behandlungsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       Gewicht_Kg VARCHAR(50), \
+       Diagnose VARCHAR(1000), \
+       Laborwerte1 VARCHAR(1000), \
+       Laborwerte2 VARCHAR(1000), \
+       Arzneien VARCHAR(255), \
+       Arzneimittel VARCHAR(100), \
+       Impfungen_Extern VARCHAR(100));""",
+    """CREATE TABLE impfung (id SERIAL PRIMARY KEY, \
+        behandlung_id INTEGER REFERENCES beahndlung(id) ON DELETE CASCADE, \
+        ImpfungsartCode INTEGER NOT NULL);""",
+    """CREATE TABLE behandlungsverlauf (id SERIAL PRIMARY KEY, \
+       person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
+       tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
+       Datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       Diagnose VARCHAR(255), \
+       Behandlung VARCHAR(1000));""")
 
-    """CREATE TABLE owner (id SERIAL PRIMARY KEY, \
-       auth_user_id INTEGER REFERENCES auth_user(id), \
-       auth_guest_id INTEGER REFERENCES auth_user(id), \
-       status INTEGER NOT NULL DEFAULT 0, \
-       level INTEGER NOT NULL DEFAULT 1, \
-       created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       board VARCHAR(64) NOT NULL DEFAULT '42356324111111110000000000000000000000000000000099999999CABDEBAC');""",
-
-    """CREATE TABLE move (id SERIAL PRIMARY KEY, \
-        match_id INTEGER REFERENCES match(id) ON DELETE CASCADE, \
-        prevfields VARCHAR(64) NOT NULL, \
-        src VARCHAR(2) NOT NULL, \
-        dst VARCHAR(2) NOT NULL, \
-        prompiece VARCHAR(3));""",
-    """CREATE TABLE comment (id SERIAL PRIMARY KEY, \
-       match_id INTEGER REFERENCES match(id) ON DELETE CASCADE, \
-       created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       text VARCHAR(256) NOT NULL);""")
-       

@@ -68,4 +68,24 @@ sqlcreates = (
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
        Anlagedatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);""")
+    """CREATE TABLE rechnung (id SERIAL PRIMARY KEY, \
+       person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
+       tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
+       Rechnungjahr INTEGER NOT NULL, \
+       Rechnunglfnr INTEGER NOT NULL, \
+       Datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       Ort VARCHAR(255), \
+       Diagnose VARCHAR(255), \
+       Zahlung VARCHAR(255), \
+       Brutto_Summe DOUBLE NOT NULL, \
+       Netto_Summe DOUBLE NOT NULL, \
+       Steuerbetrag_Zwanzig INTEGER NOT NULL DEFAULT 0, \
+       Steuerbetrag_Dreizehn INTEGER NOT NULL DEFAULT 0, \
+       Steuerbetrag_Zehn  INTEGER NOT NULL DEFAULT 0);""")
+    """CREATE TABLE rechnungzeile (id SERIAL PRIMARY KEY, \
+       rechnung_id INTEGER REFERENCES rechnung(id) ON DELETE CASCADE, \
+       ArtikelartID INTEGER NOTT NULL, \
+       Datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       Artikel VARCHAR(255), \
+       Betrag DOUBLE NOT NULL);""")
 

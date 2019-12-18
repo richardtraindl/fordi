@@ -23,6 +23,14 @@ sqlcreates = (
        Vorname VARCHAR(40), \
        Notiz VARCHAR(200), \
        Kunde BOOLEAN NOT NULL DEFAULT true);""",
+    """CREATE TABLE tier (id SERIAL PRIMARY KEY, \
+       Tiername 
+       AnredeartCode INTEGER NOT NULL, \
+       Titel VARCHAR(40), \
+       Familienname VARCHAR(40), \
+       Vorname VARCHAR(40), \
+       Notiz VARCHAR(200), \
+       Kunde BOOLEAN NOT NULL DEFAULT true);""",
 
     """CREATE TABLE owner (id SERIAL PRIMARY KEY, \
        auth_user_id INTEGER REFERENCES auth_user(id), \

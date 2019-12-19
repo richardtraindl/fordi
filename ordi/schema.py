@@ -40,7 +40,7 @@ sqlcreates = (
        farbe VARCHAR(30), \
        viren VARCHAR(30), \
        merkmal VARCHAR(50), \
-       geburtsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       geburtsdatum DATE NOT NULL, \
        geschlechtsartCode INTEGER NOT NULL, \
        chip_nummer VARCHAR(30), \
        eu_passnummer VARCHAR(30), \
@@ -61,19 +61,19 @@ sqlcreates = (
     """CREATE TABLE behandlungsverlauf (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
-       datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       datum DATE NOT NULL DEFAULT NOW(), \
        diagnose VARCHAR(255), \
        behandlung VARCHAR(1000));""")
     """CREATE TABLE tierhaltung (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
-       anlagedatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);""")
+       anlagedatum DATE NOT NULL NOW());""")
     """CREATE TABLE rechnung (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
        rechnungjahr INTEGER NOT NULL, \
        rechnunglfnr INTEGER NOT NULL, \
-       datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       datum DATE NOT NULL DEFAULT NOW(), \
        ort VARCHAR(255), \
        diagnose VARCHAR(255), \
        zahlung VARCHAR(255), \
@@ -84,8 +84,8 @@ sqlcreates = (
        steuerbetrag_zehn DECIMAL(10,2) NOT NULL DEFAULT 0);""")
     """CREATE TABLE rechnungzeile (id SERIAL PRIMARY KEY, \
        rechnung_id INTEGER REFERENCES rechnung(id) ON DELETE CASCADE, \
-       artikelartcode INTEGER NOTT NULL, \
-       datum DATE NOT NULL DEFAULT CURRENT_DATE, \
+       artikelartcode INTEGER NOT NULL, \
+       datum DATE NOT NULL DEFAULT NOW(), \
        artikel VARCHAR(255), \
        betrag DECIMAL(10,2) NOT NULL);""")
 

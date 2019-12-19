@@ -44,7 +44,7 @@ sqlcreates = (
        geschlechtsartCode INTEGER NOT NULL, \
        chip_nummer VARCHAR(30), \
        eu_passnummer VARCHAR(30), \
-       Patient BOOLEAN NOT NULL DEFAULT true);""",
+       patient BOOLEAN NOT NULL DEFAULT true);""",
     """CREATE TABLE behandlung (id SERIAL PRIMARY KEY, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
        behandlungsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
@@ -77,15 +77,15 @@ sqlcreates = (
        ort VARCHAR(255), \
        diagnose VARCHAR(255), \
        zahlung VARCHAR(255), \
-       brutto_summe DOUBLE NOT NULL, \
-       netto_summe DOUBLE NOT NULL, \
-       steuerbetrag_zwanzig INTEGER NOT NULL DEFAULT 0, \
-       steuerbetrag_dreizehn INTEGER NOT NULL DEFAULT 0, \
-       steuerbetrag_zehn  INTEGER NOT NULL DEFAULT 0);""")
+       brutto_summe DECIMAL(10,2) NOT NULL, \
+       netto_summe DECIMAL(10,2) NOT NULL, \
+       steuerbetrag_zwanzig DECIMAL(10,2) NOT NULL DEFAULT 0, \
+       steuerbetrag_dreizehn DECIMAL(10,2) NOT NULL DEFAULT 0, \
+       steuerbetrag_zehn DECIMAL(10,2) NOT NULL DEFAULT 0);""")
     """CREATE TABLE rechnungzeile (id SERIAL PRIMARY KEY, \
        rechnung_id INTEGER REFERENCES rechnung(id) ON DELETE CASCADE, \
        artikelartcode INTEGER NOTT NULL, \
-       datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       datum DATE NOT NULL DEFAULT CURRENT_DATE, \
        artikel VARCHAR(255), \
-       betrag DOUBLE NOT NULL);""")
+       betrag DECIMAL(10,2) NOT NULL);""")
 

@@ -73,7 +73,7 @@ sqlcreates = (
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
        rechnungjahr INTEGER NOT NULL, \
        rechnunglfnr INTEGER NOT NULL, \
-       datum DATE NOT NULL DEFAULT NOW, \
+       datum DATE NOT NULL DEFAULT CURRENT_DATE, \
        ort VARCHAR(255), \
        diagnose VARCHAR(255), \
        zahlung VARCHAR(255), \
@@ -85,7 +85,7 @@ sqlcreates = (
     """CREATE TABLE rechnungzeile (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
        rechnung_id INTEGER REFERENCES rechnung(id) ON DELETE CASCADE, \
        artikelartcode INTEGER NOT NULL, \
-       datum DATE NOT NULL DEFAULT NOW, \
+       datum DATE NOT NULL DEFAULT CURRENT_DATE, \
        artikel VARCHAR(255), \
        betrag DECIMAL(10,2) NOT NULL);""")
 

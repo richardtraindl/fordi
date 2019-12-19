@@ -17,75 +17,75 @@ sqlcreates = (
         username VARCHAR(50) NOT NULL, \
         password VARCHAR(256) NOT NULL, UNIQUE(username));""",
     """CREATE TABLE person (id SERIAL PRIMARY KEY, \
-       AnredeartCode INTEGER NOT NULL, \
-       Titel VARCHAR(40), \
-       Familienname VARCHAR(40), \
-       Vorname VARCHAR(40), \
-       Notiz VARCHAR(200), \
-       Kunde BOOLEAN NOT NULL DEFAULT true);""",
+       anredeartcode INTEGER NOT NULL, \
+       titel VARCHAR(40), \
+       familienname VARCHAR(40), \
+       vorname VARCHAR(40), \
+       notiz VARCHAR(200), \
+       kunde BOOLEAN NOT NULL DEFAULT true);""",
     """CREATE TABLE adresse (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
-       Strasse VARCHAR(40), \
-       Postleitzahl VARCHAR(10), \
-       Ort VARCHAR(40));""",
+       strasse VARCHAR(40), \
+       postleitzahl VARCHAR(10), \
+       ort VARCHAR(40));""",
     """CREATE TABLE kontakt (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
-       KontaktartCode INTEGER NOT NULL, \
-       Kontakt VARCHAR(50), \
-       Kontakt_Intern VARCHAR(50));""",
+       kontaktartcode INTEGER NOT NULL, \
+       kontakt VARCHAR(50), \
+       kontakt_intern VARCHAR(50));""",
     """CREATE TABLE tier (id SERIAL PRIMARY KEY, \
-       Tiername VARCHAR(30), \
-       Tierart VARCHAR(30), \
-       Rasse VARCHAR(30), \
-       Farbe VARCHAR(30), \
-       Viren VARCHAR(30), \
-       Merkmal VARCHAR(50), \
-       Geburtsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       GeschlechtsartCode INTEGER NOT NULL, \
-       Chip_Nummer VARCHAR(30), \
-       EU_Passnummer VARCHAR(30), \
+       tiername VARCHAR(30), \
+       tierart VARCHAR(30), \
+       rasse VARCHAR(30), \
+       farbe VARCHAR(30), \
+       viren VARCHAR(30), \
+       merkmal VARCHAR(50), \
+       geburtsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       geschlechtsartCode INTEGER NOT NULL, \
+       chip_nummer VARCHAR(30), \
+       eu_passnummer VARCHAR(30), \
        Patient BOOLEAN NOT NULL DEFAULT true);""",
     """CREATE TABLE behandlung (id SERIAL PRIMARY KEY, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
-       Behandlungsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       Gewicht_Kg VARCHAR(50), \
-       Diagnose VARCHAR(1000), \
-       Laborwerte1 VARCHAR(1000), \
-       Laborwerte2 VARCHAR(1000), \
-       Arzneien VARCHAR(255), \
-       Arzneimittel VARCHAR(100), \
-       Impfungen_Extern VARCHAR(100));""",
+       behandlungsdatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       gewicht_Kg VARCHAR(50), \
+       diagnose VARCHAR(1000), \
+       laborwerte1 VARCHAR(1000), \
+       laborwerte2 VARCHAR(1000), \
+       arzneien VARCHAR(255), \
+       arzneimittel VARCHAR(100), \
+       impfungen_extern VARCHAR(100));""",
     """CREATE TABLE impfung (id SERIAL PRIMARY KEY, \
         behandlung_id INTEGER REFERENCES beahndlung(id) ON DELETE CASCADE, \
-        ImpfungsartCode INTEGER NOT NULL);""",
+        impfungsartcode INTEGER NOT NULL);""",
     """CREATE TABLE behandlungsverlauf (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
-       Datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       Diagnose VARCHAR(255), \
-       Behandlung VARCHAR(1000));""")
+       datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       diagnose VARCHAR(255), \
+       behandlung VARCHAR(1000));""")
     """CREATE TABLE tierhaltung (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
-       Anlagedatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);""")
+       anlagedatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);""")
     """CREATE TABLE rechnung (id SERIAL PRIMARY KEY, \
        person_id INTEGER REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER REFERENCES tier(id) ON DELETE CASCADE, \
-       Rechnungjahr INTEGER NOT NULL, \
-       Rechnunglfnr INTEGER NOT NULL, \
-       Datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       Ort VARCHAR(255), \
-       Diagnose VARCHAR(255), \
-       Zahlung VARCHAR(255), \
-       Brutto_Summe DOUBLE NOT NULL, \
-       Netto_Summe DOUBLE NOT NULL, \
-       Steuerbetrag_Zwanzig INTEGER NOT NULL DEFAULT 0, \
-       Steuerbetrag_Dreizehn INTEGER NOT NULL DEFAULT 0, \
-       Steuerbetrag_Zehn  INTEGER NOT NULL DEFAULT 0);""")
+       rechnungjahr INTEGER NOT NULL, \
+       rechnunglfnr INTEGER NOT NULL, \
+       datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       ort VARCHAR(255), \
+       diagnose VARCHAR(255), \
+       zahlung VARCHAR(255), \
+       brutto_summe DOUBLE NOT NULL, \
+       netto_summe DOUBLE NOT NULL, \
+       steuerbetrag_zwanzig INTEGER NOT NULL DEFAULT 0, \
+       steuerbetrag_dreizehn INTEGER NOT NULL DEFAULT 0, \
+       steuerbetrag_zehn  INTEGER NOT NULL DEFAULT 0);""")
     """CREATE TABLE rechnungzeile (id SERIAL PRIMARY KEY, \
        rechnung_id INTEGER REFERENCES rechnung(id) ON DELETE CASCADE, \
-       ArtikelartID INTEGER NOTT NULL, \
-       Datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       Artikel VARCHAR(255), \
-       Betrag DOUBLE NOT NULL);""")
+       artikelartcode INTEGER NOTT NULL, \
+       datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       artikel VARCHAR(255), \
+       betrag DOUBLE NOT NULL);""")
 

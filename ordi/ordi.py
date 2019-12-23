@@ -10,10 +10,8 @@ from ordi.db import get_db
 
 bp = Blueprint('ordi', __name__)
 
-from psycopg2.extras import DictCursor
 
-
-@bp.route('/')
+@bp.route('/', methods=('GET',))
 @login_required
 def index():
     dbcon = get_db()
@@ -40,11 +38,12 @@ def karteikarte(id):
     karteikarte = cur.fetchone()
 
     cur.execute(
-        'SELECT * FROM tierhaltung, behandlung, impfung'
-        ' WHERE tierhaltung.id = ? AND tierhaltung.tier_id = behandlung.tier_id AND behandlung.id = impfung.behandlung_id ORDER BY behandlungsdatum DESC',
+        'SELECT * FROM tierhaltung, behandlung'
+        ' WHERE tierhaltung.id = ? AND tierhaltung.tier_id = behandlung.tier_id ORDER BY behandlungsdatum DESC',
         (id,)
     )
     behandlungen = cur.fetchall()
+    print(id, behandlungen)
     cur.close()
     return render_template('ordi/karteikarte.html', karteikarte=karteikarte, behandlungen=behandlungen)
 
@@ -227,6 +226,38 @@ def addtier(person_id):
         cur.close()
         return redirect(url_for('ordi.index'))
     return render_template('ordi/addtier.html')
+
+
+@bp.route('/<int:tierhaltung_id>/newbehandlung', methods=('GET', 'POST'))
+@login_required
+def newbehandlung(tierhaltung_id):
+    if(request.method == 'POST'):
+        behandlungsdatum = request.form['behandlungsdatum']
+        gewicht_Kg = request.form['gewicht_Kg']
+        diagnose = request.form['diagnose']
+        laborwerte1 = request.form['laborwerte1']
+        laborwerte2 = request.form['laborwerte2']
+        arzneien = request.form['arzneien']
+        arzneimittel = request.form['arzneimittel']
+        impfungen_extern = request.form['impfungen_extern']
+
+        dbcon = get_db()
+        dbcon.execute('pragma foreign_keys=ON')
+        cur = dbcon.cursor()
+        cur.execute(
+            'SELECT * FROM tierhaltung WHERE id = ?',
+            (tierhaltung_id,)
+        )
+        tierhaltung = cur.fetchone()
+
+        cur.execute(
+            'INSERT INTO behandlung (tier_id, behandlungsdatum, gewicht_Kg, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)'
+            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (tierhaltung['tier_id'], behandlungsdatum, gewicht_Kg, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
+        )
+        dbcon.commit()
+        cur.close()
+    return redirect(url_for('ordi.karteikarte', id=tierhaltung['id']))
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

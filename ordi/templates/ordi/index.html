@@ -56,9 +56,13 @@
       {% endfor %}
     </table>
 
-    <div><a href="{{ url_for('ordi.newkarteikarte') }}">neue Karteikarte</a></p>
-    <div><a href="{{ url_for('ordi.newperson') }}">neue Person</a></p>
-    <div><a href="{{ url_for('ordi.newtier') }}">neues Tier</a></p>
+    <div class="row-grid">
+        <p>zur Karteikarte</p>
+        <p><a href="{{ url_for('ordi.newkarteikarte') }}">neue Karteikarte</a></p>
+        <p><a href="{{ url_for('ordi.newtier') }}">neues Tier</a></p>
+        <p>Karteikarte löschen</p>
+        <p>neue Rechnung</p>
+        <p>neuer Behandlungsverlauf</p>
     </div>
 {% endblock %}
 

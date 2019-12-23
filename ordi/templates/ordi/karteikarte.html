@@ -95,7 +95,7 @@
         </tr>
         <tr>
             <td style="width: 5%">
-                <form method="post">
+                <form method="post" action="{{ url_for('ordi.newbehandlung', tierhaltung_id=karteikarte['id']) }}">
                 <input size="5" name="behandlungsdatum" id="behandlungsdatum" value="{{ request.form['behandlungsdatum'] }}">
             </td>
             <td style="width: 5%"><input size="5" name="gewicht_Kg" id="gewicht_Kg" value="{{ request.form['gewicht_Kg'] }}"></td>
@@ -112,14 +112,14 @@
         </tr>
       {% for behandlung in behandlungen %}
         <tr>
-            <td>{{ behandlungen['behandlungsdatum'] }}</td>
-            <td>{{ behandlungen['gewicht_Kg'] }}</td>
-            <td>{{ behandlungen['diagnose'] }}</td>
-            <td>{{ behandlungen['laborwerte1'] }}</td>
-            <td>{{ behandlungen['laborwerte2'] }}</td>
-            <td>{{ behandlungen['arzneien'] }}</td>
-            <td>{{ behandlungen['arzneimittel'] }}</td>
-            <td>{{ behandlungen['impfungen_extern'] }}</td>
+            <td>{{ behandlung['behandlungsdatum'] }}</td>
+            <td>{{ behandlung['gewicht_Kg'] }}</td>
+            <td>{{ behandlung['diagnose'] }}</td>
+            <td>{{ behandlung['laborwerte1'] }}</td>
+            <td>{{ behandlung['laborwerte2'] }}</td>
+            <td>{{ behandlung['arzneien'] }}</td>
+            <td>{{ behandlung['arzneimittel'] }}</td>
+            <td>{{ behandlung['impfungen_extern'] }}</td>
         </tr>
       {% endfor %}
     </table>

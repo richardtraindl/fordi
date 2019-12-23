@@ -83,16 +83,6 @@
     <div class="huge-gap"></div>
 
     <table class="liste">
-        <colgroup>
-			      <col width="5%">
-			      <col width="5%">
-			      <col width="30%">
-			      <col width="15%">
-			      <col width="15%">
-			      <col width="10%">
-			      <col width="10%">
-			      <col width="10%">
-		    </colgroup>
         <tr>
             <th>Datum</th>
             <th>Gewicht</th>
@@ -104,17 +94,17 @@
             <th>Impfungen</th>
         </tr>
         <tr>
-            <td>
+            <td style="width: 5%">
                 <form method="post">
                 <input size="5" name="behandlungsdatum" id="behandlungsdatum" value="{{ request.form['behandlungsdatum'] }}">
             </td>
-            <td><input size="5" name="gewicht_Kg" id="gewicht_Kg" value="{{ request.form['gewicht_Kg'] }}"></td>
-            <td><input size="5" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}"></td>
-            <td><input size="5" name="laborwerte1" id="laborwerte1" value="{{ request.form['laborwerte1'] }}"></td>
-            <td><input size="5" name="laborwerte2" id="laborwerte2" value="{{ request.form['laborwerte2'] }}"></td>
-            <td><input size="5" name="arzneien" id="arzneien" value="{{ request.form['arzneien'] }}"></td>
-            <td><input size="5" name="arzneimittel" id="arzneimittel" value="{{ request.form['arzneimittel'] }}"></td>
-            <td>
+            <td style="width: 5%"><input size="5" name="gewicht_Kg" id="gewicht_Kg" value="{{ request.form['gewicht_Kg'] }}"></td>
+            <td style="width: 30%"><input size="5" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}"></td>
+            <td style="width: 15%"><input size="5" name="laborwerte1" id="laborwerte1" value="{{ request.form['laborwerte1'] }}"></td>
+            <td style="width: 15%"><input size="5" name="laborwerte2" id="laborwerte2" value="{{ request.form['laborwerte2'] }}"></td>
+            <td style="width: 10%"><input size="5" name="arzneien" id="arzneien" value="{{ request.form['arzneien'] }}"></td>
+            <td style="width: 10%"><input size="5" name="arzneimittel" id="arzneimittel" value="{{ request.form['arzneimittel'] }}"></td>
+            <td style="width: 10%">
                 <input size="5" name="impfungen_extern" id="impfungen_extern" value="{{ request.form['impfungen_extern'] }}">
                 <div><input type="submit" value="Save">
                 </form>

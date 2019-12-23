@@ -82,7 +82,7 @@
 
     <div class="huge-gap"></div>
 
-    <table>
+    <table class="liste">
         <tr>
             <th>Datum</th>
             <th>Gewicht</th>
@@ -104,10 +104,10 @@
             <td><input size="5" name="laborwerte2" id="laborwerte2" value="{{ request.form['laborwerte2'] }}"></td>
             <td><input size="5" name="arzneien" id="arzneien" value="{{ request.form['arzneien'] }}"></td>
             <td><input size="5" name="arzneimittel" id="arzneimittel" value="{{ request.form['arzneimittel'] }}"></td>
-            <td><input size="5" name="impfungen_extern" id="impfungen_extern" value="{{ request.form['impfungen_extern'] }}"></td>
             <td>
-              <div><input type="submit" value="Save">
-              </form>
+                <input size="5" name="impfungen_extern" id="impfungen_extern" value="{{ request.form['impfungen_extern'] }}">
+                <div><input type="submit" value="Save">
+                </form>
             </td>
         </tr>
       {% for behandlung in behandlungen %}

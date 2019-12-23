@@ -1,0 +1,23 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  New Person
+{% endblock %}
+
+
+{% block content %}
+    <div>
+        <h2>New Person</h2>
+        <hr>
+    </div>
+    <form method="post">
+        <div class="twocols">
+            {% include 'ordi/_person.html' %}
+        </div>
+        <div>
+            <input type="submit" value="Save">
+        </div>
+    </form>
+{% endblock %}

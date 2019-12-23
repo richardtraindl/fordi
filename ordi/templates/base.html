@@ -1,0 +1,42 @@
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" initial-scale="1.0">
+        <title>{% block title %}{% endblock %} - Josh</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery-1.11.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='jquery-ui.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='custom.js') }}"></script>
+    </head>
+    <body>
+        <header class="row-grid">
+            <h1><a href="{{ url_for('ordi.index') }}">Ordi</a></h1>
+            <p>
+              {% if g.user %}
+                <span>{{ g.user['username'] }}</span>
+                &nbsp;
+                <a href="{{ url_for('auth.logout') }}">Log Out</a>
+              {% else %}
+                <a href="{{ url_for('auth.register') }}">Register</a>
+                &nbsp;
+                <a href="{{ url_for('auth.login') }}">Log In</a>
+              {% endif %}
+            </p>
+        </header>
+
+        <div id="content-wrapper">
+          <div id="msg">
+            {% for message in get_flashed_messages() %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+          </div>
+          <section id="content">
+            {% block content %}{% endblock %}
+          </section>
+        </div>
+    </body>
+</html>
+ 
+  
+
+

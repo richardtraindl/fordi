@@ -1,0 +1,118 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Karteikarte
+{% endblock %}
+
+
+{% block content %}
+    <h2>Karteikarte</h2>
+    <div class="twocols">
+        <div class="twocols">
+            <div>Anrede</div>
+            <div>{{ karteikarte['anredeartcode'] }}</div>
+
+            <div>Titel</div>
+            <div>{{ karteikarte['titel'] }}</div>
+
+            <div>Familienname</div>
+            <div>{{ karteikarte['familienname'] }}</div>
+
+            <div>Vorname</div>
+            <div>{{ karteikarte['vorname'] }}</div>
+
+            <div>Notiz</div>
+            <div>{{ karteikarte['notiz'] }}</div>
+
+            <div>Kunde</div>
+            <div>{{ karteikarte['kunde'] }}</div>
+
+            <div>Straße</div>
+            <div>{{ karteikarte['strasse'] }}</div>
+
+            <div>Postleitzahl</div>
+            <div>{{ karteikarte['postleitzahl'] }}</div>
+
+            <div>Ort</div>
+            <div>{{ karteikarte['ort'] }}</div>
+
+            <div>Kontaktart</div>
+            <div>{{ karteikarte['kontaktartcode'] }}</div>
+
+            <div>Kontakt</div>
+            <div>{{ karteikarte['kontakt'] }}</div>
+        </div>
+        <div class="twocols">
+            <div>Tiername</div>
+            <div>{{ karteikarte['tiername'] }}</div>
+
+            <div>Tierart</div>
+            <div>{{ karteikarte['tierart'] }}</div>
+
+            <div>Rasse</div>
+            <div>{{ karteikarte['rasse'] }}</div>
+
+            <div>Farbe</div>
+            <div>{{ karteikarte['farbe'] }}</div>
+
+            <div>Geburtsdatum</div>
+            <div>{{ karteikarte['geburtsdatum'] }}</div>
+
+            <div>Geschlecht</div>
+            <div>{{ karteikarte['geschlechtsartcode'] }}</div>
+
+            <div>Chipnr.</div>
+            <div>{{ karteikarte['chip_nummer'] }}</div>
+
+            <div>EU-Passnr.</div>
+            <div>{{ karteikarte['eu_passnummer'] }}</div>
+
+            <div>Patient</div>
+            <div>{{ karteikarte['patient'] }}</div>
+
+            <div>Viren</div>
+            <div>{{ karteikarte['viren'] }}</div>
+
+            <div>Merkmal</div>
+            <div>{{ karteikarte['merkmal'] }}</div>
+        </div>
+    </div>
+    <div>
+        <div class="huge-gap"></div>
+        <div class="row-grid">
+            <div>Datum</div>
+            <div>Gewicht</div>
+            <div>Diagnose</div>
+            <div>Laborwerte1</div>
+            <div>Laborwerte2</div>
+            <div>Arzneien</div>
+            <div>Arzneimittel</div>
+            <div>Impfungen</div>
+        </div>
+        <form method="post" class="row-grid">
+            <div name="behandlungsdatum" id="behandlungsdatum" value="{{ request.form['behandlungsdatum'] }}">ddd</div>
+            <div name="gewicht_Kg" id="gewicht_Kg" value="{{ request.form['gewicht_Kg'] }}">ddd</div>
+            <div name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}">ddddddddddddddddddd</div>
+            <div name="laborwerte1" id="laborwerte1" value="{{ request.form['laborwerte1'] }}">dddddddddddddddddd</div>
+            <div name="laborwerte2" id="laborwerte2" value="{{ request.form['laborwerte2'] }}">ddd</div>
+            <div name="arzneien" id="arzneien" value="{{ request.form['arzneien'] }}">ddd</div>
+            <div name="arzneimittel" id="arzneimittel" value="{{ request.form['arzneimittel'] }}">dddddddddddddddddddddddddddddddddddd</div>
+            <div name="impfungen_extern" id="impfungen_extern" value="{{ request.form['impfungen_extern'] }}">ddddddd</div>
+            <div><input type="submit" value="Save"></div>
+        </form>
+          {% for behandlung in behandlungen %}
+            <div class="row-grid">
+                <div>{{ behandlungen['behandlungsdatum'] }}</div>
+                <div>{{ behandlungen['gewicht_Kg'] }}</div>
+                <div>{{ behandlungen['diagnose'] }}</div>
+                <div>{{ behandlungen['laborwerte1'] }}</div>
+                <div>{{ behandlungen['laborwerte2'] }}</div>
+                <div>{{ behandlungen['arzneien'] }}</div>
+                <div>{{ behandlungen['arzneimittel'] }}</div>
+                <div>{{ behandlungen['impfungen_extern'] }}</div>
+            </div>
+          {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,53 @@
+
+        <label for="tiername">Tiername</label>
+        <input name="tiername" id="titel" value="{{ request.form['tiername'] }}" required>
+
+        <label for="tierart">Tierart</label>
+        <input name="tierart" id="tierart" value="{{ request.form['tierart'] }}" required>
+
+        <label for="rasse">Rasse</label>
+        <input name="rasse" id="rasse" value="{{ request.form['rasse'] }}">
+
+        <label for="farbe">Farbe</label>
+        <input name="farbe" id="farbe" value="{{ request.form['farbe'] }}">
+
+        <label for="viren">Viren</label>
+        <input name="viren" id="viren" value="{{ request.form['viren'] }}">
+
+        <label for="merkmal">Merkmal</label>
+        <input name="merkmal" id="merkmal" value="{{ request.form['merkmal'] }}">
+
+        <label for="geburtsdatum">Geburtsdatum</label>
+        <input name="geburtsdatum" id="geburtsdatum" value="{{ request.form['geburtsdatum'] }}" required>
+
+        <label for="geschlechtsartcode">Geschlecht</label>
+        <select name="geschlechtsartcode" id="geschlechtsartcode">
+            {% if request.form['geschlechtsartcode'] == 0 %}
+                <option value="0" selected>0</option>
+            {% else %}
+                <option value="0">&nbsp;</option>
+            {% endif %}
+            {% if request.form['geschlechtsartcode'] == 1 %}
+                <option value="1" selected>1</option>
+            {% else %}
+                <option value="1">m</option>
+            {% endif %}
+            {% if request.form['geschlechtsartcode'] == 2 %}
+                <option value="2" selected>2</option>
+            {% else %}
+                <option value="2">w</option>
+            {% endif %}
+        </select>
+
+        <label for="chip_nummer">Chip Nummer</label>
+        <input name="chip_nummer" id="chip_nummer" value="{{ request.form['chip_nummer'] }}">
+
+        <label for="eu_passnummer">EU Passnummer</label>
+        <input name="eu_passnummer" id="eu_passnummer" value="{{ request.form['eu_passnummer'] }}">
+
+        <label for="patient">Patient Kennzeichen</label>
+        {% if request.form['patient'] == 0 %}
+            <input type="checkbox" name="patient" value="0">
+        {% else %}
+            <input type="checkbox" name="patient" value="1" checked>            
+        {% endif %}

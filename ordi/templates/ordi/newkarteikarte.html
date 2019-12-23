@@ -1,0 +1,30 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Neue Karteikarte
+{% endblock %}
+
+
+{% block content %}
+    <div>
+        <h2>Neue Karteikarte</h2>
+        <hr>
+    </div>
+    <form method="post">
+        <div class="twocols">
+            <div class="twocols">
+                {% include 'ordi/_person.html' %}
+            </div>
+            <div class="twocols">
+                {% include 'ordi/_tier.html' %}
+            </div>
+        <div>
+            <div class="twocols">
+                <input type="submit" value="Speichern" style="margin-right: 20px;">
+                <input type="reset" value=" Abbrechen">
+            </div>
+        </div>
+    </form>
+{% endblock %}

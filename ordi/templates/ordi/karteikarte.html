@@ -12,71 +12,71 @@
     <div class="twocols">
         <div class="twocols">
             <div>Anrede</div>
-            <div>{{ karteikarte['anredeartcode'] }}</div>
+            <input disabled size="5" name="anredeartcode" id="anredeartcode" value="{{ karteikarte['anredeartcode'] }}">
 
             <div>Titel</div>
-            <div>{{ karteikarte['titel'] }}</div>
+            <input disabled size="5" name="titel" id="titel" value="{{ karteikarte['titel'] }}">
 
             <div>Familienname</div>
-            <div>{{ karteikarte['familienname'] }}</div>
+            <input disabled size="20" name="familienname" id="familienname" value="{{ karteikarte['familienname'] }}">
 
             <div>Vorname</div>
-            <div>{{ karteikarte['vorname'] }}</div>
+            <input disabled size="20" name="vorname" id="vorname" value="{{ karteikarte['vorname'] }}">
 
             <div>Notiz</div>
-            <div>{{ karteikarte['notiz'] }}</div>
+            <input disabled size="20" name="notiz" id="notiz" value="{{ karteikarte['notiz'] }}">
 
             <div>Kunde</div>
-            <div>{{ karteikarte['kunde'] }}</div>
+            <input disabled size="5" name="kunde" id="kunde" value="{{ karteikarte['kunde'] }}">
 
             <div>Straße</div>
-            <div>{{ karteikarte['strasse'] }}</div>
+            <input disabled size="20" name="strasse" id="strasse" value="{{ karteikarte['strasse'] }}">
 
             <div>Postleitzahl</div>
-            <div>{{ karteikarte['postleitzahl'] }}</div>
+            <input disabled size="5" name="postleitzahl" id="postleitzahl" value="{{ karteikarte['postleitzahl'] }}">
 
             <div>Ort</div>
-            <div>{{ karteikarte['ort'] }}</div>
+            <input disabled size="20" name="ort" id="ort" value="{{ karteikarte['ort'] }}">
 
             <div>Kontaktart</div>
-            <div>{{ karteikarte['kontaktartcode'] }}</div>
+            <input disabled size="5" name="kontaktartcode" id="kontaktartcode" value="{{ karteikarte['kontaktartcode'] }}">
 
             <div>Kontakt</div>
-            <div>{{ karteikarte['kontakt'] }}</div>
+            <input disabled size="20" name="kontakt" id="kontakt" value="{{ karteikarte['kontakt'] }}">
         </div>
         <div class="twocols">
             <div>Tiername</div>
-            <div>{{ karteikarte['tiername'] }}</div>
+            <input disabled size="20" name="tiername" id="tiername" value="{{ karteikarte['tiername'] }}">
 
             <div>Tierart</div>
-            <div>{{ karteikarte['tierart'] }}</div>
+            <input disabled size="20" name="tierart" id="tierart" value="{{ karteikarte['tierart'] }}">
 
             <div>Rasse</div>
-            <div>{{ karteikarte['rasse'] }}</div>
+            <input disabled size="20" name="rasse" id="rasse" value="{{ karteikarte['rasse'] }}">
 
             <div>Farbe</div>
-            <div>{{ karteikarte['farbe'] }}</div>
+            <input disabled size="20" name="farbe" id="farbe" value="{{ karteikarte['farbe'] }}">
 
             <div>Geburtsdatum</div>
-            <div>{{ karteikarte['geburtsdatum'] }}</div>
+            <input disabled size="5" name="geburtsdatum" id="geburtsdatum" value="{{ karteikarte['geburtsdatum'] }}">
 
             <div>Geschlecht</div>
-            <div>{{ karteikarte['geschlechtsartcode'] }}</div>
+            <input disabled size="5" name="geschlechtsartcode" id="geschlechtsartcode" value="{{ karteikarte['geschlechtsartcode'] }}">
 
             <div>Chipnr.</div>
-            <div>{{ karteikarte['chip_nummer'] }}</div>
+            <input disabled size="20" name="chip_nummer" id="chip_nummer" value="{{ karteikarte['chip_nummer'] }}">
 
             <div>EU-Passnr.</div>
-            <div>{{ karteikarte['eu_passnummer'] }}</div>
+            <input disabled size="20" name="eu_passnummer" id="eu_passnummer" value="{{ karteikarte['eu_passnummer'] }}">
 
             <div>Patient</div>
-            <div>{{ karteikarte['patient'] }}</div>
+            <input disabled size="5" name="patient" id="patient" value="{{ karteikarte['patient'] }}">
 
             <div>Viren</div>
-            <div>{{ karteikarte['viren'] }}</div>
+            <input disabled size="20" name="viren" id="viren" value="{{ karteikarte['viren'] }}">
 
             <div>Merkmal</div>
-            <div>{{ karteikarte['merkmal'] }}</div>
+            <input disabled size="20" name="merkmal" id="merkmal" value="{{ karteikarte['merkmal'] }}">
         </div>
     </div>
 
@@ -123,4 +123,11 @@
         </tr>
       {% endfor %}
     </table>
+
+    <script>
+        $(document).ready(function(){
+            $( "input" ).prop( "disabled", true );
+            /* $( "input" ).prop( "disabled", false ); */
+        });
+    </script>
 {% endblock %}

@@ -1,4 +1,5 @@
 
+from datetime import datetime
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
@@ -43,7 +44,6 @@ def karteikarte(id):
         (id,)
     )
     behandlungen = cur.fetchall()
-    print(id, behandlungen)
     cur.close()
     return render_template('ordi/karteikarte.html', karteikarte=karteikarte, behandlungen=behandlungen)
 
@@ -232,7 +232,11 @@ def addtier(person_id):
 @login_required
 def newbehandlung(tierhaltung_id):
     if(request.method == 'POST'):
-        behandlungsdatum = request.form['behandlungsdatum']
+        #behandlungsdatum = request.form['behandlungsdatum']
+        good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
+        if(len(behandlungsdatum) != 8):
+            behandlungsdatum = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         gewicht_Kg = request.form['gewicht_Kg']
         diagnose = request.form['diagnose']
         laborwerte1 = request.form['laborwerte1']
@@ -258,6 +262,34 @@ def newbehandlung(tierhaltung_id):
         dbcon.commit()
         cur.close()
     return redirect(url_for('ordi.karteikarte', id=tierhaltung['id']))
+
+
+@bp.route('/<int:tierhalung_id>/<int:behandlung_id>/editbehandlung', methods=('GET', 'POST'))
+@login_required
+def editbehandlung(tierhalung_id, behandlung_id):
+    if(request.method == 'POST'):
+        good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
+        if(len(behandlungsdatum) != 8):
+            behandlungsdatum = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        gewicht_Kg = request.form['gewicht_Kg']
+        diagnose = request.form['diagnose']
+        laborwerte1 = request.form['laborwerte1']
+        laborwerte2 = request.form['laborwerte2']
+        arzneien = request.form['arzneien']
+        arzneimittel = request.form['arzneimittel']
+        impfungen_extern = request.form['impfungen_extern']
+
+        dbcon = get_db()
+        dbcon.execute('pragma foreign_keys=ON')
+        cur.execute(
+            'UPDATE behandlung SET behandlungsdatum = ?, gewicht_Kg = ?, diagnose = ?, laborwerte1 = ?, laborwerte2 = ?, arzneien = ?, arzneimittel = ?, impfungen_extern = ?'
+            ' WHERE behandlung.id = ?',
+            (behandlungsdatum, gewicht_Kg, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern, behandlung_id)
+        )
+        dbcon.commit()
+        cur.close()
+    return redirect(url_for('ordi.karteikarte', id=tierhalung_id))
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

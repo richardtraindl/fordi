@@ -1,53 +1,101 @@
 
+    <div class="twocols tier">
         <label for="tiername">Tiername</label>
-        <input name="tiername" id="titel" value="{{ request.form['tiername'] }}" required>
+        {% if karteikarte %}
+            <input size="20" name="tiername" id="titel" value="{{ karteikarte['tiername'] }}" required>    
+        {% else %}
+            <input size="20" name="tiername" id="titel" required>
+        {% endif %}
 
         <label for="tierart">Tierart</label>
-        <input name="tierart" id="tierart" value="{{ request.form['tierart'] }}" required>
+        {% if karteikarte %}
+            <input size="20" name="tierart" id="tierart" value="{{ karteikarte['tierart'] }}" required>
+        {% else %}
+            <input size="20" name="tierart" id="tierart" required>
+        {% endif %}
 
         <label for="rasse">Rasse</label>
-        <input name="rasse" id="rasse" value="{{ request.form['rasse'] }}">
+        {% if karteikarte %}
+            <input size="20" name="rasse" id="rasse" value="{{ karteikarte['rasse'] }}">
+        {% else %}
+            <input size="20" name="rasse" id="rasse">
+        {% endif %}
 
         <label for="farbe">Farbe</label>
-        <input name="farbe" id="farbe" value="{{ request.form['farbe'] }}">
+        {% if karteikarte %}
+            <input size="20" name="farbe" id="farbe" value="{{ karteikarte['farbe'] }}">
+        {% else %}
+            <input size="20" name="farbe" id="farbe">
+        {% endif %}
 
         <label for="viren">Viren</label>
-        <input name="viren" id="viren" value="{{ request.form['viren'] }}">
+        {% if karteikarte %}
+            <input size="20" name="viren" id="viren" value="{{ karteikarte['viren'] }}">
+        {% else %}
+            <input size="20" name="viren" id="viren">
+        {% endif %}
 
         <label for="merkmal">Merkmal</label>
-        <input name="merkmal" id="merkmal" value="{{ request.form['merkmal'] }}">
+        {% if karteikarte %}
+            <input size="20" name="merkmal" id="merkmal" value="{{ karteikarte['merkmal'] }}">
+        {% else %}
+            <input size="20" name="merkmal" id="merkmal">
+        {% endif %}
 
         <label for="geburtsdatum">Geburtsdatum</label>
-        <input name="geburtsdatum" id="geburtsdatum" value="{{ request.form['geburtsdatum'] }}" required>
+        {% if karteikarte %}
+            <input size="10" name="geburtsdatum" id="geburtsdatum" value="{{ karteikarte['geburtsdatum'] }}" required>
+        {% else %}
+            <input size="10" name="geburtsdatum" id="geburtsdatum" required>
+        {% endif %}
 
         <label for="geschlechtsartcode">Geschlecht</label>
         <select name="geschlechtsartcode" id="geschlechtsartcode">
-            {% if request.form['geschlechtsartcode'] == 0 %}
-                <option value="0" selected>0</option>
-            {% else %}
+            {% if not karteikarte %}
                 <option value="0">&nbsp;</option>
-            {% endif %}
-            {% if request.form['geschlechtsartcode'] == 1 %}
-                <option value="1" selected>1</option>
-            {% else %}
                 <option value="1">m</option>
-            {% endif %}
-            {% if request.form['geschlechtsartcode'] == 2 %}
-                <option value="2" selected>2</option>
-            {% else %}
                 <option value="2">w</option>
+            {% else %}
+                {% if karteikarte['geschlechtsartcode'] == 0 %}
+                    <option value="0" selected>&nbsp;</option>
+                {% else %}
+                    <option value="0">&nbsp;</option>
+                {% endif %}
+                {% if karteikarte['geschlechtsartcode'] == 1 %}
+                    <option value="1" selected>m</option>
+                {% else %}
+                    <option value="1">m</option>
+                {% endif %}
+                {% if karteikarte['geschlechtsartcode'] == 2 %}
+                    <option value="2" selected>w</option>
+                {% else %}
+                    <option value="2">w</option>
+                {% endif %}
             {% endif %}
         </select>
 
         <label for="chip_nummer">Chip Nummer</label>
-        <input name="chip_nummer" id="chip_nummer" value="{{ request.form['chip_nummer'] }}">
+        {% if karteikarte %}
+            <input size="20" name="chip_nummer" id="chip_nummer" value="{{ karteikarte['chip_nummer'] }}">    
+        {% else %}
+            <input size="20" name="chip_nummer" id="chip_nummer">
+        {% endif %}
 
         <label for="eu_passnummer">EU Passnummer</label>
-        <input name="eu_passnummer" id="eu_passnummer" value="{{ request.form['eu_passnummer'] }}">
+        {% if karteikarte %}
+            <input size="20" name="eu_passnummer" id="eu_passnummer" value="{{ karteikarte['eu_passnummer'] }}">
+        {% else %}
+            <input size="20" name="eu_passnummer" id="eu_passnummer">
+        {% endif %}
 
         <label for="patient">Patient Kennzeichen</label>
-        {% if request.form['patient'] == 0 %}
-            <input type="checkbox" name="patient" value="0">
+        {% if not karteikarte %}
+            <input size="5" type="checkbox" name="patient" value="1" checked>
         {% else %}
-            <input type="checkbox" name="patient" value="1" checked>            
+            {% if karteikarte['patient'] == 0 %}
+                <input size="5" type="checkbox" name="patient" value="0">
+            {% else %}
+                <input size="5" type="checkbox" name="patient" value="1" checked>
+            {% endif %}
         {% endif %}
+    </div>

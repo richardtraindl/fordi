@@ -40,27 +40,26 @@
         </tr>
       {% for tierhaltung in tierhaltungen %}
         <tr>
-            <td><div class="btn"><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">bearb.</a></div></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['anredeartcode'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['vorname'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['tiername'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['tierart'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['rasse'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtsartcode'] }}</a></td>
-            <td><a href="{{ url_for('ordi.karteikarte', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
+            <td><div class="btn"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">bearb.</a></div></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['anredeartcode'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['vorname'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tiername'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tierart'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['rasse'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtsartcode'] }}</a></td>
+            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
             <td><a href="{{ url_for('ordi.addtier', person_id=tierhaltung['person_id']) }}" class="textbutton">Tier hinzufügen</a></td>
             <td><a href="{{ url_for('ordi.delete', id=tierhaltung['id']) }}" class="textbutton">löschen</a></td>
         </tr>
       {% endfor %}
     </table>
 
-    <div class="row-grid">
-        <p>zur Karteikarte</p>
-        <p><a href="{{ url_for('ordi.newkarteikarte') }}">neue Karteikarte</a></p>
-        <p><a href="{{ url_for('ordi.newtier') }}">neues Tier</a></p>
-        <p>Karteikarte löschen</p>
+    <div class="gap"></div>
+
+    <div class="row-grid" style="width: 40%">
+        <p><a href="{{ url_for('ordi.create') }}">neue Karteikarte</a></p>
         <p>neue Rechnung</p>
         <p>neuer Behandlungsverlauf</p>
     </div>

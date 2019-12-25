@@ -3,21 +3,23 @@
 
 
 {% block title %}
-  New Tier
+  Neues Tier
 {% endblock %}
 
 
 {% block content %}
     <div>
-        <h2>New Tier</h2>
+        <h2>Neues Tier</h2>
         <hr>
     </div>
     <form method="post">
-        <div class="twocols">
-            {% include 'ordi/_tier.html' %}
-        </div>
+        {% include 'ordi/_tier.html' %}
+
         <div>
-            <input type="submit" value="Save">
+            <div class="twocols">
+                <input type="submit" value="Speichern" style="margin-right: 20px;">
+                <p class="btn"><a href="{{ url_for('ordi.index') }}">Abbrechen</a></p>
+            </div>
         </div>
     </form>
 {% endblock %}

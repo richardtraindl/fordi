@@ -63,6 +63,7 @@ def init_db():
     db.commit()
 
     for sqlcreate in sqlcreates:
+        cur.execute("PRAGMA foreign_keys = ON;")
         cur.execute(sqlcreate)
     cur.close()
     db.commit()

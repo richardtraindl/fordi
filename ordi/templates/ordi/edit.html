@@ -31,25 +31,25 @@
             {% for behandlung in behandlungen %}
             <form method="post" action="{{ url_for('ordi.editbehandlung', behandlung_id=behandlung['id']) }}">
             <tr class="behandlung">
-                <td><input size="8" name="behandlungsdatum" id="behandlungsdatum" value="{{ behandlung['behandlungsdatum'] }}"></td>
-                <td><input size="3" name="gewicht_Kg" id="gewicht_Kg" value="{{ behandlung['gewicht_Kg'] }}"></td>
-                <td><input size="5" name="diagnose" id="diagnose" value="{{ behandlung['diagnose'] }}"></td>
-                <td><input size="5" name="laborwerte1" id="laborwerte1" value="{{ behandlung['laborwerte1'] }}"></td>
-                <td><input size="5" name="laborwerte2" id="laborwerte2" value="{{ behandlung['laborwerte2'] }}"></td>
-                <td><input size="5" name="arzneien" id="arzneien" value="{{ behandlung['arzneien'] }}"></td>
-                <td><input size="5" name="arzneimittel" id="arzneimittel" value="{{ behandlung['arzneimittel'] }}"></td>
-                <td><input size="5" name="impfungen_extern" id="impfungen_extern" value="{{ behandlung['impfungen_extern'] }}"></td>
+                <td><input size="8" class="date" name="behandlungsdatum" id="behandlungsdatum{{behandlung['id']}}" value="{{ behandlung['behandlungsdatum'] }}"></td>
+                <td><input size="3" name="gewicht_Kg" id="gewicht_Kg{{behandlung['id']}}" value="{{ behandlung['gewicht_Kg'] }}"></td>
+                <td><input size="5" name="diagnose" id="diagnose{{behandlung['id']}}" value="{{ behandlung['diagnose'] }}"></td>
+                <td><input size="5" name="laborwerte1" id="laborwerte1{{behandlung['id']}}" value="{{ behandlung['laborwerte1'] }}"></td>
+                <td><input size="5" name="laborwerte2" id="laborwerte2{{behandlung['id']}}" value="{{ behandlung['laborwerte2'] }}"></td>
+                <td><input size="5" name="arzneien" id="arzneien{{behandlung['id']}}" value="{{ behandlung['arzneien'] }}"></td>
+                <td><input size="5" name="arzneimittel" id="arzneimittel{{behandlung['id']}}" value="{{ behandlung['arzneimittel'] }}"></td>
+                <td><input size="5" name="impfungen_extern" id="impfungen_extern{{behandlung['id']}}" value="{{ behandlung['impfungen_extern'] }}"></td>
                 <td><input type="submit" value="Bearbeiten"></td>
             </tr>
             </form>
             {% endfor %}
-            <form method="post" action="{{ url_for('ordi.newbehandlung', tierhaltung_id=karteikarte['id']) }}">
+            <form method="post" action="{{ url_for('ordi.newbehandlung', id=karteikarte['id']) }}">
             <tr>
-                <td><input size="8" name="behandlungsdatum" id="behandlungsdatum"></td>
+                <td><input size="8" class="date" name="behandlungsdatum" id="behandlungsdatum"></td>
                 <td><input size="3" name="gewicht_Kg" id="gewicht_Kg"></td>
                 <td><input size="5" name="diagnose" id="diagnose"></td>
-                <td><input size="5" name="laborwerte1" id="laborwerte1"></td>
-                <td><input size="5" name="laborwerte2" id="laborwerte2"></td>
+                <td><input size="5" name="laborwerte1" id="laborwerte10"></td>
+                <td><input size="5" name="laborwerte2" id="laborwerte20"></td>
                 <td><input size="5" name="arzneien" id="arzneien"></td>
                 <td><input size="5" name="arzneimittel" id="arzneimittel"></td>
                 <td><input size="5" name="impfungen_extern" id="impfungen_extern"></td>
@@ -70,6 +70,9 @@
             $( ".behandlung select" ).prop( "disabled", false );
 
             $( "input[type=submit]" ).prop( "disabled", false );
+            
+            $.datepicker.setDefaults($.datepicker.regional["de"]);
+            $(".date").datepicker({ dateFormat: "yy-mm-dd" });
         });
     </script>
 {% endblock %}

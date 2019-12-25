@@ -44,9 +44,9 @@
 
         <label for="geburtsdatum">Geburtsdatum</label>
         {% if karteikarte %}
-            <input size="10" name="geburtsdatum" id="geburtsdatum" value="{{ karteikarte['geburtsdatum'] }}" required>
+            <input size="10" class="date" name="geburtsdatum" id="geburtsdatum" value="{{ karteikarte['geburtsdatum'] }}" required>
         {% else %}
-            <input size="10" name="geburtsdatum" id="geburtsdatum" required>
+            <input size="10" class="date" name="geburtsdatum" id="geburtsdatum" required>
         {% endif %}
 
         <label for="geschlechtsartcode">Geschlecht</label>
@@ -99,3 +99,4 @@
             {% endif %}
         {% endif %}
     </div>
+

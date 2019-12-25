@@ -47,7 +47,7 @@ def create():
         person_id = cursor.execute(
             'INSERT INTO person (anredeartcode, titel, familienname, vorname, notiz, kunde)'
             ' VALUES (?, ?, ?, ?, ?, ?)',
-            (anredeartcode, titel, familienname, vorname, notiz, kunde)
+            (anredeartcode, titel, familienname, vorname, notiz, kunde,)
         ).lastrowid
         dbcon.commit()
 
@@ -57,7 +57,7 @@ def create():
         adresse_id = cursor.execute(
             'INSERT INTO adresse (person_id, strasse, postleitzahl, ort)'
             ' VALUES (?, ?, ?, ?)',
-            (person_id, strasse, postleitzahl, ort)
+            (person_id, strasse, postleitzahl, ort,)
         ).lastrowid
         dbcon.commit()
 
@@ -69,7 +69,7 @@ def create():
             cursor.execute(
                 'INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)'
                 ' VALUES (?, ?, ?, ?)',
-                (person_id, kontaktartcode, kontakt1, kontakt_intern1)
+                (person_id, kontaktartcode, kontakt1, kontakt_intern1,)
             )
             dbcon.commit()
         kontakt2 = request.form['kontakt2']
@@ -79,7 +79,7 @@ def create():
             cursor.execute(
                 'INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)'
                 ' VALUES (?, ?, ?, ?)',
-                (person_id, kontaktartcode, kontakt2, kontakt_intern2)
+                (person_id, kontaktartcode, kontakt2, kontakt_intern2,)
             )
             dbcon.commit()
 
@@ -101,18 +101,18 @@ def create():
         tier_id = cursor.execute(
             'INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)'
             ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
+            (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient,)
         ).lastrowid
         dbcon.commit()
 
-        tierhaltung_id = cursor.execute(
+        id = cursor.execute(
             'INSERT INTO tierhaltung (person_id, tier_id)'
             ' VALUES (?, ?)',
-            (person_id, tier_id)
+            (person_id, tier_id,)
         ).lastrowid
         dbcon.commit()
         cursor.close()
-        return redirect(url_for('ordi.edit', id=tierhaltung_id))
+        return redirect(url_for('ordi.edit', id=id))
     return render_template('ordi/create.html')
 
 
@@ -144,7 +144,7 @@ def edit(id):
 
     cursor.execute(
         'SELECT * FROM behandlung JOIN tierhaltung ON behandlung.tier_id = tierhaltung.tier_id'
-        ' WHERE tierhaltung.id = ?',
+        ' WHERE tierhaltung.id = ? ORDER BY behandlungsdatum ASC',
         (id,)
     )
     behandlungen = cursor.fetchall()
@@ -177,34 +177,30 @@ def addtier(person_id):
         tier_id = cursor.execute(
             'INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)'
             ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
+            (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient,)
         ).lastrowid
         dbcon.commit()
 
         tierhaltung_id = cursor.execute(
             'INSERT INTO tierhaltung (person_id, tier_id)'
             ' VALUES (?, ?)',
-            (person_id, tier_id)
+            (person_id, tier_id,)
         ).lastrowid
         dbcon.commit()
         cursor.close()
-        return redirect(url_for('ordi.index'))
+        return redirect(url_for('ordi.edit', id=tierhaltung_id))
     return render_template('ordi/addtier.html')
 
 
-@bp.route('/<int:tierhaltung_id>/newbehandlung', methods=('GET', 'POST'))
+@bp.route('/<int:id>/newbehandlung', methods=('GET', 'POST'))
 @login_required
-def newbehandlung(tierhaltung_id):
+def newbehandlung(id):
     if(request.method == 'POST'):
         behandlungsdatum = request.form['behandlungsdatum']
         if(len(behandlungsdatum) == 0):
             behandlungsdatum = date.today().strftime("%Y-%m-%d")
-        """good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
-        if(len(behandlungsdatum) != 8):
-            behandlungsdatum = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            behandlungsdatum += datetime.now().strftime(" %H:%M:%S")"""
+        #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
         gewicht_Kg = request.form['gewicht_Kg']
         diagnose = request.form['diagnose']
         laborwerte1 = request.form['laborwerte1']
@@ -218,18 +214,18 @@ def newbehandlung(tierhaltung_id):
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.execute(
             'SELECT * FROM tierhaltung WHERE id = ?',
-            (tierhaltung_id,)
+            (id,)
         )
         tierhaltung = cursor.fetchone()
 
         cursor.execute(
             'INSERT INTO behandlung (tier_id, behandlungsdatum, gewicht_Kg, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)'
             ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (tierhaltung['tier_id'], behandlungsdatum, gewicht_Kg, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
+            (tierhaltung['tier_id'], behandlungsdatum, gewicht_Kg, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern,)
         )
         dbcon.commit()
         cursor.close()
-    return redirect(url_for('ordi.edit', id=tierhaltung['id']))
+    return redirect(url_for('ordi.edit', id=id))
 
 
 @bp.route('/<int:behandlung_id>/editbehandlung', methods=('GET', 'POST'))
@@ -237,8 +233,8 @@ def newbehandlung(tierhaltung_id):
 def editbehandlung(behandlung_id):
     if(request.method == 'POST'):
         behandlungsdatum = request.form['behandlungsdatum']
-        """good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)"""
+        #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
         if(len(behandlungsdatum) == 0):
             behandlungsdatum = date.today().strftime("%Y-%m-%d")
         gewicht_Kg = request.form['gewicht_Kg']

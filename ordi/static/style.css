@@ -94,6 +94,7 @@ input[type=submit], input[type=reset] { align-self: start; min-width: 160px; mar
   background-image: -moz-linear-gradient(-90deg, silver, white);
   background-image: -webkit-linear-gradient(-90deg, rgb(238, 238, 238), rgb(204, 204, 204) ); /* , lightgrey, darkgrey);		/* silver, gray */
   border: 1px solid rgb(153, 153, 153);
+  color: Black;
 }
 
 .btn a { color: Black; text-decoration: none;}

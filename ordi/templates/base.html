@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width" initial-scale="1.0">
-        <title>{% block title %}{% endblock %} - Ordi</title>
+        <title>Ordi - {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui-1.12.1.min.css') }}">
         <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
@@ -12,6 +12,7 @@
     <body>
         <header class="row-grid">
             <h1><a href="{{ url_for('ordi.index') }}">Ordi</a></h1>
+            <h2>{{ page_title }}</h2>
             <p>
               {% if g.user %}
                 <span>{{ g.user['username'] }}</span>

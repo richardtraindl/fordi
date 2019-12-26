@@ -19,7 +19,7 @@ bp = Blueprint('ordi', __name__)
 @login_required
 def index():
     tierhaltungen = get_tierhaltungen()
-    return render_template('ordi/index.html', tierhaltungen=tierhaltungen)
+    return render_template('ordi/index.html', tierhaltungen=tierhaltungen, page_title="Karteikarten")
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -127,7 +127,7 @@ def create():
         dbcon.commit()
         cursor.close()
         return redirect(url_for('ordi.edit', id=id))
-    return render_template('ordi/create.html')
+    return render_template('ordi/create.html', page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/edit', methods=('GET',))
@@ -142,7 +142,7 @@ def edit(id):
     behandlungen = get_behandlungen(id)
     behandlungsdatum = date.today().strftime("%Y-%m-%d")
 
-    return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum)
+    return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, page_title="Karteikarte")
 
 
 @bp.route('/<int:person_id>/addtier', methods=('GET', 'POST'))
@@ -182,7 +182,7 @@ def addtier(person_id):
         dbcon.commit()
         cursor.close()
         return redirect(url_for('ordi.edit', id=id))
-    return render_template('ordi/addtier.html')
+    return render_template('ordi/addtier.html', page_title="Neues Tier")
 
 
 @bp.route('/<int:id>/newbehandlung', methods=('GET', 'POST'))

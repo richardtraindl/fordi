@@ -1,6 +1,7 @@
 
 
 from datetime import date
+import re
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
@@ -9,6 +10,7 @@ from werkzeug.exceptions import abort
 
 from ordi.auth import login_required
 from ordi.db import get_db
+from ordi.dbaccess import *
 
 bp = Blueprint('ordi', __name__)
 
@@ -16,14 +18,7 @@ bp = Blueprint('ordi', __name__)
 @bp.route('/', methods=('GET',))
 @login_required
 def index():
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute(
-        'SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
-        ' ORDER BY familienname ASC'
-    )
-    tierhaltungen = cursor.fetchall()
+    tierhaltungen = get_tierhaltungen()
     return render_template('ordi/index.html', tierhaltungen=tierhaltungen)
 
 
@@ -31,6 +26,8 @@ def index():
 @login_required
 def create():
     if(request.method == 'POST'):
+        error = None
+
         anredeartcode = request.form['anredeartcode']
         titel = request.form['titel']
         familienname = request.form['familienname']
@@ -40,6 +37,38 @@ def create():
             kunde = 1
         else:
             kunde = 0
+
+        tiername = request.form['tiername']
+        tierart = request.form['tierart']
+        rasse = request.form['rasse']
+        farbe = request.form['farbe']
+        viren = request.form['viren']
+        merkmal = request.form['merkmal']
+        geburtsdatum = request.form['geburtsdatum']
+        geschlechtsartcode = request.form['geschlechtsartcode']
+        chip_nummer = request.form['chip_nummer']
+        eu_passnummer = request.form['eu_passnummer']
+        if(request.form.get('patient')):
+            patient = 1
+        else:
+            patient = 0
+
+        if(len(familienname) == 0):
+            error = "Familienname erforderlich"
+            flash(error)
+            return render_template('ordi/create.html')
+        if(len(tiername) == 0):
+            error = "Tiername erforderlich"
+            flash(error)
+            return render_template('ordi/create.html')
+        if(len(tierart) == 0):
+            error = "Tierart erforderlich"
+            flash(error)
+            return render_template('ordi/create.html')
+        if(len(geburtsdatum) == 0):
+            error = "Geburtsdatum erforderlich"
+            flash(error)
+            return render_template('ordi/create.html')
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -83,21 +112,6 @@ def create():
             )
             dbcon.commit()
 
-        tiername = request.form['tiername']
-        tierart = request.form['tierart']
-        rasse = request.form['rasse']
-        farbe = request.form['farbe']
-        viren = request.form['viren']
-        merkmal = request.form['merkmal']
-        geburtsdatum = request.form['geburtsdatum']
-        geschlechtsartcode = request.form['geschlechtsartcode']
-        chip_nummer = request.form['chip_nummer']
-        eu_passnummer = request.form['eu_passnummer']
-        if(request.form.get('patient')):
-            patient = 1
-        else:
-            patient = 0
-        
         tier_id = cursor.execute(
             'INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)'
             ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -119,37 +133,16 @@ def create():
 @bp.route('/<int:id>/edit', methods=('GET',))
 @login_required
 def edit(id):
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute(
-        'SELECT * FROM tierhaltung, person, tier'
-        ' WHERE tierhaltung.id = ? AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id',
-        (id,)
-    )
-    karteikarte = cursor.fetchone()
-    person_id = karteikarte['person_id']
+    karteikarte = get_karteinkarte(id)
 
-    cursor.execute(
-        'SELECT * FROM adresse WHERE adresse.person_id = ?',
-        (person_id,)
-    )
-    adresse = cursor.fetchone()
+    adresse = get_adresse(karteikarte['person_id'])
 
-    cursor.execute(
-        'SELECT * FROM kontakt WHERE kontakt.person_id = ?',
-        (person_id,)
-    )
-    kontakte = cursor.fetchall()
+    kontakte = get_kontakte(karteikarte['person_id'])
 
-    cursor.execute(
-        'SELECT * FROM behandlung JOIN tierhaltung ON behandlung.tier_id = tierhaltung.tier_id'
-        ' WHERE tierhaltung.id = ? ORDER BY behandlungsdatum ASC',
-        (id,)
-    )
-    behandlungen = cursor.fetchall()
-    cursor.close()
-    return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
+    behandlungen = get_behandlungen(id)
+    behandlungsdatum = date.today().strftime("%Y-%m-%d")
+
+    return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum)
 
 
 @bp.route('/<int:person_id>/addtier', methods=('GET', 'POST'))
@@ -181,14 +174,14 @@ def addtier(person_id):
         ).lastrowid
         dbcon.commit()
 
-        tierhaltung_id = cursor.execute(
+        id = cursor.execute(
             'INSERT INTO tierhaltung (person_id, tier_id)'
             ' VALUES (?, ?)',
             (person_id, tier_id,)
         ).lastrowid
         dbcon.commit()
         cursor.close()
-        return redirect(url_for('ordi.edit', id=tierhaltung_id))
+        return redirect(url_for('ordi.edit', id=id))
     return render_template('ordi/addtier.html')
 
 
@@ -196,11 +189,8 @@ def addtier(person_id):
 @login_required
 def newbehandlung(id):
     if(request.method == 'POST'):
+        error = None
         behandlungsdatum = request.form['behandlungsdatum']
-        if(len(behandlungsdatum) == 0):
-            behandlungsdatum = date.today().strftime("%Y-%m-%d")
-        #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
         gewicht_Kg = request.form['gewicht_Kg']
         diagnose = request.form['diagnose']
         laborwerte1 = request.form['laborwerte1']
@@ -208,6 +198,20 @@ def newbehandlung(id):
         arzneien = request.form['arzneien']
         arzneimittel = request.form['arzneimittel']
         impfungen_extern = request.form['impfungen_extern']
+
+        if(len(behandlungsdatum) == 0):
+            behandlungsdatum = date.today().strftime("%Y-%m-%d")
+        #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
+
+        if(len(gewicht_Kg) > 0 and re.search(r"\d", gewicht_Kg) == None):
+            error = "Zahl für Gewicht erforderlich."
+            flash(error)
+            karteikarte = get_karteinkarte(id)
+            adresse = get_adresse(karteikarte['person_id'])
+            kontakte = get_kontakte(karteikarte['person_id'])
+            behandlungen = get_behandlungen(id)
+            return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -228,15 +232,11 @@ def newbehandlung(id):
     return redirect(url_for('ordi.edit', id=id))
 
 
-@bp.route('/<int:behandlung_id>/editbehandlung', methods=('GET', 'POST'))
+@bp.route('/<int:id>/<int:behandlung_id>/editbehandlung', methods=('GET', 'POST'))
 @login_required
-def editbehandlung(behandlung_id):
+def editbehandlung(id, behandlung_id):
     if(request.method == 'POST'):
         behandlungsdatum = request.form['behandlungsdatum']
-        #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
-        if(len(behandlungsdatum) == 0):
-            behandlungsdatum = date.today().strftime("%Y-%m-%d")
         gewicht_Kg = request.form['gewicht_Kg']
         diagnose = request.form['diagnose']
         laborwerte1 = request.form['laborwerte1']
@@ -244,6 +244,20 @@ def editbehandlung(behandlung_id):
         arzneien = request.form['arzneien']
         arzneimittel = request.form['arzneimittel']
         impfungen_extern = request.form['impfungen_extern']
+
+        if(len(behandlungsdatum) == 0):
+            behandlungsdatum = date.today().strftime("%Y-%m-%d")
+        #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
+
+        if(len(gewicht_Kg) > 0 and re.search(r"\d", gewicht_Kg) == None):
+            error = "Zahl für Gewicht erforderlich."
+            flash(error)
+            karteikarte = get_karteinkarte(id)
+            adresse = get_adresse(karteikarte['person_id'])
+            kontakte = get_kontakte(karteikarte['person_id'])
+            behandlungen = get_behandlungen(id)
+            return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -256,18 +270,7 @@ def editbehandlung(behandlung_id):
         dbcon.commit()
         cursor.close()
 
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute(
-        'SELECT tierhaltung.id'
-        ' FROM tierhaltung JOIN behandlung ON tierhaltung.tier_id = behandlung.tier_id'
-        ' WHERE behandlung.id = ?',
-        (behandlung_id,)
-    )
-    tierhaltung = cursor.fetchone()
-    cursor.close()
-    return redirect(url_for('ordi.edit', id=tierhaltung['id']))
+    return redirect(url_for('ordi.edit', id=id))
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

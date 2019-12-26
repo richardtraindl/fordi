@@ -29,7 +29,7 @@
                 <th>&nbsp;</th>
             </tr>
             {% for behandlung in behandlungen %}
-            <form method="post" action="{{ url_for('ordi.editbehandlung', behandlung_id=behandlung['id']) }}">
+            <form method="post" action="{{ url_for('ordi.editbehandlung', id=karteikarte['id'], behandlung_id=behandlung['id']) }}">
             <tr class="behandlung">
                 <td><input size="8" class="date" name="behandlungsdatum" id="behandlungsdatum{{behandlung['id']}}" value="{{ behandlung['behandlungsdatum'] }}"></td>
                 <td><input size="3" name="gewicht_Kg" id="gewicht_Kg{{behandlung['id']}}" value="{{ behandlung['gewicht_Kg'] }}"></td>
@@ -45,14 +45,14 @@
             {% endfor %}
             <form method="post" action="{{ url_for('ordi.newbehandlung', id=karteikarte['id']) }}">
             <tr>
-                <td><input size="8" class="date" name="behandlungsdatum" id="behandlungsdatum"></td>
-                <td><input size="3" name="gewicht_Kg" id="gewicht_Kg"></td>
-                <td><input size="5" name="diagnose" id="diagnose"></td>
-                <td><input size="5" name="laborwerte1" id="laborwerte10"></td>
-                <td><input size="5" name="laborwerte2" id="laborwerte20"></td>
-                <td><input size="5" name="arzneien" id="arzneien"></td>
-                <td><input size="5" name="arzneimittel" id="arzneimittel"></td>
-                <td><input size="5" name="impfungen_extern" id="impfungen_extern"></td>
+                <td><input size="8" class="date" name="behandlungsdatum" id="behandlungsdatum" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
+                <td><input size="3" name="gewicht_Kg" id="gewicht_Kg" value="{{ request.form['gewicht_Kg'] }}"></td>
+                <td><input size="5" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}"></td>
+                <td><input size="5" name="laborwerte1" id="laborwerte1" value="{{ request.form['laborwerte1'] }}"></td>
+                <td><input size="5" name="laborwerte2" id="laborwerte2" value="{{ request.form['laborwerte2'] }}"></td>
+                <td><input size="5" name="arzneien" id="arzneien" value="{{ request.form['arzneien'] }}"></td>
+                <td><input size="5" name="arzneimittel" id="arzneimittel" value="{{ request.form['arzneimittel'] }}"></td>
+                <td><input size="5" name="impfungen_extern" id="impfungen_extern" value="{{ request.form['impfungen_extern'] }}"></td>
                 <td><input size="5" type="submit" value="Speichern"></td>
             </tr>
             </form>

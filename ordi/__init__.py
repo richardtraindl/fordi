@@ -35,6 +35,10 @@ def create_app(test_config=None):
     app.register_blueprint(ordi.bp)
     app.add_url_rule('/', endpoint='index')
 
+    from .util.filters import mapanrede, mapgeschlecht
+    app.jinja_env.filters['mapanrede'] = mapanrede
+    app.jinja_env.filters['mapgeschlecht'] = mapgeschlecht
+
     return app
     
     #app.config.from_mapping(

@@ -2,32 +2,36 @@
     <div class="twocols person">
         <label for="anredeartcode">Anrede</label>
         <select name="anredeartcode" id="anredeartcode">
-            {% if not karteikarte %}
-                <option value="0">&nbsp;</option>
-                <option value="1">Herr</option>
-                <option value="2">Frau</option>
-                <option value="3">Firma</option>
+            {% if karteikarte %}
+                {% set anredeartcode = karteikarte['anredeartcode'] %}
             {% else %}
-                {% if karteikarte['anredeartcode'] == 0 %}
-                    <option value="0" selected>&nbsp;</option>
-                {% else %}
-                    <option value="0">&nbsp;</option>
-                {% endif %}
-                {% if karteikarte['anredeartcode'] == 1 %}
-                    <option value="1" selected>Herr</option>
-                {% else %}
-                    <option value="1">Herr</option>
-                {% endif %}
-                {% if karteikarte['anredeartcode'] == 2 %}
-                    <option value="2" selected>Frau</option>
-                {% else %}
-                    <option value="2">Frau</option>
-                {% endif %}
-                {% if karteikarte['anredeartcode'] == 3 %}
-                    <option value="3" selected>Firma</option>
-                {% else %}
-                    <option value="3">Firma</option>
-                {% endif %}
+                {% set anredeartcode = request.form['anredeartcode'] %}                
+            {% endif %}
+
+            {% if anredeartcode == "0" %}
+                <option value="0" selected>&nbsp;</option>
+            {% else %}
+                <option value="0">&nbsp;</option>
+            {% endif %}
+            {% if anredeartcode == "1" %}
+                <option value="1" selected>Herr</option>
+            {% else %}
+                <option value="1">Herr</option>
+            {% endif %}
+            {% if anredeartcode == "2" %}
+                <option value="2" selected>Frau</option>
+            {% else %}
+                <option value="2">Frau</option>
+            {% endif %}
+            {% if anredeartcode == "3" %}
+                <option value="3" selected>Familie</option>
+            {% else %}
+                <option value="3">Familie</option>
+            {% endif %}
+            {% if anredeartcode == "4" %}
+                <option value="4" selected>Firma</option>
+            {% else %}
+                <option value="4">Firma</option>
             {% endif %}
         </select>
 
@@ -35,35 +39,38 @@
         {% if karteikarte %}
             <input size="5" name="titel" id="titel" value="{{ karteikarte['titel'] }}">
         {% else %}
-            <input size="5" name="titel" id="titel">        
+            <input size="5" name="titel" id="titel" value="{{ request.form['titel'] }}">        
         {% endif %}
 
         <label for="familienname">Familienname</label>
         {% if karteikarte %}
             <input size="20" name="familienname" id="familienname" value="{{ karteikarte['familienname'] }}" required>        
         {% else %}
-            <input size="20" name="familienname" id="familienname" required>
+            <input size="20" name="familienname" id="familienname" value="{{ request.form['familienname'] }}" required>
         {% endif %}
 
         <label for="vorname">Vorname</label>
         {% if karteikarte %}
             <input size="20" name="vorname" id="vorname" value="{{ karteikarte['vorname'] }}">
         {% else %}
-            <input size="20" name="vorname" id="vorname">
+            <input size="20" name="vorname" id="vorname" value="{{ request.form['vorname'] }}">
         {% endif %}
-        
 
         <label for="notiz">Notiz</label>
         {% if karteikarte %}
             <input size="20" name="notiz" id="wplayer_name" value="{{ karteikarte['notiz'] }}">        
         {% else %}
-            <input size="20" name="notiz" id="wplayer_name">
+            <input size="20" name="notiz" id="wplayer_name" value="{{ request.form['notiz'] }}">
         {% endif %}
         
 
         <label for="kunde">Kunden Kennzeichen</label>
         {% if not karteikarte %}
-            <input size="5" type="checkbox" name="kunde" value="1" checked>
+            {% if request.form.get('kunde') %}
+                <input size="5" type="checkbox" name="kunde" value="1" checked>
+            {% else %}
+                <input size="5" type="checkbox" name="kunde" value="1">
+            {% endif %}
         {% else %}
             {% if karteikarte['kunde'] == 0 %}
                 <input size="5" type="checkbox" name="kunde" value="0">
@@ -76,7 +83,7 @@
         {% if adresse %}
             <input size="20" name="strasse" id="strasse" value="{{ adresse['strasse'] }}">        
         {% else %}
-            <input size="20" name="strasse" id="strasse">
+            <input size="20" name="strasse" id="strasse" value="{{ request.form['strasse'] }}">
         {% endif %}
         
 
@@ -84,31 +91,31 @@
         {% if adresse %}
             <input size="5" name="postleitzahl" id="postleitzahl" value="{{ adresse['postleitzahl'] }}">        
         {% else %}
-            <input size="5" name="postleitzahl" id="postleitzahl">
+            <input size="5" name="postleitzahl" id="postleitzahl" value="{{ request.form['postleitzahl'] }}">
         {% endif %}
         
         <label for="ort">Ort</label>
         {% if adresse %}
             <input size="20" name="ort" id="ort" value="{{ adresse['ort'] }}">        
         {% else %}
-            <input size="20" name="ort" id="ort">
+            <input size="20" name="ort" id="ort" value="{{ request.form['ort'] }}">
         {% endif %}
 
         {% set counter = 1 %}
         {% for kontakt in kontakte %}
             <label for="kontakt{{counter}}">Telefonnr.</label>
-            <input size="20" name="kontakt{{counter}}" id="kontakt{{counter}}" value="{{ kontakt['kontakt'] }}">
+            <input size="20" name="kontakt{{counter}}" id="kontakt{{counter}}" value="{{ kontakt['kontakt{{counter}}'] }}">
             {% set counter = counter + 1 %}
         {% endfor %}
 
         {% if kontakte|length == 1 %}
             <label for="kontakt2">Telefonnr.</label>
-            <input size="20" name="kontakt2" id="kontakt2">
+            <input size="20" name="kontakt2" id="kontakt2" value="{{ request.form['kontakt2'] }}">
         {% endif %}
         {% if kontakte|length == 0 %}
             <label for="kontakt1">Telefonnr.</label>
-            <input size="20" name="kontakt1" id="kontakt1">
+            <input size="20" name="kontakt1" id="kontakt1" value="{{ request.form['kontakt1'] }}">
             <label for="kontakt2">Telefonnr.</label>
-            <input size="20" name="kontakt2" id="kontakt2">
+            <input size="20" name="kontakt2" id="kontakt2" value="{{ request.form['kontakt2'] }}">
         {% endif %}
     </div>

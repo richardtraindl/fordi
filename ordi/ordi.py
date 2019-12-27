@@ -199,10 +199,15 @@ def newbehandlung(id):
         arzneimittel = request.form['arzneimittel']
         impfungen_extern = request.form['impfungen_extern']
 
+        if(len(gewicht_Kg) == 0 and len(diagnose) == 0 and len(laborwerte1) == 0 and
+           len(laborwerte2) == 0 and len(arzneien) == 0 and len(arzneimittel) == 0 and
+           len(impfungen_extern) == 0):
+            return redirect(url_for('ordi.edit', id=id))
+               
         if(len(behandlungsdatum) == 0):
             behandlungsdatum = date.today().strftime("%Y-%m-%d")
-        #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
+            #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+            #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
 
         if(len(gewicht_Kg) > 0 and re.search(r"\d", gewicht_Kg) == None):
             error = "Zahl für Gewicht erforderlich."

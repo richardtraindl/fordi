@@ -15,54 +15,55 @@
 
     <div class="huge-gap"></div>
 
-    <table class="liste"">
+    <table class="liste">
         <thead>
             <tr>
-                <th style="width: 10%">Datum</th>
-                <th style="width: 10%">Gewicht</th>
-                <th style="width: 20%">Diagnose</th>
-                <th style="width: 10%">Laborwerte1</th>
-                <th style="width: 10%">Laborwerte2</th>
-                <th style="width: 10%">Arzneien</th>
-                <th style="width: 10%">Arzneimittel</th>
-                <th style="width: 10%">Impfungen</th>
-                <th style="width: 10%">&nbsp;</th>
+                <th style="width: 9.9%">Datum</th>
+                <th style="width: 9.9%">Gewicht</th>
+                <th style="width: 19.8%">Diagnose</th>
+                <th style="width: 9.9%">Laborwerte1</th>
+                <th style="width: 9.9%">Laborwerte2</th>
+                <th style="width: 9.9%">Arzneien</th>
+                <th style="width: 9.9%">Arzneimittel</th>
+                <th style="width: 9.9%">Impfungen</th>
+                <th style="width: 10.9%">&nbsp;</th>
             </tr>
         </thead>
     </table>
-    <table class="liste" style="height: 40%; overflow: scroll">
+  <div style="height: 30%; overflow: scroll">
+    <table class="liste">
       <tbody>
       {% for behandlung in behandlungen %}
-        <form method="post" action="{{ url_for('ordi.editbehandlung', id=karteikarte['id'], behandlung_id=behandlung['id']) }}">
-            <tr class="behandlung">
-                <td><input size="8" class="date" name="behandlungsdatum" id="behandlungsdatum-{{behandlung['id']}}" value="{{ behandlung['behandlungsdatum'] }}"></td>
-                <td><input size="3" name="gewicht_Kg" id="gewicht_Kg-{{behandlung['id']}}" value="{{ behandlung['gewicht_Kg'] }}"></td>
-                <td><textarea style="width: 100%" name="diagnose" id="diagnose-{{behandlung['id']}}">{{ behandlung['diagnose'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="laborwerte1" id="laborwerte1-{{behandlung['id']}}">{{ behandlung['laborwerte1'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="laborwerte2" id="laborwerte2-{{behandlung['id']}}">{{ behandlung['laborwerte2'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="arzneien" id="arzneien-{{behandlung['id']}}">{{ behandlung['arzneien'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="arzneimittel" id="arzneimittel-{{behandlung['id']}}">{{ behandlung['arzneimittel'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="impfungen_extern" id="impfungen_extern-{{behandlung['id']}}">{{ behandlung['impfungen_extern'] }}</textarea></td>
-                <td><input type="submit" value="Bearbeiten"></td>
-            </tr>
-        </form>
+        <tr class="behandlung">
+            <form method="post" action="{{ url_for('ordi.editbehandlung', id=karteikarte['id'], behandlung_id=behandlung['id']) }}">
+                <td style="width: 10%"><input type="text" style="width: 100%" name="behandlungsdatum" id="behandlungsdatum-{{behandlung['id']}}" class="date" value="{{ behandlung['behandlungsdatum'] }}"></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="gewicht_Kg" id="gewicht_Kg-{{behandlung['id']}}">{{ behandlung['gewicht_Kg'] }}</textarea></td>
+                <td style="width: 20%"><textarea style="width: 100%" name="diagnose" id="diagnose-{{behandlung['id']}}">{{ behandlung['diagnose'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1" id="laborwerte1-{{behandlung['id']}}">{{ behandlung['laborwerte1'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte2" id="laborwerte2-{{behandlung['id']}}">{{ behandlung['laborwerte2'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="arzneien" id="arzneien-{{behandlung['id']}}">{{ behandlung['arzneien'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="arzneimittel" id="arzneimittel-{{behandlung['id']}}">{{ behandlung['arzneimittel'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern" id="impfungen_extern-{{behandlung['id']}}">{{ behandlung['impfungen_extern'] }}</textarea></td>
+                <td style="width: 10%"><input style="visibility: hidden" type="submit" value="Bearbeiten"></td>
+            </form>
+        </tr>
       {% endfor %}
-        <form method="post" action="{{ url_for('ordi.newbehandlung', id=karteikarte['id']) }}">
-            <tr>
-                <td><input size="8" class="date" name="behandlungsdatum" id="behandlungsdatum" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
-                <td><input size="3" name="gewicht_Kg" id="gewicht_Kg" value="{{ request.form['gewicht_Kg'] }}"></td>
-                <td><textarea style="width: 100%" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="laborwerte1" id="laborwerte1">{{ request.form['laborwerte1'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="laborwerte2" id="laborwerte2">{{ request.form['laborwerte2'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="arzneien" id="arzneien">{{ request.form['arzneien'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="arzneimittel" id="arzneimittel">{{ request.form['arzneimittel'] }}</textarea></td>
-                <td><textarea style="width: 100%" name="impfungen_extern" id="impfungen_extern">{{ request.form['impfungen_extern'] }}</textarea></td>
-                <td><input type="submit" value="Speichern"></td>
-            </tr>
-        </form>
+        <tr class="editbehandlung">
+            <form method="post" action="{{ url_for('ordi.newbehandlung', id=karteikarte['id']) }}">
+                <td style="width: 10%"><input type="text" style="width: 100%" name="behandlungsdatum" id="behandlungsdatum" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="gewicht_Kg" id="gewicht_Kg">{{ request.form['gewicht_Kg'] }}</textarea></td>
+                <td style="width: 20%"><textarea style="width: 100%" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1" id="laborwerte1">{{ request.form['laborwerte1'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte2" id="laborwerte2">{{ request.form['laborwerte2'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="arzneien" id="arzneien">{{ request.form['arzneien'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="arzneimittel" id="arzneimittel">{{ request.form['arzneimittel'] }}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern" id="impfungen_extern">{{ request.form['impfungen_extern'] }}</textarea></td>
+                <td style="width: 10%"><input type="submit" value="Speichern"></td>
+            </form>
+        </tr>
       </tbody>
     </table>
-
+  </div>
     <script>
         $(document).ready(function(){
             $(".person input").prop("disabled", true);
@@ -71,11 +72,11 @@
             $(".tier input").prop("disabled", true);
             $(".tier select").prop("disabled", true);
 
-            $(".behandlung input").prop("disabled", false);
-            $(".behandlung select").prop("disabled", false);
+            $(".behandlung input").prop("disabled", true);
+            /*$(".behandlung input[type=submit]").css("visibility", "hidden");*/
+            $(".behandlung textarea").prop("disabled", true);
+            $(".behandlung select").prop("disabled", true);
 
-            $("input[type=submit]").prop("disabled", false);
-            
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ dateFormat: "yy-mm-dd" });
 

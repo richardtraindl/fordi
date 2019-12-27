@@ -53,7 +53,7 @@ header p { padding-right: 20px; justify-items: end; text-align: right; }
 
 form { margin: 0px }
 input.danger { color: #cc2f2e; }
-input[type=submit], input[type=reset] { align-self: start; min-width: 160px; margin: 8px 0 0 0 }
+input[type=submit], input[type=reset] { align-self: start; min-width: 40px; margin: 8px 0 0 0 }
 
 .fbold { font-weight: bold; }
 .red-bold { color: red; font-weight: bold; }
@@ -111,3 +111,5 @@ input[type=submit], input[type=reset] { align-self: start; min-width: 160px; mar
 .huge-gap {
   padding-bottom: 30px;
 }
+
+.editbehandlung input[type=text], .editbehandlung textarea { background-color: #fdfd96; }

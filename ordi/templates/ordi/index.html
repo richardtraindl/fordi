@@ -41,7 +41,7 @@
         </tr>
       {% for tierhaltung in tierhaltungen %}
         <tr>
-            <td><a class="btn" href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">bearb.</a></div></td>
+            <td><a class="btn" href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">Bearb.</a></div></td>
             <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['anredeartcode']|mapanrede }}</a></td>
             <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
             <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
@@ -52,7 +52,7 @@
             <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtsartcode']|mapgeschlecht }}</a></td>
             <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
             <td><a class="btn" href="{{ url_for('ordi.addtier', person_id=tierhaltung['person_id']) }}">Tier hinzuf.</a></td>
-            <td><a class="btn delete" href="{{ url_for('ordi.delete', id=tierhaltung['id']) }}">löschen</a></td>
+            <td><a class="btn delete" href="{{ url_for('ordi.delete', id=tierhaltung['id']) }}">Löschen</a></td>
         </tr>
       {% endfor %}
     </table>

@@ -15,8 +15,7 @@
         <div class="huge-gap"></div>
     </div>
 
-    <div class="behandlungen" style="height: 40%; overflow: scroll">
-        <table class="liste">
+        <table class="liste" style="height: 40%; overflow: scroll">
             <tr>
                 <th style="width: 10%">Datum</th>
                 <th style="width: 10%">Gewicht</th>
@@ -57,23 +56,24 @@
             </tr>
             </form>
         </table>
-    </div>
 
     <script>
         $(document).ready(function(){
-            $( ".person input" ).prop( "disabled", true );
-            $( ".person select" ).prop( "disabled", true );
+            $(".person input").prop("disabled", true);
+            $(".person select").prop("disabled", true);
 
-            $( ".tier input" ).prop( "disabled", true );
-            $( ".tier select" ).prop( "disabled", true );
+            $(".tier input").prop("disabled", true);
+            $(".tier select").prop("disabled", true);
 
-            $( ".behandlung input" ).prop( "disabled", false );
-            $( ".behandlung select" ).prop( "disabled", false );
+            $(".behandlung input").prop("disabled", false);
+            $(".behandlung select").prop("disabled", false);
 
-            $( "input[type=submit]" ).prop( "disabled", false );
+            $("input[type=submit]").prop("disabled", false);
             
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ dateFormat: "yy-mm-dd" });
+
+            $("#behandlungsdatum").focus();
         });
     </script>
 {% endblock %}

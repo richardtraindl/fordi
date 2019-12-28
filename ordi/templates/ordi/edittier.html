@@ -3,22 +3,23 @@
 
 
 {% block title %}
-  Neues Tier
+  Tier ändern
 {% endblock %}
 
 
 {% block content %}
     <form method="post">
+
         {% include 'ordi/_tier.html' %}
 
         <div>
             <div class="twocols">
                 <input type="submit" value="Speichern" style="margin-right: 20px;">
-                <p class="btn"><a href="{{ url_for('ordi.index') }}">Abbrechen</a></p>
+                <p class="btn"><a href="{{ url_for('ordi.edit', id=karteikarte['id']) }}">Abbrechen</a></p>
             </div>
         </div>
     </form>
-
+    
     <script>
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);

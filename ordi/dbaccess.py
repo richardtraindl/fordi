@@ -17,7 +17,7 @@ def get_tierhaltungen():
     return tierhaltungen
 
 
-def get_karteinkarte(id):
+def get_karteikarte(id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -29,6 +29,32 @@ def get_karteinkarte(id):
     karteikarte = cursor.fetchone()
     cursor.close()
     return karteikarte
+
+
+def get_person(person_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'SELECT * FROM person WHERE person.id = ?',
+        (person_id,)
+    )
+    person = cursor.fetchone()
+    cursor.close()
+    return person
+
+
+def get_tier(tier_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'SELECT * FROM tier WHERE tier.id = ?',
+        (tier_id,)
+    )
+    tier = cursor.fetchone()
+    cursor.close()
+    return tier
 
 
 def get_adresse(person_id):

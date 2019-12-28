@@ -9,8 +9,15 @@
 
 {% block content %}
     <div>
-        {% include 'ordi/_person.html' %}
-        {% include 'ordi/_tier.html' %}
+        <div class="twocols">
+            <p><a href="{{ url_for('ordi.editperson', id=karteikarte['id'], person_id=karteikarte['person_id']) }}">Person ändern</a></p>
+
+            <p><a href="{{ url_for('ordi.edittier', id=karteikarte['id'], tier_id=karteikarte['tier_id']) }}">Tier ändern</a></p>
+
+            {% include 'ordi/_person.html' %}
+        
+            {% include 'ordi/_tier.html' %}
+        </div>
     </div>
 
     <div class="huge-gap"></div>
@@ -78,7 +85,11 @@
             $(".behandlung select").prop("disabled", true);
 
             $.datepicker.setDefaults($.datepicker.regional["de"]);
-            $(".date").datepicker({ dateFormat: "yy-mm-dd" });
+            $(".date").datepicker({ 
+                dateFormat: "yy-mm-dd",
+                changeMonth: true,
+                changeYear: true 
+            });
 
             $("#diagnose").focus();
         });

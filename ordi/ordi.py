@@ -127,13 +127,13 @@ def create():
         dbcon.commit()
         cursor.close()
         return redirect(url_for('ordi.edit', id=id))
-    return render_template('ordi/create.html', page_title="Neue Karteikarte")
+    return render_template('ordi/create.html', new="true", page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/edit', methods=('GET',))
 @login_required
 def edit(id):
-    karteikarte = get_karteinkarte(id)
+    karteikarte = get_karteikarte(id)
 
     adresse = get_adresse(karteikarte['person_id'])
 
@@ -185,6 +185,69 @@ def addtier(person_id):
     return render_template('ordi/addtier.html', page_title="Neues Tier")
 
 
+@bp.route('/<int:id>/<int:tier_id>/edittier', methods=('GET', 'POST'))
+@login_required
+def edittier(id, tier_id):
+    if(request.method == 'POST'):
+        tiername = request.form['tiername']
+        tierart = request.form['tierart']
+        rasse = request.form['rasse']
+        farbe = request.form['farbe']
+        viren = request.form['viren']
+        merkmal = request.form['merkmal']
+        geburtsdatum = request.form['geburtsdatum']
+        geschlechtsartcode = request.form['geschlechtsartcode']
+        chip_nummer = request.form['chip_nummer']
+        eu_passnummer = request.form['eu_passnummer']
+        if(request.form.get('patient')):
+            patient = 1
+        else:
+            patient = 0
+
+        dbcon = get_db()
+        cursor = dbcon.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.execute(
+            'UPDATE tier SET tiername = ?, tierart = ?, rasse = ?, farbe = ?, viren = ?, merkmal = ?, geburtsdatum = ?, geschlechtsartcode = ?, chip_nummer = ?, eu_passnummer = ?, patient = ?'
+            ' WHERE tier.id = ?',
+            (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient, tier_id,)
+        )
+        dbcon.commit()
+        cursor.close()
+        return redirect(url_for('ordi.edit', id=id))
+    karteikarte = get_karteikarte(id)
+    return render_template('ordi/edittier.html', karteikarte=karteikarte, page_title="Tier ändern")
+
+
+@bp.route('/<int:id>/<int:person_id>/editperson', methods=('GET', 'POST'))
+@login_required
+def editperson(id, person_id):
+    if(request.method == 'POST'):
+        anredeartcode = request.form['anredeartcode']
+        titel = request.form['titel']
+        familienname = request.form['familienname']
+        vorname = request.form['vorname']
+        notiz = request.form['notiz']
+        if(request.form.get('kunde')):
+            kunde = 1
+        else:
+            kunde = 0
+
+        dbcon = get_db()
+        cursor = dbcon.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.execute(
+            'UPDATE person SET anredeartcode = ?, titel = ?, familienname = ?, vorname = ?, notiz = ?, kunde = ?'
+            ' WHERE person.id = ?',
+            (anredeartcode, titel, familienname, vorname, notiz, kunde, person_id,)
+        )
+        dbcon.commit()
+        cursor.close()
+        return redirect(url_for('ordi.edit', id=id))
+    karteikarte = get_karteikarte(id)
+    return render_template('ordi/editperson.html', karteikarte=karteikarte, page_title="Person ändern")
+
+
 @bp.route('/<int:id>/newbehandlung', methods=('GET', 'POST'))
 @login_required
 def newbehandlung(id):
@@ -212,7 +275,7 @@ def newbehandlung(id):
         if(len(gewicht_Kg) > 0 and re.search(r"\d", gewicht_Kg) == None):
             error = "Zahl für Gewicht erforderlich."
             flash(error)
-            karteikarte = get_karteinkarte(id)
+            karteikarte = get_karteikarte(id)
             adresse = get_adresse(karteikarte['person_id'])
             kontakte = get_kontakte(karteikarte['person_id'])
             behandlungen = get_behandlungen(id)
@@ -258,7 +321,7 @@ def editbehandlung(id, behandlung_id):
         if(len(gewicht_Kg) > 0 and re.search(r"\d", gewicht_Kg) == None):
             error = "Zahl für Gewicht erforderlich."
             flash(error)
-            karteikarte = get_karteinkarte(id)
+            karteikarte = get_karteikarte(id)
             adresse = get_adresse(karteikarte['person_id'])
             kontakte = get_kontakte(karteikarte['person_id'])
             behandlungen = get_behandlungen(id)

@@ -5,36 +5,36 @@
         {% if karteikarte %}
             {% set anredeartcode = karteikarte['anredeartcode'] %}
         {% else %}
-            {% set anredeartcode = request.form['anredeartcode'] %}                
+            {% set anredeartcode = request.form['anredeartcode'] %}
         {% endif %}
 
-        {% if anredeartcode == "0" %}
+        {% if anredeartcode == 0 %}
             <option value="0" selected>&nbsp;</option>
         {% else %}
             <option value="0">&nbsp;</option>
         {% endif %}
-        {% if anredeartcode == "1" %}
+        {% if anredeartcode == 1 %}
             <option value="1" selected>Herr</option>
         {% else %}
             <option value="1">Herr</option>
         {% endif %}
-        {% if anredeartcode == "2" %}
+        {% if anredeartcode == 2 %}
             <option value="2" selected>Frau</option>
         {% else %}
             <option value="2">Frau</option>
         {% endif %}
-        {% if anredeartcode == "3" %}
+        {% if anredeartcode == 3 %}
             <option value="3" selected>Familie</option>
         {% else %}
             <option value="3">Familie</option>
         {% endif %}
-        {% if anredeartcode == "4" %}
+        {% if anredeartcode == 4 %}
             <option value="4" selected>Firma</option>
         {% else %}
             <option value="4">Firma</option>
         {% endif %}
         </select>
-
+        
         <label for="titel">Titel</label>
         {% if karteikarte %}
             <input size="5" name="titel" id="titel" value="{{ karteikarte['titel'] }}">
@@ -65,17 +65,21 @@
         
 
         <label for="kunde">Kunden Kennzeichen</label>
-        {% if not karteikarte %}
-            {% if request.form.get('kunde') %}
-                <input size="5" type="checkbox" name="kunde" value="1" checked>
-            {% else %}
-                <input size="5" type="checkbox" name="kunde" value="1">
-            {% endif %}
-        {% else %}
+        {% if karteikarte %}
             {% if karteikarte['kunde'] == 0 %}
                 <input size="5" type="checkbox" name="kunde" value="0">
             {% else %}
                 <input size="5" type="checkbox" name="kunde" value="1" checked>
+            {% endif %}
+        {% else %}
+            {% if new %}
+                <input size="5" type="checkbox" name="kunde" value="1" checked>
+            {% else %}
+                {% if request.form.get('kunde') %}
+                    <input size="5" type="checkbox" name="kunde" value="1" checked>
+                {% else %}
+                    <input size="5" type="checkbox" name="kunde" value="1">
+                {% endif %}
             {% endif %}
         {% endif %}
 

@@ -43,27 +43,27 @@
             {% set geschlechtsartcode = request.form['geschlechtsartcode'] %}                
         {% endif %}
 
-        {% if geschlechtsartcode == "0" %}
+        {% if geschlechtsartcode == 0 %}
             <option value="0" selected>&nbsp;</option>
         {% else %}
             <option value="0">&nbsp;</option>
         {% endif %}
-        {% if geschlechtsartcode == "1" %}
+        {% if geschlechtsartcode == 1 %}
             <option value="1" selected>m</option>
         {% else %}
             <option value="1">m</option>
         {% endif %}
-        {% if geschlechtsartcode == "2" %}
+        {% if geschlechtsartcode == 2 %}
             <option value="2" selected>mk</option>
         {% else %}
             <option value="2">mk</option>
         {% endif %}
-        {% if geschlechtsartcode == "3" %}
+        {% if geschlechtsartcode == 3 %}
             <option value="3" selected>w</option>
         {% else %}
             <option value="3">w</option>
         {% endif %}
-        {% if geschlechtsartcode == "4" %}
+        {% if geschlechtsartcode == 4 %}
             <option value="4" selected>wk</option>
         {% else %}
             <option value="4">wk</option>
@@ -85,17 +85,21 @@
         {% endif %}
 
         <label for="patient">Patient</label>
-        {% if not karteikarte %}
-            {% if request.form.get('patient') %}
-                <input size="5" type="checkbox" name="patient" value="1" checked>
-            {% else %}
-                <input size="5" type="checkbox" name="patient" value="1">
-            {% endif %}
-        {% else %}
+        {% if karteikarte %}
             {% if karteikarte['patient'] == 0 %}
                 <input size="5" type="checkbox" name="patient" value="0">
             {% else %}
                 <input size="5" type="checkbox" name="patient" value="1" checked>
+            {% endif %}
+        {% else %}
+            {% if new %}
+                <input size="5" type="checkbox" name="patient" value="1" checked>
+            {% else %}
+                {% if request.form.get('patient') %}
+                    <input size="5" type="checkbox" name="patient" value="1" checked>
+                {% else %}
+                    <input size="5" type="checkbox" name="patient" value="1">
+                {% endif %}
             {% endif %}
         {% endif %}
 

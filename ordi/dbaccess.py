@@ -4,14 +4,24 @@
 from ordi.db import get_db
 
 
-def get_tierhaltungen():
+def get_tierhaltungen(searchoption, criteria, kunde, patient):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute(
-        'SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
-        ' ORDER BY familienname ASC'
-    )
+    if(searchoption == 0):
+        cursor.execute(
+            'SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            ' AND familienname LIKE ? AND kunde = ? AND patient = ?'
+            ' ORDER BY familienname ASC',
+            (criteria + "%", kunde, patient,)
+        )
+    else:
+        cursor.execute(
+            'SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            ' AND tiername LIKE ? AND kunde = ? AND patient = ?'
+            ' ORDER BY familienname ASC',
+            (criteria + "%", kunde, patient,)
+        )
     tierhaltungen = cursor.fetchall()
     cursor.close()
     return tierhaltungen

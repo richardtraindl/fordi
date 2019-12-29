@@ -15,11 +15,26 @@ from ordi.dbaccess import *
 bp = Blueprint('ordi', __name__)
 
 
-@bp.route('/', methods=('GET',))
+@bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
-    tierhaltungen = get_tierhaltungen()
-    return render_template('ordi/index.html', tierhaltungen=tierhaltungen, page_title="Karteikarten")
+    searchoption = 0
+    criteria = ""
+    kunde = 1
+    patient = 1
+    if(request.method == 'POST'):
+        searchoption = int(request.form['searchoption'])
+        criteria = request.form['criteria']
+        if(request.form.get('kunde')):
+            kunde = 1
+        else:
+            kunde = 0
+        if(request.form.get('patient')):
+            patient = 1
+        else:
+            patient = 0
+    tierhaltungen = get_tierhaltungen(searchoption, criteria, kunde, patient)
+    return render_template('ordi/index.html', searchoption=searchoption, criteria=criteria, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
 
 
 @bp.route('/create', methods=('GET', 'POST'))

@@ -55,7 +55,7 @@
             </form>
         </tr>
       {% endfor %}
-        <tr class="editbehandlung">
+        <tr class="editbehandlung edit-focus">
             <form method="post" action="{{ url_for('ordi.newbehandlung', id=karteikarte['id']) }}">
                 <td style="width: 9%"><input type="text" style="width: 100%" name="behandlungsdatum" id="behandlungsdatum" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
                 <td style="width: 8%"><textarea style="width: 100%" name="gewicht_Kg" id="gewicht_Kg">{{ request.form['gewicht_Kg'] }}</textarea></td>

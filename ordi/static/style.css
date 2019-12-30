@@ -50,15 +50,16 @@ header p { padding-right: 20px; justify-items: end; text-align: right; }
 .flex-container {
     display: flex; 
     flex-direction: row; 
+    justify-content: flex-start;
     flex-wrap: wrap;  
     align-content: space-between;
     align-items: center;
 }
-.flex-container > * { margin-right: 20px; }
+.flex-container > div, .flex-container > p { padding-right: 20px; }
 
 form { margin: 0px }
 input.danger { color: #cc2f2e; }
-input[type=submit], input[type=reset] { align-self: start; min-width: 40px; margin: 8px 0 0 0 }
+input[type=submit], input[type=reset] { align-self: start; min-width: 40px; }
 
 .fbold { font-weight: bold; }
 .red-bold { color: red; font-weight: bold; }
@@ -88,10 +89,6 @@ input[type=submit], input[type=reset] { align-self: start; min-width: 40px; marg
 }
 
 .btn {
-  margin-left: auto;
-  margin-right: auto; 
-  /*  display: block; */
-  /* text-align: center; */
   padding: 2px;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -101,20 +98,18 @@ input[type=submit], input[type=reset] { align-self: start; min-width: 40px; marg
   border: 1px solid rgb(153, 153, 153);
   color: Black;
 }
-
 .btn a { color: Black; text-decoration: none;}
-
-
-.gap {
-  padding-bottom: 20px;
-}
 
 .small-gap {
   padding-bottom: 10px;
+}
+
+.gap {
+  padding-bottom: 20px;
 }
 
 .huge-gap {
   padding-bottom: 30px;
 }
 
-.editbehandlung input[type=text], .editbehandlung textarea { background-color: #fdfd96; }
+.edit-focus input[type=text], .edit-focus textarea { background-color: #fdfd96; }

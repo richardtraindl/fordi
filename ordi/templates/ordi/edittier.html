@@ -12,14 +12,14 @@
 
         {% include 'ordi/_tier.html' %}
 
-        <div>
-            <div class="twocols">
-                <input type="submit" value="Speichern" style="margin-right: 20px;">
-                <p class="btn"><a href="{{ url_for('ordi.edit', id=karteikarte['id']) }}">Abbrechen</a></p>
-            </div>
+        <div class="small-gap"></div>
+
+        <div class="flex-container">
+            <input type="submit" value="Speichern" style="margin-right: 20px;">
+            <p class="btn"><a href="{{ url_for('ordi.edit', id=karteikarte['id']) }}">Abbrechen</a></p>
         </div>
     </form>
-    
+
     <script>
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);

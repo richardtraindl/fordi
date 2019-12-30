@@ -13,11 +13,12 @@
             {% include 'ordi/_person.html' %}
             {% include 'ordi/_tier.html' %}
         </div>
-        <div>
-            <div class="twocols">
-                <input type="submit" value="Speichern" style="margin-right: 20px;">
+
+        <div class="small-gap"></div>
+
+        <div class="flex-container">
+                <div><input type="submit" value="Speichern"></div>
                 <p class="btn"><a href="{{ url_for('ordi.index') }}">Abbrechen</a></p>
-            </div>
         </div>
     </form>
 

@@ -1,7 +1,10 @@
 
-<form method="post" action="{{ url_for('ordi.index', searchoption=searchoption, criteria=criteria, kunde=kunde, patient=patient) }}">
+<form method="post" action="{{ url_for('ordi.index') }}">
     <div class="flex-container">
+      <div>
         <label for="searchoption">Filter</label>
+      </div>
+      <div>
         <select name="searchoption" id="searchoption">
         {% if searchoption == 0 %}
             <option value="0" selected>Familienname</option>
@@ -14,23 +17,37 @@
             <option value="1">Tiername</option>
         {% endif %}
         </select>
+      </div>
 
+      <div>
         <input type="text" size="10" name="criteria" id="criteria" value="{{ criteria }}">
+      </div>
 
+      <div>
         <label for="kunde">Kunden Kennzeichen</label>
-        {% if kunde == 0 %}
-            <input size="5" type="checkbox" name="kunde" value="0">
-        {% else %}
-            <input size="5" type="checkbox" name="kunde" value="1" checked>
-        {% endif %}
+      </div>
 
+      <div>
+      {% if kunde == 0 %}
+        <input type="checkbox" name="kunde" value="0">
+      {% else %}
+        <input type="checkbox" name="kunde" value="1" checked>
+      {% endif %}
+      </div>
+
+      <div>
         <label for="patient">Patient</label>
-        {% if patient == 0 %}
-            <input size="5" type="checkbox" name="patient" value="0">
-        {% else %}
-            <input size="5" type="checkbox" name="patient" value="1" checked>
-        {% endif %}
+      </div>
+      <div>
+      {% if patient == 0 %}
+        <input type="checkbox" name="patient" value="0">
+      {% else %}
+        <input type="checkbox" name="patient" value="1" checked>
+      {% endif %}
+      </div>
 
+      <div>
         <input type="submit" value="Suchen">
+      </div>
     </div>
 </form>

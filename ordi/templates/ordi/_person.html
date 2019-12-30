@@ -67,18 +67,18 @@
         <label for="kunde">Kunden Kennzeichen</label>
         {% if karteikarte %}
             {% if karteikarte['kunde'] == 0 %}
-                <input size="5" type="checkbox" name="kunde" value="0">
+                <input type="checkbox" name="kunde" value="0">
             {% else %}
-                <input size="5" type="checkbox" name="kunde" value="1" checked>
+                <input type="checkbox" name="kunde" value="1" checked>
             {% endif %}
         {% else %}
             {% if new %}
-                <input size="5" type="checkbox" name="kunde" value="1" checked>
+                <input type="checkbox" name="kunde" value="1" checked>
             {% else %}
                 {% if request.form.get('kunde') %}
-                    <input size="5" type="checkbox" name="kunde" value="1" checked>
+                    <input type="checkbox" name="kunde" value="1" checked>
                 {% else %}
-                    <input size="5" type="checkbox" name="kunde" value="1">
+                    <input type="checkbox" name="kunde" value="1">
                 {% endif %}
             {% endif %}
         {% endif %}

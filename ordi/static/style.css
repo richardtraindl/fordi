@@ -1,5 +1,4 @@
 
-
 @font-face {
     font-family: 'Open Sans';
     src: url('fonts/OpenSans-Regular.woff');
@@ -69,7 +68,6 @@ input[type=submit], input[type=reset] { align-self: start; min-width: 40px; }
 .liste {
     width: 100%;
 }
-
 .liste, .liste th, .liste td { 
   padding: 2px;
   border-color: grey;
@@ -79,13 +77,16 @@ input[type=submit], input[type=reset] { align-self: start; min-width: 40px; }
   text-align: left;
   empty-cells: show;
 }
-
 .liste tr:nth-child(even) { 
   background-color: #EEEEEE;
 }
-
 .liste tr:nth-child(odd) { 
   background-color: #FFFFFF; 
+}
+.liste td { 
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn {

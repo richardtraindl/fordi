@@ -4,27 +4,19 @@
 from ordi.db import get_db
 
 
-def get_tierhaltungen(searchoption, criteria, kunde, patient):
+def get_karteikarten(familienname, tiername, kunde, patient):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    if(searchoption == 0):
-        cursor.execute(
-            'SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
-            ' AND familienname LIKE ? AND kunde = ? AND patient = ?'
-            ' ORDER BY familienname ASC',
-            (criteria + "%", kunde, patient,)
-        )
-    else:
-        cursor.execute(
-            'SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
-            ' AND tiername LIKE ? AND kunde = ? AND patient = ?'
-            ' ORDER BY familienname ASC',
-            (criteria + "%", kunde, patient,)
-        )
-    tierhaltungen = cursor.fetchall()
+    cursor.execute(
+        'SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+        ' AND familienname LIKE ? AND tiername LIKE ? AND kunde = ? AND patient = ?'
+        ' ORDER BY familienname ASC',
+        (familienname + "%", tiername + "%", kunde, patient,)
+    )
+    karteikarten = cursor.fetchall()
     cursor.close()
-    return tierhaltungen
+    return karteikarten
 
 
 def get_karteikarte(id):
@@ -104,4 +96,16 @@ def get_behandlungen(id):
     behandlungen = cursor.fetchall()
     cursor.close()
     return behandlungen
+
+
+def get_behandlungsverlauf(behandlungsverlauf_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute(
+        'SELECT * FROM behandlungsverlauf WHERE behandlungsverlauf.id = ?',
+        (behandlungsverlauf_id,)
+    )
+    behandlungsverlauf = cursor.fetchone()
+    cursor.close()
+    return behandlungsverlauf
 

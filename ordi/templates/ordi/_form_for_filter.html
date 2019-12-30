@@ -2,31 +2,18 @@
 <form method="post" action="{{ url_for('ordi.index') }}">
     <div class="flex-container">
       <div>
-        <label for="searchoption">Filter</label>
-      </div>
-      <div>
-        <select name="searchoption" id="searchoption">
-        {% if searchoption == 0 %}
-            <option value="0" selected>Familienname</option>
-        {% else %}
-            <option value="0">Familienname</option>
-        {% endif %}
-        {% if searchoption == 1 %}
-            <option value="1" selected>Tiername</option>
-        {% else %}
-            <option value="1">Tiername</option>
-        {% endif %}
-        </select>
+        <label for="familienname">Familienname</label>
+        <input type="text" size="10" name="familienname" id="familienname" value="{{ familienname }}">
       </div>
 
       <div>
-        <input type="text" size="10" name="criteria" id="criteria" value="{{ criteria }}">
+        <label for="tiername">Tiername</label>
+        <input type="text" size="10" name="tiername" id="tiername" value="{{ tiername }}">
       </div>
 
       <div>
-        <label for="kunde">Kunden Kennzeichen</label>
+        <label for="kunde">Kunde</label>
       </div>
-
       <div>
       {% if kunde == 0 %}
         <input type="checkbox" name="kunde" value="0">
@@ -47,7 +34,7 @@
       </div>
 
       <div>
-        <input type="submit" value="Suchen">
+        <input type="submit" value="suchen">
       </div>
     </div>
 </form>

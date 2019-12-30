@@ -14,18 +14,16 @@
 
     <table class="liste">
         <colgroup>
+            <col width="2%">
             <col width="6%">
             <col width="6%">
-            <col width="4%">
+            <col width="18%">
+            <col width="12%">
+            <col width="18%">
             <col width="14%">
             <col width="10%">
-            <col width="12%">
-            <col width="12%">
-            <col width="8%">
-            <col width="4%">
-            <col width="8%">
-            <col width="10%">
             <col width="6%">
+            <col width="8%">
         <colgroup>
         <tr>
             <th>&nbsp;</th>
@@ -38,23 +36,19 @@
             <th>Rasse</th>
             <th>Geschl.</th>
             <th>Geb.Datum</th>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>
         </tr>
       {% for tierhaltung in tierhaltungen %}
         <tr>
-            <td><a class="btn" href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">Bearb.</a></div></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['anredeartcode']|mapanrede }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['vorname'] }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tiername'] }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tierart'] }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['rasse'] }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtsartcode']|mapgeschlecht }}</a></td>
-            <td><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
-            <td><a class="btn" href="{{ url_for('ordi.addtier', person_id=tierhaltung['person_id']) }}">Tier hinzuf.</a></td>
-            <td><a class="btn delete" href="{{ url_for('ordi.delete', id=tierhaltung['id']) }}">Löschen</a></td>
+            <td style="width: 2%; text-align: center"><input type="radio" "{{ tierhaltung['id'] }}" name="option" value="{{ tierhaltung['id'] }}"></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['anredeartcode']|mapanrede }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
+            <td style=""><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['vorname'] }}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tiername'] }}</a></td>
+            <td style="width: 14%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tierart'] }}</a></td>
+            <td style="width: 10%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['rasse'] }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtsartcode']|mapgeschlecht }}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
         </tr>
       {% endfor %}
     </table>
@@ -62,20 +56,51 @@
     <div class="gap"></div>
 
     <div class="flex-container">
+        <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
         <p><a class="btn" href="{{ url_for('ordi.create') }}">neue Karteikarte</a></p>
+        <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
+        <p><a class="btn" id="karteikarte_loeschen" href="#">Karteikarte löschen</a></p>
         <p>neue Rechnung</p>
         <p>neuer Behandlungsverlauf</p>
     </div>
 
     <script>
         $(document).ready(function() {
-            $(".delete").click(function() {
-                if(confirm("Soll der Datensatz gelöscht werden?")){
-                    return true;
+            $('#zur_karteikarte').click(function(){ 
+                var id = $("input:radio[name=option]:checked").val(); 
+                if(id == null){
+                    alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    return false;
+                    window.location = "/" + id.toString() + "/edit";
                 }
+                return false; 
+            });
+            $('#neues_tier').click(function(){ 
+                var id = $("input:radio[name=option]:checked").val(); 
+                if(id == null){
+                    alert("Bitte eine Karteikarte auswählen!");
+                }
+                else{
+                    window.location = "/" + id.toString() + "/addtier";
+                }
+                return false; 
+            });
+            $('#karteikarte_loeschen').click(function(){ 
+                var id = $("input:radio[name=option]:checked").val(); 
+                if(id == null){
+                    alert("Bitte eine Karteikarte auswählen!");
+                }
+                else{
+                    if(confirm("Soll der Datensatz gelöscht werden?")){
+                        window.location = "/" + id.toString() + "/delete";
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                return false; 
             });
         });
     </script>

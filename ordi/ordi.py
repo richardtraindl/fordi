@@ -15,15 +15,15 @@ from ordi.dbaccess import *
 bp = Blueprint('ordi', __name__)
 
 
-@bp.route('/menu', methods=('GET',))
-@login_required
-def menu():
-    return render_template('ordi/menu.html', page_title="Menü")
-
-
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/', methods=('GET',))
 @login_required
 def index():
+    return render_template('ordi/index.html', page_title="Menü")
+
+
+@bp.route('/karteikarten', methods=('GET', 'POST'))
+@login_required
+def karteikarten():
     familienname = ""
     tiername = ""
     kunde = 1
@@ -40,7 +40,7 @@ def index():
         else:
             patient = 0
     tierhaltungen = get_karteikarten(familienname, tiername, kunde, patient)
-    return render_template('ordi/index.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
+    return render_template('ordi/karteikarten.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
 
 
 @bp.route('/verlaeufe', methods=('GET', 'POST'))

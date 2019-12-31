@@ -11,7 +11,11 @@
     </head>
     <body>
         <header class="row-grid">
-            <h1><a href="{{ url_for('ordi.menu') }}">Ordi</a></h1>
+            {% if page_title == "Karteikarte" %}
+            <h1><a href="{{ url_for('ordi.karteikarten') }}">Karteikarten</a></h1>
+            {% else %}
+            <h1><a href="{{ url_for('ordi.index') }}">Ordi</a></h1>
+            {% endif %}
             <h2>{{ page_title }}</h2>
             <p>
               {% if g.user %}

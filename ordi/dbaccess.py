@@ -19,6 +19,24 @@ def get_karteikarten(familienname, tiername, kunde, patient):
     return karteikarten
 
 
+def get_verlaeufe(behandlungsjahr):
+    begin = str(behandlungsjahr) + "-01-01"
+    end = str(behandlungsjahr + 1) + "-01-01"
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'SELECT * FROM behandlungsverlauf, person, tier'
+        ' WHERE behandlungsverlauf.person_id = person.id AND behandlungsverlauf.tier_id = tier.id'
+        ' AND behandlungsverlauf.datum >  ? AND behandlungsverlauf.datum <  ?'
+        ' ORDER BY behandlungsverlauf.datum ASC',
+        (begin, end,)
+    )
+    verlaeufe = cursor.fetchall()
+    cursor.close()
+    return verlaeufe
+
+
 def get_karteikarte(id):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -27,6 +45,20 @@ def get_karteikarte(id):
         'SELECT * FROM tierhaltung, person, tier'
         ' WHERE tierhaltung.id = ? AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id',
         (id,)
+    )
+    karteikarte = cursor.fetchone()
+    cursor.close()
+    return karteikarte
+
+
+def get_karteikarte_by_children(person_id, tier_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'SELECT * FROM tierhaltung, person, tier'
+        ' WHERE tierhaltung.person_id = ? AND tierhaltung.tier_id = ?',
+        (person_id, tier_id,)
     )
     karteikarte = cursor.fetchone()
     cursor.close()
@@ -102,7 +134,7 @@ def get_behandlungsverlauf(behandlungsverlauf_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute(
-        'SELECT * FROM behandlungsverlauf WHERE behandlungsverlauf.id = ?',
+        'SELECT * FROM behandlungsverlauf WHERE id = ?',
         (behandlungsverlauf_id,)
     )
     behandlungsverlauf = cursor.fetchone()

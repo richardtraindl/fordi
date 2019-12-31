@@ -3,40 +3,51 @@
 
 
 {% block title %}
-  Karteikarten
+  Behandlungsverläufe
 {% endblock %}
 
 
 {% block content %}
     <div class="gap"></div>
-        {% include 'ordi/_form_for_filter.html' %}
+      <form method="post" action="{{ url_for('ordi.verlaeufe') }}">
+        <div class="flex-container">
+            <div>
+                <label for="behandlungsjahr">Behandlungsjahr</label>
+                <input type="text" size="10" name="behandlungsjahr" id="behandlungsjahr" value="{{ behandlungsjahr }}">
+            </div>
+            <div>
+                <input type="submit" value="suchen">
+            </div>
+        </div>
+      </form>
+
     <div class="gap"></div>
 
     <table class="liste">
         <tr>
             <th width="2%">&nbsp;</th>
+            <th width="8%">Behandlungsdatum</th>
             <th width="6%">Anrede</th>
-            <th width="6%">Titel</th>
             <th width="18%">Familienname</th>
             <th width="12%">Vorname</th>
             <th width="18%">Tiername</th>
             <th width="12%">Tierart</th>
-            <th width="12%">Rasse</th>
-            <th width="6%">Geschl.</th>
+            <th width="10%">Rasse</th>
+            <th width="6%"Geschl.</th>
             <th width="8%">Geb.Datum</th>
         </tr>
-      {% for tierhaltung in tierhaltungen %}
+      {% for verlauf in verlaeufe %}
         <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ tierhaltung['id'] }}"></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['anredeartcode']|mapanrede }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
-            <td style=""><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['vorname'] }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tiername'] }}</a></td>
-            <td style="width: 14%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['tierart'] }}</a></td>
-            <td style="width: 10%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['rasse'] }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtsartcode']|mapgeschlecht }}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('ordi.edit', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
+            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ verlauf['id'] }}"></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['datum'] }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['anredeartcode']|mapanrede }}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['familienname'] }}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['vorname'] }}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['tiername'] }}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['tierart'] }}</a></td>
+            <td style="width: 10%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['rasse'] }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['geschlechtsartcode']|mapgeschlecht }}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=verlauf['id']) }}">{{ verlauf['geburtsdatum'] }}</a></td>
         </tr>
       {% endfor %}
     </table>
@@ -44,23 +55,18 @@
     <div class="gap"></div>
 
     <div class="flex-container">
-        <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
-        <p><a class="btn" href="{{ url_for('ordi.create') }}">neue Karteikarte</a></p>
-        <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
-        <p><a class="btn" id="karteikarte_loeschen" href="#">Karteikarte löschen</a></p>
-        <p>neue Rechnung</p>
-        <p><a class="btn" id="neuer_behandlungsverlauf" href="#">neuer Behandlungsverlauf</a></p>
+        <p><a class="btn" id="edit_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
     </div>
 
     <script>
         $(document).ready(function() {
-            $('#zur_karteikarte').click(function(){ 
+            $('#edit_behandlungsverlauf').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/" + id.toString() + "/edit";
+                    window.location = "/" + id.toString() + "/editverlauf";
                 }
                 return false; 
             });

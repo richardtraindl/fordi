@@ -21,18 +21,18 @@
     {% if behandlungsverlauf %}
         <form method="post" action="{{ url_for('ordi.editverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">
     {% else %}
-        <form method="post" action="{{ url_for('ordi.createverlauf') }}">
+        <form method="post" action="{{ url_for('ordi.createverlauf', id=karteikarte['id']) }}">
     {% endif %}
 
     <div style="display: inline-grid; grid-template-columns: auto ;">
         {% if behandlungsverlauf %}
-            <div><input type="text" name="datum" id="datum" class="date" value="{{ behandlungsverlauf['datum'] }}"></div>
-            <div><input type="text" name="diagnose" id="diagnose" value="{{ behandlungsverlauf['diagnose'] }}"></div>
-            <div><textarea name="behandlungsverlauf" id="behandlungsverlauf">{{ behandlungsverlauf['behandlungsverlauf'] }}</textarea></div>
+            <div><input type="text" name="datum" id="datum" class="date" value="{{ behandlungsverlauf['datum'] }}" required></div>
+            <div><input type="text" name="diagnose" id="diagnose" value="{{ behandlungsverlauf['diagnose'] }}" required></div>
+            <div><textarea name="behandlung" id="behandlung" required>{{ behandlungsverlauf['behandlung'] }}</textarea></div>
         {% else %}
-            <div><input type="text" name="datum" id="datum" class="date" value="{{ request.form['datum'] }}"></div>
-            <div><input type="text" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}"></div>
-            <div><textarea name="behandlungsverlauf" id="behandlungsverlauf">{{ request.form['behandlungsverlauf'] }}</textarea></div>
+            <div><input type="text" name="datum" id="datum" class="date" value="{{ request.form['datum'] }}" required></div>
+            <div><input type="text" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}" required></div>
+            <div><textarea name="behandlung" id="behandlung" required>{{ request.form['behandlung'] }}</textarea></div>
         {% endif %}
         <div><input type="submit" value="Behandlungsverlauf drucken"></div>
     </div>

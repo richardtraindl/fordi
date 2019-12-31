@@ -15,6 +15,12 @@ from ordi.dbaccess import *
 bp = Blueprint('ordi', __name__)
 
 
+@bp.route('/menu', methods=('GET',))
+@login_required
+def menu():
+    return render_template('ordi/menu.html', page_title="Menü")
+
+
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
@@ -35,6 +41,21 @@ def index():
             patient = 0
     tierhaltungen = get_karteikarten(familienname, tiername, kunde, patient)
     return render_template('ordi/index.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
+
+
+@bp.route('/verlaeufe', methods=('GET', 'POST'))
+@login_required
+def verlaeufe():
+    if(request.method == 'POST'):
+        behandlungsjahr = request.form['behandlungsjahr']
+        if(len(behandlungsjahr) > 0):
+            behandlungsjahr = int(request.form['behandlungsjahr'])
+        else:
+            behandlungsjahr = int(date.today().strftime("%Y"))
+    else:
+        behandlungsjahr = int(date.today().strftime("%Y"))
+    verlaeufe = get_verlaeufe(behandlungsjahr)
+    return render_template('ordi/verlaeufe.html', verlaeufe=verlaeufe, behandlungsjahr=behandlungsjahr, page_title="Behandlungsverläufe")
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -362,43 +383,51 @@ def editbehandlung(id, behandlung_id):
 def editverlauf(behandlungsverlauf_id):
     if(request.method == 'POST'):
         datum = request.form['datum']
+        if(len(datum) == 10):
+            datum += " 00:00:00"
         diagnose = request.form['diagnose']
-        behandlungsverlauf = request.form['behandlungsverlauf']
+        behandlung = request.form['behandlung']
 
         dbcon = get_db()
         cursor = dbcon.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.execute(
-            'UPDATE behandlungsverlauf SET datum = ?, diagnose = ?, behandlungsverlauf = ?'
-            ' WHERE behandlungsverlauf_id = ?',
-            (datum, diagnose, behandlungsverlauf, behandlungsverlauf_id,)
+            'UPDATE behandlungsverlauf SET datum = ?, diagnose = ?, behandlung = ?'
+            ' WHERE id = ?',
+            (datum, diagnose, behandlung, behandlungsverlauf_id,)
         )
         dbcon.commit()
         cursor.close()
     behandlungsverlauf = get_behandlungsverlauf(behandlungsverlauf_id)
-    return redirect(url_for('ordi.editverlauf', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf))
+    karteikarte = get_karteikarte_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
+    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, karteikarte=karteikarte)
 
 
-@bp.route('/createverlauf', methods=('GET', 'POST'))
+@bp.route('/<int:id>/createverlauf', methods=('GET', 'POST'))
 @login_required
-def createverlauf():
+def createverlauf(id):
     if(request.method == 'POST'):
         datum = request.form['datum']
+        if(len(datum) == 10):
+            datum += " 00:00:00"
         diagnose = request.form['diagnose']
-        behandlungsverlauf = request.form['behandlungsverlauf']
+        behandlung = request.form['behandlung']
 
+        karteikarte = get_karteikarte(id)
         dbcon = get_db()
         cursor = dbcon.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
         behandlungsverlauf_id = cursor.execute(
-            'INSERT INTO behandlungsverlauf (datum, diagnose, behandlungsverlauf)'
-            ' VALUES (?, ?, ?)',
-            (datum, diagnose, behandlungsverlauf,)
+            'INSERT INTO behandlungsverlauf (person_id, tier_id, datum, diagnose, behandlung)'
+            ' VALUES (?, ?, ?, ?, ?)',
+            (karteikarte['person_id'], karteikarte['tier_id'], datum, diagnose, behandlung,)
         ).lastrowid
         dbcon.commit()
         cursor.close()
         return redirect(url_for('ordi.editverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
-    return render_template('ordi/behandlungsverlauf.html', page_title="Behandlungsverlauf")
+    else:
+        karteikarte = get_karteikarte(id)
+    return render_template('ordi/behandlungsverlauf.html', karteikarte=karteikarte, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

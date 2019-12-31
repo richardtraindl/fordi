@@ -2,9 +2,9 @@
     <div class="twocols tier">
         <label for="tiername">Tiername</label>
         {% if karteikarte %}
-            <input size="20" name="tiername" id="titel" value="{{ karteikarte['tiername'] }}" required>    
+            <input size="20" name="tiername" id="tiername" value="{{ karteikarte['tiername'] }}" required>    
         {% else %}
-            <input size="20" name="tiername" id="titel" value="{{ request.form['tiername'] }}" required>
+            <input size="20" name="tiername" id="tiername" value="{{ request.form['tiername'] }}" required>
         {% endif %}
 
         <label for="tierart">Tierart</label>

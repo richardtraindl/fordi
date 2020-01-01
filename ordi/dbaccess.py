@@ -4,7 +4,7 @@
 from ordi.db import get_db
 
 
-def get_karteikarten(familienname, tiername, kunde, patient):
+def read_tierhaltungen(familienname, tiername, kunde, patient):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -14,12 +14,12 @@ def get_karteikarten(familienname, tiername, kunde, patient):
         ' ORDER BY familienname ASC',
         (familienname + "%", tiername + "%", kunde, patient,)
     )
-    karteikarten = cursor.fetchall()
+    tierhaltungen = cursor.fetchall()
     cursor.close()
-    return karteikarten
+    return tierhaltungen
 
 
-def get_verlaeufe(behandlungsjahr):
+def read_behandlungsverlaeufe(behandlungsjahr):
     begin = str(behandlungsjahr) + "-01-01"
     end = str(behandlungsjahr + 1) + "-01-01"
     dbcon = get_db()
@@ -32,12 +32,12 @@ def get_verlaeufe(behandlungsjahr):
         ' ORDER BY behandlungsverlauf.datum ASC',
         (begin, end,)
     )
-    verlaeufe = cursor.fetchall()
+    behandlungsverlaeufe = cursor.fetchall()
     cursor.close()
-    return verlaeufe
+    return behandlungsverlaeufe
 
 
-def get_karteikarte(id):
+def read_tierhaltung(id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -46,12 +46,12 @@ def get_karteikarte(id):
         ' WHERE tierhaltung.id = ? AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id',
         (id,)
     )
-    karteikarte = cursor.fetchone()
+    tierhaltung = cursor.fetchone()
     cursor.close()
-    return karteikarte
+    return tierhaltung
 
 
-def get_karteikarte_by_children(person_id, tier_id):
+def read_tierhaltung_by_children(person_id, tier_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -60,12 +60,12 @@ def get_karteikarte_by_children(person_id, tier_id):
         ' WHERE tierhaltung.person_id = ? AND tierhaltung.tier_id = ?',
         (person_id, tier_id,)
     )
-    karteikarte = cursor.fetchone()
+    tierhaltung = cursor.fetchone()
     cursor.close()
-    return karteikarte
+    return tierhaltung
 
 
-def get_person(person_id):
+def read_person(person_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -78,7 +78,7 @@ def get_person(person_id):
     return person
 
 
-def get_tier(tier_id):
+def read_tier(tier_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -91,7 +91,7 @@ def get_tier(tier_id):
     return tier
 
 
-def get_adresse(person_id):
+def read_adresse(person_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -104,7 +104,7 @@ def get_adresse(person_id):
     return adresse
 
 
-def get_kontakte(person_id):
+def read_kontakte(person_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
@@ -117,7 +117,7 @@ def get_kontakte(person_id):
     return kontakte
 
 
-def get_behandlungen(id):
+def read_behandlungen(id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute(
@@ -130,7 +130,7 @@ def get_behandlungen(id):
     return behandlungen
 
 
-def get_behandlungsverlauf(behandlungsverlauf_id):
+def read_behandlungsverlauf(behandlungsverlauf_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute(

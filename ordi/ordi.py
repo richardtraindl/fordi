@@ -15,15 +15,9 @@ from ordi.dbaccess import *
 bp = Blueprint('ordi', __name__)
 
 
-@bp.route('/', methods=('GET',))
+@bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
-    return render_template('ordi/index.html', page_title="Menü")
-
-
-@bp.route('/karteikarten', methods=('GET', 'POST'))
-@login_required
-def karteikarten():
     familienname = ""
     tiername = ""
     kunde = 1
@@ -39,28 +33,27 @@ def karteikarten():
             patient = 1
         else:
             patient = 0
-    tierhaltungen = get_karteikarten(familienname, tiername, kunde, patient)
-    return render_template('ordi/karteikarten.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
+    tierhaltungen = read_tierhaltungen(familienname, tiername, kunde, patient)
+    return render_template('ordi/tierhaltungen.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
 
 
-@bp.route('/verlaeufe', methods=('GET', 'POST'))
+@bp.route('/behandlungsverlaeufe', methods=('GET', 'POST'))
 @login_required
-def verlaeufe():
+def behandlungsverlaeufe():
     if(request.method == 'POST'):
-        behandlungsjahr = request.form['behandlungsjahr']
-        if(len(behandlungsjahr) > 0):
+        if(len(request.form['behandlungsjahr']) > 0):
             behandlungsjahr = int(request.form['behandlungsjahr'])
         else:
             behandlungsjahr = int(date.today().strftime("%Y"))
     else:
         behandlungsjahr = int(date.today().strftime("%Y"))
-    verlaeufe = get_verlaeufe(behandlungsjahr)
-    return render_template('ordi/verlaeufe.html', verlaeufe=verlaeufe, behandlungsjahr=behandlungsjahr, page_title="Behandlungsverläufe")
+    behandlungsverlaeufe = read_behandlungsverlaeufe(behandlungsjahr)
+    return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=behandlungsjahr, page_title="Behandlungsverläufe")
 
 
-@bp.route('/create', methods=('GET', 'POST'))
+@bp.route('/create_tierhaltung', methods=('GET', 'POST'))
 @login_required
-def create():
+def create_tierhaltung():
     if(request.method == 'POST'):
         error = None
 
@@ -92,19 +85,19 @@ def create():
         if(len(familienname) == 0):
             error = "Familienname erforderlich"
             flash(error)
-            return render_template('ordi/create.html')
+            return render_template('ordi/create_tierhaltung.html')
         if(len(tiername) == 0):
             error = "Tiername erforderlich"
             flash(error)
-            return render_template('ordi/create.html')
+            return render_template('ordi/create_tierhaltung.html')
         if(len(tierart) == 0):
             error = "Tierart erforderlich"
             flash(error)
-            return render_template('ordi/create.html')
+            return render_template('ordi/create_tierhaltung.html')
         if(len(geburtsdatum) == 0):
             error = "Geburtsdatum erforderlich"
             flash(error)
-            return render_template('ordi/create.html')
+            return render_template('ordi/create_tierhaltung.html')
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -162,28 +155,28 @@ def create():
         ).lastrowid
         dbcon.commit()
         cursor.close()
-        return redirect(url_for('ordi.edit', id=id))
-    return render_template('ordi/create.html', new="true", page_title="Neue Karteikarte")
+        return redirect(url_for('ordi.show_tierhaltung', id=id))
+    return render_template('ordi/create_tierhaltung.html', new="true", page_title="Neue Karteikarte")
 
 
-@bp.route('/<int:id>/edit', methods=('GET',))
+@bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
 @login_required
-def edit(id):
-    karteikarte = get_karteikarte(id)
+def show_tierhaltung(id):
+    tierhaltung = read_tierhaltung(id)
 
-    adresse = get_adresse(karteikarte['person_id'])
+    adresse = read_adresse(karteikarte['person_id'])
 
-    kontakte = get_kontakte(karteikarte['person_id'])
+    kontakte = read_kontakte(karteikarte['person_id'])
 
-    behandlungen = get_behandlungen(id)
+    behandlungen = read_behandlungen(id)
     behandlungsdatum = date.today().strftime("%Y-%m-%d")
 
-    return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, page_title="Karteikarte")
+    return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, page_title="Karteikarte")
 
 
-@bp.route('/<int:id>/addtier', methods=('GET', 'POST'))
+@bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
 @login_required
-def addtier(id):
+def create_tier(id):
     if(request.method == 'POST'):
         tiername = request.form['tiername']
         tierart = request.form['tierart']
@@ -210,21 +203,21 @@ def addtier(id):
         ).lastrowid
         dbcon.commit()
 
-        karteikarte = get_karteikarte(id)
+        tierhaltung = read_tierhaltung(id)
         newid = cursor.execute(
             'INSERT INTO tierhaltung (person_id, tier_id)'
             ' VALUES (?, ?)',
-            (karteikarte['person_id'], tier_id,)
+            (tierhaltung['person_id'], tier_id,)
         ).lastrowid
         dbcon.commit()
         cursor.close()
-        return redirect(url_for('ordi.edit', id=newid))
-    return render_template('ordi/addtier.html', new="true", page_title="Neues Tier")
+        return redirect(url_for('ordi.show_tierhaltung', id=newid))
+    return render_template('ordi/create_tier.html', new="true", page_title="Neues Tier")
 
 
-@bp.route('/<int:id>/<int:tier_id>/edittier', methods=('GET', 'POST'))
+@bp.route('/<int:id>/<int:tier_id>/edit_tier', methods=('GET', 'POST'))
 @login_required
-def edittier(id, tier_id):
+def edit_tier(id, tier_id):
     if(request.method == 'POST'):
         tiername = request.form['tiername']
         tierart = request.form['tierart']
@@ -251,14 +244,14 @@ def edittier(id, tier_id):
         )
         dbcon.commit()
         cursor.close()
-        return redirect(url_for('ordi.edit', id=id))
-    karteikarte = get_karteikarte(id)
-    return render_template('ordi/edittier.html', karteikarte=karteikarte, page_title="Tier ändern")
+        return redirect(url_for('ordi.show_tierhaltung', id=id))
+    tierhaltung = read_tierhaltung(id)
+    return render_template('ordi/edit_tier.html', tierhaltung=tierhaltung, page_title="Tier ändern")
 
 
-@bp.route('/<int:id>/<int:person_id>/editperson', methods=('GET', 'POST'))
+@bp.route('/<int:id>/<int:person_id>/edit_person', methods=('GET', 'POST'))
 @login_required
-def editperson(id, person_id):
+def edit_person(id, person_id):
     if(request.method == 'POST'):
         anredeartcode = request.form['anredeartcode']
         titel = request.form['titel']
@@ -280,14 +273,14 @@ def editperson(id, person_id):
         )
         dbcon.commit()
         cursor.close()
-        return redirect(url_for('ordi.edit', id=id))
-    karteikarte = get_karteikarte(id)
-    return render_template('ordi/editperson.html', karteikarte=karteikarte, page_title="Person ändern")
+        return redirect(url_for('ordi.show_tierhaltung', id=id))
+    tierhaltung = read_tierhaltung(id)
+    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, page_title="Person ändern")
 
 
-@bp.route('/<int:id>/newbehandlung', methods=('GET', 'POST'))
+@bp.route('/<int:id>/create_behandlung', methods=('GET', 'POST'))
 @login_required
-def newbehandlung(id):
+def create_behandlung(id):
     if(request.method == 'POST'):
         error = None
         behandlungsdatum = request.form['behandlungsdatum']
@@ -302,7 +295,7 @@ def newbehandlung(id):
         if(len(gewicht_Kg) == 0 and len(diagnose) == 0 and len(laborwerte1) == 0 and
            len(laborwerte2) == 0 and len(arzneien) == 0 and len(arzneimittel) == 0 and
            len(impfungen_extern) == 0):
-            return redirect(url_for('ordi.edit', id=id))
+            return redirect(url_for('ordi.show_tierhaltung', id=id))
                
         if(len(behandlungsdatum) == 0):
             behandlungsdatum = date.today().strftime("%Y-%m-%d")
@@ -316,7 +309,7 @@ def newbehandlung(id):
             adresse = get_adresse(karteikarte['person_id'])
             kontakte = get_kontakte(karteikarte['person_id'])
             behandlungen = get_behandlungen(id)
-            return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
+            return render_template('ordi/show_tierhaltung.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -334,12 +327,12 @@ def newbehandlung(id):
         )
         dbcon.commit()
         cursor.close()
-    return redirect(url_for('ordi.edit', id=id))
+    return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
-@bp.route('/<int:id>/<int:behandlung_id>/editbehandlung', methods=('GET', 'POST'))
+@bp.route('/<int:id>/<int:behandlung_id>/update_behandlung', methods=('GET', 'POST'))
 @login_required
-def editbehandlung(id, behandlung_id):
+def update_behandlung(id, behandlung_id):
     if(request.method == 'POST'):
         behandlungsdatum = request.form['behandlungsdatum']
         gewicht_Kg = request.form['gewicht_Kg']
@@ -358,11 +351,11 @@ def editbehandlung(id, behandlung_id):
         if(len(gewicht_Kg) > 0 and re.search(r"\d", gewicht_Kg) == None):
             error = "Zahl für Gewicht erforderlich."
             flash(error)
-            karteikarte = get_karteikarte(id)
-            adresse = get_adresse(karteikarte['person_id'])
-            kontakte = get_kontakte(karteikarte['person_id'])
-            behandlungen = get_behandlungen(id)
-            return render_template('ordi/edit.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
+            tierhaltung = read_tierhaltung(id)
+            adresse = read_adresse(karteikarte['person_id'])
+            kontakte = read_kontakte(karteikarte['person_id'])
+            behandlungen = read_behandlungen(id)
+            return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -375,12 +368,39 @@ def editbehandlung(id, behandlung_id):
         dbcon.commit()
         cursor.close()
 
-    return redirect(url_for('ordi.edit', id=id))
+    return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
-@bp.route('/<int:behandlungsverlauf_id>/editverlauf', methods=('GET', 'POST'))
+@bp.route('/<int:id>/create_behandlungsverlauf', methods=('GET', 'POST'))
 @login_required
-def editverlauf(behandlungsverlauf_id):
+def create_behandlungsverlauf(id):
+    if(request.method == 'POST'):
+        datum = request.form['datum']
+        if(len(datum) == 10):
+            datum += " 00:00:00"
+        diagnose = request.form['diagnose']
+        behandlung = request.form['behandlung']
+
+        tierhaltung = read_tierhaltung(id)
+        dbcon = get_db()
+        cursor = dbcon.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        behandlungsverlauf_id = cursor.execute(
+            'INSERT INTO behandlungsverlauf (person_id, tier_id, datum, diagnose, behandlung)'
+            ' VALUES (?, ?, ?, ?, ?)',
+            (tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung,)
+        ).lastrowid
+        dbcon.commit()
+        cursor.close()
+        return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
+    else:
+        tierhaltung = read_tierhaltung(id)
+    return render_template('ordi/behandlungsverlauf.html', tierhaltung=tierhaltung, page_title="Behandlungsverlauf")
+
+
+@bp.route('/<int:behandlungsverlauf_id>/edit_behandlungsverlauf', methods=('GET', 'POST'))
+@login_required
+def edit_behandlungsverlauf(behandlungsverlauf_id):
     if(request.method == 'POST'):
         datum = request.form['datum']
         if(len(datum) == 10):
@@ -398,41 +418,14 @@ def editverlauf(behandlungsverlauf_id):
         )
         dbcon.commit()
         cursor.close()
-    behandlungsverlauf = get_behandlungsverlauf(behandlungsverlauf_id)
-    karteikarte = get_karteikarte_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
-    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, karteikarte=karteikarte)
+    behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
+    tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
+    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung)
 
 
-@bp.route('/<int:id>/createverlauf', methods=('GET', 'POST'))
+@bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
 @login_required
-def createverlauf(id):
-    if(request.method == 'POST'):
-        datum = request.form['datum']
-        if(len(datum) == 10):
-            datum += " 00:00:00"
-        diagnose = request.form['diagnose']
-        behandlung = request.form['behandlung']
-
-        karteikarte = get_karteikarte(id)
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        behandlungsverlauf_id = cursor.execute(
-            'INSERT INTO behandlungsverlauf (person_id, tier_id, datum, diagnose, behandlung)'
-            ' VALUES (?, ?, ?, ?, ?)',
-            (karteikarte['person_id'], karteikarte['tier_id'], datum, diagnose, behandlung,)
-        ).lastrowid
-        dbcon.commit()
-        cursor.close()
-        return redirect(url_for('ordi.editverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
-    else:
-        karteikarte = get_karteikarte(id)
-    return render_template('ordi/behandlungsverlauf.html', karteikarte=karteikarte, page_title="Behandlungsverlauf")
-
-
-@bp.route('/<int:id>/delete', methods=('GET',))
-@login_required
-def delete(id):
+def delete_tierhaltung(id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")

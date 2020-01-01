@@ -11,18 +11,25 @@ h2, h2 a { margin: 6px 0; padding: 0; font-size: 24px; text-decoration: underlin
 h3, h3 a { margin: 0; padding: 0; font-size: 20px; }
 p, label, input { margin: 0; padding: 0 }
 a { color: #377ba8; text-decoration: none;}
-hr { border: none; border-top: 1px solid lightgray; }
 
 #content-wrapper { padding: 8px; }
 
 .flash { margin: 12px 0; padding: 8px; background: #cae6f6; border: 1px solid #377ba8; }
 
 header { 
-    background: lightgray; 
-    padding: 8px 0;
+    background: lightgray;
+    padding: 8px 20px 8px 20px;
 } 
-header h1 { padding-left: 20px; }
-header p { padding-right: 20px; justify-items: end; text-align: right; }
+header p { justify-items: end; text-align: right; }
+
+nav { background: lightgray; margin-top: 1px; padding: 8px 0px 6px 0px; }
+nav a, 
+nav a:link, 
+nav a:visited,
+nav a:active {
+    text-decoration: none;
+    font-size: 16px;
+}
 
 .row-grid { 
     display: grid; 

@@ -11,11 +11,7 @@
     </head>
     <body>
         <header class="row-grid">
-            {% if page_title == "Karteikarte" %}
-            <h1><a href="{{ url_for('ordi.karteikarten') }}">Karteikarten</a></h1>
-            {% else %}
             <h1>Ordi</h1>
-            {% endif %}
             <h2>{{ page_title }}</h2>
             <p>
               {% if g.user %}
@@ -34,7 +30,7 @@
         <nav class="flex-container">
             <p><a href="{{ url_for('ordi.index') }}">Patientenkarteien</a></p>
             <p><a href="#">Rechnungen</a></p>
-            <p><a href="{{ url_for('ordi.tmhistories') }}">Behandlungsverläufe</a></p>
+            <p><a href="{{ url_for('ordi.behandlungsverlaeufe') }}">Behandlungsverläufe</a></p>
             <p><a href="#">Abfragen</a></p>
         </nav>
         {% endif %}

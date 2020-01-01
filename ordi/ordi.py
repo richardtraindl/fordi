@@ -164,14 +164,14 @@ def create_tierhaltung():
 def show_tierhaltung(id):
     tierhaltung = read_tierhaltung(id)
 
-    adresse = read_adresse(karteikarte['person_id'])
+    adresse = read_adresse(tierhaltung['person_id'])
 
-    kontakte = read_kontakte(karteikarte['person_id'])
+    kontakte = read_kontakte(tierhaltung['person_id'])
 
     behandlungen = read_behandlungen(id)
     behandlungsdatum = date.today().strftime("%Y-%m-%d")
 
-    return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, page_title="Karteikarte")
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
@@ -305,11 +305,11 @@ def create_behandlung(id):
         if(len(gewicht_Kg) > 0 and re.search(r"\d", gewicht_Kg) == None):
             error = "Zahl für Gewicht erforderlich."
             flash(error)
-            karteikarte = get_karteikarte(id)
-            adresse = get_adresse(karteikarte['person_id'])
-            kontakte = get_kontakte(karteikarte['person_id'])
-            behandlungen = get_behandlungen(id)
-            return render_template('ordi/show_tierhaltung.html', karteikarte=karteikarte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
+            tierhaltung = read_tierhaltung(id)
+            adresse = read_adresse(tierhaltung['person_id'])
+            kontakte = read_kontakte(tierhaltung['person_id'])
+            behandlungen = read_behandlungen(id)
+            return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -352,8 +352,8 @@ def update_behandlung(id, behandlung_id):
             error = "Zahl für Gewicht erforderlich."
             flash(error)
             tierhaltung = read_tierhaltung(id)
-            adresse = read_adresse(karteikarte['person_id'])
-            kontakte = read_kontakte(karteikarte['person_id'])
+            adresse = read_adresse(tierhaltung['person_id'])
+            kontakte = read_kontakte(tierhaltung['person_id'])
             behandlungen = read_behandlungen(id)
             return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 

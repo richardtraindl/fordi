@@ -10,9 +10,9 @@
 {% block content %}
     <div>
         <div class="twocols">
-            <p><a href="{{ url_for('ordi.editperson', id=karteikarte['id'], person_id=karteikarte['person_id']) }}">Person ändern</a></p>
+            <p><a href="{{ url_for('ordi.edit_person', id=tierhaltung['id'], person_id=tierhaltung['person_id']) }}">Person ändern</a></p>
 
-            <p><a href="{{ url_for('ordi.edittier', id=karteikarte['id'], tier_id=karteikarte['tier_id']) }}">Tier ändern</a></p>
+            <p><a href="{{ url_for('ordi.edit_tier', id=tierhaltung['id'], tier_id=tierhaltung['tier_id']) }}">Tier ändern</a></p>
 
             {% include 'ordi/_person.html' %}
         
@@ -42,7 +42,7 @@
       <tbody>
       {% for behandlung in behandlungen %}
         <tr class="behandlung">
-            <form method="post" action="{{ url_for('ordi.editbehandlung', id=karteikarte['id'], behandlung_id=behandlung['id']) }}">
+            <form method="post" action="{{ url_for('ordi.update_behandlung', id=tierhaltung['id'], behandlung_id=behandlung['id']) }}">
                 <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum" id="behandlungsdatum-{{behandlung['id']}}" class="date" value="{{ behandlung['behandlungsdatum'] }}"></td>
                 <td style="width: 25%"><textarea style="width: 100%" name="diagnose" id="diagnose-{{behandlung['id']}}">{{ behandlung['diagnose'] }}</textarea></td>
                 <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1" id="laborwerte1-{{behandlung['id']}}">{{ behandlung['laborwerte1'] }}</textarea></td>
@@ -56,7 +56,7 @@
         </tr>
       {% endfor %}
         <tr class="editbehandlung edit-focus">
-            <form method="post" action="{{ url_for('ordi.newbehandlung', id=karteikarte['id']) }}">
+            <form method="post" action="{{ url_for('ordi.create_behandlung', id=tierhaltung['id']) }}">
                 <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum" id="behandlungsdatum" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
                 <td style="width: 25%"><textarea style="width: 100%" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea></td>
                 <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1" id="laborwerte1">{{ request.form['laborwerte1'] }}</textarea></td>

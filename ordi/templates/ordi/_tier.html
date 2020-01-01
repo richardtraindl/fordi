@@ -1,44 +1,44 @@
 
     <div class="twocols tier">
         <label for="tiername">Tiername</label>
-        {% if karteikarte %}
-            <input size="20" name="tiername" id="tiername" value="{{ karteikarte['tiername'] }}" required>    
+        {% if tierhaltung %}
+            <input size="20" name="tiername" id="tiername" value="{{ tierhaltung['tiername'] }}" required>    
         {% else %}
             <input size="20" name="tiername" id="tiername" value="{{ request.form['tiername'] }}" required>
         {% endif %}
 
         <label for="tierart">Tierart</label>
-        {% if karteikarte %}
-            <input size="20" name="tierart" id="tierart" value="{{ karteikarte['tierart'] }}" required>
+        {% if tierhaltung %}
+            <input size="20" name="tierart" id="tierart" value="{{ tierhaltung['tierart'] }}" required>
         {% else %}
             <input size="20" name="tierart" id="tierart" value="{{ request.form['tierart'] }}" required>
         {% endif %}
 
         <label for="rasse">Rasse</label>
-        {% if karteikarte %}
-            <input size="20" name="rasse" id="rasse" value="{{ karteikarte['rasse'] }}">
+        {% if tierhaltung %}
+            <input size="20" name="rasse" id="rasse" value="{{ tierhaltung['rasse'] }}">
         {% else %}
             <input size="20" name="rasse" id="rasse" value="{{ request.form['rasse'] }}">
         {% endif %}
 
         <label for="farbe">Farbe</label>
-        {% if karteikarte %}
-            <input size="20" name="farbe" id="farbe" value="{{ karteikarte['farbe'] }}">
+        {% if tierhaltung %}
+            <input size="20" name="farbe" id="farbe" value="{{ tierhaltung['farbe'] }}">
         {% else %}
             <input size="20" name="farbe" id="farbe" value="{{ request.form['farbe'] }}">
         {% endif %}
 
         <label for="geburtsdatum">Geburtsdatum</label>
-        {% if karteikarte %}
-            <input size="10" class="date" name="geburtsdatum" id="geburtsdatum" value="{{ karteikarte['geburtsdatum'] }}" required>
+        {% if tierhaltung %}
+            <input size="10" class="date" name="geburtsdatum" id="geburtsdatum" value="{{ tierhaltung['geburtsdatum'] }}" required>
         {% else %}
             <input size="10" class="date" name="geburtsdatum" id="geburtsdatum" value="{{ request.form['geburtsdatum'] }}" required>
         {% endif %}
 
         <label for="geschlechtsartcode">Geschlecht</label>
         <select name="geschlechtsartcode" id="geschlechtsartcode">
-        {% if karteikarte %}
-            {% set geschlechtsartcode = karteikarte['geschlechtsartcode'] %}
+        {% if tierhaltung %}
+            {% set geschlechtsartcode = tierhaltung['geschlechtsartcode'] %}
         {% else %}
             {% set geschlechtsartcode = request.form['geschlechtsartcode'] %}                
         {% endif %}
@@ -71,22 +71,22 @@
         </select>
 
         <label for="chip_nummer">Chip Nummer</label>
-        {% if karteikarte %}
-            <input size="20" name="chip_nummer" id="chip_nummer" value="{{ karteikarte['chip_nummer'] }}">    
+        {% if tierhaltung %}
+            <input size="20" name="chip_nummer" id="chip_nummer" value="{{ tierhaltung['chip_nummer'] }}">    
         {% else %}
             <input size="20" name="chip_nummer" id="chip_nummer" value="{{ request.form['chip_nummer'] }}">
         {% endif %}
 
         <label for="eu_passnummer">EU Passnummer</label>
-        {% if karteikarte %}
-            <input size="20" name="eu_passnummer" id="eu_passnummer" value="{{ karteikarte['eu_passnummer'] }}">
+        {% if tierhaltung %}
+            <input size="20" name="eu_passnummer" id="eu_passnummer" value="{{ tierhaltung['eu_passnummer'] }}">
         {% else %}
             <input size="20" name="eu_passnummer" id="eu_passnummer" value="{{ request.form['eu_passnummer'] }}">
         {% endif %}
 
         <label for="patient">Patient</label>
-        {% if karteikarte %}
-            {% if karteikarte['patient'] == 0 %}
+        {% if tierhaltung %}
+            {% if tierhaltung['patient'] == 0 %}
                 <input type="checkbox" name="patient" value="0">
             {% else %}
                 <input type="checkbox" name="patient" value="1" checked>
@@ -104,15 +104,15 @@
         {% endif %}
 
         <label for="viren">Viren</label>
-        {% if karteikarte %}
-            <input size="20" name="viren" id="viren" value="{{ karteikarte['viren'] }}">
+        {% if tierhaltung %}
+            <input size="20" name="viren" id="viren" value="{{ tierhaltung['viren'] }}">
         {% else %}
             <input size="20" name="viren" id="viren" value="{{ request.form['viren'] }}">
         {% endif %}
 
         <label for="merkmal">Merkmal</label>
-        {% if karteikarte %}
-            <input size="20" name="merkmal" id="merkmal" value="{{ karteikarte['merkmal'] }}">
+        {% if tierhaltung %}
+            <input size="20" name="merkmal" id="merkmal" value="{{ tierhaltung['merkmal'] }}">
         {% else %}
             <input size="20" name="merkmal" id="merkmal" value="{{ request.form['merkmal'] }}">
         {% endif %}

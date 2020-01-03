@@ -26,15 +26,35 @@ def read_behandlungsverlaeufe(behandlungsjahr):
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        'SELECT * FROM behandlungsverlauf, person, tier'
-        ' WHERE behandlungsverlauf.person_id = person.id AND behandlungsverlauf.tier_id = tier.id'
-        ' AND behandlungsverlauf.datum >  ? AND behandlungsverlauf.datum <  ?'
+        'SELECT * FROM behandlungsverlauf, tierhaltung, person, tier'
+        ' WHERE behandlungsverlauf.tierhaltung_id = tierhaltung.id'
+        ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+        ' AND behandlungsverlauf.datum > ? AND behandlungsverlauf.datum <  ?'
         ' ORDER BY behandlungsverlauf.datum ASC',
         (begin, end,)
     )
     behandlungsverlaeufe = cursor.fetchall()
     cursor.close()
     return behandlungsverlaeufe
+
+
+def read_rechnungen(rechnungsjahr):
+    begin = str(rechnungsjahr) + "-01-01"
+    end = str(rechnungsjahr + 1) + "-01-01"
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'SELECT * FROM rechnung, tierhaltung, person, tier'
+        ' WHERE tierhaltung_id = tierhaltung.id'
+        ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+        ' AND rechnung.rechnungsjahr > ? AND rechnung.rechnungsjahr <  ?'
+        ' ORDER BY rechnung.ausstellungsdatum ASC',
+        (begin, end,)
+    )
+    rechnungen = cursor.fetchall()
+    cursor.close()
+    return rechnungen
 
 
 def read_tierhaltung(id):

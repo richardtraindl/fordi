@@ -66,17 +66,7 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/" + id.toString() + "/editverlauf";
-                }
-                return false; 
-            });
-            $('#neues_tier').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.location = "/" + id.toString() + "/addtier";
+                    window.location = "/" + id.toString() + "/edit_behandlungsverlauf";
                 }
                 return false; 
             });
@@ -87,22 +77,12 @@
                 }
                 else{
                     if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/" + id.toString() + "/delete";
+                        window.location = "/" + id.toString() + "/delete_behandlungsverlauf";
                         return true;
                     }
                     else{
                         return false;
                     }
-                }
-                return false; 
-            });
-            $('#neuer_behandlungsverlauf').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.location = "/" + id.toString() + "/createverlauf";
                 }
                 return false; 
             });

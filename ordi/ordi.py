@@ -51,6 +51,20 @@ def behandlungsverlaeufe():
     return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=behandlungsjahr, page_title="Behandlungsverläufe")
 
 
+@bp.route('/rechnungen', methods=('GET', 'POST'))
+@login_required
+def rechnungen():
+    if(request.method == 'POST'):
+        if(len(request.form['rechnungsjahr']) > 0):
+            rechnungsjahr = int(request.form['rechnungsjahr'])
+        else:
+            rechnungsjahr = int(date.today().strftime("%Y"))
+    else:
+        rechnungsjahr = int(date.today().strftime("%Y"))
+    rechnungen = read_rechnungen(rechnungsjahr)
+    return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=rechnungsjahr, page_title="Rechnungen")
+
+
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
 @login_required
 def create_tierhaltung():
@@ -376,8 +390,8 @@ def update_behandlung(id, behandlung_id):
 def create_behandlungsverlauf(id):
     if(request.method == 'POST'):
         datum = request.form['datum']
-        if(len(datum) == 10):
-            datum += " 00:00:00"
+        if(len(datum) == 0):
+            datum = date.today().strftime("%Y-%m-%d")
         diagnose = request.form['diagnose']
         behandlung = request.form['behandlung']
 
@@ -386,9 +400,9 @@ def create_behandlungsverlauf(id):
         cursor = dbcon.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
         behandlungsverlauf_id = cursor.execute(
-            'INSERT INTO behandlungsverlauf (person_id, tier_id, datum, diagnose, behandlung)'
-            ' VALUES (?, ?, ?, ?, ?)',
-            (tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung,)
+            'INSERT INTO behandlungsverlauf (tierhaltung_id, datum, diagnose, behandlung)'
+            ' VALUES (?, ?, ?, ?)',
+            (tierhaltung['id'], datum, diagnose, behandlung,)
         ).lastrowid
         dbcon.commit()
         cursor.close()
@@ -403,8 +417,8 @@ def create_behandlungsverlauf(id):
 def edit_behandlungsverlauf(behandlungsverlauf_id):
     if(request.method == 'POST'):
         datum = request.form['datum']
-        if(len(datum) == 10):
-            datum += " 00:00:00"
+        if(len(datum) == 0):
+            datum = date.today().strftime("%Y-%m-%d")
         diagnose = request.form['diagnose']
         behandlung = request.form['behandlung']
 
@@ -419,8 +433,77 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         dbcon.commit()
         cursor.close()
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-    tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
+    tierhaltung = read_tierhaltung(behandlungsverlauf['tierhaltung_id'])
     return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung)
+
+
+@bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
+@login_required
+def create_rechnung(id):
+    if(request.method == 'POST'):
+        rechnungsjahr = request.form['rechnungsjahr']
+        rechnungslfnr = request.form['rechnungslfnr']
+        ausstellungsdatum = request.form['ausstellungsdatum']
+        if(len(ausstellungsdatum) == 0):
+            ausstellungsdatum = date.today().strftime("%Y-%m-%d")
+        ausstellungsort = request.form['ausstellungsort']
+        if(len(ausstellungsort) == 0):
+            ausstellungsort = "Wien"
+        diagnose = request.form['diagnose']
+        bezahlung = request.form['bezahlung']
+        brutto_summe = 0
+        netto_summe = 0
+        steuerbetrag_zwanzig = 0
+        steuerbetrag_dreizehn = 0
+        steuerbetrag_zehn = 0
+
+        dbcon = get_db()
+        cursor = dbcon.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        rechnung_id = cursor.execute(
+            'INSERT INTO rechnung (tierhaltung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung,'
+            ' brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn)'
+            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn,)
+        ).lastrowid
+        dbcon.commit()
+        cursor.close()
+        tierhaltung = read_tierhaltung(id)
+        return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id,))
+    tierhaltung = read_tierhaltung(id)
+    return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, page_title="Rechnung")
+
+
+@bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
+@login_required
+def edit_rechnung(rechnung_id):
+    if(request.method == 'POST'):
+        rechnungsjahr = request.form['rechnungsjahr']
+        rechnungslfnr = request.form['rechnungslfnr']
+        ausstellungsdatum = request.form['ausstellungsdatum']
+        if(len(ausstellungsdatum) == 0):
+            ausstellungsdatum = date.today().strftime("%Y-%m-%d")
+        ausstellungsort = request.form['ausstellungsort']
+        if(len(ausstellungsort) == 0):
+            ausstellungsort = "Wien"
+        diagnose = request.form['diagnose']
+        bezahlung = request.form['bezahlung']
+
+        ### ToDo rechnungszeilen
+
+        dbcon = get_db()
+        cursor = dbcon.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.execute(
+            'UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?, ausstellungsort = ?, diagnose = ?, bezahlung = ?'
+            ' WHERE id = ?',
+            (rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, rechnung_id,)
+        )
+        dbcon.commit()
+        cursor.close()
+    rechnung = read_rechnung(rechnung_id)
+    tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
+    return render_template('ordi/behandlungsverlauf.html', rechnung_id=rechnung_id, rechnung=rechnung, tierhaltung=tierhaltung)
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))

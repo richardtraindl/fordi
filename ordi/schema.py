@@ -59,26 +59,24 @@ sqlcreates = (
     """CREATE TABLE impfung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
         behandlung_id INTEGER NOT NULL REFERENCES beahndlung(id) ON DELETE CASCADE, \
         impfungsartcode INTEGER NOT NULL);""",
-    """CREATE TABLE behandlungsverlauf (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
-       tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
-       datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-       diagnose VARCHAR(255), \
-       behandlung VARCHAR(1000));""",
     """CREATE TABLE tierhaltung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
        person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
        tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
-       anlagedatum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+       anlagezeit TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
        UNIQUE(person_id,tier_id));""",
-    """CREATE TABLE rechnung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
-       tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
-       rechnungjahr INTEGER NOT NULL, \
-       rechnunglfnr INTEGER NOT NULL, \
+    """CREATE TABLE behandlungsverlauf (id INTEGER PRIMARY KEY AUTOINCREMENT, \
+       tierhaltung_id INTEGER NOT NULL REFERENCES tierhaltung(id) ON DELETE CASCADE, \
        datum DATE NOT NULL DEFAULT CURRENT_DATE, \
-       ort VARCHAR(255), \
        diagnose VARCHAR(255), \
-       zahlung VARCHAR(255), \
+       behandlung VARCHAR(1000));""",
+    """CREATE TABLE rechnung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
+       tierhaltung_id INTEGER NOT NULL REFERENCES tierhaltung(id) ON DELETE CASCADE, \
+       rechnungsjahr INTEGER NOT NULL, \
+       rechnungslfnr INTEGER NOT NULL, \
+       ausstellungsdatum DATE NOT NULL DEFAULT CURRENT_DATE, \
+       ausstellungsort VARCHAR(255), \
+       diagnose VARCHAR(255), \
+       bezahlung VARCHAR(255), \
        brutto_summe DECIMAL(10,2) NOT NULL, \
        netto_summe DECIMAL(10,2) NOT NULL, \
        steuerbetrag_zwanzig DECIMAL(10,2) NOT NULL DEFAULT 0, \
@@ -86,8 +84,8 @@ sqlcreates = (
        steuerbetrag_zehn DECIMAL(10,2) NOT NULL DEFAULT 0);""",
     """CREATE TABLE rechnungszeile (id INTEGER PRIMARY KEY AUTOINCREMENT, \
        rechnung_id INTEGER NOT NULL REFERENCES rechnung(id) ON DELETE CASCADE, \
-       artikelartcode INTEGER NOT NULL, \
        datum DATE NOT NULL DEFAULT CURRENT_DATE, \
+       artikelartcode INTEGER NOT NULL, \
        artikel VARCHAR(255), \
        betrag DECIMAL(10,2) NOT NULL);""")
 

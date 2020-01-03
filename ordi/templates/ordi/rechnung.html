@@ -1,0 +1,118 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Rechnung
+{% endblock %}
+
+
+{% block content %}
+    <div>
+        <div class="twocols">
+            {% include 'ordi/_person.html' %}
+
+            {% include 'ordi/_tier.html' %}
+        </div>
+    </div>
+
+    <div class="huge-gap"></div>
+
+    {% if rechnung %}
+        <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">
+    {% else %}
+        <form method="post" action="{{ url_for('ordi.create_rechnung', id=tierhaltung['id']) }}">
+    {% endif %}
+
+        <div class="twocols">
+          {% if behandlungsverlauf %}
+            <label for="rechnungsjahr">rechnungsjahr</label>
+            <input type="text" style="width: 100%" name="rechnungsjahr" id="rechnungsjahr" value="{{ rechnung['rechnungsjahr'] }}">
+            
+            <label for="rechnungslfnr">rechnungslfnr</label>
+            <input type="text" style="width: 100%" name="rechnungslfnr" id="rechnungslfnr" value="{{ rechnung['rechnungslfnr'] }}">
+            
+            <label for="ausstellungsdatum">ausstellungsdatum</label>
+            <input type="text" style="width: 100%" name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ rechnung['ausstellungsdatum'] }}">
+            
+            <label for="ausstellungsort">ausstellungsort</label>
+            <input type="text" style="width: 100%" name="ausstellungsort" id="rechnungslfnr" value="{{ rechnung['rechnungslfnr'] }}">
+            
+            <label for="diagnose">diagnose</label>
+            <textarea style="width: 100%" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
+            
+            <label for="bezahlung">bezahlung</label>
+            <input type="text" style="width: 100%" name="bezahlung" id="bezahlung" value="{{ rechnung['bezahlung'] }}">
+          {% else %}
+            <label for="rechnungsjahr">rechnungsjahr</label>
+            <input type="text" style="width: 100%" name="rechnungsjahr" id="rechnungsjahr" value="{{ request.form['rechnungsjahr'] }}">
+            
+            <label for="rechnungslfnr">rechnungslfnr</label>
+            <input type="text" style="width: 100%" name="rechnungslfnr" id="rechnungslfnr" value="{{ request.form['rechnungslfnr'] }}">
+            
+            <label for="ausstellungsdatum">ausstellungsdatum</label>
+            <input type="text" style="width: 100%" name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ request.form['ausstellungsdatum'] }}">
+            
+            <label for="ausstellungsort">ausstellungsort</label>
+            <input type="text" style="width: 100%" name="ausstellungsort" id="rechnungslfnr" value="{{ request.form['rechnungslfnr'] }}">
+            
+            <label for="diagnose">diagnose</label>
+            <textarea style="width: 100%" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
+            
+            <label for="bezahlung">bezahlung</label>
+            <input type="text" style="width: 100%" name="bezahlung" id="bezahlung" value="{{ request.form['bezahlung'] }}">
+          {% endif %}
+        </div>
+
+
+        <table class="liste">
+            <thead>
+                <tr>
+                    <th style="width: 8%">Datum</th>
+                    <th style="width: 12%">Artikelart</th>
+                    <th style="width: 60">Detail</th>
+                    <th style="width: 20%">Betrag</th>
+                    <th style="width: 10%">&nbsp;</th>
+                </tr>
+            </thead>
+        </table>
+        <div style="height: 30%; overflow: scroll">
+            <table class="liste">
+                <tbody>
+                {% for rechnungszeile in rechnungszeilen %}
+                    <tr class="rechnungszeile">
+                        <td style="width: 8%"><input type="text" style="width: 100%" name="datum" id="datum-{{rechnungszeile['id']}}" class="date" value="{{ rechnungszeile['datum'] }}"></td>
+                        <td style="width: 12%"><textarea style="width: 100%" name="artikelartcode" id="artikelartcode-{{rechnungszeile['id']}}">{{ rechnungszeile['artikelartcode'] }}</textarea></td>
+                        <td style="width: 50%"><textarea style="width: 100%" name="artikel" id="artikel-{{rechnungszeile['id']}}">{{ rechnungszeile['artikel'] }}</textarea></td>
+                        <td style="width: 20%"><textarea style="width: 100%" name="betrag" id="betrag-{{rechnungszeile['id']}}">{{ rechnungszeile['betrag'] }}</textarea></td>
+                        <td style="width: 10%"><input type="submit" value="bearbeiten"></td>
+                    </tr>
+                {% endfor %}
+                    <tr class="newrechnungszeile edit-focus">
+                        <td style="width: 8%"><input type="text" style="width: 100%" name="datum" id="datum" class="date" value="{{ request.form['datum'] }}"></td>
+                        <td style="width: 12%"><textarea style="width: 100%" name="artikelartcode" id="artikelartcode">{{ request.form['artikelartcode'] }}</textarea></td>
+                        <td style="width: 50%"><textarea style="width: 100%" name="artikel" id="artikel">{{ request.form['artikel'] }}</textarea></td>
+                        <td style="width: 20%"><textarea style="width: 100%" name="betrag" id="betrag">{{ request.form['betrag'] }}</textarea></td>
+                        <td style="width: 10%"><input type="submit" value="speichern"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div><input type="submit" value="Rechnung drucken"></div>
+    </form>
+
+
+    <script>
+        $(document).ready(function(){
+            $.datepicker.setDefaults($.datepicker.regional["de"]);
+            $(".date").datepicker({ 
+                dateFormat: "yy-mm-dd",
+                changeMonth: true,
+                changeYear: true 
+            });
+
+            $("#diagnose").focus();
+        });
+    </script>
+{% endblock %}

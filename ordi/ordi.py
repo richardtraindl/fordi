@@ -503,7 +503,7 @@ def edit_rechnung(rechnung_id):
         cursor.close()
     rechnung = read_rechnung(rechnung_id)
     tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
-    return render_template('ordi/behandlungsverlauf.html', rechnung_id=rechnung_id, rechnung=rechnung, tierhaltung=tierhaltung)
+    return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, rechnung=rechnung, tierhaltung=tierhaltung)
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))

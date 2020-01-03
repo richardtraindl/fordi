@@ -104,20 +104,17 @@
             <input size="20" name="strasse" id="strasse" value="{{ request.form['strasse'] }}">
         {% endif %}
 
-        {% set counter = 1 %}
-        {% for kontakt in kontakte %}
-            <label for="kontakt{{counter}}">Telefonnr.</label>
-            <input size="20" name="kontakt{{counter}}" id="kontakt{{counter}}" value="{{ kontakt['kontakt{{counter}}'] }}">
-            {% set counter = counter + 1 %}
-        {% endfor %}
-
-        {% if kontakte|length == 1 %}
-            <label for="kontakt2">Telefonnr.</label>
-            <input size="20" name="kontakt2" id="kontakt2" value="{{ request.form['kontakt2'] }}">
-        {% endif %}
-        {% if kontakte|length == 0 %}
+        {% if kontakte[0] %}
+            <label for="kontakt1">Telefonnr.</label>
+            <input size="20" name="kontakt1" id="kontakt1" value="{{ kontakte[0]['kontakt'] }}">
+        {% else %}
             <label for="kontakt1">Telefonnr.</label>
             <input size="20" name="kontakt1" id="kontakt1" value="{{ request.form['kontakt1'] }}">
+        {% endif %}
+        {% if kontakte[1] %}
+            <label for="kontakt2">Telefonnr.</label>
+            <input size="20" name="kontakt2" id="kontakt2" value="{{ kontakte[1]['kontakt'] }}">
+        {% else %}
             <label for="kontakt2">Telefonnr.</label>
             <input size="20" name="kontakt2" id="kontakt2" value="{{ request.form['kontakt2'] }}">
         {% endif %}

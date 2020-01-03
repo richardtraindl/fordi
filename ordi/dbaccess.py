@@ -20,19 +20,27 @@ def read_tierhaltungen(familienname, tiername, kunde, patient):
 
 
 def read_behandlungsverlaeufe(behandlungsjahr):
-    begin = str(behandlungsjahr) + "-01-01"
-    end = str(behandlungsjahr + 1) + "-01-01"
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute(
-        'SELECT * FROM behandlungsverlauf, tierhaltung, person, tier'
-        ' WHERE behandlungsverlauf.tierhaltung_id = tierhaltung.id'
-        ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
-        ' AND behandlungsverlauf.datum > ? AND behandlungsverlauf.datum <  ?'
-        ' ORDER BY behandlungsverlauf.datum ASC',
-        (begin, end,)
-    )
+    if(behandlungsjahr):
+        begin = str(behandlungsjahr - 1) + "-12-31"
+        end = str(behandlungsjahr + 1) + "-01-01"
+        cursor.execute(
+            'SELECT * FROM behandlungsverlauf, tierhaltung, person, tier'
+            ' WHERE behandlungsverlauf.tierhaltung_id = tierhaltung.id'
+            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            ' AND behandlungsverlauf.datum > ? AND behandlungsverlauf.datum <  ?'
+            ' ORDER BY behandlungsverlauf.datum ASC',
+            (begin, end,)
+        )
+    else:
+        cursor.execute(
+            'SELECT * FROM behandlungsverlauf, tierhaltung, person, tier'
+            ' WHERE behandlungsverlauf.tierhaltung_id = tierhaltung.id'
+            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            ' ORDER BY behandlungsverlauf.datum ASC'
+        )
     behandlungsverlaeufe = cursor.fetchall()
     cursor.close()
     return behandlungsverlaeufe
@@ -42,14 +50,22 @@ def read_rechnungen(rechnungsjahr):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute(
-        'SELECT * FROM rechnung, tierhaltung, person, tier'
-        ' WHERE rechnung.tierhaltung_id = tierhaltung.id'
-        ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
-        ' AND rechnung.rechnungsjahr = ?'
-        ' ORDER BY rechnung.ausstellungsdatum ASC',
-        (rechnungsjahr,)
-    )
+    if(rechnungsjahr):
+        cursor.execute(
+            'SELECT * FROM rechnung, tierhaltung, person, tier'
+            ' WHERE rechnung.tierhaltung_id = tierhaltung.id'
+            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            ' AND rechnung.rechnungsjahr = ?'
+            ' ORDER BY rechnungsjahr, rechnungslfnr ASC',
+            (rechnungsjahr,)
+        )
+    else:
+        cursor.execute(
+            'SELECT * FROM rechnung, tierhaltung, person, tier'
+            ' WHERE rechnung.tierhaltung_id = tierhaltung.id'
+            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            ' ORDER BY rechnungsjahr, rechnungslfnr ASC'
+        )
     rechnungen = cursor.fetchall()
     cursor.close()
     return rechnungen
@@ -158,4 +174,16 @@ def read_behandlungsverlauf(behandlungsverlauf_id):
     behandlungsverlauf = cursor.fetchone()
     cursor.close()
     return behandlungsverlauf
+
+
+def read_rechnung(rechnung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute(
+        'SELECT * FROM rechnung WHERE rechnung.id = ?',
+        (rechnung_id,)
+    )
+    rechnung = cursor.fetchone()
+    cursor.close()
+    return rechnung
 

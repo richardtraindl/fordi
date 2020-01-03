@@ -41,28 +41,36 @@ def index():
 @login_required
 def behandlungsverlaeufe():
     if(request.method == 'POST'):
-        if(len(request.form['behandlungsjahr']) > 0):
+        try:
             behandlungsjahr = int(request.form['behandlungsjahr'])
-        else:
-            behandlungsjahr = int(date.today().strftime("%Y"))
+        except:
+            behandlungsjahr = None
     else:
-        behandlungsjahr = int(date.today().strftime("%Y"))
+        behandlungsjahr = None
     behandlungsverlaeufe = read_behandlungsverlaeufe(behandlungsjahr)
-    return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=behandlungsjahr, page_title="Behandlungsverläufe")
+    if(behandlungsjahr):
+        str_behandlungsjahr = str(behandlungsjahr)
+    else:
+        str_behandlungsjahr = ""
+    return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
 
 
 @bp.route('/rechnungen', methods=('GET', 'POST'))
 @login_required
 def rechnungen():
     if(request.method == 'POST'):
-        if(len(request.form['rechnungsjahr']) > 0):
+        try:
             rechnungsjahr = int(request.form['rechnungsjahr'])
-        else:
-            rechnungsjahr = int(date.today().strftime("%Y"))
+        except:
+            rechnungsjahr = None
     else:
-        rechnungsjahr = int(date.today().strftime("%Y"))
+        rechnungsjahr = None
     rechnungen = read_rechnungen(rechnungsjahr)
-    return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=rechnungsjahr, page_title="Rechnungen")
+    if(rechnungsjahr):
+        str_rechnungsjahr = str(rechnungsjahr)
+    else:
+        str_rechnungsjahr = ""
+    return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
 
 
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
@@ -126,12 +134,13 @@ def create_tierhaltung():
         strasse = request.form['strasse']
         postleitzahl = request.form['postleitzahl']
         ort = request.form['ort']
-        adresse_id = cursor.execute(
-            'INSERT INTO adresse (person_id, strasse, postleitzahl, ort)'
-            ' VALUES (?, ?, ?, ?)',
-            (person_id, strasse, postleitzahl, ort,)
-        ).lastrowid
-        dbcon.commit()
+        if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
+            cursor.execute(
+                'INSERT INTO adresse (person_id, strasse, postleitzahl, ort)'
+                ' VALUES (?, ?, ?, ?)',
+                (person_id, strasse, postleitzahl, ort,)
+            )
+            dbcon.commit()
 
         kontaktartcode = 1 # fix für Telefon
         kontakt1 = request.form['kontakt1']
@@ -286,10 +295,83 @@ def edit_person(id, person_id):
             (anredeartcode, titel, familienname, vorname, notiz, kunde, person_id,)
         )
         dbcon.commit()
+
+        strasse = request.form['strasse']
+        postleitzahl = request.form['postleitzahl']
+        ort = request.form['ort']
+        adresse = read_adresse(person_id)
+        if(adresse):
+            if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
+                cursor.execute(
+                    'UPDATE adresse SET strasse = ?, postleitzahl = ?, ort = ?'
+                    ' WHERE id = ?',
+                    (strasse, postleitzahl, ort, adresse['id'],)
+                )
+                dbcon.commit()
+            else:
+                cursor.execute('DELETE FROM adresse WHERE id = ?', (adresse['id'],))
+                dbcon.commit()
+        else:
+            if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
+                cursor.execute(
+                    'INSERT INTO adresse (person_id, strasse, postleitzahl, ort)'
+                    ' VALUES (?, ?, ?, ?)',
+                    (person_id, strasse, postleitzahl, ort,)
+                )
+                dbcon.commit()
+
+        kontakte = read_kontakte(person_id)
+        kontaktartcode = 1 # fix für Telefon
+        bad_chars = [';', ':', '-', '/', ' ', '\n']
+        kontakt1 = request.form['kontakt1']
+        kontakt_intern1 = ''.join(i for i in kontakt1 if not i in bad_chars)
+        if(len(kontakte) > 0):
+            if(len(kontakt1) > 0):
+                cursor.execute(
+                    'UPDATE kontakt SET kontaktartcode = ?, kontakt = ?, kontakt_intern = ?'
+                    ' WHERE id = ?',
+                    (kontaktartcode, kontakt1, kontakt_intern1, kontakte[0]['id'],)
+                )
+                dbcon.commit()
+            else:
+                cursor.execute('DELETE FROM kontakt WHERE id = ?', (kontakte[0]['id'],))
+                dbcon.commit()
+        else:
+            if(len(kontakt1) > 0):
+                cursor.execute(
+                    'INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)'
+                    ' VALUES (?, ?, ?, ?)',
+                    (person_id, kontaktartcode, kontakt1, kontakt_intern1,)
+                )
+                dbcon.commit()
+
+        kontakt2 = request.form['kontakt2']
+        kontakt_intern2 = ''.join(i for i in kontakt2 if not i in bad_chars)
+        if(len(kontakte) > 1):
+            if(len(kontakt2) > 0):
+                cursor.execute(
+                    'UPDATE kontakt SET kontaktartcode = ?, kontakt = ?, kontakt_intern = ?'
+                    ' WHERE id = ?',
+                    (kontaktartcode, kontakt2, kontakt_intern2, kontakte[1]['id'],)
+                )
+                dbcon.commit()
+            else:
+                cursor.execute('DELETE FROM kontakt WHERE id = ?', (kontakte[1]['id'],))
+                dbcon.commit()
+        else:
+            if(len(kontakt2) > 0):
+                cursor.execute(
+                    'INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)'
+                    ' VALUES (?, ?, ?, ?)',
+                    (person_id, kontaktartcode, kontakt2, kontakt_intern2,)
+                )
+                dbcon.commit()
         cursor.close()
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     tierhaltung = read_tierhaltung(id)
-    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, page_title="Person ändern")
+    adresse = read_adresse(person_id)
+    kontakte = read_kontakte(person_id)
+    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Person ändern")
 
 
 @bp.route('/<int:id>/create_behandlung', methods=('GET', 'POST'))
@@ -434,7 +516,7 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         cursor.close()
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung(behandlungsverlauf['tierhaltung_id'])
-    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung)
+    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
@@ -503,7 +585,7 @@ def edit_rechnung(rechnung_id):
         cursor.close()
     rechnung = read_rechnung(rechnung_id)
     tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
-    return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, rechnung=rechnung, tierhaltung=tierhaltung)
+    return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, rechnung=rechnung, tierhaltung=tierhaltung, page_title="Rechnung")
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))

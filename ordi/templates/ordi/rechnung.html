@@ -105,6 +105,12 @@
 
     <script>
         $(document).ready(function(){
+            $(".person input").prop("disabled", true);
+            $(".person select").prop("disabled", true);
+
+            $(".tier input").prop("disabled", true);
+            $(".tier select").prop("disabled", true);
+
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
                 dateFormat: "yy-mm-dd",

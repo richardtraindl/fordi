@@ -48,7 +48,7 @@
         <p><a class="btn" href="{{ url_for('ordi.create_tierhaltung') }}">neue Karteikarte</a></p>
         <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
         <p><a class="btn" id="karteikarte_loeschen" href="#">Karteikarte löschen</a></p>
-        <p>neue Rechnung</p>
+        <p><a class="btn" id="neue_rechnung" href="#">neue Rechnung</a></p>
         <p><a class="btn" id="neuer_behandlungsverlauf" href="#">neuer Behandlungsverlauf</a></p>
     </div>
 
@@ -97,6 +97,16 @@
                 }
                 else{
                     window.location = "/" + id.toString() + "/create_behandlungsverlauf";
+                }
+                return false; 
+            });
+            $('#neue_rechnung').click(function(){ 
+                var id = $("input:radio[name=option]:checked").val(); 
+                if(id == null){
+                    alert("Bitte eine Karteikarte auswählen!");
+                }
+                else{
+                    window.location = "/" + id.toString() + "/create_rechnung";
                 }
                 return false; 
             });

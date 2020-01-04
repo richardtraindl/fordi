@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="huge-gap"></div>
+    <div class="gap"></div>
 
     {% if rechnung %}
         <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">
@@ -27,44 +27,44 @@
     {% if rechnung %}
         <div class="fourcols">
             <label for="rechnungsjahr">Rechnungsjahr</label>
-            <input type="text" size=5 name="rechnungsjahr" id="rechnungsjahr" value="{{ rechnung['rechnungsjahr'] }}">
+            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ rechnung['rechnungsjahr'] }}" required>
             
             <label for="rechnungslfnr">Rechnungslfnr</label>
-            <input type="text" size=5 name="rechnungslfnr" id="rechnungslfnr" value="{{ rechnung['rechnungslfnr'] }}">
+            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{ rechnung['rechnungslfnr'] }}" required>
             
             <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=10 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ rechnung['ausstellungsdatum'] }}">
+            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ rechnung['ausstellungsdatum'] }}" required>
             
             <label for="ausstellungsort">Ausstellungsort</label>
-            <input type="text" size=20 name="ausstellungsort" id="rechnungslfnr" value="{{ rechnung['rechnungslfnr'] }}">
+            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{ rechnung['ausstellungsort'] }}" required>
         </div>
         <div class="twocols">
             <label for="diagnose">Diagnose</label>
-            <textarea style="width: 640px" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
+            <textarea style="width: 480px; height: 32px" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
             
             <label for="bezahlung">Bezahlung</label>
-            <input type="text" size=40 name="bezahlung" id="bezahlung" value="{{ rechnung['bezahlung'] }}">
+            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ rechnung['bezahlung'] }}">
         </div>
       {% else %}
-        <div class="fourcols">
+        <div class="eightcols">
             <label for="rechnungsjahr">Rechnungsjahr</label>
-            <input type="text" size=5 name="rechnungsjahr" id="rechnungsjahr" value="{{ request.form['rechnungsjahr'] }}">
+            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ request.form['rechnungsjahr'] }}" required>
             
             <label for="rechnungslfnr">Rechnungslfnr</label>
-            <input type="text" size=5 name="rechnungslfnr" id="rechnungslfnr" value="{{ request.form['rechnungslfnr'] }}">
+            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{ request.form['rechnungslfnr'] }}" required>
             
             <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=10 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ request.form['ausstellungsdatum'] }}">
+            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ request.form['ausstellungsdatum'] or ausstellungsdatum }}" required>
             
             <label for="ausstellungsort">Ausstellungsort</label>
-            <input type="text" size=20 name="ausstellungsort" id="rechnungslfnr" value="{{ request.form['rechnungslfnr'] }}">
+            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{ request.form['ausstellungsort'] or ausstellungsort }}" required>
         </div>
         <div class="twocols">
             <label for="diagnose">Diagnose</label>
-            <textarea style="width: 640px" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
+            <textarea style="width: 480px" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
             
             <label for="bezahlung">Bezahlung</label>
-            <input type="text" size=40 name="bezahlung" id="bezahlung" value="{{ request.form['bezahlung'] }}">
+            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ request.form['bezahlung'] }}">
         </div>
       {% endif %}
 
@@ -76,35 +76,38 @@
                 <th style="width: 8%">Datum</th>
                 <th style="width: 12%">Artikelart</th>
                 <th style="width: 60">Detail</th>
-                <th style="width: 20%">Betrag</th>
-                <th style="width: 10%">&nbsp;</th>
+                <th style="width: 19%">Betrag</th>
+                <th style="width: 1%">&nbsp;</th>
             </tr>
         </thead>
     </table>
-    <div style="height: 30%; overflow: scroll">
+
+    <div id="scroller" style="height: 160px; overflow: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
             {% for rechnungszeile in rechnungszeilen %}
-                <tr class="rechnungszeile">
-                    <td style="width: 8%"><input type="text" style="width: 100%" name="datum" id="datum-{{rechnungszeile['id']}}" class="date" value="{{ rechnungszeile['datum'] }}"></td>
-                    <td style="width: 12%"><textarea style="width: 100%" name="artikelartcode" id="artikelartcode-{{rechnungszeile['id']}}">{{ rechnungszeile['artikelartcode'] }}</textarea></td>
-                    <td style="width: 50%"><textarea style="width: 100%" name="artikel" id="artikel-{{rechnungszeile['id']}}">{{ rechnungszeile['artikel'] }}</textarea></td>
-                    <td style="width: 20%"><textarea style="width: 100%" name="betrag" id="betrag-{{rechnungszeile['id']}}">{{ rechnungszeile['betrag'] }}</textarea></td>
-                    <td style="width: 10%"><input type="submit" value="bearbeiten"></td>
+                <tr>
+                    <td style="width: 8%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile['datum'] }}"></td>
+                    <td style="width: 12%"><textarea style="width: 100%" name="artikelartcode[]">{{ rechnungszeile['artikelartcode'] }}</textarea></td>
+                    <td style="width: 60%"><textarea style="width: 100%" name="artikel[]">{{ rechnungszeile['artikel'] }}</textarea></td>
+                    <td style="width: 19%"><textarea style="width: 100%" name="betrag[]">{{ rechnungszeile['betrag'] }}</textarea></td>
+                    <td style="width: 1%"><input type="text" style="visibility: hidden" name="rechnungszeile_id[]" value="{{ rechnungszeile['id'] }}"></td>
                 </tr>
             {% endfor %}
-                <tr class="newrechnungszeile edit-focus">
-                    <td style="width: 8%"><input type="text" style="width: 100%" name="datum" id="datum" class="date" value="{{ request.form['datum'] }}"></td>
-                    <td style="width: 12%"><textarea style="width: 100%" name="artikelartcode" id="artikelartcode">{{ request.form['artikelartcode'] }}</textarea></td>
-                    <td style="width: 50%"><textarea style="width: 100%" name="artikel" id="artikel">{{ request.form['artikel'] }}</textarea></td>
-                    <td style="width: 20%"><textarea style="width: 100%" name="betrag" id="betrag">{{ request.form['betrag'] }}</textarea></td>
-                    <td style="width: 10%"><input type="submit" value="speichern"></td>
+                <tr class="edit-focus">
+                    <td style="width: 8%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ request.form['datum'] or rechnungszeile_datum }}"></td>
+                    <td style="width: 12%"><textarea style="width: 100%" name="artikelartcode[]" id="new-artikelartcode">{{ request.form['artikelartcode'] }}</textarea></td>
+                    <td style="width: 60%"><textarea style="width: 100%" name="artikel[]">{{ request.form['artikel'] }}</textarea></td>
+                    <td style="width: 19%"><textarea style="width: 100%" name="betrag[]">{{ request.form['betrag'] }}</textarea></td>
+                    <td style="width: 1%"><input type="text" style="visibility: hidden" name="rechnungszeile_id[]" value=""></td>
                 </tr>
             </tbody>
         </table>
-    </div>
+    
+        <div class="small-gap"></div>
 
-    <div><input type="submit" value="Rechnung drucken"></div>
+        <div><input type="submit" value="Rechnung drucken"></div>
+    </div>
     </form>
 
     <script>
@@ -121,8 +124,11 @@
                 changeMonth: true,
                 changeYear: true 
             });
+            
+            $("#new-artikelartcode").focus();
 
-            $("#diagnose").focus();
+            var element = document.getElementById("scroller");
+            element.scrollTop = element.scrollHeight;
         });
     </script>
 {% endblock %}

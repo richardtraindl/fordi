@@ -18,7 +18,7 @@ a { color: #377ba8; text-decoration: none;}
 
 header { 
     background: lightgray;
-    padding: 8px 20px 8px 20px;
+    padding: 4px 16px 4px 16px;
 } 
 header p { justify-items: end; text-align: right; }
 
@@ -51,17 +51,17 @@ nav a:active {
     align-items: center;
     justify-items: start;
 }
-.twocols > * { margin: 6px 6px 0 0 }
+.twocols > * { margin: 4px 6px 0 0 }
 
-.fourcols {
+.eightcols {
     display: inline-grid; 
-    grid-template-columns: auto auto auto auto; 
+    grid-template-columns: auto auto auto auto auto auto auto auto; 
     grid-template-rows: auto; 
     grid-auto-flow: row;
     align-items: center;
     justify-items: start;
 }
-.fourcols > * { margin: 6px 6px 0 0 }
+.eightcols > * { margin: 4px 6px 0 0 }
 
 .flex-container {
     display: flex; 

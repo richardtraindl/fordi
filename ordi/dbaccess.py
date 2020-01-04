@@ -187,3 +187,14 @@ def read_rechnung(rechnung_id):
     cursor.close()
     return rechnung
 
+
+def read_rechnungszeilen(rechnung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute(
+        'SELECT * FROM rechnungszeile WHERE rechnung_id = ?',
+        (rechnung_id,)
+    )
+    rechnungszeilen = cursor.fetchall()
+    cursor.close()
+    return rechnungszeilen

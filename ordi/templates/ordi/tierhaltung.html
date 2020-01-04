@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div class="huge-gap"></div>
+    <div class="gap"></div>
 
     <table class="liste">
         <thead>
@@ -37,11 +37,10 @@
             </tr>
         </thead>
     </table>
-  <div style="height: 30%; overflow: scroll">
+  <div id="scroller" style="height: 160px; overflow-y: scroll; overflow-x: hidden;">
     <table class="liste">
       <tbody>
       <form method="post" action="{{ url_for('ordi.save_behandlungen', id=tierhaltung['id']) }}">
-      {% set counter = 10 %}
       {% for behandlung in behandlungen %}
         <tr>
             <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum[]" class="date" value="{{ behandlung['behandlungsdatum'] }}"></td>
@@ -54,11 +53,10 @@
             <td style="width: 6%"><textarea style="width: 100%" name="gewicht[]">{{ behandlung['gewicht'] }}</textarea></td>
             <td style="width: 10%"><input type="text" style="visibility: hidden" name="behandlung_id[]" value="{{ behandlung['id'] }}"></td>
         </tr>
-        {% set counter = counter + 1 %}
       {% endfor %}
         <tr class="edit-focus">
             <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum[]" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
-            <td style="width: 25%"><textarea style="width: 100%" name="diagnose[]">{{ request.form['diagnose'] }}</textarea></td>
+            <td style="width: 25%"><textarea style="width: 100%" name="diagnose[]" id="new-diagnose">{{ request.form['diagnose'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1[]">{{ request.form['laborwerte1'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="laborwerte2[]">{{ request.form['laborwerte2'] }}</textarea></td>
             <td style="width: 11%"><textarea style="width: 100%" name="arzneien[]">{{ request.form['arzneien'] }}</textarea></td>
@@ -69,13 +67,17 @@
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <div><input type="text" style="visibility: hidden" name="counter" value="{{counter}}"></td>
+    <div class="small-gap"></div>
 
     <div><input type="submit" value="Speichern"></div>
-  </div>
+
     <script>
         $(document).ready(function(){
+            //$(".person > *").css("font-size", "12px");
+            //$(".tier > *").css("font-size", "12px");
+
             $(".person input").prop("disabled", true);
             $(".person select").prop("disabled", true);
 
@@ -89,7 +91,10 @@
                 changeYear: true 
             });
 
-            $("#diagnose").focus();
+            $("#new-diagnose").focus();
+
+            var element = document.getElementById("scroller");
+            element.scrollTop = element.scrollHeight;
         });
     </script>
 {% endblock %}

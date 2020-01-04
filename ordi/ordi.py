@@ -11,6 +11,7 @@ from werkzeug.exceptions import abort
 from ordi.auth import login_required
 from ordi.db import get_db
 from ordi.dbaccess import *
+from ordi.business import *
 
 bp = Blueprint('ordi', __name__)
 
@@ -565,6 +566,18 @@ def create_rechnung(id):
         steuerbetrag_dreizehn = 0
         steuerbetrag_zehn = 0
 
+        data = (
+            request.form.getlist('datum[]'),
+            request.form.getlist('artikelartcode[]'),
+            request.form.getlist('artikel[]'),
+            request.form.getlist('betrag[]'),
+            request.form.getlist('rechnungszeile_id[]')
+        )
+        rechnungszeilen = build_objects(data)
+        print(rechnungszeilen)
+        brutto_summe, netto_summe, steuerbetrag_zwanzig, \
+        steuerbetrag_dreizehn, steuerbetrag_zehn = calc_rechnung(rechnungszeilen)
+
         dbcon = get_db()
         cursor = dbcon.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
@@ -577,30 +590,20 @@ def create_rechnung(id):
         ).lastrowid
         dbcon.commit()
 
-        data = (
-            request.form.getlist('datum[]'),
-            request.form.getlist('artikelartcode[]'),
-            request.form.getlist('artikel[]'),
-            request.form.getlist('betrag[]'),
-            request.form.getlist('rechnungszeile_id[]')
-        )
-        rechnungen = build_objects(data)
-        print(rechnungen)
-
         cursor.execute(
             'SELECT * FROM tierhaltung WHERE id = ?',
             (id,)
         )
         tierhaltung = cursor.fetchone()
 
-        for rechnung in rechnungen:
-            datum = rechnung[0]
+        for rechnungszeile in rechnungszeilen:
+            datum = rechnungszeile[0]
             if(len(datum) == 0):
                 datum = date.today().strftime("%Y-%m-%d")
-            artikelartcode = rechnung[1]
-            artikel = rechnung[2]
-            betrag = rechnung[3]
-            rechnungszeile_id = rechnung[4]
+            artikelartcode = rechnungszeile[1]
+            artikel = rechnungszeile[2]
+            betrag = rechnungszeile[3]
+            rechnungszeile_id = rechnungszeile[4]
             if(len(artikelartcode) > 0 or len(artikel) > 0 or len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
                     cursor.execute(
@@ -640,16 +643,11 @@ def edit_rechnung(rechnung_id):
             ausstellungsort = "Wien"
         diagnose = request.form['diagnose']
         bezahlung = request.form['bezahlung']
-
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.execute(
-            'UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?, ausstellungsort = ?, diagnose = ?, bezahlung = ?'
-            ' WHERE id = ?',
-            (rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, rechnung_id,)
-        )
-        dbcon.commit()
+        brutto_summe = 0
+        netto_summe = 0
+        steuerbetrag_zwanzig = 0
+        steuerbetrag_dreizehn = 0
+        steuerbetrag_zehn = 0
 
         data = (
             request.form.getlist('datum[]'),
@@ -658,13 +656,27 @@ def edit_rechnung(rechnung_id):
             request.form.getlist('betrag[]'),
             request.form.getlist('rechnungszeile_id[]')
         )
-        rechnungen = build_objects(data)
-        for rechnung in rechnungen:
-            datum = rechnung[0]
-            artikelartcode = rechnung[1]
-            artikel = rechnung[2]
-            betrag = rechnung[3]
-            rechnungszeile_id = rechnung[4]
+        rechnungszeilen = build_objects(data)
+        print(rechnungszeilen)
+        brutto_summe, netto_summe, steuerbetrag_zwanzig, \
+        steuerbetrag_dreizehn, steuerbetrag_zehn = calc_rechnung(rechnungszeilen)
+
+        dbcon = get_db()
+        cursor = dbcon.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.execute(
+            'UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?, ausstellungsort = ?, diagnose = ?, bezahlung = ?, brutto_summe = ?, netto_summe = ?, steuerbetrag_zwanzig = ?, steuerbetrag_dreizehn = ?, steuerbetrag_zehn = ?'
+            ' WHERE id = ?',
+            (rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn, rechnung_id,)
+        )
+        dbcon.commit()
+
+        for rechnungszeile in rechnungszeilen:
+            datum = rechnungszeile[0]
+            artikelartcode = rechnungszeile[1]
+            artikel = rechnungszeile[2]
+            betrag = rechnungszeile[3]
+            rechnungszeile_id = rechnungszeile[4]
             if(len(artikelartcode) > 0 or len(artikel) > 0 or len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
                     cursor.execute(
@@ -687,6 +699,18 @@ def edit_rechnung(rechnung_id):
     rechnung = read_rechnung(rechnung_id)
     tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
     return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, page_title="Rechnung")
+
+
+@bp.route('/<int:rechnung_id>/<int:rechnungszeile_id>/delete_rechnungszeile', methods=('GET',))
+@login_required
+def delete_rechnungszeile(rechnung_id, rechnungszeile_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM rechnungszeile WHERE id = ?', (rechnungszeile_id,))
+    dbcon.commit()
+    cursor.close()
+    return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))

@@ -104,14 +104,14 @@
             <input size="20" name="strasse" id="strasse" value="{{ request.form['strasse'] }}">
         {% endif %}
 
-        {% if kontakte[0] %}
+        {% if kontakte and kontakte[0] %}
             <label for="kontakt1">Telefonnr.</label>
             <input size="20" name="kontakt1" id="kontakt1" value="{{ kontakte[0]['kontakt'] }}">
         {% else %}
             <label for="kontakt1">Telefonnr.</label>
             <input size="20" name="kontakt1" id="kontakt1" value="{{ request.form['kontakt1'] }}">
         {% endif %}
-        {% if kontakte[1] %}
+        {% if kontakte and kontakte[1] %}
             <label for="kontakt2">Telefonnr.</label>
             <input size="20" name="kontakt2" id="kontakt2" value="{{ kontakte[1]['kontakt'] }}">
         {% else %}

@@ -40,36 +40,39 @@
   <div style="height: 30%; overflow: scroll">
     <table class="liste">
       <tbody>
+      <form method="post" action="{{ url_for('ordi.save_behandlungen', id=tierhaltung['id']) }}">
+      {% set counter = 10 %}
       {% for behandlung in behandlungen %}
-        <tr class="behandlung">
-            <form method="post" action="{{ url_for('ordi.update_behandlung', id=tierhaltung['id'], behandlung_id=behandlung['id']) }}">
-                <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum" id="behandlungsdatum-{{behandlung['id']}}" class="date" value="{{ behandlung['behandlungsdatum'] }}"></td>
-                <td style="width: 25%"><textarea style="width: 100%" name="diagnose" id="diagnose-{{behandlung['id']}}">{{ behandlung['diagnose'] }}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1" id="laborwerte1-{{behandlung['id']}}">{{ behandlung['laborwerte1'] }}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte2" id="laborwerte2-{{behandlung['id']}}">{{ behandlung['laborwerte2'] }}</textarea></td>
-                <td style="width: 11%"><textarea style="width: 100%" name="arzneien" id="arzneien-{{behandlung['id']}}">{{ behandlung['arzneien'] }}</textarea></td>
-                <td style="width: 9%"><textarea style="width: 100%" name="arzneimittel" id="arzneimittel-{{behandlung['id']}}">{{ behandlung['arzneimittel'] }}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern" id="impfungen_extern-{{behandlung['id']}}">{{ behandlung['impfungen_extern'] }}</textarea></td>
-                <td style="width: 6%"><textarea style="width: 100%" name="gewicht_Kg" id="gewicht_Kg-{{behandlung['id']}}">{{ behandlung['gewicht_Kg'] }}</textarea></td>
-                <td style="width: 10%"><input style="visibility: hidden" type="submit" value="Bearbeiten"></td>
-            </form>
+        <tr>
+            <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum[]" class="date" value="{{ behandlung['behandlungsdatum'] }}"></td>
+            <td style="width: 25%"><textarea style="width: 100%" name="diagnose[]">{{ behandlung['diagnose'] }}</textarea></td>
+            <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1[]">{{ behandlung['laborwerte1'] }}</textarea></td>
+            <td style="width: 10%"><textarea style="width: 100%" name="laborwerte2[]">{{ behandlung['laborwerte2'] }}</textarea></td>
+            <td style="width: 11%"><textarea style="width: 100%" name="arzneien[]">{{ behandlung['arzneien'] }}</textarea></td>
+            <td style="width: 9%"><textarea style="width: 100%" name="arzneimittel[]">{{ behandlung['arzneimittel'] }}</textarea></td>
+            <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ behandlung['impfungen_extern'] }}</textarea></td>
+            <td style="width: 6%"><textarea style="width: 100%" name="gewicht[]">{{ behandlung['gewicht'] }}</textarea></td>
+            <td style="width: 10%"><input type="text" style="visibility: hidden" name="behandlung_id[]" value="{{ behandlung['id'] }}"></td>
         </tr>
+        {% set counter = counter + 1 %}
       {% endfor %}
-        <tr class="editbehandlung edit-focus">
-            <form method="post" action="{{ url_for('ordi.create_behandlung', id=tierhaltung['id']) }}">
-                <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum" id="behandlungsdatum" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
-                <td style="width: 25%"><textarea style="width: 100%" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1" id="laborwerte1">{{ request.form['laborwerte1'] }}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%" name="laborwerte2" id="laborwerte2">{{ request.form['laborwerte2'] }}</textarea></td>
-                <td style="width: 11%"><textarea style="width: 100%" name="arzneien" id="arzneien">{{ request.form['arzneien'] }}</textarea></td>
-                <td style="width: 9%"><textarea style="width: 100%" name="arzneimittel" id="arzneimittel">{{ request.form['arzneimittel'] }}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern" id="impfungen_extern">{{ request.form['impfungen_extern'] }}</textarea></td>
-                <td style="width: 6%"><textarea style="width: 100%" name="gewicht_Kg" id="gewicht_Kg">{{ request.form['gewicht_Kg'] }}</textarea></td>
-                <td style="width: 10%"><input type="submit" value="Speichern"></td>
-            </form>
+        <tr class="edit-focus">
+            <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum[]" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
+            <td style="width: 25%"><textarea style="width: 100%" name="diagnose[]">{{ request.form['diagnose'] }}</textarea></td>
+            <td style="width: 10%"><textarea style="width: 100%" name="laborwerte1[]">{{ request.form['laborwerte1'] }}</textarea></td>
+            <td style="width: 10%"><textarea style="width: 100%" name="laborwerte2[]">{{ request.form['laborwerte2'] }}</textarea></td>
+            <td style="width: 11%"><textarea style="width: 100%" name="arzneien[]">{{ request.form['arzneien'] }}</textarea></td>
+            <td style="width: 9%"><textarea style="width: 100%" name="arzneimittel[]">{{ request.form['arzneimittel'] }}</textarea></td>
+            <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ request.form['impfungen_extern'] }}</textarea></td>
+            <td style="width: 6%"><textarea style="width: 100%" name="gewicht[]">{{ request.form['gewicht'] }}</textarea></td>
+            <td style="width: 10%"><input type="text" style="width: 100%; visibility: hidden" name="behandlung_id[]" value=""></td>
         </tr>
       </tbody>
     </table>
+
+    <div><input type="text" style="visibility: hidden" name="counter" value="{{counter}}"></td>
+
+    <div><input type="submit" value="Speichern"></div>
   </div>
     <script>
         $(document).ready(function(){
@@ -78,11 +81,6 @@
 
             $(".tier input").prop("disabled", true);
             $(".tier select").prop("disabled", true);
-
-            $(".behandlung input").prop("disabled", true);
-            /*$(".behandlung input[type=submit]").css("visibility", "hidden");*/
-            $(".behandlung textarea").prop("disabled", true);
-            $(".behandlung select").prop("disabled", true);
 
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 

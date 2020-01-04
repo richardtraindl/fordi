@@ -49,7 +49,7 @@ sqlcreates = (
     """CREATE TABLE behandlung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
        tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
        behandlungsdatum DATE NOT NULL DEFAULT CURRENT_DATE, \
-       gewicht_Kg VARCHAR(50), \
+       gewicht VARCHAR(50), \
        diagnose VARCHAR(1000), \
        laborwerte1 VARCHAR(1000), \
        laborwerte2 VARCHAR(1000), \

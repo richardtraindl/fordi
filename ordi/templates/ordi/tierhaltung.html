@@ -19,7 +19,7 @@
             {% include 'ordi/_tier.html' %}
         </div>
     </div>
-
+ 
     <div class="gap"></div>
 
     <table class="liste">
@@ -37,7 +37,7 @@
             </tr>
         </thead>
     </table>
-  <div id="scroller" style="height: 160px; overflow-y: scroll; overflow-x: hidden;">
+  <div id="scroller" style="height: 240px; overflow-y: scroll; overflow-x: hidden;">
     <table class="liste">
       <tbody>
       <form method="post" action="{{ url_for('ordi.save_behandlungen', id=tierhaltung['id']) }}">
@@ -51,7 +51,10 @@
             <td style="width: 10%"><textarea style="width: 100%" name="arzneimittel[]">{{ behandlung['arzneimittel'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ behandlung['impfungen_extern'] }}</textarea></td>
             <td style="width: 6%"><textarea style="width: 100%" name="gewicht[]">{{ behandlung['gewicht'] }}</textarea></td>
-            <td style="width: 6%"><input type="text" style="visibility: hidden" name="behandlung_id[]" value="{{ behandlung['id'] }}"></td>
+            <td style="width: 6%">
+                <a class="zeile_loeschen" tierhaltung_id="{{ tierhaltung['id'] }}" behandlung_id="{{ behandlung['id'] }}" href="#">Zeile löschen</a>
+                <input type="hidden" name="behandlung_id[]" value="{{ behandlung['id'] }}">
+            </td>
         </tr>
       {% endfor %}
         <tr class="edit-focus">
@@ -63,7 +66,7 @@
             <td style="width: 10%"><textarea style="width: 100%" name="arzneimittel[]">{{ request.form['arzneimittel'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ request.form['impfungen_extern'] }}</textarea></td>
             <td style="width: 6%"><textarea style="width: 100%" name="gewicht[]">{{ request.form['gewicht'] }}</textarea></td>
-            <td style="width: 6%"><input type="text" style="width: 100%; visibility: hidden" name="behandlung_id[]" value=""></td>
+            <td style="width: 6%"><input type="hidden" name="behandlung_id[]" value=""></td>
         </tr>
       </tbody>
     </table>
@@ -73,17 +76,10 @@
 
     <div><input type="submit" value="Speichern"></div>
 
+
+   <div><a id="kontaktliste" liste="{{ kontaktliste }}" href="">kontaktliste</a></div>
     <script>
         $(document).ready(function(){
-            //$(".person > *").css("font-size", "12px");
-            //$(".tier > *").css("font-size", "12px");
-
-            $(".person input").prop("disabled", true);
-            $(".person select").prop("disabled", true);
-
-            $(".tier input").prop("disabled", true);
-            $(".tier select").prop("disabled", true);
-
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
                 dateFormat: "yy-mm-dd",
@@ -95,6 +91,26 @@
 
             var element = document.getElementById("scroller");
             element.scrollTop = element.scrollHeight;
+            
+            $('.zeile_loeschen').click(function(){ 
+                var tierhaltung_id = $(this).attr("tierhaltung_id");
+                var behandlung_id = $(this).attr("behandlung_id");
+                if(tierhaltung_id != null && behandlung_id != null){
+                    if(confirm("Soll der Datensatz gelöscht werden?")){
+                        window.location = "/" + tierhaltung_id.toString() + "/" + behandlung_id.toString() + "/delete_behandlung";
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                return false; 
+            });
+            
+            $('#kontaktliste').click(function(){ 
+                var liste = $(this).attr("liste");
+                alert(liste);
+            });
         });
     </script>
 {% endblock %}

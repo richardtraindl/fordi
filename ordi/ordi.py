@@ -12,6 +12,7 @@ from ordi.auth import login_required
 from ordi.db import get_db
 from ordi.dbaccess import *
 from ordi.business import *
+from ordi.values import *
 
 bp = Blueprint('ordi', __name__)
 
@@ -194,8 +195,11 @@ def show_tierhaltung(id):
 
     behandlungen = read_behandlungen(id)
     behandlungsdatum = date.today().strftime("%Y-%m-%d")
-
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, page_title="Karteikarte")
+    
+    kontaktliste = []
+    for kontakt in KONTAKT:
+        kontaktliste.append(kontakt)
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, kontaktliste=kontaktliste, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
@@ -518,7 +522,9 @@ def create_behandlungsverlauf(id):
         return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
     else:
         tierhaltung = read_tierhaltung(id)
-    return render_template('ordi/behandlungsverlauf.html', tierhaltung=tierhaltung, page_title="Behandlungsverlauf")
+        adresse = read_adresse(tierhaltung['person_id'])
+        kontakte = read_kontakte(tierhaltung['person_id'])
+    return render_template('ordi/behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/edit_behandlungsverlauf', methods=('GET', 'POST'))
@@ -543,7 +549,9 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         cursor.close()
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung(behandlungsverlauf['tierhaltung_id'])
-    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, page_title="Behandlungsverlauf")
+    adresse = read_adresse(tierhaltung['person_id'])
+    kontakte = read_kontakte(tierhaltung['person_id'])
+    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
@@ -623,10 +631,12 @@ def create_rechnung(id):
         cursor.close()
         return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id,))
     tierhaltung = read_tierhaltung(id)
+    adresse = read_adresse(tierhaltung['person_id'])
+    kontakte = read_kontakte(tierhaltung['person_id'])
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
     ausstellungsdatum = date.today().strftime("%Y-%m-%d")
     ausstellungsort = "Wien"
-    return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, ausstellungsdatum=ausstellungsdatum, ausstellungsort=ausstellungsort, rechnungszeile_datum=rechnungszeile_datum, page_title="Rechnung")
+    return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, ausstellungsdatum=ausstellungsdatum, ausstellungsort=ausstellungsort, rechnungszeile_datum=rechnungszeile_datum, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
@@ -698,7 +708,21 @@ def edit_rechnung(rechnung_id):
     rechnungszeilen = read_rechnungszeilen(rechnung_id)
     rechnung = read_rechnung(rechnung_id)
     tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
-    return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, page_title="Rechnung")
+    adresse = read_adresse(tierhaltung['person_id'])
+    kontakte = read_kontakte(tierhaltung['person_id'])
+    return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Rechnung")
+
+
+@bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))
+@login_required
+def delete_behandlung(id, behandlung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM behandlung WHERE id = ?', (behandlung_id,))
+    dbcon.commit()
+    cursor.close()
+    return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
 @bp.route('/<int:rechnung_id>/<int:rechnungszeile_id>/delete_rechnungszeile', methods=('GET',))

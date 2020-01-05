@@ -1,0 +1,121 @@
+
+    <div class="twocols person">
+        <label for="anredeartcode">Anrede</label>
+        <select name="anredeartcode" id="anredeartcode">
+        {% if tierhaltung %}
+            {% set anredeartcode = tierhaltung['anredeartcode'] %}
+        {% else %}
+            {% set anredeartcode = request.form['anredeartcode'] %}
+        {% endif %}
+
+        {% if anredeartcode == 0 %}
+            <option value="0" selected>&nbsp;</option>
+        {% else %}
+            <option value="0">&nbsp;</option>
+        {% endif %}
+        {% if anredeartcode == 1 %}
+            <option value="1" selected>Herr</option>
+        {% else %}
+            <option value="1">Herr</option>
+        {% endif %}
+        {% if anredeartcode == 2 %}
+            <option value="2" selected>Frau</option>
+        {% else %}
+            <option value="2">Frau</option>
+        {% endif %}
+        {% if anredeartcode == 3 %}
+            <option value="3" selected>Familie</option>
+        {% else %}
+            <option value="3">Familie</option>
+        {% endif %}
+        {% if anredeartcode == 4 %}
+            <option value="4" selected>Firma</option>
+        {% else %}
+            <option value="4">Firma</option>
+        {% endif %}
+        </select>
+        
+        <label for="titel">Titel</label>
+        {% if tierhaltung %}
+            <input size="5" name="titel" id="titel" value="{{ tierhaltung['titel'] }}">
+        {% else %}
+            <input size="5" name="titel" id="titel" value="{{ request.form['titel'] }}">        
+        {% endif %}
+
+        <label for="familienname">Familienname</label>
+        {% if tierhaltung %}
+            <input size="20" name="familienname" id="familienname" value="{{ tierhaltung['familienname'] }}" required>        
+        {% else %}
+            <input size="20" name="familienname" id="familienname" value="{{ request.form['familienname'] }}" required>
+        {% endif %}
+
+        <label for="vorname">Vorname</label>
+        {% if tierhaltung %}
+            <input size="20" name="vorname" id="vorname" value="{{ tierhaltung['vorname'] }}">
+        {% else %}
+            <input size="20" name="vorname" id="vorname" value="{{ request.form['vorname'] }}">
+        {% endif %}
+
+        <label for="notiz">Notiz</label>
+        {% if tierhaltung %}
+            <input size="20" name="notiz" id="wplayer_name" value="{{ tierhaltung['notiz'] }}">        
+        {% else %}
+            <input size="20" name="notiz" id="wplayer_name" value="{{ request.form['notiz'] }}">
+        {% endif %}
+        
+
+        <label for="kunde">Kunden Kennzeichen</label>
+        {% if tierhaltung %}
+            {% if tierhaltung['kunde'] == 0 %}
+                <input type="checkbox" name="kunde" value="0">
+            {% else %}
+                <input type="checkbox" name="kunde" value="1" checked>
+            {% endif %}
+        {% else %}
+            {% if new %}
+                <input type="checkbox" name="kunde" value="1" checked>
+            {% else %}
+                {% if request.form.get('kunde') %}
+                    <input type="checkbox" name="kunde" value="1" checked>
+                {% else %}
+                    <input type="checkbox" name="kunde" value="1">
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        <label for="postleitzahl">Postleitzahl</label>
+        {% if adresse %}
+            <input size="5" name="postleitzahl" id="postleitzahl" value="{{ adresse['postleitzahl'] }}">        
+        {% else %}
+            <input size="5" name="postleitzahl" id="postleitzahl" value="{{ request.form['postleitzahl'] }}">
+        {% endif %}
+        
+        <label for="ort">Ort</label>
+        {% if adresse %}
+            <input size="20" name="ort" id="ort" value="{{ adresse['ort'] }}">        
+        {% else %}
+            <input size="20" name="ort" id="ort" value="{{ request.form['ort'] }}">
+        {% endif %}
+
+        <label for="strasse">Straße</label>
+        {% if adresse %}
+            <input size="20" name="strasse" id="strasse" value="{{ adresse['strasse'] }}">        
+        {% else %}
+            <input size="20" name="strasse" id="strasse" value="{{ request.form['strasse'] }}">
+        {% endif %}
+
+        {% if kontakte and kontakte[0] %}
+            <label for="kontakt1">Telefonnr.</label>
+            <input size="20" name="kontakt1" id="kontakt1" value="{{ kontakte[0]['kontakt'] }}">
+        {% else %}
+            <label for="kontakt1">Telefonnr.</label>
+            <input size="20" name="kontakt1" id="kontakt1" value="{{ request.form['kontakt1'] }}">
+        {% endif %}
+        {% if kontakte and kontakte[1] %}
+            <label for="kontakt2">Telefonnr.</label>
+            <input size="20" name="kontakt2" id="kontakt2" value="{{ kontakte[1]['kontakt'] }}">
+        {% else %}
+            <label for="kontakt2">Telefonnr.</label>
+            <input size="20" name="kontakt2" id="kontakt2" value="{{ request.form['kontakt2'] }}">
+        {% endif %}
+    </div>

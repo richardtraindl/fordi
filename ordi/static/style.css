@@ -53,15 +53,15 @@ nav a:active {
 }
 .twocols > * { margin: 4px 6px 0 0 }
 
-.eightcols {
+.fourcols {
     display: inline-grid; 
-    grid-template-columns: auto auto auto auto auto auto auto auto; 
+    grid-template-columns: auto auto auto auto;
     grid-template-rows: auto; 
     grid-auto-flow: row;
     align-items: center;
     justify-items: start;
 }
-.eightcols > * { margin: 4px 6px 0 0 }
+.fourcols > * { margin: 4px 6px 0 0 }
 
 .flex-container {
     display: flex; 
@@ -78,7 +78,7 @@ input.danger { color: #cc2f2e; }
 input[type=submit], input[type=reset] { align-self: start; min-width: 40px; }
 textarea {
   width: 100%;
-  height: 60px;
+  height: 64px;
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;

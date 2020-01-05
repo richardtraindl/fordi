@@ -25,6 +25,7 @@
     {% endif %}
 
     {% if rechnung %}
+      <div>
         <div class="fourcols">
             <label for="rechnungsjahr">Rechnungsjahr</label>
             <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ rechnung['rechnungsjahr'] }}" required>
@@ -38,6 +39,8 @@
             <label for="ausstellungsort">Ausstellungsort</label>
             <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{ rechnung['ausstellungsort'] }}" required>
         </div>
+      </div>
+      <div>
         <div class="twocols">
             <label for="diagnose">Diagnose</label>
             <textarea style="width: 480px; height: 32px" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
@@ -45,8 +48,10 @@
             <label for="bezahlung">Bezahlung</label>
             <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ rechnung['bezahlung'] }}">
         </div>
+      <div>
       {% else %}
-        <div class="eightcols">
+      <div>
+        <div class="fourcols">
             <label for="rechnungsjahr">Rechnungsjahr</label>
             <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ request.form['rechnungsjahr'] }}" required>
             
@@ -59,6 +64,8 @@
             <label for="ausstellungsort">Ausstellungsort</label>
             <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{ request.form['ausstellungsort'] or ausstellungsort }}" required>
         </div>
+      </div>
+      <div>
         <div class="twocols">
             <label for="diagnose">Diagnose</label>
             <textarea style="width: 480px" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
@@ -66,6 +73,7 @@
             <label for="bezahlung">Bezahlung</label>
             <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ request.form['bezahlung'] }}">
         </div>
+      </div>
       {% endif %}
 
     <div class="gap"></div>
@@ -82,7 +90,7 @@
         </thead>
     </table>
 
-    <div id="scroller" style="height: 160px; overflow: scroll; overflow-x: hidden;">
+    <div id="scroller" style="height: 240px; overflow: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
             {% for rechnungszeile in rechnungszeilen %}
@@ -90,10 +98,10 @@
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile['datum'] }}" required></td>
                     {% set artikelartcode = rechnungszeile['artikelartcode'] %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 40px;" name="artikel[]">{{ rechnungszeile['artikel'] }}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 40px;" name="betrag[]" required>{{ rechnungszeile['betrag'] }}</textarea></td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ rechnungszeile['artikel'] }}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ rechnungszeile['betrag'] }}</textarea></td>
                     <td style="width: 6%">
-                        <a href="{{ url_for('ordi.delete_rechnungszeile', rechnung_id=rechnung['id'], rechnungszeile_id=rechnungszeile['id']) }}">Zeile löschen</a>
+                        <a class="zeile_loeschen" rechnung_id="{{ rechnung['id'] }}" rechnungszeile_id="{{ rechnungszeile['id'] }}" href="#">Zeile löschen</a>
                         <input type="hidden" name="rechnungszeile_id[]" value="{{ rechnungszeile['id'] }}">
                     </td>
                 </tr>
@@ -102,8 +110,8 @@
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ request.form['datum'] or rechnungszeile_datum }}" required></td>
                     {% set artikelartcode = request.form['artikelartcode'] %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 40px;" name="artikel[]">{{ request.form['artikel'] }}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 40px;" name="betrag[]" required>{{ request.form['betrag'] }}</textarea></td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ request.form['artikel'] }}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ request.form['betrag'] }}</textarea></td>
                     <td style="width: 6%">
                         <a id="neue_zeile" href="#">neue Zeile</a>
                         <input type="hidden" name="rechnungszeile_id[]" value="">
@@ -120,12 +128,6 @@
 
     <script>
         $(document).ready(function(){
-            $(".person input").prop("disabled", true);
-            $(".person select").prop("disabled", true);
-
-            $(".tier input").prop("disabled", true);
-            $(".tier select").prop("disabled", true);
-
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
                 dateFormat: "yy-mm-dd",
@@ -140,6 +142,21 @@
             
             $('#neue_zeile').click(function(){ 
                 $('form').submit();
+                return false; 
+            });
+            
+            $('.zeile_loeschen').click(function(){ 
+                var rechnung_id = $(this).attr("rechnung_id");
+                var rechnungszeile_id = $(this).attr("rechnungszeile_id");
+                if(rechnung_id != null && rechnungszeile_id != null){
+                    if(confirm("Soll der Datensatz gelöscht werden?")){
+                        window.location = "/" + rechnung_id.toString() + "/" + rechnungszeile_id.toString() + "/delete_rechnungszeile";
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
                 return false; 
             });
         });

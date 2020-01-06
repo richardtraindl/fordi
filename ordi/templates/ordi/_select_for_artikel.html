@@ -1,51 +1,56 @@
     
         <select name="artikelartcode[]">
-        {% if artikelartcode == 1 %}
+        {% if artikelartcode == 0 or artikelartcode == "0" %}
+            <option value="0" selected>&nbsp;</option>
+        {% else %}
+            <option value="0">&nbsp;</option>
+        {% endif %}
+        {% if artikelartcode == 1 or artikelartcode == "1" %}
             <option value="1" selected>Visite</option>
         {% else %}
             <option value="1">Visite</option>
         {% endif %}
-        {% if artikelartcode == 2 %}
+        {% if artikelartcode == 2 or artikelartcode == "2" %}
             <option value="2" selected>Labor</option>
         {% else %}
             <option value="2">Labor</option>
         {% endif %}
-        {% if artikelartcode == 3 %}
+        {% if artikelartcode == 3 or artikelartcode == "3" %}
             <option value="3" selected>Injektion</option>
         {% else %}
             <option value="3">Injektion</option>
         {% endif %}
-        {% if artikelartcode == 4 %}
+        {% if artikelartcode == 4 or artikelartcode == "4" %}
             <option value="4" selected>Röntgen</option>
         {% else %}
             <option value="4">Röntgen</option>
         {% endif %}
-        {% if artikelartcode == 5 %}
+        {% if artikelartcode == 5 or artikelartcode == "5" %}
             <option value="5" selected>Ultraschall</option>
         {% else %}
             <option value="5">Ultraschall</option>
         {% endif %}
-        {% if artikelartcode == 6 %}
+        {% if artikelartcode == 6 or artikelartcode == "6" %}
             <option value="6" selected>Medikamente</option>
         {% else %}
             <option value="6">Medikamente</option>
         {% endif %}
-        {% if artikelartcode == 7 %}
+        {% if artikelartcode == 7 or artikelartcode == "7" %}
             <option value="7" selected>Futter und Medikamente</option>
         {% else %}
             <option value="7">Futter und Medikamente</option>
         {% endif %}
-        {% if artikelartcode == 8 %}
+        {% if artikelartcode == 8 or artikelartcode == "8" %}
             <option value="8" selected>Artikel mit 20%</option>
         {% else %}
             <option value="8">Artikel mit 20%</option>
         {% endif %}
-        {% if artikelartcode == 9 %}
+        {% if artikelartcode == 9 or artikelartcode == "9" %}
             <option value="9" selected>Artikel mit 13%</option>
         {% else %}
             <option value="9">Artikel mit 13%</option>
         {% endif %}
-        {% if artikelartcode == 10 %}
+        {% if artikelartcode == 10 or artikelartcode == "10" %}
             <option value="10" selected>Artikel mit 10%</option>
         {% else %}
             <option value="10">Artikel mit 10%</option>

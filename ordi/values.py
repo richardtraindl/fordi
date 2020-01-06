@@ -126,6 +126,7 @@ IMPFUNG = {
 
 
 ARTIKEL = {
+    ''                       : 0,
     'Visite'                 : 1,
     'Labor'                  : 2,
     'Injektion'              : 3,

@@ -198,7 +198,8 @@ def show_tierhaltung(id):
     
     kontaktliste = []
     for kontakt in KONTAKT:
-        kontaktliste.append(kontakt)
+        kontaktliste.append(kontakt + "   ")
+    print(kontaktliste)
     return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, kontaktliste=kontaktliste, page_title="Karteikarte")
 
 
@@ -431,14 +432,14 @@ def create_behandlung(id):
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
-def build_objects(data):
-    objects = []
+def build_behandlungen(data):
+    behandlungen = []
     for idx in range(len(data[0])):
-        item = []
+        behandlung = []
         for row in data:
-            item.append(row[idx])
-        objects.append(item)
-    return objects
+            behandlung.append(row[idx])
+        behandlungen.append(behandlung)
+    return behandlungen
 
 @bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
 @login_required
@@ -455,7 +456,7 @@ def save_behandlungen(id):
             request.form.getlist('gewicht[]'),
             request.form.getlist('behandlung_id[]'),
         )
-        behandlungen = build_objects(data)
+        behandlungen = build_behandlungen(data)
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -554,6 +555,19 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
     return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
 
 
+def build_rechnungszeilen(data):
+    rechnungszeilen = []
+    for idx in range(len(data[0])):
+        rechnungszeile = []
+        for row in data:
+            rechnungszeile.append(row[idx])
+        if(rechnungszeile[1] == "0" and len(rechnungszeile[2]) == 0 and
+           len(rechnungszeile[3]) == 0 and len(rechnungszeile[4]) == 0):
+            continue
+        else:
+            rechnungszeilen.append(rechnungszeile)
+    return rechnungszeilen
+
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
 @login_required
 def create_rechnung(id):
@@ -581,10 +595,16 @@ def create_rechnung(id):
             request.form.getlist('betrag[]'),
             request.form.getlist('rechnungszeile_id[]')
         )
-        rechnungszeilen = build_objects(data)
-        print(rechnungszeilen)
-        brutto_summe, netto_summe, steuerbetrag_zwanzig, \
-        steuerbetrag_dreizehn, steuerbetrag_zehn = calc_rechnung(rechnungszeilen)
+        req_rechnungszeilen = build_rechnungszeilen(data)
+        print(req_rechnungszeilen)
+        calc = calc_rechnung(req_rechnungszeilen)
+        print(str(calc.brutto_summe) + " error: " + calc.error_msg)
+        if(len(calc.error_msg) > 0):
+            flash(calc.error_msg)
+            tierhaltung = read_tierhaltung(id)
+            adresse = read_adresse(tierhaltung['person_id'])
+            kontakte = read_kontakte(tierhaltung['person_id'])
+            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -604,14 +624,14 @@ def create_rechnung(id):
         )
         tierhaltung = cursor.fetchone()
 
-        for rechnungszeile in rechnungszeilen:
-            datum = rechnungszeile[0]
+        for req_rechnungszeile in req_rechnungszeilen:
+            datum = req_rechnungszeile[0]
             if(len(datum) == 0):
                 datum = date.today().strftime("%Y-%m-%d")
-            artikelartcode = rechnungszeile[1]
-            artikel = rechnungszeile[2]
-            betrag = rechnungszeile[3]
-            rechnungszeile_id = rechnungszeile[4]
+            artikelartcode = req_rechnungszeile[1]
+            artikel = req_rechnungszeile[2]
+            betrag = req_rechnungszeile[3]
+            rechnungszeile_id = req_rechnungszeile[4]
             if(len(artikelartcode) > 0 or len(artikel) > 0 or len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
                     cursor.execute(
@@ -666,10 +686,18 @@ def edit_rechnung(rechnung_id):
             request.form.getlist('betrag[]'),
             request.form.getlist('rechnungszeile_id[]')
         )
-        rechnungszeilen = build_objects(data)
-        print(rechnungszeilen)
-        brutto_summe, netto_summe, steuerbetrag_zwanzig, \
-        steuerbetrag_dreizehn, steuerbetrag_zehn = calc_rechnung(rechnungszeilen)
+        print(data)
+        req_rechnungszeilen = build_rechnungszeilen(data)
+        print(req_rechnungszeilen)
+        calc = calc_rechnung(req_rechnungszeilen)
+        print(str(calc.brutto_summe) + " error: " + calc.error_msg)
+        if(len(calc.error_msg) > 0):
+            flash(calc.error_msg)
+            rechnung = read_rechnung(rechnung_id)
+            tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
+            adresse = read_adresse(tierhaltung['person_id'])
+            kontakte = read_kontakte(tierhaltung['person_id'])
+            return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
 
         dbcon = get_db()
         cursor = dbcon.cursor()
@@ -681,13 +709,13 @@ def edit_rechnung(rechnung_id):
         )
         dbcon.commit()
 
-        for rechnungszeile in rechnungszeilen:
-            datum = rechnungszeile[0]
-            artikelartcode = rechnungszeile[1]
-            artikel = rechnungszeile[2]
-            betrag = rechnungszeile[3]
-            rechnungszeile_id = rechnungszeile[4]
-            if(len(artikelartcode) > 0 or len(artikel) > 0 or len(betrag) > 0):
+        for req_rechnungszeile in req_rechnungszeilen:
+            datum = req_rechnungszeile[0]
+            artikelartcode = req_rechnungszeile[1]
+            artikel = req_rechnungszeile[2]
+            betrag = req_rechnungszeile[3]
+            rechnungszeile_id = req_rechnungszeile[4]
+            if(len(datum) == 10 and len(artikelartcode) > 0 and len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
                     cursor.execute(
                         'INSERT INTO rechnungszeile (rechnung_id, datum, artikelartcode, artikel, betrag)'
@@ -723,6 +751,30 @@ def delete_behandlung(id, behandlung_id):
     dbcon.commit()
     cursor.close()
     return redirect(url_for('ordi.show_tierhaltung', id=id))
+
+
+@bp.route('/<int:behandlungsverlauf_id>/delete_behandlungsverlauf', methods=('GET',))
+@login_required
+def delete_behandlungsverlauf(behandlungsverlauf_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM behandlungsverlauf WHERE id = ?', (behandlungsverlauf_id,))
+    dbcon.commit()
+    cursor.close()
+    return redirect(url_for('ordi.behandlungsverlaeufe'))
+
+
+@bp.route('/<int:rechnung_id>/delete_rechnung', methods=('GET',))
+@login_required
+def delete_rechnung(rechnung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM rechnung WHERE id = ?', (rechnung_id,))
+    dbcon.commit()
+    cursor.close()
+    return redirect(url_for('ordi.rechnungen'))
 
 
 @bp.route('/<int:rechnung_id>/<int:rechnungszeile_id>/delete_rechnungszeile', methods=('GET',))

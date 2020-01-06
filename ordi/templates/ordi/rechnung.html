@@ -18,11 +18,15 @@
 
     <div class="gap"></div>
 
-    {% if rechnung %}
-        <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">
+  {% if rechnung %}
+    <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">
+  {% else %}
+    {% if rechnung_id %}
+    <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung_id) }}">
     {% else %}
-        <form method="post" action="{{ url_for('ordi.create_rechnung', id=tierhaltung['id']) }}">
+    <form method="post" action="{{ url_for('ordi.create_rechnung', id=tierhaltung['id']) }}">
     {% endif %}
+  {% endif %}
 
     {% if rechnung %}
       <div>
@@ -68,7 +72,7 @@
       <div>
         <div class="twocols">
             <label for="diagnose">Diagnose</label>
-            <textarea style="width: 480px" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
+            <textarea style="width: 480px; height: 42px;" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
             
             <label for="bezahlung">Bezahlung</label>
             <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ request.form['bezahlung'] }}">
@@ -76,9 +80,9 @@
       </div>
       {% endif %}
 
-    <div class="gap"></div>
+      <div class="gap"></div>
 
-    <table class="liste">
+      <table class="liste">
         <thead>
             <tr>
                 <th style="width: 10%">Datum</th>
@@ -88,12 +92,13 @@
                 <th style="width: 7%">&nbsp;</th>
             </tr>
         </thead>
-    </table>
+      </table>
 
-    <div id="scroller" style="height: 240px; overflow: scroll; overflow-x: hidden;">
+      <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
-            {% for rechnungszeile in rechnungszeilen %}
+            {% if rechnung %}
+              {% for rechnungszeile in rechnungszeilen %}
                 <tr>
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile['datum'] }}" required></td>
                     {% set artikelartcode = rechnungszeile['artikelartcode'] %}
@@ -105,28 +110,100 @@
                         <input type="hidden" name="rechnungszeile_id[]" value="{{ rechnungszeile['id'] }}">
                     </td>
                 </tr>
-            {% endfor %}
-                <tr class="edit-focus">
-                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ request.form['datum'] or rechnungszeile_datum }}" required></td>
-                    {% set artikelartcode = request.form['artikelartcode'] %}
+              {% endfor %}
+                <tr id="neue_zeile">
+                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile_datum }}"></td>
+                    {% set artikelartcode = 0 %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ request.form['artikel'] }}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ request.form['betrag'] }}</textarea></td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
                     <td style="width: 6%">
-                        <a id="neue_zeile" href="#">neue Zeile</a>
+                        <a href="#" onclick="newrow();">neue Zeile</a>
                         <input type="hidden" name="rechnungszeile_id[]" value="">
                     </td>
                 </tr>
+            {% else %}
+                {% for req_rechnungszeile in req_rechnungszeilen %}
+                  <tr>
+                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ req_rechnungszeile[0] or rechnungszeile_datum }}"></td>
+                    {% set artikelartcode = req_rechnungszeile[1] %}
+                    <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ req_rechnungszeile[2] }}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{ req_rechnungszeile[3] }}</textarea></td>
+                    <td style="width: 6%">
+                        <a class="zeile_loeschen" rechnung_id="{{ rechnung['id'] }}" rechnungszeile_id="{{ req_rechnungszeile['id'] }}" href="#">Zeile löschen</a>
+                        <input type="hidden" name="rechnungszeile_id[]" value="{{ req_rechnungszeile[4] }}">
+                    </td>
+                  </tr>
+                {% endfor %}
+                  <tr id="neue_zeile">
+                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile_datum }}"></td>
+                    {% set artikelartcode = 0 %}
+                    <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
+                    <td style="width: 6%">
+                        <a href="#" onclick="newrow();">neue Zeile</a>
+                        <input type="hidden" name="rechnungszeile_id[]" value="">
+                    </td>
+                  </tr>
+              {% endif %}
             </tbody>
         </table>
-    
-        <div class="small-gap"></div>
+      </div>
 
-        <div><a class="btn" id="rechnung_drucken" href="#">Rechnung drucken</a></div>
-    </div>
+      <div class="small-gap"></div>
+
+      <div><input type="submit" value="Rechnung drucken"></div>
     </form>
 
     <script>
+        function newrow() {
+            var childanchor = $("a[onclick='newrow();']").first();
+            // childanchor.empty();
+            childanchor.text("Zeile löschen");
+            //childanchor.removeAttr("onclick");
+            childanchor.attr("onclick", "delete_newrow($(this));");
+            $("#neue_zeile").removeAttr("id");
+
+            $("tbody").append(
+              '<tr id="neue_zeile">' +
+                '<td style="width: 10%">' + 
+                    '<input type="text" style="width: 100%" name="datum[]" class="date" value="">' + 
+                '</td>' + 
+                '<td style="width: 20%">' + 
+                    '<select name="artikelartcode[]">' +
+                        '<option value="0" selected>&nbsp;</option>' +
+                        '<option value="1">Visite</option>' +
+                        '<option value="2">Labor</option>' +
+                        '<option value="3">Injektion</option>' +
+                        '<option value="4">Röntgen</option>' +
+                        '<option value="5">Ultraschall</option>' +
+                        '<option value="6">Medikamente</option>' +
+                        '<option value="7">Futter und Medikamente</option>' +
+                        '<option value="8">Artikel mit 20%</option>' +
+                        '<option value="9">Artikel mit 13%</option>' +
+                        '<option value="10">Artikel mit 10%</option>' +
+                    '</select>' +
+                '</td>' +
+                '<td style="width: 54%">' + 
+                    '<textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea>' + 
+                '</td>' + 
+                '<td style="width: 10%">' +
+                    '<textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea>' + 
+                '</td>' + 
+                '<td style="width: 6%">' + 
+                    '<a href="#" onclick="newrow();">neue Zeile</a>' + 
+                    '<input type="hidden" name="rechnungszeile_id[]" value="">' +
+                '</td>' +
+              '</tr>'
+            );
+        }
+
+        function delete_newrow($obj) {
+            $obj.closest("tr").remove();
+        };
+
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
@@ -139,12 +216,7 @@
 
             var element = document.getElementById("scroller");
             element.scrollTop = element.scrollHeight;
-            
-            $('#neue_zeile').click(function(){ 
-                $('form').submit();
-                return false; 
-            });
-            
+
             $('.zeile_loeschen').click(function(){ 
                 var rechnung_id = $(this).attr("rechnung_id");
                 var rechnungszeile_id = $(this).attr("rechnungszeile_id");
@@ -159,6 +231,6 @@
                 }
                 return false; 
             });
-        });
+         });
     </script>
 {% endblock %}

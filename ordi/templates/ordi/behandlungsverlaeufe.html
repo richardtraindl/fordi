@@ -23,7 +23,8 @@
 
     <div class="gap"></div>
 
-    <table class="liste">
+    <div style="max-height: 70vh; overflow-y: scroll">
+      <table class="liste">
         <tr>
             <th width="2%">&nbsp;</th>
             <th width="8%">Behandlungsdatum</th>
@@ -50,17 +51,19 @@
             <td style="width: 8%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geburtsdatum'] }}</a></td>
         </tr>
       {% endfor %}
-    </table>
+      </table>
+    </div>
 
     <div class="gap"></div>
 
     <div class="flex-container">
-        <p><a class="btn" id="edit_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
+        <p><a class="btn" id="zum_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
+        <p><a class="btn" id="behandlungsverlauf_loeschen" href="#">Behandlungsverlauf löschen</a></p>
     </div>
 
     <script>
         $(document).ready(function() {
-            $('#edit_behandlungsverlauf').click(function(){ 
+            $('#zum_behandlungsverlauf').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
                     alert("Bitte eine Karteikarte auswählen!");
@@ -70,7 +73,7 @@
                 }
                 return false; 
             });
-            $('#karteikarte_loeschen').click(function(){ 
+            $('#behandlungsverlauf_loeschen').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
                     alert("Bitte eine Karteikarte auswählen!");

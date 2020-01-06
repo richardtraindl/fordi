@@ -164,6 +164,17 @@ def read_behandlungen(id):
     return behandlungen
 
 
+def read_behandlung(behandlung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute(
+        'SELECT * FROM behandlung WHERE id = ?', (behandlung_id,)
+    )
+    behandlung = cursor.fetchone()
+    cursor.close()
+    return behandlung
+
+
 def read_behandlungsverlauf(behandlungsverlauf_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -198,3 +209,16 @@ def read_rechnungszeilen(rechnung_id):
     rechnungszeilen = cursor.fetchall()
     cursor.close()
     return rechnungszeilen
+
+
+def read_rechnungszeile(rechnungszeile_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute(
+        'SELECT * FROM rechnungszeile WHERE id = ?',
+        (rechnungszeile_id,)
+    )
+    rechnungszeile = cursor.fetchone()
+    cursor.close()
+    return rechnungszeile
+

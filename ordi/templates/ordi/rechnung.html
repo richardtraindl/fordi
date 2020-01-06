@@ -47,7 +47,7 @@
       <div>
         <div class="twocols">
             <label for="diagnose">Diagnose</label>
-            <textarea style="width: 480px; height: 32px" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
+            <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
             
             <label for="bezahlung">Bezahlung</label>
             <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ rechnung['bezahlung'] }}">
@@ -106,22 +106,11 @@
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ rechnungszeile['artikel'] }}</textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ rechnungszeile['betrag'] }}</textarea></td>
                     <td style="width: 6%">
-                        <a class="zeile_loeschen" rechnung_id="{{ rechnung['id'] }}" rechnungszeile_id="{{ rechnungszeile['id'] }}" href="#">Zeile löschen</a>
+                        <a class="zeile_loeschen" rechnungszeile_id="{{ rechnungszeile['id'] }}" href="#">Zeile löschen</a>
                         <input type="hidden" name="rechnungszeile_id[]" value="{{ rechnungszeile['id'] }}">
                     </td>
                 </tr>
               {% endfor %}
-                <tr id="neue_zeile">
-                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile_datum }}"></td>
-                    {% set artikelartcode = 0 %}
-                    <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
-                    <td style="width: 6%">
-                        <a href="#" onclick="newrow();">neue Zeile</a>
-                        <input type="hidden" name="rechnungszeile_id[]" value="">
-                    </td>
-                </tr>
             {% else %}
                 {% for req_rechnungszeile in req_rechnungszeilen %}
                   <tr>
@@ -131,23 +120,23 @@
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ req_rechnungszeile[2] }}</textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{ req_rechnungszeile[3] }}</textarea></td>
                     <td style="width: 6%">
-                        <a class="zeile_loeschen" rechnung_id="{{ rechnung['id'] }}" rechnungszeile_id="{{ req_rechnungszeile['id'] }}" href="#">Zeile löschen</a>
+                        <a class="zeile_loeschen" rechnungszeile_id="{{ req_rechnungszeile['id'] }}" href="#">Zeile löschen</a>
                         <input type="hidden" name="rechnungszeile_id[]" value="{{ req_rechnungszeile[4] }}">
                     </td>
                   </tr>
                 {% endfor %}
-                  <tr id="neue_zeile">
+            {% endif %}
+                <tr id="neue_zeile">
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile_datum }}"></td>
                     {% set artikelartcode = 0 %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
                     <td style="width: 6%">
-                        <a href="#" onclick="newrow();">neue Zeile</a>
+                        <a href="#" onclick="newrow($(this));">neue Zeile</a>
                         <input type="hidden" name="rechnungszeile_id[]" value="">
                     </td>
-                  </tr>
-              {% endif %}
+                </tr>
             </tbody>
         </table>
       </div>
@@ -158,18 +147,25 @@
     </form>
 
     <script>
-        function newrow() {
-            var childanchor = $("a[onclick='newrow();']").first();
-            // childanchor.empty();
-            childanchor.text("Zeile löschen");
-            //childanchor.removeAttr("onclick");
-            childanchor.attr("onclick", "delete_newrow($(this));");
-            $("#neue_zeile").removeAttr("id");
+        function newrow($obj) {
+            $obj.text("Zeile löschen");
+            $obj.attr("onclick", "delete_newrow($(this));");
+            $obj.closest("tr").removeAttr("id");
 
-            $("tbody").append(
+            var date = new Date();
+            var year = String(date.getFullYear());
+            var month = String(date.getMonth() + 1);
+            if(month.length == 1){
+                month = "0" + month;
+            }
+            var day = String(date.getDate());
+                        if(day.length == 1){
+                day = "0" + day;
+            }
+            $obj.closest("tbody").append(
               '<tr id="neue_zeile">' +
                 '<td style="width: 10%">' + 
-                    '<input type="text" style="width: 100%" name="datum[]" class="date" value="">' + 
+                    '<input type="text" style="width: 100%" name="datum[]" class="date" value="' + year + "-" + month + "-" + day + '">' + 
                 '</td>' + 
                 '<td style="width: 20%">' + 
                     '<select name="artikelartcode[]">' +
@@ -193,7 +189,7 @@
                     '<textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea>' + 
                 '</td>' + 
                 '<td style="width: 6%">' + 
-                    '<a href="#" onclick="newrow();">neue Zeile</a>' + 
+                    '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
                     '<input type="hidden" name="rechnungszeile_id[]" value="">' +
                 '</td>' +
               '</tr>'
@@ -218,11 +214,10 @@
             element.scrollTop = element.scrollHeight;
 
             $('.zeile_loeschen').click(function(){ 
-                var rechnung_id = $(this).attr("rechnung_id");
                 var rechnungszeile_id = $(this).attr("rechnungszeile_id");
-                if(rechnung_id != null && rechnungszeile_id != null){
+                if(rechnungszeile_id != null){
                     if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/" + rechnung_id.toString() + "/" + rechnungszeile_id.toString() + "/delete_rechnungszeile";
+                        window.location = "/" + rechnungszeile_id.toString() + "/delete_rechnungszeile";
                         return true;
                     }
                     else{

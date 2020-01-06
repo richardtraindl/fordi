@@ -596,9 +596,7 @@ def create_rechnung(id):
             request.form.getlist('rechnungszeile_id[]')
         )
         req_rechnungszeilen = build_rechnungszeilen(data)
-        print(req_rechnungszeilen)
         calc = calc_rechnung(req_rechnungszeilen)
-        print(str(calc.brutto_summe) + " error: " + calc.error_msg)
         if(len(calc.error_msg) > 0):
             flash(calc.error_msg)
             tierhaltung = read_tierhaltung(id)
@@ -688,9 +686,7 @@ def edit_rechnung(rechnung_id):
         )
         print(data)
         req_rechnungszeilen = build_rechnungszeilen(data)
-        print(req_rechnungszeilen)
         calc = calc_rechnung(req_rechnungszeilen)
-        print(str(calc.brutto_summe) + " error: " + calc.error_msg)
         if(len(calc.error_msg) > 0):
             flash(calc.error_msg)
             rechnung = read_rechnung(rechnung_id)
@@ -711,6 +707,8 @@ def edit_rechnung(rechnung_id):
 
         for req_rechnungszeile in req_rechnungszeilen:
             datum = req_rechnungszeile[0]
+            if(len(datum) == 0):
+                datum = date.today().strftime("%Y-%m-%d")
             artikelartcode = req_rechnungszeile[1]
             artikel = req_rechnungszeile[2]
             betrag = req_rechnungszeile[3]
@@ -777,16 +775,17 @@ def delete_rechnung(rechnung_id):
     return redirect(url_for('ordi.rechnungen'))
 
 
-@bp.route('/<int:rechnung_id>/<int:rechnungszeile_id>/delete_rechnungszeile', methods=('GET',))
+@bp.route('/<int:rechnungszeile_id>/delete_rechnungszeile', methods=('GET',))
 @login_required
-def delete_rechnungszeile(rechnung_id, rechnungszeile_id):
+def delete_rechnungszeile(rechnungszeile_id):
+    rechnungszeile = read_rechnungszeile(rechnungszeile_id)
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute('DELETE FROM rechnungszeile WHERE id = ?', (rechnungszeile_id,))
     dbcon.commit()
     cursor.close()
-    return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
+    return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnungszeile['rechnung_id']))
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))

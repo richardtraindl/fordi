@@ -439,17 +439,7 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
             datum = date.today().strftime("%Y-%m-%d")
         diagnose = request.form['diagnose']
         behandlung = request.form['behandlung']
-
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.execute(
-            'UPDATE behandlungsverlauf SET datum = ?, diagnose = ?, behandlung = ?'
-            ' WHERE id = ?',
-            (datum, diagnose, behandlung, behandlungsverlauf_id,)
-        )
-        dbcon.commit()
-        cursor.close()
+        update_behandlungsverlauf(behandlungsverlauf_id, datum, diagnose, behandlung)
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung(behandlungsverlauf['tierhaltung_id'])
     adresse = read_adresse(tierhaltung['person_id'])
@@ -506,23 +496,8 @@ def create_rechnung(id):
             kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
 
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-
-        rechnung_id = cursor.execute(
-            'INSERT INTO rechnung (tierhaltung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung,'
-            ' brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn)'
-            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn,)
-        ).lastrowid
-        dbcon.commit()
-
-        cursor.execute(
-            'SELECT * FROM tierhaltung WHERE id = ?',
-            (id,)
-        )
-        tierhaltung = cursor.fetchone()
+        tierhaltung = read_tierhaltung(id)
+        rechnung_id = write_rechnung(tierhaltung['person_id'], tierhaltung['tier_id'], rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn)
 
         for req_rechnungszeile in req_rechnungszeilen:
             datum = req_rechnungszeile[0]

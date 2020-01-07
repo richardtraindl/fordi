@@ -197,24 +197,9 @@ def create_tier(id):
         else:
             patient = 0
 
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        tier_id = cursor.execute(
-            'INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)'
-            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient,)
-        ).lastrowid
-        dbcon.commit()
-
+        tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
         tierhaltung = read_tierhaltung(id)
-        newid = cursor.execute(
-            'INSERT INTO tierhaltung (person_id, tier_id)'
-            ' VALUES (?, ?)',
-            (tierhaltung['person_id'], tier_id,)
-        ).lastrowid
-        dbcon.commit()
-        cursor.close()
+        newid =  write_tierhaltung(tierhaltung['person_id'], tier_id)
         return redirect(url_for('ordi.show_tierhaltung', id=newid))
     return render_template('ordi/create_tier.html', new="true", page_title="Neues Tier")
 

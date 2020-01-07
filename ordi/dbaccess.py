@@ -292,3 +292,18 @@ def write_tierhaltung(person_id, tier_id):
     cursor.close()
     return id
 
+
+def write_behandlung(tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    behandlung_id = cursor.execute(
+        'INSERT INTO behandlung (tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)'
+        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        (tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern,)
+    ).lastrowid
+    dbcon.commit()
+    cursor.close()
+    return behandlung_id
+
+

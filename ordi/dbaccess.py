@@ -358,6 +358,33 @@ def write_rechnung(person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellung
         (person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn,)
     ).lastrowid
     dbcon.commit()
+    cursor.close()
     return rechnung_id
 
+
+def write_rechnungszeile(rechnung_id, datum, artikelartcode, artikel, betrag):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    rechnungszeile_id = cursor.execute(
+        'INSERT INTO rechnungszeile (rechnung_id, datum, artikelartcode, artikel, betrag)'
+        ' VALUES (?, ?, ?, ?, ?)',
+        (rechnung_id, datum, artikelartcode, artikel, betrag,)
+    ).lastrowid
+    dbcon.commit()
+    cursor.close()
+    return rechnungszeile_id
+
+
+def update_rechnungszeile(rechnungszeile_id, datum, artikelartcode, artikel, betrag):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'UPDATE rechnungszeile SET datum = ?, artikelartcode = ?, artikel = ?, betrag = ?'
+        ' WHERE rechnungszeile.id = ?',
+        (datum, artikelartcode, artikel, betrag, rechnungszeile_id,)
+    )
+    dbcon.commit()
+    cursor.close()
 

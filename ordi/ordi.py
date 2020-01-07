@@ -388,16 +388,7 @@ def save_behandlungen(id):
             request.form.getlist('behandlung_id[]'),
         )
         behandlungen = build_behandlungen(data)
-
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-
-        cursor.execute(
-            'SELECT * FROM tierhaltung WHERE id = ?',
-            (id,)
-        )
-        tierhaltung = cursor.fetchone()
+        tierhaltung = read_tierhaltung(id)
 
         for behandlung in behandlungen:
             behandlungsdatum = behandlung[0]
@@ -413,20 +404,9 @@ def save_behandlungen(id):
                len(laborwerte2) > 0 or len(arzneien) > 0 or len(arzneimittel) > 0 or
                len(impfungen_extern) > 0):
                 if(len(behandlung_id) == 0):
-                    cursor.execute(
-                        'INSERT INTO behandlung (tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)'
-                        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                        (tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern,)
-                    )
-                    dbcon.commit()
+                    write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
                 else:
-                    cursor.execute(
-                        'UPDATE behandlung SET behandlungsdatum = ?, gewicht = ?, diagnose = ?, laborwerte1 = ?, laborwerte2 = ?, arzneien = ?, arzneimittel = ?, impfungen_extern = ?'
-                        ' WHERE behandlung.id = ?',
-                        (behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern, behandlung_id)
-                    )
-                    dbcon.commit()
-        cursor.close()
+                    update_behandlung(behandlung_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
@@ -441,16 +421,7 @@ def create_behandlungsverlauf(id):
         behandlung = request.form['behandlung']
 
         tierhaltung = read_tierhaltung(id)
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        behandlungsverlauf_id = cursor.execute(
-            'INSERT INTO behandlungsverlauf (tierhaltung_id, datum, diagnose, behandlung)'
-            ' VALUES (?, ?, ?, ?)',
-            (tierhaltung['id'], datum, diagnose, behandlung,)
-        ).lastrowid
-        dbcon.commit()
-        cursor.close()
+        write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
     else:
         tierhaltung = read_tierhaltung(id)

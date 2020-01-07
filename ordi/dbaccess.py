@@ -222,3 +222,73 @@ def read_rechnungszeile(rechnungszeile_id):
     cursor.close()
     return rechnungszeile
 
+
+def write_person(anredeartcode, titel, familienname, vorname, notiz, kunde):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    person_id = cursor.execute(
+        'INSERT INTO person (anredeartcode, titel, familienname, vorname, notiz, kunde)'
+        ' VALUES (?, ?, ?, ?, ?, ?)',
+        (anredeartcode, titel, familienname, vorname, notiz, kunde,)
+    ).lastrowid
+    dbcon.commit()
+    cursor.close()
+    return person_id
+
+
+def write_adresse(person_id, strasse, postleitzahl, ort):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    adresse_id = cursor.execute(
+        'INSERT INTO adresse (person_id, strasse, postleitzahl, ort)'
+        ' VALUES (?, ?, ?, ?)',
+        (person_id, strasse, postleitzahl, ort,)
+    ).lastrowid
+    dbcon.commit()
+    cursor.close()
+    return adresse_id
+
+
+def write_kontakt(person_id, kontaktartcode, kontakt, kontakt_intern):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    kontakt_id = cursor.execute(
+        'INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)'
+        ' VALUES (?, ?, ?, ?)',
+        (person_id, kontaktartcode, kontakt, kontakt_intern,)
+    ).lastrowid
+    dbcon.commit()
+    cursor.close()
+    return kontakt_id
+
+
+def write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    tier_id = cursor.execute(
+        'INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)'
+        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient,)
+    ).lastrowid
+    dbcon.commit()
+    cursor.close()
+    return tier_id
+
+
+def write_tierhaltung(person_id, tier_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    id = cursor.execute(
+        'INSERT INTO tierhaltung (person_id, tier_id)'
+        ' VALUES (?, ?)',
+        (person_id, tier_id,)
+    ).lastrowid
+    dbcon.commit()
+    cursor.close()
+    return id
+

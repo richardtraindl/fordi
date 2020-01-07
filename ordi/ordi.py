@@ -279,12 +279,7 @@ def edit_person(id, person_id):
                 dbcon.commit()
         else:
             if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
-                cursor.execute(
-                    'INSERT INTO adresse (person_id, strasse, postleitzahl, ort)'
-                    ' VALUES (?, ?, ?, ?)',
-                    (person_id, strasse, postleitzahl, ort,)
-                )
-                dbcon.commit()
+                write_adresse(person_id, strasse, postleitzahl, ort)
 
         kontakte = read_kontakte(person_id)
         kontaktartcode = 1 # fix für Telefon
@@ -304,12 +299,7 @@ def edit_person(id, person_id):
                 dbcon.commit()
         else:
             if(len(kontakt1) > 0):
-                cursor.execute(
-                    'INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)'
-                    ' VALUES (?, ?, ?, ?)',
-                    (person_id, kontaktartcode, kontakt1, kontakt_intern1,)
-                )
-                dbcon.commit()
+                write_kontakt(person_id, kontaktartcode, kontakt1, kontakt_intern1)
 
         kontakt2 = request.form['kontakt2']
         kontakt_intern2 = ''.join(i for i in kontakt2 if not i in bad_chars)
@@ -326,12 +316,7 @@ def edit_person(id, person_id):
                 dbcon.commit()
         else:
             if(len(kontakt2) > 0):
-                cursor.execute(
-                    'INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)'
-                    ' VALUES (?, ?, ?, ?)',
-                    (person_id, kontaktartcode, kontakt2, kontakt_intern2,)
-                )
-                dbcon.commit()
+                write_kontakt(person_id, kontaktartcode, kontakt2, kontakt_intern2)
         cursor.close()
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     tierhaltung = read_tierhaltung(id)
@@ -373,22 +358,8 @@ def create_behandlung(id):
             behandlungen = read_behandlungen(id)
             return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.execute(
-            'SELECT * FROM tierhaltung WHERE id = ?',
-            (id,)
-        )
-        tierhaltung = cursor.fetchone()
-
-        cursor.execute(
-            'INSERT INTO behandlung (tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)'
-            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern,)
-        )
-        dbcon.commit()
-        cursor.close()
+        tierhaltung = read_tierhaltung(id)
+        write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 

@@ -212,12 +212,11 @@ def show_tierhaltung(id):
 
     behandlungen = read_behandlungen(id)
     behandlungsdatum = date.today().strftime("%Y-%m-%d")
-    
-    kontaktliste = []
-    for kontakt in KONTAKT:
-        kontaktliste.append(kontakt + "   ")
-    print(kontaktliste)
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, kontaktliste=kontaktliste, page_title="Karteikarte")
+
+    laboreferenzen = []
+    for referenz in LABOR_REFERENZ:
+        laboreferenzen.append(referenz)
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, laboreferenzen=laboreferenzen, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))

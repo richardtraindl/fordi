@@ -78,14 +78,13 @@
     <div><input type="submit" value="Speichern"></div>
 
     <p style="display: none">
-	<select id="lab" style="height: 240px" multiple >
+	<select id="lab" style="height: 240px" multiple>
 		{% for referenz in laboreferenzen %}
 		    <option value="{{ loop.index }}">{{ referenz }}</option>
 		{% endfor %}
 	</select>
     </p>
 
-    <div><a id="kontaktliste" liste="{{ kontaktliste }}" href="">kontaktliste</a></div>
     <script>
         function get_lab_list_text(){
 			      var buf = "";

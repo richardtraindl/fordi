@@ -14,7 +14,7 @@ a { color: #377ba8; text-decoration: none;}
 
 #content-wrapper { padding: 8px; background-color: #EEE; }
 
-.flash { margin: 12px 0; padding: 8px; background-color: #CAE6F6; border: 1px solid #377BA8; }
+.flash { margin: 12px 0; padding: 8px; background-color: OrangeRed; border: 1px solid #377BA8; }
 
 header { 
     background: Lightgray;

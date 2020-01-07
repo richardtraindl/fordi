@@ -65,12 +65,14 @@ sqlcreates = (
        anlagezeit TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
        UNIQUE(person_id,tier_id));""",
     """CREATE TABLE behandlungsverlauf (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       tierhaltung_id INTEGER NOT NULL REFERENCES tierhaltung(id) ON DELETE CASCADE, \
+       person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
+       tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
        datum DATE NOT NULL DEFAULT CURRENT_DATE, \
        diagnose VARCHAR(255), \
        behandlung VARCHAR(1000));""",
     """CREATE TABLE rechnung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       tierhaltung_id INTEGER NOT NULL REFERENCES tierhaltung(id) ON DELETE CASCADE, \
+       person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
+       tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
        rechnungsjahr INTEGER NOT NULL, \
        rechnungslfnr INTEGER NOT NULL, \
        ausstellungsdatum DATE NOT NULL DEFAULT CURRENT_DATE, \

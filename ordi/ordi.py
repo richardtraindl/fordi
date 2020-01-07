@@ -75,6 +75,23 @@ def rechnungen():
     return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
 
 
+@bp.route('/abfragen', methods=('GET', 'POST'))
+@login_required
+def abfragen():
+    if(request.method == 'POST'):
+        print(request.form['abfragecode'])
+        try:
+            abfragecode = int(request.form['abfragecode'])
+        except:
+            abfragecode = 0
+        abfragekriterium = request.form['abfragekriterium']
+    else:
+        abfragecode = 0
+        abfragekriterium = ""
+    abfragen = [] # read_abfragen(abfragekriterium)
+    return render_template('ordi/abfragen.html', abfragen=abfragen, abfragekriterium=abfragekriterium, page_title="Abfragen")
+
+
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
 @login_required
 def create_tierhaltung():

@@ -15,19 +15,23 @@ class cCalc:
 def calc_rechnung(rechnungszeilen):
     calc = cCalc()
 
+    if(len(rechnungszeilen) == 0):
+        calc.error_msg = "Mindestens eine Rechnungszeile erforderlich."
+        return calc
+
     for rechnungszeile in rechnungszeilen:
         try:
             artikelartcode = int(rechnungszeile[1])
             steuersatz = ARTIKEL_STEUER[artikelartcode]
         except:
-            calc.error_msg = "Falsche Artikelart"
+            calc.error_msg = "Falsche Artikelart."
             return calc
 
         try:
             str_betrag = rechnungszeile[3].replace(",", ".")
             betrag = float(str_betrag)
         except:
-            calc.error_msg = "Betrag ist keine Zahl"
+            calc.error_msg = "Betrag ist keine Zahl."
             return calc
 
         calc.brutto_summe += betrag

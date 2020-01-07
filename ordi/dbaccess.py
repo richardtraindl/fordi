@@ -334,3 +334,15 @@ def write_behandlungsverlauf(person_id, tier_id, datum, diagnose, behandlung):
     return behandlungsverlauf_id
 
 
+def update_behandlungsverlauf(behandlungsverlauf_id, datum, diagnose, behandlung):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'UPDATE behandlungsverlauf SET datum = ?, diagnose = ?, behandlung = ?'
+        ' WHERE id = ?',
+        (datum, diagnose, behandlung, behandlungsverlauf_id,)
+    )
+    dbcon.commit()
+    cursor.close()
+

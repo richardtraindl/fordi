@@ -177,7 +177,11 @@ def show_tierhaltung(id):
     laboreferenzen = []
     for referenz in LABOR_REFERENZ:
         laboreferenzen.append(referenz)
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, laboreferenzen=laboreferenzen, page_title="Karteikarte")
+
+    impfungen = []
+    for impfung in IMPFUNG:
+        impfungen.append(impfung)
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, laboreferenzen=laboreferenzen, impfungen=impfungen, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
@@ -225,16 +229,7 @@ def edit_tier(id, tier_id):
         else:
             patient = 0
 
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.execute(
-            'UPDATE tier SET tiername = ?, tierart = ?, rasse = ?, farbe = ?, viren = ?, merkmal = ?, geburtsdatum = ?, geschlechtsartcode = ?, chip_nummer = ?, eu_passnummer = ?, patient = ?'
-            ' WHERE tier.id = ?',
-            (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient, tier_id,)
-        )
-        dbcon.commit()
-        cursor.close()
+        update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     tierhaltung = read_tierhaltung(id)
     return render_template('ordi/edit_tier.html', tierhaltung=tierhaltung, page_title="Tier ändern")
@@ -253,16 +248,7 @@ def edit_person(id, person_id):
             kunde = 1
         else:
             kunde = 0
-
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.execute(
-            'UPDATE person SET anredeartcode = ?, titel = ?, familienname = ?, vorname = ?, notiz = ?, kunde = ?'
-            ' WHERE person.id = ?',
-            (anredeartcode, titel, familienname, vorname, notiz, kunde, person_id,)
-        )
-        dbcon.commit()
+        update_person(person_id, anredeartcode, titel, familienname, vorname, notiz, kunde)
 
         strasse = request.form['strasse']
         postleitzahl = request.form['postleitzahl']
@@ -270,15 +256,9 @@ def edit_person(id, person_id):
         adresse = read_adresse(person_id)
         if(adresse):
             if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
-                cursor.execute(
-                    'UPDATE adresse SET strasse = ?, postleitzahl = ?, ort = ?'
-                    ' WHERE id = ?',
-                    (strasse, postleitzahl, ort, adresse['id'],)
-                )
-                dbcon.commit()
+                update_adresse(adresse['id'], strasse, postleitzahl, ort)
             else:
-                cursor.execute('DELETE FROM adresse WHERE id = ?', (adresse['id'],))
-                dbcon.commit()
+                delete_db_adresse(adresse['id'])
         else:
             if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
                 write_adresse(person_id, strasse, postleitzahl, ort)
@@ -290,15 +270,9 @@ def edit_person(id, person_id):
         kontakt_intern1 = ''.join(i for i in kontakt1 if not i in bad_chars)
         if(len(kontakte) > 0):
             if(len(kontakt1) > 0):
-                cursor.execute(
-                    'UPDATE kontakt SET kontaktartcode = ?, kontakt = ?, kontakt_intern = ?'
-                    ' WHERE id = ?',
-                    (kontaktartcode, kontakt1, kontakt_intern1, kontakte[0]['id'],)
-                )
-                dbcon.commit()
+                update_kontakt(kontakte[0]['id'], kontaktartcode, kontakt1, kontakt_intern1)
             else:
-                cursor.execute('DELETE FROM kontakt WHERE id = ?', (kontakte[0]['id'],))
-                dbcon.commit()
+                delete_db_kontakt(kontakte[0]['id'])
         else:
             if(len(kontakt1) > 0):
                 write_kontakt(person_id, kontaktartcode, kontakt1, kontakt_intern1)
@@ -307,19 +281,12 @@ def edit_person(id, person_id):
         kontakt_intern2 = ''.join(i for i in kontakt2 if not i in bad_chars)
         if(len(kontakte) > 1):
             if(len(kontakt2) > 0):
-                cursor.execute(
-                    'UPDATE kontakt SET kontaktartcode = ?, kontakt = ?, kontakt_intern = ?'
-                    ' WHERE id = ?',
-                    (kontaktartcode, kontakt2, kontakt_intern2, kontakte[1]['id'],)
-                )
-                dbcon.commit()
+                update_kontakt(kontakte[1]['id'], kontaktartcode, kontakt2, kontakt_intern2)
             else:
-                cursor.execute('DELETE FROM kontakt WHERE id = ?', (kontakte[1]['id'],))
-                dbcon.commit()
+                delete_db_kontakt(kontakte[1]['id'])
         else:
             if(len(kontakt2) > 0):
                 write_kontakt(person_id, kontaktartcode, kontakt2, kontakt_intern2)
-        cursor.close()
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     tierhaltung = read_tierhaltung(id)
     adresse = read_adresse(person_id)
@@ -423,7 +390,7 @@ def create_behandlungsverlauf(id):
         behandlung = request.form['behandlung']
 
         tierhaltung = read_tierhaltung(id)
-        write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
+        behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
     else:
         tierhaltung = read_tierhaltung(id)
@@ -443,10 +410,10 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         behandlung = request.form['behandlung']
         update_behandlungsverlauf(behandlungsverlauf_id, datum, diagnose, behandlung)
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-    tierhaltung = read_tierhaltung(behandlungsverlauf['tierhaltung_id'])
-    adresse = read_adresse(tierhaltung['person_id'])
-    kontakte = read_kontakte(tierhaltung['person_id'])
-    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf_id=behandlungsverlauf_id, behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+    tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
+    adresse = read_adresse(behandlungsverlauf['person_id'])
+    kontakte = read_kontakte(behandlungsverlauf['person_id'])
+    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
 
 
 def build_rechnungszeilen(data):
@@ -521,7 +488,10 @@ def create_rechnung(id):
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
     ausstellungsdatum = date.today().strftime("%Y-%m-%d")
     ausstellungsort = "Wien"
-    return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, ausstellungsdatum=ausstellungsdatum, ausstellungsort=ausstellungsort, rechnungszeile_datum=rechnungszeile_datum, page_title="Rechnung")
+    artikel = []
+    for art in ARTIKEL:
+        artikel.append(art)
+    return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, ausstellungsdatum=ausstellungsdatum, ausstellungsort=ausstellungsort, rechnungszeile_datum=rechnungszeile_datum, artikel=artikel, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
@@ -562,7 +532,7 @@ def edit_rechnung(rechnung_id):
             kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
         else:
-            update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):
+            update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn)
 
         for req_rechnungszeile in req_rechnungszeilen:
             datum = req_rechnungszeile[0]
@@ -580,45 +550,33 @@ def edit_rechnung(rechnung_id):
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
     rechnungszeilen = read_rechnungszeilen(rechnung_id)
     rechnung = read_rechnung(rechnung_id)
-    tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
+    tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
     adresse = read_adresse(tierhaltung['person_id'])
     kontakte = read_kontakte(tierhaltung['person_id'])
-    return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Rechnung")
+    artikel = []
+    for art in ARTIKEL:
+        artikel.append(art)
+    return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, artikel=artikel, page_title="Rechnung")
 
 
 @bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))
 @login_required
 def delete_behandlung(id, behandlung_id):
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute('DELETE FROM behandlung WHERE id = ?', (behandlung_id,))
-    dbcon.commit()
-    cursor.close()
+    delete_db_behandlung(behandlung_id)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
 @bp.route('/<int:behandlungsverlauf_id>/delete_behandlungsverlauf', methods=('GET',))
 @login_required
 def delete_behandlungsverlauf(behandlungsverlauf_id):
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute('DELETE FROM behandlungsverlauf WHERE id = ?', (behandlungsverlauf_id,))
-    dbcon.commit()
-    cursor.close()
+    delete_db_behandlungsverlauf(behandlungsverlauf_id)
     return redirect(url_for('ordi.behandlungsverlaeufe'))
 
 
 @bp.route('/<int:rechnung_id>/delete_rechnung', methods=('GET',))
 @login_required
 def delete_rechnung(rechnung_id):
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute('DELETE FROM rechnung WHERE id = ?', (rechnung_id,))
-    dbcon.commit()
-    cursor.close()
+    delete_db_rechnung(rechnung_id)
     return redirect(url_for('ordi.rechnungen'))
 
 
@@ -626,23 +584,13 @@ def delete_rechnung(rechnung_id):
 @login_required
 def delete_rechnungszeile(rechnungszeile_id):
     rechnungszeile = read_rechnungszeile(rechnungszeile_id)
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute('DELETE FROM rechnungszeile WHERE id = ?', (rechnungszeile_id,))
-    dbcon.commit()
-    cursor.close()
+    delete_db_rechnungszeile(rechnungszeile_id)
     return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnungszeile['rechnung_id']))
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
 @login_required
 def delete_tierhaltung(id):
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute('DELETE FROM tierhaltung WHERE id = ?', (id,))
-    dbcon.commit()
-    cursor.close()
+    delete_db_tierhaltung(id)
     return redirect(url_for('ordi.index'))
 

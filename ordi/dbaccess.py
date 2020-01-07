@@ -85,6 +85,22 @@ def read_tierhaltung(id):
     return tierhaltung
 
 
+def delete_db_tierhaltung(id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('SELECT * FROM tierhaltung WHERE tierhaltung.id = ?', (id,))
+    tierhaltung = cursor.fetchone()
+    cursor.execute('DELETE FROM tierhaltung WHERE id = ?', (id,))
+    cursor.execute('DELETE FROM tier WHERE id = ?', (tierhaltung['tier_id'],))    
+    cursor.execute('SELECT * FROM tierhaltung WHERE tierhaltung.person_id = ?', (tierhaltung['person_id'],))
+    tierhaltungen = cursor.fetchall()
+    if(len(tierhaltungen) == 0):
+        cursor.execute('DELETE FROM person WHERE id = ?', (tierhaltung['person_id'],))    
+    dbcon.commit()
+    cursor.close()
+
+
 def read_tierhaltung_by_children(person_id, tier_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -199,6 +215,28 @@ def read_rechnung(rechnung_id):
     return rechnung
 
 
+def update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?, ausstellungsort = ?, diagnose = ?, bezahlung = ?, brutto_summe = ?, netto_summe = ?, steuerbetrag_zwanzig = ?, steuerbetrag_dreizehn = ?, steuerbetrag_zehn = ?'
+        ' WHERE id = ?',
+        (rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn, rechnung_id,)
+    )
+    dbcon.commit()
+    cursor.close()
+
+
+def delete_db_rechnung(rechnung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM rechnung WHERE id = ?', (rechnung_id,))
+    dbcon.commit()
+    cursor.close()
+
+
 def read_rechnungszeilen(rechnung_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -237,6 +275,19 @@ def write_person(anredeartcode, titel, familienname, vorname, notiz, kunde):
     return person_id
 
 
+def update_person(person_id, anredeartcode, titel, familienname, vorname, notiz, kunde):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'UPDATE person SET anredeartcode = ?, titel = ?, familienname = ?, vorname = ?, notiz = ?, kunde = ?'
+        ' WHERE person.id = ?',
+        (anredeartcode, titel, familienname, vorname, notiz, kunde, person_id,)
+    )
+    dbcon.commit()
+    cursor.close()
+
+
 def write_adresse(person_id, strasse, postleitzahl, ort):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -249,6 +300,28 @@ def write_adresse(person_id, strasse, postleitzahl, ort):
     dbcon.commit()
     cursor.close()
     return adresse_id
+
+
+def update_adresse(adresse_id, strasse, postleitzahl, ort):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'UPDATE adresse SET strasse = ?, postleitzahl = ?, ort = ?'
+        ' WHERE id = ?',
+        (strasse, postleitzahl, ort, adresse_id,)
+    )
+    dbcon.commit()
+    cursor.close()
+
+
+def delete_db_adresse(adresse_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM adresse WHERE id = ?', (adresse_id,))
+    dbcon.commit()
+    cursor.close()
 
 
 def write_kontakt(person_id, kontaktartcode, kontakt, kontakt_intern):
@@ -265,6 +338,28 @@ def write_kontakt(person_id, kontaktartcode, kontakt, kontakt_intern):
     return kontakt_id
 
 
+def update_kontakt(kontakt_id, kontaktartcode, kontakt, kontakt_intern):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'UPDATE kontakt SET kontaktartcode = ?, kontakt = ?, kontakt_intern = ?'
+        ' WHERE id = ?',
+        (kontaktartcode, kontakt, kontakt_intern, kontakt_id,)
+    )
+    dbcon.commit()
+    cursor.close()
+
+
+def delete_db_kontakt(kontakt_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM kontakt WHERE id = ?', (kontakt_id,))
+    dbcon.commit()
+    cursor.close()
+
+
 def write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -277,6 +372,19 @@ def write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, ge
     dbcon.commit()
     cursor.close()
     return tier_id
+
+
+def update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute(
+        'UPDATE tier SET tiername = ?, tierart = ?, rasse = ?, farbe = ?, viren = ?, merkmal = ?, geburtsdatum = ?, geschlechtsartcode = ?, chip_nummer = ?, eu_passnummer = ?, patient = ?'
+        ' WHERE tier.id = ?',
+        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient, tier_id,)
+    )
+    dbcon.commit()
+    cursor.close()
 
 
 def write_tierhaltung(person_id, tier_id):
@@ -320,13 +428,22 @@ def update_behandlung(behandlung_id, behandlungsdatum, gewicht, diagnose, laborw
     cursor.close()
 
 
+def delete_db_behandlung(behandlung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM behandlung WHERE id = ?', (behandlung_id,))
+    dbcon.commit()
+    cursor.close()
+
+
 def write_behandlungsverlauf(person_id, tier_id, datum, diagnose, behandlung):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     behandlungsverlauf_id = cursor.execute(
         'INSERT INTO behandlungsverlauf (person_id, tier_id, datum, diagnose, behandlung)'
-        ' VALUES (?, ?, ?, ?)',
+        ' VALUES (?, ?, ?, ?, ?)',
         (person_id, tier_id, datum, diagnose, behandlung,)
     ).lastrowid
     dbcon.commit()
@@ -347,6 +464,15 @@ def update_behandlungsverlauf(behandlungsverlauf_id, datum, diagnose, behandlung
     cursor.close()
 
 
+def delete_db_behandlungsverlauf(behandlungsverlauf_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM behandlungsverlauf WHERE id = ?', (behandlungsverlauf_id,))
+    dbcon.commit()
+    cursor.close()
+
+
 def write_rechnung(person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -360,19 +486,6 @@ def write_rechnung(person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellung
     dbcon.commit()
     cursor.close()
     return rechnung_id
-
-
-def update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON;")
-    cursor.execute(
-        'UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?, ausstellungsort = ?, diagnose = ?, bezahlung = ?, brutto_summe = ?, netto_summe = ?, steuerbetrag_zwanzig = ?, steuerbetrag_dreizehn = ?, steuerbetrag_zehn = ?'
-        ' WHERE id = ?',
-        (rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn, rechnung_id,)
-    )
-    dbcon.commit()
-    cursor.close()
 
 
 def write_rechnungszeile(rechnung_id, datum, artikelartcode, artikel, betrag):
@@ -398,6 +511,15 @@ def update_rechnungszeile(rechnungszeile_id, datum, artikelartcode, artikel, bet
         ' WHERE rechnungszeile.id = ?',
         (datum, artikelartcode, artikel, betrag, rechnungszeile_id,)
     )
+    dbcon.commit()
+    cursor.close()
+
+
+def delete_db_rechnungszeile(rechnungszeile_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('DELETE FROM rechnungszeile WHERE id = ?', (rechnungszeile_id,))
     dbcon.commit()
     cursor.close()
 

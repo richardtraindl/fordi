@@ -509,21 +509,9 @@ def create_rechnung(id):
             rechnungszeile_id = req_rechnungszeile[4]
             if(len(artikelartcode) > 0 or len(artikel) > 0 or len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
-                    cursor.execute(
-                        'INSERT INTO rechnungszeile (rechnung_id, datum, artikelartcode, artikel, betrag)'
-                        ' VALUES (?, ?, ?, ?, ?)',
-                        (rechnung_id, datum, artikelartcode, artikel, betrag,)
-                    )
-                    dbcon.commit()
+                    write_rechnungszeile(rechnung_id, datum, artikelartcode, artikel, betrag)
                 else:
-                    cursor.execute(
-                        'UPDATE rechnungszeile SET datum = ?, artikelartcode = ?, artikel = ?, betrag = ?'
-                        ' WHERE rechnungszeile.id = ?',
-                        (datum, artikelartcode, artikel, betrag, rechnungszeile_id,)
-                    )
-                    dbcon.commit()
-
-        cursor.close()
+                    update_rechnungszeile(rechnungszeile_id, datum, artikelartcode, artikel, betrag)
         return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id,))
     tierhaltung = read_tierhaltung(id)
     adresse = read_adresse(tierhaltung['person_id'])
@@ -571,16 +559,8 @@ def edit_rechnung(rechnung_id):
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
-
-        dbcon = get_db()
-        cursor = dbcon.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        cursor.execute(
-            'UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?, ausstellungsort = ?, diagnose = ?, bezahlung = ?, brutto_summe = ?, netto_summe = ?, steuerbetrag_zwanzig = ?, steuerbetrag_dreizehn = ?, steuerbetrag_zehn = ?'
-            ' WHERE id = ?',
-            (rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn, rechnung_id,)
-        )
-        dbcon.commit()
+        else:
+            update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):
 
         for req_rechnungszeile in req_rechnungszeilen:
             datum = req_rechnungszeile[0]
@@ -592,21 +572,9 @@ def edit_rechnung(rechnung_id):
             rechnungszeile_id = req_rechnungszeile[4]
             if(len(datum) == 10 and len(artikelartcode) > 0 and len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
-                    cursor.execute(
-                        'INSERT INTO rechnungszeile (rechnung_id, datum, artikelartcode, artikel, betrag)'
-                        ' VALUES (?, ?, ?, ?, ?)',
-                        (rechnung_id, datum, artikelartcode, artikel, betrag,)
-                    )
-                    dbcon.commit()
+                    write_rechnungszeile(rechnung_id, datum, artikelartcode, artikel, betrag)
                 else:
-                    cursor.execute(
-                        'UPDATE rechnungszeile SET datum = ?, artikelartcode = ?, artikel = ?, betrag = ?'
-                        ' WHERE rechnungszeile.id = ?',
-                        (datum, artikelartcode, artikel, betrag, rechnungszeile_id,)
-                    )
-                    dbcon.commit()
-
-        cursor.close()
+                    update_rechnungszeile(rechnungszeile_id, datum, artikelartcode, artikel, betrag)
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
     rechnungszeilen = read_rechnungszeilen(rechnung_id)
     rechnung = read_rechnung(rechnung_id)

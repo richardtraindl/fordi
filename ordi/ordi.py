@@ -106,39 +106,6 @@ def create_tierhaltung():
         else:
             kunde = 0
 
-        error = ""
-        if(len(familienname) == 0):
-            error += "Familienname erforderlich. "
-        if(len(tiername) == 0):
-            error += "Tiername erforderlich. "
-        if(len(tierart) == 0):
-            error += "Tierart erforderlich. "
-        if(len(geburtsdatum) == 0):
-            error += "Geburtsdatum erforderlich. "
-        if(len(error) > 0):
-            flash(error)
-            return render_template('ordi/create_tierhaltung.html')
-        person_id = write_person(anredeartcode, titel, familienname, vorname, notiz, kunde)
-
-        strasse = request.form['strasse']
-        postleitzahl = request.form['postleitzahl']
-        ort = request.form['ort']
-        if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
-            write_adresse(person_id, strasse, postleitzahl, ort)
-
-        kontaktartcode = 1 # fix für Telefon
-        kontakt1 = request.form['kontakt1']
-        if(len(kontakt1) > 0):
-            bad_chars = [';', ':', '-', '/', ' ', '\n']
-            kontakt_intern1 = ''.join(i for i in kontakt1 if not i in bad_chars)
-        write_kontakt(person_id, kontaktartcode, kontakt1, kontakt_intern1)
-
-        kontakt2 = request.form['kontakt2']
-        if(len(kontakt2) > 0):
-            bad_chars = [';', ':', '-', '/', ' ', '\n']
-            kontakt_intern2 = ''.join(i for i in kontakt2 if not i in bad_chars)
-        write_kontakt(person_id, kontaktartcode, kontakt2, kontakt_intern2)
-
         tiername = request.form['tiername']
         tierart = request.form['tierart']
         rasse = request.form['rasse']
@@ -153,7 +120,42 @@ def create_tierhaltung():
             patient = 1
         else:
             patient = 0
+
+        error = ""
+        if(len(familienname) == 0):
+            error += "Familienname erforderlich. "
+        if(len(tiername) == 0):
+            error += "Tiername erforderlich. "
+        if(len(tierart) == 0):
+            error += "Tierart erforderlich. "
+        if(len(geburtsdatum) == 0):
+            error += "Geburtsdatum erforderlich. "
+        if(len(error) > 0):
+            flash(error)
+            return render_template('ordi/create_tierhaltung.html')
+
+        person_id = write_person(anredeartcode, titel, familienname, vorname, notiz, kunde)
+
         tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
+
+        strasse = request.form['strasse']
+        postleitzahl = request.form['postleitzahl']
+        ort = request.form['ort']
+        if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
+            write_adresse(person_id, strasse, postleitzahl, ort)
+
+        kontaktartcode = 1 # fix für Telefon
+        kontakt1 = request.form['kontakt1']
+        if(len(kontakt1) > 0):
+            bad_chars = [';', ':', '-', '/', ' ', '\n']
+            kontakt_intern1 = ''.join(i for i in kontakt1 if not i in bad_chars)
+            write_kontakt(person_id, kontaktartcode, kontakt1, kontakt_intern1)
+
+        kontakt2 = request.form['kontakt2']
+        if(len(kontakt2) > 0):
+            bad_chars = [';', ':', '-', '/', ' ', '\n']
+            kontakt_intern2 = ''.join(i for i in kontakt2 if not i in bad_chars)
+            write_kontakt(person_id, kontaktartcode, kontakt2, kontakt_intern2)
 
         id = write_tierhaltung(person_id, tier_id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))

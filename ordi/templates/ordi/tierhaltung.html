@@ -139,6 +139,13 @@
                                     $(this).dialog("close");} 
                               }] 
             });
+
+            $('.labor').click(  function() {
+                labor_text_feld = this;
+                $dialog_labor.dialog('open');
+                // prevent the default action, e.g., following a link
+                return false;
+            });
         });
     </script>
 {% endblock %}

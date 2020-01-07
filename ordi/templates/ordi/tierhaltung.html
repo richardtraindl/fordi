@@ -46,8 +46,8 @@
         <tr>
             <td style="width: 10%"><input type="text" style="width: 100%" name="behandlungsdatum[]" class="date" value="{{ behandlung['behandlungsdatum'] }}"></td>
             <td style="width: 24%"><textarea style="width: 100%" name="diagnose[]">{{ behandlung['diagnose'] }}</textarea></td>
-            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte1[]">{{ behandlung['laborwerte1'] }}</textarea></td>
-            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte2[]">{{ behandlung['laborwerte2'] }}</textarea></td>
+            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte1[]" class="labor">{{ behandlung['laborwerte1'] }}</textarea></td>
+            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte2[]" class="labor">{{ behandlung['laborwerte2'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="arzneien[]">{{ behandlung['arzneien'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="arzneimittel[]">{{ behandlung['arzneimittel'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ behandlung['impfungen_extern'] }}</textarea></td>
@@ -61,8 +61,8 @@
         <tr class="edit-focus">
             <td style="width: 10%"><input type="text" style="width: 100%" name="behandlungsdatum[]" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
             <td style="width: 24%"><textarea style="width: 100%" name="diagnose[]" id="new-diagnose">{{ request.form['diagnose'] }}</textarea></td>
-            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte1[]">{{ request.form['laborwerte1'] }}</textarea></td>
-            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte2[]">{{ request.form['laborwerte2'] }}</textarea></td>
+            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte1[]" class="labor">{{ request.form['laborwerte1'] }}</textarea></td>
+            <td style="width: 12%"><textarea style="width: 100%" name="laborwerte2[]" class="labor">{{ request.form['laborwerte2'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="arzneien[]">{{ request.form['arzneien'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="arzneimittel[]">{{ request.form['arzneimittel'] }}</textarea></td>
             <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ request.form['impfungen_extern'] }}</textarea></td>
@@ -79,6 +79,14 @@
 
     <div><a id="kontaktliste" liste="{{ kontaktliste }}" href="">kontaktliste</a></div>
     <script>
+        function get_lab_list_text(){
+			      var buf = "";
+			      $( '#lab option:selected').each(function () {
+				        buf += $(this).text() + "\n ";
+			      });
+			      return buf;
+        }
+      
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
@@ -107,10 +115,23 @@
                 return false; 
             });
             
-            $('#kontaktliste').click(function(){ 
-                var liste = $(this).attr("liste");
-                alert(liste);
-            });
-        });
+            var $dialog_labor = $('<div></div>');
+			          $dialog_labor.html( $("#lab") );
+			          $dialog_labor.dialog({
+				            autoOpen: false,
+				            title: 'Laborwerte',
+				            modal: true,
+				            buttons: [{ text: "OK", click: function(){
+								                  labor_text_feld.value = labor_text_feld.value + get_lab_list_text() + '**';
+								                  $('#lab option').attr('selected', false );
+								                  labor_text_feld.focus(); 
+								                  $(this).dialog("close");} 
+							                },
+							                {text: "Abbruch", click: function(){
+								                  labor_text_feld.focus();
+								                  $(this).dialog("close");} 
+							                }] 
+			          });
+		    });
     </script>
 {% endblock %}

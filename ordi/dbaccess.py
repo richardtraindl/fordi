@@ -27,18 +27,18 @@ def read_behandlungsverlaeufe(behandlungsjahr):
         begin = str(behandlungsjahr - 1) + "-12-31"
         end = str(behandlungsjahr + 1) + "-01-01"
         cursor.execute(
-            'SELECT * FROM behandlungsverlauf, tierhaltung, person, tier'
-            ' WHERE behandlungsverlauf.tierhaltung_id = tierhaltung.id'
-            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            'SELECT * FROM behandlungsverlauf, person, tier'
+            ' WHERE behandlungsverlauf.person_id = person.id'
+            ' AND behandlungsverlauf.tier_id = tier.id'
             ' AND behandlungsverlauf.datum > ? AND behandlungsverlauf.datum <  ?'
             ' ORDER BY behandlungsverlauf.datum ASC',
             (begin, end,)
         )
     else:
         cursor.execute(
-            'SELECT * FROM behandlungsverlauf, tierhaltung, person, tier'
-            ' WHERE behandlungsverlauf.tierhaltung_id = tierhaltung.id'
-            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            'SELECT * FROM behandlungsverlauf, person, tier'
+            ' WHERE behandlungsverlauf.person_id = person.id'
+            ' AND behandlungsverlauf.tier_id = tier.id'
             ' ORDER BY behandlungsverlauf.datum ASC'
         )
     behandlungsverlaeufe = cursor.fetchall()
@@ -52,18 +52,18 @@ def read_rechnungen(rechnungsjahr):
     cursor.execute("PRAGMA foreign_keys=ON;")
     if(rechnungsjahr):
         cursor.execute(
-            'SELECT * FROM rechnung, tierhaltung, person, tier'
-            ' WHERE rechnung.tierhaltung_id = tierhaltung.id'
-            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            'SELECT * FROM rechnung, person, tier'
+            ' WHERE rechnung.person_id = person.id'
+            ' AND rechnung.tier_id = tier.id'
             ' AND rechnung.rechnungsjahr = ?'
             ' ORDER BY rechnungsjahr, rechnungslfnr ASC',
             (rechnungsjahr,)
         )
     else:
         cursor.execute(
-            'SELECT * FROM rechnung, tierhaltung, person, tier'
-            ' WHERE rechnung.tierhaltung_id = tierhaltung.id'
-            ' AND tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+            'SELECT * FROM rechnung, person, tier'
+            ' WHERE rechnung.person_id = person.id'
+            ' AND rechnung.tier_id = tier.id'
             ' ORDER BY rechnungsjahr, rechnungslfnr ASC'
         )
     rechnungen = cursor.fetchall()

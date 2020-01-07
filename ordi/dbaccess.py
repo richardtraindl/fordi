@@ -320,14 +320,14 @@ def update_behandlung(behandlung_id, behandlungsdatum, gewicht, diagnose, laborw
     cursor.close()
 
 
-def write_behandlungsverlauf(tierhaltung_id, datum, diagnose, behandlung):
+def write_behandlungsverlauf(person_id, tier_id, datum, diagnose, behandlung):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     behandlungsverlauf_id = cursor.execute(
-        'INSERT INTO behandlungsverlauf (tierhaltung_id, datum, diagnose, behandlung)'
+        'INSERT INTO behandlungsverlauf (person_id, tier_id, datum, diagnose, behandlung)'
         ' VALUES (?, ?, ?, ?)',
-        (tierhaltung['id'], datum, diagnose, behandlung,)
+        (person_id, tier_id, datum, diagnose, behandlung,)
     ).lastrowid
     dbcon.commit()
     cursor.close()

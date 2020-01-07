@@ -87,13 +87,13 @@
 
     <script>
         function get_lab_list_text(){
-			      var buf = "";
-			      $( '#lab option:selected').each(function () {
-				        buf += $(this).text() + "\n ";
-			      });
-			      return buf;
+            var buf = "";
+ 	    $( '#lab option:selected').each(function () {
+                buf += $(this).text() + "\n ";
+            });
+            return buf;
         }
-      
+
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
@@ -123,22 +123,22 @@
             });
             
             var $dialog_labor = $('<div></div>');
-			          $dialog_labor.html( $("#lab") );
-			          $dialog_labor.dialog({
-				            autoOpen: false,
-				            title: 'Laborwerte',
-				            modal: true,
-				            buttons: [{ text: "OK", click: function(){
-								                  labor_text_feld.value = labor_text_feld.value + get_lab_list_text() + '**';
-								                  $('#lab option').attr('selected', false );
-								                  labor_text_feld.focus(); 
-								                  $(this).dialog("close");} 
-							                },
-							                {text: "Abbruch", click: function(){
-								                  labor_text_feld.focus();
-								                  $(this).dialog("close");} 
-							                }] 
-			          });
-		    });
+                $dialog_labor.html( $("#lab") );
+                $dialog_labor.dialog({
+                    autoOpen: false,
+                    title: 'Laborwerte',
+                    modal: true,
+                    buttons: [{ text: "OK", click: function(){
+                                    labor_text_feld.value = labor_text_feld.value + get_lab_list_text() + '**';
+                                    $('#lab option').attr('selected', false );
+                                    labor_text_feld.focus(); 
+                                    $(this).dialog("close");} 
+                              },
+                              {text: "Abbruch", click: function(){
+                                    labor_text_feld.focus();
+                                    $(this).dialog("close");} 
+                              }] 
+            });
+        });
     </script>
 {% endblock %}

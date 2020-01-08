@@ -57,7 +57,7 @@ sqlcreates = (
        arzneimittel VARCHAR(100), \
        impfungen_extern VARCHAR(100));""",
     """CREATE TABLE impfung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-        behandlung_id INTEGER NOT NULL REFERENCES beahndlung(id) ON DELETE CASCADE, \
+        behandlung_id INTEGER NOT NULL REFERENCES behandlung(id) ON DELETE CASCADE, \
         impfungsartcode INTEGER NOT NULL);""",
     """CREATE TABLE tierhaltung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
        person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \

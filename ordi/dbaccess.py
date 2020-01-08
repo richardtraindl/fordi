@@ -184,11 +184,23 @@ def read_behandlung(behandlung_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute(
-        'SELECT * FROM behandlung WHERE id = ?', (behandlung_id,)
+        'SELECT * FROM behandlung, impfung WHERE behandlung.id = impfung.behandlung_id'
+        ' AND behandlung.id = ?', (behandlung_id,)
     )
     behandlung = cursor.fetchone()
     cursor.close()
     return behandlung
+
+
+def read_impfungen(behandlung_id):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute(
+        'SELECT * FROM impfung WHERE behandlung_id = ?', (behandlung_id,)
+    )
+    impfungen = cursor.fetchall()
+    cursor.close()
+    return impfungen
 
 
 def read_behandlungsverlauf(behandlungsverlauf_id):

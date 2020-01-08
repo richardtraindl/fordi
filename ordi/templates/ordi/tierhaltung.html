@@ -57,6 +57,21 @@
                 <input type="hidden" name="behandlung_id[]" value="{{ behandlung['id'] }}">
             </td>
         </tr>
+        <tr>
+            <td colspan=9>
+        <select id="impf" style="height: 40px" multiple>
+        {% for impfung in impfungen %}
+            {% for impfungext in behandlung['impfungen_extern'] %}
+                {% if impfung == impfungext %}
+                    <option value="{{ impfung }}" selected>{{ impfung }}</option>
+                {% else %}
+                    <option value="{{ impfung }}">{{ impfung }}</option>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        </select>
+        </td>
+        </tr>
       {% endfor %}
         <tr class="edit-focus">
             <td style="width: 8%"><input type="text" style="width: 100%" name="behandlungsdatum[]" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
@@ -78,11 +93,11 @@
     <div><input type="submit" value="Speichern"></div>
 
     <p style="display: none">
-	<select id="lab" style="height: 240px" multiple>
-		{% for referenz in laboreferenzen %}
-		    <option value="{{ loop.index }}">{{ referenz }}</option>
-		{% endfor %}
-	</select>
+        <select id="lab" style="height: 240px" multiple>
+        {% for referenz in laboreferenzen %}
+            <option value="{{ loop.index }}">{{ referenz }}</option>
+        {% endfor %}
+        </select>
     </p>
 
     <script>

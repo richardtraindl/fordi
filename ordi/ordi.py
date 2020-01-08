@@ -172,6 +172,10 @@ def show_tierhaltung(id):
     kontakte = read_kontakte(tierhaltung['person_id'])
 
     behandlungen = read_behandlungen(id)
+    for behandlung in behandlungen:
+        print(behandlung['impfungen_extern'])
+        for beh in behandlung:
+            print(" * " + str(beh))
     behandlungsdatum = date.today().strftime("%Y-%m-%d")
 
     laboreferenzen = []

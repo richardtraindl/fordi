@@ -183,10 +183,7 @@ def read_behandlungen(id):
 def read_behandlung(behandlung_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
-    cursor.execute(
-        'SELECT * FROM behandlung, impfung WHERE behandlung.id = impfung.behandlung_id'
-        ' AND behandlung.id = ?', (behandlung_id,)
-    )
+    cursor.execute('SELECT * FROM behandlung WHERE behandlung.id = ?', (behandlung_id,))
     behandlung = cursor.fetchone()
     cursor.close()
     return behandlung
@@ -195,9 +192,7 @@ def read_behandlung(behandlung_id):
 def read_impfungen(behandlung_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
-    cursor.execute(
-        'SELECT * FROM impfung WHERE behandlung_id = ?', (behandlung_id,)
-    )
+    cursor.execute('SELECT * FROM impfung WHERE behandlung_id = ?', (behandlung_id,))
     impfungen = cursor.fetchall()
     cursor.close()
     return impfungen
@@ -206,10 +201,7 @@ def read_impfungen(behandlung_id):
 def read_behandlungsverlauf(behandlungsverlauf_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
-    cursor.execute(
-        'SELECT * FROM behandlungsverlauf WHERE id = ?',
-        (behandlungsverlauf_id,)
-    )
+    cursor.execute('SELECT * FROM behandlungsverlauf WHERE id = ?',(behandlungsverlauf_id,))
     behandlungsverlauf = cursor.fetchone()
     cursor.close()
     return behandlungsverlauf
@@ -218,10 +210,7 @@ def read_behandlungsverlauf(behandlungsverlauf_id):
 def read_rechnung(rechnung_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
-    cursor.execute(
-        'SELECT * FROM rechnung WHERE rechnung.id = ?',
-        (rechnung_id,)
-    )
+    cursor.execute('SELECT * FROM rechnung WHERE rechnung.id = ?',(rechnung_id,))
     rechnung = cursor.fetchone()
     cursor.close()
     return rechnung
@@ -252,10 +241,7 @@ def delete_db_rechnung(rechnung_id):
 def read_rechnungszeilen(rechnung_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
-    cursor.execute(
-        'SELECT * FROM rechnungszeile WHERE rechnung_id = ?',
-        (rechnung_id,)
-    )
+    cursor.execute('SELECT * FROM rechnungszeile WHERE rechnung_id = ?',(rechnung_id,))
     rechnungszeilen = cursor.fetchall()
     cursor.close()
     return rechnungszeilen
@@ -264,10 +250,7 @@ def read_rechnungszeilen(rechnung_id):
 def read_rechnungszeile(rechnungszeile_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
-    cursor.execute(
-        'SELECT * FROM rechnungszeile WHERE id = ?',
-        (rechnungszeile_id,)
-    )
+    cursor.execute('SELECT * FROM rechnungszeile WHERE id = ?',(rechnungszeile_id,))
     rechnungszeile = cursor.fetchone()
     cursor.close()
     return rechnungszeile

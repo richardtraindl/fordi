@@ -171,21 +171,23 @@ def show_tierhaltung(id):
 
     kontakte = read_kontakte(tierhaltung['person_id'])
 
-    behandlungen = read_behandlungen(id)
-    for behandlung in behandlungen:
-        print(behandlung['impfungen_extern'])
-        for beh in behandlung:
-            print(" * " + str(beh))
+    behandlungen = []
+    tmpbehandlungen = read_behandlungen(id)
+    for tmpbehandlung in tmpbehandlungen:
+        tmpimpfungen = read_impfungen(tmpbehandlung['id'])
+        behandlungen.append([tmpbehandlung, tmpimpfungen])
+
     behandlungsdatum = date.today().strftime("%Y-%m-%d")
 
     laboreferenzen = []
     for referenz in LABOR_REFERENZ:
         laboreferenzen.append(referenz)
 
-    impfungen = []
-    for impfung in IMPFUNG:
-        impfungen.append(impfung)
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, laboreferenzen=laboreferenzen, impfungen=impfungen, page_title="Karteikarte")
+    impfungswerte = []
+    for key, value in IMPFUNG.items():
+        impfungswerte.append([key, value])
+
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, laboreferenzen=laboreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))

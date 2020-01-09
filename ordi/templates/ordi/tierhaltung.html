@@ -50,27 +50,29 @@
             <td style="width: 11%"><textarea style="width: 100%" name="laborwerte2[]" class="labor">{{ behandlung[0]['laborwerte2'] }}</textarea></td>
             <td style="width: 14%"><textarea style="width: 100%" name="arzneien[]">{{ behandlung[0]['arzneien'] }}</textarea></td>
             <td style="width: 7%"><textarea style="width: 100%" name="arzneimittel[]">{{ behandlung[0]['arzneimittel'] }}</textarea></td>
-            <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ behandlung[0]['impfungen_extern'] }}</textarea></td>
+            <td style="width: 10%">
+                <select id="impf" style="height: 60px" multiple>
+                    {% for impfungswert in impfungswerte %}
+                        {% set vars = {'selected': False} %}
+                        {% for impfung in behandlung[1] %} 
+                            {% if impfung['impfungsartcode']|string == impfungswert[1]|string %}
+                                {% if vars.update({'selected': True}) %} {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if vars.selected %}
+                            <option value="{{ impfungswert[1] }}" selected>{{ impfungswert[0] }}</option>
+                        {% else %}
+                            <option value="{{ impfungswert[1] }}">{{ impfungswert[0] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <textarea style="width: 100%" name="impfungen_extern[]">{{ behandlung[0]['impfungen_extern'] }}</textarea>
+            </td>
             <td style="width: 4%"><textarea style="width: 100%" name="gewicht[]">{{ behandlung[0]['gewicht'] }}</textarea></td>
             <td style="width: 5%">
                 <a class="zeile_loeschen" tierhaltung_id="{{ tierhaltung['id'] }}" behandlung_id="{{ behandlung[0]['id'] }}" href="#">Zeile löschen</a>
                 <input type="hidden" name="behandlung_id[]" value="{{ behandlung[0]['id'] }}">
             </td>
-        </tr>
-        <tr>
-            <td colspan=9>
-        <select id="impf" style="height: 40px" multiple>
-        {% for impfung in impfungen %}
-            {% for impfungext in behandlung['impfungen_extern'] %}
-                {% if impfung == impfungext %}
-                    <option value="{{ impfung }}" selected>{{ impfung }}</option>
-                {% else %}
-                    <option value="{{ impfung }}">{{ impfung }}</option>
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-        </select>
-        </td>
         </tr>
       {% endfor %}
         <tr class="edit-focus">
@@ -80,24 +82,7 @@
             <td style="width: 11%"><textarea style="width: 100%" name="laborwerte2[]" class="labor">{{ request.form['laborwerte2'] }}</textarea></td>
             <td style="width: 14%"><textarea style="width: 100%" name="arzneien[]">{{ request.form['arzneien'] }}</textarea></td>
             <td style="width: 7%"><textarea style="width: 100%" name="arzneimittel[]">{{ request.form['arzneimittel'] }}</textarea></td>
-            <td style="width: 10%">
-                <select id="impf" style="height: 60px" multiple>
-				            {% for impfungswert in impfungswerte %}
-					              {% set vars = {'selected': False} %}
-					              {% for impfung in behandlung[1] %} 
-						                {% if impfung['impfungsartcode']|string == impfungswert[1]|string %}
-						                    {% if vars.update({'selected': True}) %} {% endif %}
-						                {% endif %}
-					              {% endfor %}
-					              {% if vars.selected %}
-						              <option value="{{ impfungswert[1] }}" selected>{{ impfungswert[0] }}</option>
-					              {% else %}
-					                  <option value="{{ impfungswert[1] }}">{{ impfungswert[0] }}</option>
-					              {% endif %}
-				            {% endfor %}
-                </select>
-              <textarea style="width: 100%" name="impfungen_extern[]">{{ request.form['impfungen_extern'] }}</textarea>
-          </td>
+            <td style="width: 10%"><textarea style="width: 100%" name="impfungen_extern[]">{{ request.form['impfungen_extern'] }}</textarea></td>
             <td style="width: 4%"><textarea style="width: 100%" name="gewicht[]">{{ request.form['gewicht'] }}</textarea></td>
             <td style="width: 5%"><input type="hidden" name="behandlung_id[]" value=""></td>
         </tr>

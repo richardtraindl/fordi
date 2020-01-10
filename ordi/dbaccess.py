@@ -432,6 +432,44 @@ def delete_db_behandlung(behandlung_id):
     cursor.close()
 
 
+def save_or_delete_impfungen(behandlung_id, impfungstexte):
+    dbcon = get_db()
+    cursor = dbcon.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute('SELECT * FROM impfung WHERE behandlung_id = ?, (behandlung_id,))
+    sql_impfungen = cursor.fetchall()
+
+    for impfungstext in impfungstexte:
+        try:
+            impfungsartcode = IMPFUNG[impfungstext]
+        except:
+            print("severe error")
+            cursor.close()
+            return False
+        found = False
+        for sql_impfung in sql_impfungen:
+            if(impfungsartcode == sql_impfung['impfungsartcode']):
+				found = True
+                break
+        if(found == False):
+            cursor.execute('INSERT INTO impfung (behandlung_id, impfungsartcode) VALUES (?, ?)',
+                           (behandlung_id, impfungsartcode,))
+            dbcon.commit()
+
+    for sql_impfung in sql_impfungen:
+        found = False
+        for impfungstext in impfungstexte:
+            impfungsartcode = IMPFUNG[impfungstext]
+            if(impfungsartcode == sql_impfung['impfungsartcode']):
+				found = True
+                break
+        if(found == False):
+            cursor.execute('DELETE FROM impfung WHERE id = ?', (sql_impfung['id'],))
+            dbcon.commit()
+            cursor.close()
+    return True
+
+
 def write_behandlungsverlauf(person_id, tier_id, datum, diagnose, behandlung):
     dbcon = get_db()
     cursor = dbcon.cursor()

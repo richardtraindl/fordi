@@ -50,23 +50,18 @@
             <td style="width: 11%"><textarea style="width: 100%" name="laborwerte2[]" class="labor">{{ behandlung[0]['laborwerte2'] }}</textarea></td>
             <td style="width: 14%"><textarea style="width: 100%" name="arzneien[]">{{ behandlung[0]['arzneien'] }}</textarea></td>
             <td style="width: 7%"><textarea style="width: 100%" name="arzneimittel[]">{{ behandlung[0]['arzneimittel'] }}</textarea></td>
-            <td style="width: 10%">
-                <select id="impf" style="height: 60px" multiple>
-                    {% for impfungswert in impfungswerte %}
-                        {% set vars = {'selected': False} %}
-                        {% for impfung in behandlung[1] %} 
-                            {% if impfung['impfungsartcode']|string == impfungswert[1]|string %}
-                                {% if vars.update({'selected': True}) %} {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                        {% if vars.selected %}
-                            <option value="{{ impfungswert[1] }}" selected>{{ impfungswert[0] }}</option>
-                        {% else %}
-                            <option value="{{ impfungswert[1] }}">{{ impfungswert[0] }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                <textarea style="width: 100%" name="impfungen_extern[]">{{ behandlung[0]['impfungen_extern'] }}</textarea>
+            <td style="width: 10%"><textarea class="impfungen" name="impfungen_extern[]">
+                    {%- set vars = {'selected': False} -%}
+                    {%- for impfungswert in impfungswerte -%}
+                        {%- for impfung in behandlung[1] -%}
+                            {%- if impfung['impfungsartcode']|string == impfungswert[1]|string -%}
+                                {%- if vars.selected -%}, {%- endif -%}
+                                {{- impfungswert[0] -}}
+                                {%- if vars.update({'selected': True}) -%} {%- endif -%}
+                            {%- endif -%}
+                        {%- endfor -%}
+                    {%- endfor -%}
+                </textarea>
             </td>
             <td style="width: 4%"><textarea style="width: 100%" name="gewicht[]">{{ behandlung[0]['gewicht'] }}</textarea></td>
             <td style="width: 5%">
@@ -95,20 +90,46 @@
     <div><input type="submit" value="Speichern"></div>
 
     <p style="display: none">
-        <select id="lab" style="height: 240px" multiple>
-        {% for referenz in laboreferenzen %}
-            <option value="{{ loop.index }}">{{ referenz }}</option>
-        {% endfor %}
+        <select id="laboreferenzen" style="height: 240px" multiple>
+        {%- for referenz in laboreferenzen -%}
+            <option value="{{- loop.index }}">{{- referenz -}}</option>
+        {%- endfor -%}
+        </select>
+    </p>
+
+    <p style="display: none">
+        <select id="impfungswerte" style="height: 240px" multiple>
+        {%- for impfungswert in impfungswerte -%}
+            <option value="{{- impfungswert[1] }}">{{- impfungswert[0] -}}</option>
+        {%- endfor -%}
         </select>
     </p>
 
     <script>
         function get_lab_list_text(){
             var buf = "";
- 	    $( '#lab option:selected').each(function () {
+            $( '#laboreferenzen option:selected').each(function () {
                 buf += $(this).text() + "\n ";
             });
             return buf;
+        }
+
+        function get_impfungen_list_text(){
+            var buf = "";
+            $( '#impfungswerte option:selected').each(function () {
+                if(buf.length > 0){
+                    buf += ","
+                }
+                buf += $(this).text();
+            });
+            return buf;
+        }
+
+        function edit_impfung($obj) {
+            var children = $obj.find( "li" ); // .css( "background-color", "red" );
+            children.each(function( index ) {
+                console.log( index + ": " + $( this ).text() + " " + $( this ).attr("impfungscode"));
+            });
         }
 
         $(document).ready(function(){
@@ -140,14 +161,14 @@
             });
             
             var $dialog_labor = $('<div></div>');
-                $dialog_labor.html( $("#lab") );
+                $dialog_labor.html( $("#laboreferenzen") );
                 $dialog_labor.dialog({
                     autoOpen: false,
                     title: 'Laborwerte',
                     modal: true,
                     buttons: [{ text: "OK", click: function(){
                                     labor_text_feld.value = labor_text_feld.value + get_lab_list_text() + '**';
-                                    $('#lab option').attr('selected', false );
+                                    $('#laboreferenzen option').attr('selected', false );
                                     labor_text_feld.focus(); 
                                     $(this).dialog("close");} 
                               },
@@ -162,6 +183,49 @@
                 $dialog_labor.dialog('open');
                 // prevent the default action, e.g., following a link
                 return false;
+            });
+
+            $('.impfungen').click(  function() {
+                impfungen_text_feld = this;
+                //$('#impfungswerte option').attr('selected', false );
+                /*var children = $(this).find( "li" ); // .css( "background-color", "red" );
+                children.each(function( index ) {
+                    var impfungscode = $( this ).attr("impfungscode");
+                    $('#impfungswerte option[value=' + impfungscode + ']').attr('selected', true );
+                    console.log( index + ": " + $( this ).text() + " " + $( this ).attr("impfungscode"));
+                }); */
+                //$('#impfungswerte option').each(function( index ) {
+                //    $( this ).removeAttr("selected");
+                //    console.log( index + ": " + $( this ).text() + " " + $( this ).attr("value"));
+                    //var impfungscode = $( this ).attr("impfungscode");
+                    //$('#impfungswerte option[value=' + impfungscode + ']').attr('selected', true );
+               // }); 
+                
+                
+                $dialog_impfungen.html( $("#impfungswerte") ); 
+                $dialog_impfungen.dialog('open');
+                // prevent the default action, e.g., following a link
+                return false;
+            });
+
+            var $dialog_impfungen = $('<div></div>');
+                //$dialog_impfungen.html( $("#impfungswerte") );
+                $dialog_impfungen.dialog({
+                    autoOpen: false,
+                    title: 'Impfungen',
+                    modal: true,
+                    buttons: [{ text: "OK", click: function(){
+                                    //$( this ).children().remove();
+                                    //impfungen_list_tag.append(get_impfungen_list_items());
+                                    impfungen_text_feld.value = get_impfungen_list_text();
+                                    $('#impfungswerte option').attr('selected', false );
+                                    impfungen_text_feld.focus(); 
+                                    $(this).dialog("close");} 
+                              },
+                              {text: "Abbruch", click: function(){
+                                    impfungen_text_feld.focus();
+                                    $(this).dialog("close");} 
+                              }] 
             });
         });
     </script>

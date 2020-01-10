@@ -50,7 +50,7 @@
             <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{ behandlung[0]['laborwerte2'] }}</textarea></td>
             <td style="width: 14%"><textarea name="arzneien[]">{{ behandlung[0]['arzneien'] }}</textarea></td>
             <td style="width: 7%"><textarea name="arzneimittel[]">{{ behandlung[0]['arzneimittel'] }}</textarea></td>
-            <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen">
+            <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly>
                     {%- set vars = {'selected': False} -%}
                     {%- for impfungswert in impfungswerte -%}
                         {%- for impfung in behandlung[1] -%}
@@ -77,7 +77,7 @@
             <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{ request.form['laborwerte2'] }}</textarea></td>
             <td style="width: 14%"><textarea name="arzneien[]">{{ request.form['arzneien'] }}</textarea></td>
             <td style="width: 7%"><textarea name="arzneimittel[]">{{ request.form['arzneimittel'] }}</textarea></td>
-            <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen">{{ request.form['impfungen_extern'] }}</textarea></td>
+            <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly>{{ request.form['impfungen_extern'] }}</textarea></td>
             <td style="width: 4%"><textarea name="gewicht[]">{{ request.form['gewicht'] }}</textarea></td>
             <td style="width: 5%"><input type="hidden" name="behandlung_id[]" value=""></td>
         </tr>
@@ -171,12 +171,12 @@
 
             $('.labor').click(  function() {
                 labor_text_feld = this;
-				        var body = "<select id='dialog-laboreferenzen' style='height: 240px' multiple>"
-				        $('#laboreferenzen option').each(function( index ) {
-					          body += "<option value='" + $( this ).text() + "'>" +  $( this ).text() + "</option>";
-				        });
-				        body += "</select>";
-				        $dialog_labor.html(body);
+                var body = "<select id='dialog-laboreferenzen' style='height: 240px' multiple>"
+                $('#laboreferenzen option').each(function( index ) {
+                    body += "<option value='" + $( this ).text() + "'>" +  $( this ).text() + "</option>";
+                });
+                body += "</select>";
+                $dialog_labor.html(body);
                 $dialog_labor.dialog('open');
                 // prevent the default action, e.g., following a link
                 return false;
@@ -200,25 +200,25 @@
 
             $('.impfungen').click(  function() {
                 console.log("impfungen: " + $(this).val());
-				        impfungen_text_feld = this;
-				        var impfungen = $(this).val().split(",");				
-				        var body = "<select id='dialog-impfungswerte' style='height: 240px' multiple>"
-				        $('#impfungswerte option').each(function( index ) {
-					          var impfungswert = $( this ).text();
-					          var isequal = false;
-					          $.each(impfungen, function(index, value){
-						            if(value == impfungswert){
-							              isequal = true;
-						            }
-					          });
-					          if(isequal){
-						            body += "<option value='" + $( this ).text() + "' selected>" +  $( this ).text() + "</option>";
-					          }
-					          else{
-						            body += "<option value='" + $( this ).text() + "'>" +  $( this ).text() + "</option>";
-					          }
-				        });
-				        body += "</select>";
+                impfungen_text_feld = this;
+                var impfungen = $(this).val().split(",");				
+                var body = "<select id='dialog-impfungswerte' style='height: 240px' multiple>"
+                $('#impfungswerte option').each(function( index ) {
+                      var impfungswert = $( this ).text();
+                      var isequal = false;
+                      $.each(impfungen, function(index, value){
+                            if(value == impfungswert){
+                                  isequal = true;
+                            }
+                      });
+                      if(isequal){
+                            body += "<option value='" + $( this ).text() + "' selected>" +  $( this ).text() + "</option>";
+                      }
+                      else{
+                            body += "<option value='" + $( this ).text() + "'>" +  $( this ).text() + "</option>";
+                      }
+                });
+                body += "</select>";
 
                 $dialog_impfungen.html( body ); 
                 $dialog_impfungen.dialog('open');

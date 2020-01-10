@@ -334,7 +334,12 @@ def create_behandlung(id):
             return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
         tierhaltung = read_tierhaltung(id)
-        write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
+        behandlung_id = write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
+        if(len(impfungen_extern) > 0):
+            impfungstexte = impfungen_extern.split(', ')
+        else:
+            impfungstexte = []
+        save_or_delete_impfungen(behandlung_id, impfungstexte)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
@@ -379,9 +384,14 @@ def save_behandlungen(id):
                len(laborwerte2) > 0 or len(arzneien) > 0 or len(arzneimittel) > 0 or
                len(impfungen_extern) > 0):
                 if(len(behandlung_id) == 0):
-                    write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
+                    behandlung_id = write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
                 else:
                     update_behandlung(behandlung_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
+            if(len(impfungen_extern) > 0):
+                impfungstexte = impfungen_extern.split(',')
+            else:
+                impfungstexte = []
+            save_or_delete_impfungen(behandlung_id, impfungstexte)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 

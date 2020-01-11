@@ -5,10 +5,22 @@ from .helper import reverse_lookup
 
 
 def mapanrede(anredecode):
-    return reverse_lookup(ANREDE, anredecode)
+    anrede = reverse_lookup(ANREDE, anredecode)
+    if(anrede == None):
+        anrede = ""
+    return anrede
+
 
 def mapgeschlecht(geschlechtscode):
-    return reverse_lookup(GESCHLECHT, geschlechtscode)
+    geschlecht = reverse_lookup(GESCHLECHT, geschlechtscode)
+    if(geschlecht == None):
+        geschlecht = ""
+    return geschlecht
+
 
 def mapkontakt(kontaktcode):
-    return reverse_lookup(KONTAKT, kontaktcode)
+    kontakt = reverse_lookup(KONTAKT, kontaktcode)
+    if(kontakt == None):
+        kontakt = ""
+    return kontakt
+

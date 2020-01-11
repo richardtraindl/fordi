@@ -321,28 +321,28 @@ def delete_db_adresse(adresse_id):
     cursor.close()
 
 
-def write_kontakt(person_id, kontaktartcode, kontakt, kontakt_intern):
+def write_kontakt(person_id, kontaktcode, kontakt, kontakt_intern):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     kontakt_id = cursor.execute(
-        "INSERT INTO kontakt (person_id, kontaktartcode, kontakt, kontakt_intern)"
+        "INSERT INTO kontakt (person_id, kontaktcode, kontakt, kontakt_intern)"
         " VALUES (?, ?, ?, ?)",
-        (person_id, kontaktartcode, kontakt, kontakt_intern,)
+        (person_id, kontaktcode, kontakt, kontakt_intern,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
     return kontakt_id
 
 
-def update_kontakt(kontakt_id, kontaktartcode, kontakt, kontakt_intern):
+def update_kontakt(kontakt_id, kontaktcode, kontakt, kontakt_intern):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE kontakt SET kontaktartcode = ?, kontakt = ?, kontakt_intern = ?"
+        "UPDATE kontakt SET kontaktcode = ?, kontakt = ?, kontakt_intern = ?"
         " WHERE id = ?",
-        (kontaktartcode, kontakt, kontakt_intern, kontakt_id,)
+        (kontaktcode, kontakt, kontakt_intern, kontakt_id,)
     )
     dbcon.commit()
     cursor.close()

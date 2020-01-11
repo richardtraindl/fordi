@@ -45,10 +45,5 @@ def calc_rechnung(rechnungszeilen):
             calc.steuerbetrag_zehn += (betrag - nettobetrag)
 
     calc.netto_summe = calc.brutto_summe - (calc.steuerbetrag_zwanzig + calc.steuerbetrag_dreizehn + calc.steuerbetrag_zehn)
-    """round(calc.brutto_summe, 2)
-    round(calc.netto_summe, 2)
-    round(calc.steuerbetrag_zwanzig, 2)
-    round(calc.steuerbetrag_dreizehn, 2)
-    round(calc.steuerbetrag_zehn, 2)"""
     return calc
 

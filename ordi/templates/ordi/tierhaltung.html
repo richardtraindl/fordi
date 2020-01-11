@@ -54,7 +54,7 @@
                     {%- set vars = {'selected': False} -%}
                     {%- for impfungswert in impfungswerte -%}
                         {%- for impfung in behandlung[1] -%}
-                            {%- if impfung['impfungsartcode']|string == impfungswert[1]|string -%}
+                            {%- if impfung['impfungscode']|string == impfungswert[1]|string -%}
                                 {%- if vars.selected -%}, {%- endif -%}
                                 {{- impfungswert[0] -}}
                                 {%- if vars.update({'selected': True}) -%} {%- endif -%}

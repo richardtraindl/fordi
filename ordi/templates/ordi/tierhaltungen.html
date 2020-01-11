@@ -29,14 +29,14 @@
       {% for tierhaltung in tierhaltungen %}
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ tierhaltung['id'] }}"></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['anredeartcode']|mapanrede }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['anredecode']|mapanrede }}</a></td>
             <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['vorname'] }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['tiername'] }}</a></td>
             <td style="width: 14%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['tierart'] }}</a></td>
             <td style="width: 10%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['rasse'] }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtsartcode']|mapgeschlecht }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtscode']|mapgeschlecht }}</a></td>
             <td style="width: 8%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
         </tr>
       {% endfor %}
@@ -49,9 +49,9 @@
         <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
         <p><a class="btn" href="{{ url_for('ordi.create_tierhaltung') }}">neue Karteikarte</a></p>
         <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
-        <p><a class="btn" id="karteikarte_loeschen" href="#">Karteikarte löschen</a></p>
         <p><a class="btn" id="neue_rechnung" href="#">neue Rechnung</a></p>
         <p><a class="btn" id="neuer_behandlungsverlauf" href="#">neuer Behandlungsverlauf</a></p>
+        <p><a class="btn" id="karteikarte_loeschen" href="#">Karteikarte löschen</a></p>
     </div>
 
     <script>

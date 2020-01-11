@@ -18,7 +18,7 @@ sqlcreates = (
         username VARCHAR(50) NOT NULL UNIQUE, \
         password VARCHAR(256) NOT NULL);""",
     """CREATE TABLE person (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       anredeartcode INTEGER NOT NULL, \
+       anredecode INTEGER NOT NULL, \
        titel VARCHAR(40), \
        familienname VARCHAR(40), \
        vorname VARCHAR(40), \
@@ -31,7 +31,7 @@ sqlcreates = (
        ort VARCHAR(40));""",
     """CREATE TABLE kontakt (id INTEGER PRIMARY KEY AUTOINCREMENT, \
        person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
-       kontaktartcode INTEGER NOT NULL, \
+       kontaktcode INTEGER NOT NULL, \
        kontakt VARCHAR(50), \
        kontakt_intern VARCHAR(50));""",
     """CREATE TABLE tier (id INTEGER PRIMARY KEY AUTOINCREMENT, \
@@ -42,7 +42,7 @@ sqlcreates = (
        viren VARCHAR(30), \
        merkmal VARCHAR(50), \
        geburtsdatum DATE NOT NULL, \
-       geschlechtsartcode INTEGER NOT NULL, \
+       geschlechtscode INTEGER NOT NULL, \
        chip_nummer VARCHAR(30), \
        eu_passnummer VARCHAR(30), \
        patient BOOLEAN NOT NULL DEFAULT true);""",
@@ -58,10 +58,10 @@ sqlcreates = (
        impfungen_extern VARCHAR(100));""",
     """CREATE TABLE impfung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
         behandlung_id INTEGER NOT NULL REFERENCES behandlung(id) ON DELETE CASCADE, \
-        impfungsartcode INTEGER NOT NULL);""",
+        impfungscode INTEGER NOT NULL);""",
     """CREATE TABLE tierhaltung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
-       tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
+       person_id INTEGER NOT NULL REFERENCES person(id), \
+       tier_id INTEGER NOT NULL REFERENCES tier(id), \
        anlagezeit TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
        UNIQUE(person_id,tier_id));""",
     """CREATE TABLE behandlungsverlauf (id INTEGER PRIMARY KEY AUTOINCREMENT, \
@@ -87,7 +87,7 @@ sqlcreates = (
     """CREATE TABLE rechnungszeile (id INTEGER PRIMARY KEY AUTOINCREMENT, \
        rechnung_id INTEGER NOT NULL REFERENCES rechnung(id) ON DELETE CASCADE, \
        datum DATE NOT NULL DEFAULT CURRENT_DATE, \
-       artikelartcode INTEGER NOT NULL, \
+       artikelcode INTEGER NOT NULL, \
        artikel VARCHAR(255), \
        betrag DECIMAL(10,2) NOT NULL);""")
 

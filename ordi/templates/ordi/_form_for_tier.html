@@ -35,35 +35,35 @@
             <input size="10" class="date" name="geburtsdatum" id="geburtsdatum" value="{{ request.form['geburtsdatum'] }}" required>
         {% endif %}
 
-        <label for="geschlechtsartcode">Geschlecht</label>
-        <select name="geschlechtsartcode" id="geschlechtsartcode">
+        <label for="geschlechtscode">Geschlecht</label>
+        <select name="geschlechtscode" id="geschlechtscode">
         {% if tierhaltung %}
-            {% set geschlechtsartcode = tierhaltung['geschlechtsartcode'] %}
+            {% set geschlechtscode = tierhaltung['geschlechtscode'] %}
         {% else %}
-            {% set geschlechtsartcode = request.form['geschlechtsartcode'] %}                
+            {% set geschlechtscode = request.form['geschlechtscode'] %}                
         {% endif %}
 
-        {% if geschlechtsartcode == 0 %}
+        {% if geschlechtscode == 0 %}
             <option value="0" selected>&nbsp;</option>
         {% else %}
             <option value="0">&nbsp;</option>
         {% endif %}
-        {% if geschlechtsartcode == 1 %}
+        {% if geschlechtscode == 1 %}
             <option value="1" selected>m</option>
         {% else %}
             <option value="1">m</option>
         {% endif %}
-        {% if geschlechtsartcode == 2 %}
+        {% if geschlechtscode == 2 %}
             <option value="2" selected>mk</option>
         {% else %}
             <option value="2">mk</option>
         {% endif %}
-        {% if geschlechtsartcode == 3 %}
+        {% if geschlechtscode == 3 %}
             <option value="3" selected>w</option>
         {% else %}
             <option value="3">w</option>
         {% endif %}
-        {% if geschlechtsartcode == 4 %}
+        {% if geschlechtscode == 4 %}
             <option value="4" selected>wk</option>
         {% else %}
             <option value="4">wk</option>

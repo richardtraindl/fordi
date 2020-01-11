@@ -41,13 +41,13 @@
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ behandlungsverlauf['id'] }}"></td>
             <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['datum'] }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['anredeartcode']|mapanrede }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['anredecode']|mapanrede }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['familienname'] }}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['vorname'] }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['tiername'] }}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['tierart'] }}</a></td>
             <td style="width: 10%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['rasse'] }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geschlechtsartcode']|mapgeschlecht }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geschlechtcode']|mapgeschlecht }}</a></td>
             <td style="width: 8%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geburtsdatum'] }}</a></td>
         </tr>
       {% endfor %}

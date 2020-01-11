@@ -21,8 +21,8 @@ def calc_rechnung(rechnungszeilen):
 
     for rechnungszeile in rechnungszeilen:
         try:
-            artikelartcode = int(rechnungszeile[1])
-            steuersatz = ARTIKEL_STEUER[artikelartcode]
+            artikelcode = int(rechnungszeile[1])
+            steuersatz = ARTIKEL_STEUER[artikelcode]
         except:
             calc.error_msg = "Falsche Artikelart."
             return calc
@@ -30,12 +30,13 @@ def calc_rechnung(rechnungszeilen):
         try:
             str_betrag = rechnungszeile[3].replace(",", ".")
             betrag = float(str_betrag)
+            betrag = round(betrag, 2)
         except:
             calc.error_msg = "Betrag ist keine Zahl."
             return calc
 
         calc.brutto_summe += betrag
-        nettobetrag = betrag * 100 / (100 + steuersatz)
+        nettobetrag = round(betrag * 100 / (100 + steuersatz))
         if(steuersatz == 20):
             calc.steuerbetrag_zwanzig += (betrag - nettobetrag)
         elif(steuersatz == 13):
@@ -44,10 +45,10 @@ def calc_rechnung(rechnungszeilen):
             calc.steuerbetrag_zehn += (betrag - nettobetrag)
 
     calc.netto_summe = calc.brutto_summe - (calc.steuerbetrag_zwanzig + calc.steuerbetrag_dreizehn + calc.steuerbetrag_zehn)
-    round(calc.brutto_summe, 2)
+    """round(calc.brutto_summe, 2)
     round(calc.netto_summe, 2)
     round(calc.steuerbetrag_zwanzig, 2)
     round(calc.steuerbetrag_dreizehn, 2)
-    round(calc.steuerbetrag_zehn, 2)
+    round(calc.steuerbetrag_zehn, 2)"""
     return calc
 

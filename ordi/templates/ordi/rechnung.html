@@ -101,7 +101,7 @@
               {% for rechnungszeile in rechnungszeilen %}
                 <tr>
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile['datum'] }}" required></td>
-                    {% set artikelartcode = rechnungszeile['artikelartcode'] %}
+                    {% set artikelcode = rechnungszeile['artikelcode'] %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ rechnungszeile['artikel'] }}</textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ rechnungszeile['betrag'] }}</textarea></td>
@@ -115,7 +115,7 @@
                 {% for req_rechnungszeile in req_rechnungszeilen %}
                   <tr>
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ req_rechnungszeile[0] or rechnungszeile_datum }}"></td>
-                    {% set artikelartcode = req_rechnungszeile[1] %}
+                    {% set artikelcode = req_rechnungszeile[1] %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ req_rechnungszeile[2] }}</textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{ req_rechnungszeile[3] }}</textarea></td>
@@ -128,7 +128,7 @@
             {% endif %}
                 <tr id="neue_zeile">
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile_datum }}"></td>
-                    {% set artikelartcode = 0 %}
+                    {% set artikelcode = 0 %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
@@ -168,7 +168,7 @@
                     '<input type="text" style="width: 100%" name="datum[]" class="date" value="' + year + "-" + month + "-" + day + '">' + 
                 '</td>' + 
                 '<td style="width: 20%">' + 
-                    '<select name="artikelartcode[]">' +
+                    '<select name="artikelcode[]">' +
                         '<option value="0" selected>&nbsp;</option>' +
                         '<option value="1">Visite</option>' +
                         '<option value="2">Labor</option>' +
@@ -208,7 +208,7 @@
                 changeYear: true 
             });
             
-            $("#new-artikelartcode").focus();
+            $("#new-artikelcode").focus();
 
             var element = document.getElementById("scroller");
             element.scrollTop = element.scrollHeight;

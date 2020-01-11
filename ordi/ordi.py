@@ -96,7 +96,7 @@ def abfragen():
 @login_required
 def create_tierhaltung():
     if(request.method == 'POST'):
-        anredeartcode = request.form['anredeartcode']
+        anredecode = request.form['anredecode']
         titel = request.form['titel']
         familienname = request.form['familienname']
         vorname = request.form['vorname']
@@ -113,7 +113,7 @@ def create_tierhaltung():
         viren = request.form['viren']
         merkmal = request.form['merkmal']
         geburtsdatum = request.form['geburtsdatum']
-        geschlechtsartcode = request.form['geschlechtsartcode']
+        geschlechtscode = request.form['geschlechtscode']
         chip_nummer = request.form['chip_nummer']
         eu_passnummer = request.form['eu_passnummer']
         if(request.form.get('patient')):
@@ -134,9 +134,9 @@ def create_tierhaltung():
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
-        person_id = write_person(anredeartcode, titel, familienname, vorname, notiz, kunde)
+        person_id = write_person(anredecode, titel, familienname, vorname, notiz, kunde)
 
-        tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
+        tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)
 
         strasse = request.form['strasse']
         postleitzahl = request.form['postleitzahl']
@@ -201,7 +201,7 @@ def create_tier(id):
         viren = request.form['viren']
         merkmal = request.form['merkmal']
         geburtsdatum = request.form['geburtsdatum']
-        geschlechtsartcode = int(request.form['geschlechtsartcode'])
+        geschlechtscode = int(request.form['geschlechtscode'])
         chip_nummer = request.form['chip_nummer']
         eu_passnummer = request.form['eu_passnummer']
         if(request.form.get('patient')):
@@ -209,7 +209,7 @@ def create_tier(id):
         else:
             patient = 0
 
-        tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
+        tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)
         tierhaltung = read_tierhaltung(id)
         newid =  write_tierhaltung(tierhaltung['person_id'], tier_id)
         return redirect(url_for('ordi.show_tierhaltung', id=newid))
@@ -227,7 +227,7 @@ def edit_tier(id, tier_id):
         viren = request.form['viren']
         merkmal = request.form['merkmal']
         geburtsdatum = request.form['geburtsdatum']
-        geschlechtsartcode = request.form['geschlechtsartcode']
+        geschlechtscode = request.form['geschlechtscode']
         chip_nummer = request.form['chip_nummer']
         eu_passnummer = request.form['eu_passnummer']
         if(request.form.get('patient')):
@@ -235,7 +235,7 @@ def edit_tier(id, tier_id):
         else:
             patient = 0
 
-        update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)
+        update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     tierhaltung = read_tierhaltung(id)
     return render_template('ordi/edit_tier.html', tierhaltung=tierhaltung, page_title="Tier ändern")
@@ -245,7 +245,7 @@ def edit_tier(id, tier_id):
 @login_required
 def edit_person(id, person_id):
     if(request.method == 'POST'):
-        anredeartcode = request.form['anredeartcode']
+        anredecode = request.form['anredecode']
         titel = request.form['titel']
         familienname = request.form['familienname']
         vorname = request.form['vorname']
@@ -254,7 +254,7 @@ def edit_person(id, person_id):
             kunde = 1
         else:
             kunde = 0
-        update_person(person_id, anredeartcode, titel, familienname, vorname, notiz, kunde)
+        update_person(person_id, anredecode, titel, familienname, vorname, notiz, kunde)
 
         strasse = request.form['strasse']
         postleitzahl = request.form['postleitzahl']
@@ -467,7 +467,7 @@ def create_rechnung(id):
 
         data = (
             request.form.getlist('datum[]'),
-            request.form.getlist('artikelartcode[]'),
+            request.form.getlist('artikelcode[]'),
             request.form.getlist('artikel[]'),
             request.form.getlist('betrag[]'),
             request.form.getlist('rechnungszeile_id[]')
@@ -482,21 +482,21 @@ def create_rechnung(id):
             return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
 
         tierhaltung = read_tierhaltung(id)
-        rechnung_id = write_rechnung(tierhaltung['person_id'], tierhaltung['tier_id'], rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn)
+        rechnung_id = write_rechnung(tierhaltung['person_id'], tierhaltung['tier_id'], rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
 
         for req_rechnungszeile in req_rechnungszeilen:
             datum = req_rechnungszeile[0]
             if(len(datum) == 0):
                 datum = date.today().strftime("%Y-%m-%d")
-            artikelartcode = req_rechnungszeile[1]
+            artikelcode = req_rechnungszeile[1]
             artikel = req_rechnungszeile[2]
             betrag = req_rechnungszeile[3]
             rechnungszeile_id = req_rechnungszeile[4]
-            if(len(artikelartcode) > 0 or len(artikel) > 0 or len(betrag) > 0):
+            if(len(artikelcode) > 0 or len(artikel) > 0 or len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
-                    write_rechnungszeile(rechnung_id, datum, artikelartcode, artikel, betrag)
+                    write_rechnungszeile(rechnung_id, datum, artikelcode, artikel, betrag)
                 else:
-                    update_rechnungszeile(rechnungszeile_id, datum, artikelartcode, artikel, betrag)
+                    update_rechnungszeile(rechnungszeile_id, datum, artikelcode, artikel, betrag)
         return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id,))
     tierhaltung = read_tierhaltung(id)
     adresse = read_adresse(tierhaltung['person_id'])
@@ -532,12 +532,11 @@ def edit_rechnung(rechnung_id):
 
         data = (
             request.form.getlist('datum[]'),
-            request.form.getlist('artikelartcode[]'),
+            request.form.getlist('artikelcode[]'),
             request.form.getlist('artikel[]'),
             request.form.getlist('betrag[]'),
             request.form.getlist('rechnungszeile_id[]')
         )
-        print(data)
         req_rechnungszeilen = build_rechnungszeilen(data)
         calc = calc_rechnung(req_rechnungszeilen)
         if(len(calc.error_msg) > 0):
@@ -548,21 +547,21 @@ def edit_rechnung(rechnung_id):
             kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
         else:
-            update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn)
+            update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
 
         for req_rechnungszeile in req_rechnungszeilen:
             datum = req_rechnungszeile[0]
             if(len(datum) == 0):
                 datum = date.today().strftime("%Y-%m-%d")
-            artikelartcode = req_rechnungszeile[1]
+            artikelcode = req_rechnungszeile[1]
             artikel = req_rechnungszeile[2]
             betrag = req_rechnungszeile[3]
             rechnungszeile_id = req_rechnungszeile[4]
-            if(len(datum) == 10 and len(artikelartcode) > 0 and len(betrag) > 0):
+            if(len(datum) == 10 and len(artikelcode) > 0 and len(betrag) > 0):
                 if(len(rechnungszeile_id) == 0):
-                    write_rechnungszeile(rechnung_id, datum, artikelartcode, artikel, betrag)
+                    write_rechnungszeile(rechnung_id, datum, artikelcode, artikel, betrag)
                 else:
-                    update_rechnungszeile(rechnungszeile_id, datum, artikelartcode, artikel, betrag)
+                    update_rechnungszeile(rechnungszeile_id, datum, artikelcode, artikel, betrag)
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
     rechnungszeilen = read_rechnungszeilen(rechnung_id)
     rechnung = read_rechnung(rechnung_id)

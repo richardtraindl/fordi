@@ -16,19 +16,19 @@
         <p>{{ tierhaltung['geburtsdatum'] }}</p>
 
         <p>Geschlecht</p>
-        {% if tierhaltung['geschlechtsartcode'] == 0 %}
+        {% if tierhaltung['geschlechtscode'] == 0 %}
             <p>&nbsp;</p>
         {% endif %}
-        {% if tierhaltung['geschlechtsartcode'] == 1 %}
+        {% if tierhaltung['geschlechtscode'] == 1 %}
             <p>m</p>
         {% endif %}
-        {% if tierhaltung['geschlechtsartcode'] == 2 %}
+        {% if tierhaltung['geschlechtscode'] == 2 %}
             <p>mk</p>
         {% endif %}
-        {% if tierhaltung['geschlechtsartcode'] == 3 %}
+        {% if tierhaltung['geschlechtscode'] == 3 %}
             <p>w</p>
         {% endif %}
-        {% if tierhaltung['geschlechtsartcode'] == 4 %}
+        {% if tierhaltung['geschlechtscode'] == 4 %}
             <p>wk</p>
         {% endif %}
         </select>

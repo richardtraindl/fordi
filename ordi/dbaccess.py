@@ -258,28 +258,28 @@ def read_rechnungszeile(rechnungszeile_id):
     return rechnungszeile
 
 
-def write_person(anredeartcode, titel, familienname, vorname, notiz, kunde):
+def write_person(anredecode, titel, familienname, vorname, notiz, kunde):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     person_id = cursor.execute(
-        "INSERT INTO person (anredeartcode, titel, familienname, vorname, notiz, kunde)"
+        "INSERT INTO person (anredecode, titel, familienname, vorname, notiz, kunde)"
         " VALUES (?, ?, ?, ?, ?, ?)",
-        (anredeartcode, titel, familienname, vorname, notiz, kunde,)
+        (anredecode, titel, familienname, vorname, notiz, kunde,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
     return person_id
 
 
-def update_person(person_id, anredeartcode, titel, familienname, vorname, notiz, kunde):
+def update_person(person_id, anredecode, titel, familienname, vorname, notiz, kunde):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE person SET anredeartcode = ?, titel = ?, familienname = ?, vorname = ?, notiz = ?, kunde = ?"
+        "UPDATE person SET anredecode = ?, titel = ?, familienname = ?, vorname = ?, notiz = ?, kunde = ?"
         " WHERE person.id = ?",
-        (anredeartcode, titel, familienname, vorname, notiz, kunde, person_id,)
+        (anredecode, titel, familienname, vorname, notiz, kunde, person_id,)
     )
     dbcon.commit()
     cursor.close()
@@ -357,28 +357,28 @@ def delete_db_kontakt(kontakt_id):
     cursor.close()
 
 
-def write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient):
+def write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     tier_id = cursor.execute(
-        "INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient)"
+        "INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)"
         " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient,)
+        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
     return tier_id
 
 
-def update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient):
+def update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE tier SET tiername = ?, tierart = ?, rasse = ?, farbe = ?, viren = ?, merkmal = ?, geburtsdatum = ?, geschlechtsartcode = ?, chip_nummer = ?, eu_passnummer = ?, patient = ?"
+        "UPDATE tier SET tiername = ?, tierart = ?, rasse = ?, farbe = ?, viren = ?, merkmal = ?, geburtsdatum = ?, geschlechtscode = ?, chip_nummer = ?, eu_passnummer = ?, patient = ?"
         " WHERE tier.id = ?",
-        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtsartcode, chip_nummer, eu_passnummer, patient, tier_id,)
+        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient, tier_id,)
     )
     dbcon.commit()
     cursor.close()
@@ -443,26 +443,26 @@ def save_or_delete_impfungen(behandlung_id, impfungstexte):
 
     for impfungstext in impfungstexte:
         try:
-            impfungsartcode = IMPFUNG[impfungstext]
+            impfungscode = IMPFUNG[impfungstext]
         except:
             print("severe error")
             cursor.close()
             return False
         found = False
         for sql_impfung in sql_impfungen:
-            if(impfungsartcode == sql_impfung['impfungsartcode']):
+            if(impfungscode == sql_impfung['impfungscode']):
                 found = True
                 break
         if(found == False):
-            cursor.execute("INSERT INTO impfung (behandlung_id, impfungsartcode) VALUES (?, ?)",
-                           (behandlung_id, impfungsartcode,))
+            cursor.execute("INSERT INTO impfung (behandlung_id, impfungscode) VALUES (?, ?)",
+                           (behandlung_id, impfungscode,))
             dbcon.commit()
 
     for sql_impfung in sql_impfungen:
         found = False
         for impfungstext in impfungstexte:
-            impfungsartcode = IMPFUNG[impfungstext]
-            if(impfungsartcode == sql_impfung['impfungsartcode']):
+            impfungscode = IMPFUNG[impfungstext]
+            if(impfungscode == sql_impfung['impfungscode']):
                 found = True
                 break
         if(found == False):
@@ -523,28 +523,28 @@ def write_rechnung(person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellung
     return rechnung_id
 
 
-def write_rechnungszeile(rechnung_id, datum, artikelartcode, artikel, betrag):
+def write_rechnungszeile(rechnung_id, datum, artikelcode, artikel, betrag):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     rechnungszeile_id = cursor.execute(
-        "INSERT INTO rechnungszeile (rechnung_id, datum, artikelartcode, artikel, betrag)"
+        "INSERT INTO rechnungszeile (rechnung_id, datum, artikelcode, artikel, betrag)"
         " VALUES (?, ?, ?, ?, ?)",
-        (rechnung_id, datum, artikelartcode, artikel, betrag,)
+        (rechnung_id, datum, artikelcode, artikel, betrag,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
     return rechnungszeile_id
 
 
-def update_rechnungszeile(rechnungszeile_id, datum, artikelartcode, artikel, betrag):
+def update_rechnungszeile(rechnungszeile_id, datum, artikelcode, artikel, betrag):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE rechnungszeile SET datum = ?, artikelartcode = ?, artikel = ?, betrag = ?"
+        "UPDATE rechnungszeile SET datum = ?, artikelcode = ?, artikel = ?, betrag = ?"
         " WHERE rechnungszeile.id = ?",
-        (datum, artikelartcode, artikel, betrag, rechnungszeile_id,)
+        (datum, artikelcode, artikel, betrag, rechnungszeile_id,)
     )
     dbcon.commit()
     cursor.close()

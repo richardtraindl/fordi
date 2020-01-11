@@ -115,12 +115,12 @@
                 {% for req_rechnungszeile in req_rechnungszeilen %}
                   <tr>
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ req_rechnungszeile[0] or rechnungszeile_datum }}"></td>
-                    {% set artikelcode = req_rechnungszeile[1] %}
+                    {% set artikelcode = req_rechnungszeile[1] | int %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ req_rechnungszeile[2] }}</textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{ req_rechnungszeile[3] }}</textarea></td>
                     <td style="width: 6%">
-                        <a class="zeile_loeschen" rechnungszeile_id="{{ req_rechnungszeile['id'] }}" href="#">Zeile löschen</a>
+                        <a class="zeile_loeschen" rechnungszeile_id="{{ req_rechnungszeile[4] }}" href="#">Zeile löschen</a>
                         <input type="hidden" name="rechnungszeile_id[]" value="{{ req_rechnungszeile[4] }}">
                     </td>
                   </tr>

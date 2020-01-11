@@ -16,22 +16,7 @@
         <p>{{ tierhaltung['geburtsdatum'] }}</p>
 
         <p>Geschlecht</p>
-        {% if tierhaltung['geschlechtscode'] == 0 %}
-            <p>&nbsp;</p>
-        {% endif %}
-        {% if tierhaltung['geschlechtscode'] == 1 %}
-            <p>m</p>
-        {% endif %}
-        {% if tierhaltung['geschlechtscode'] == 2 %}
-            <p>mk</p>
-        {% endif %}
-        {% if tierhaltung['geschlechtscode'] == 3 %}
-            <p>w</p>
-        {% endif %}
-        {% if tierhaltung['geschlechtscode'] == 4 %}
-            <p>wk</p>
-        {% endif %}
-        </select>
+        <p>{{tierhaltung['geschlechtscode'] | mapgeschlecht }}</p>
 
         <p>Chip Nummer</p>
         <p>{{ tierhaltung['chip_nummer'] }}</p>

@@ -45,13 +45,13 @@
             <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['rechnungsjahr'] }}</a></td>
             <td style="width: 2%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['rechnungslfnr'] }}</a></td>
             <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ '{0:0.2f}'.format(rechnung['brutto_summe']) }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['anredecode']|mapanrede }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['anredecode'] | mapanrede }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['familienname'] }}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['vorname'] }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['tiername'] }}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['tierart'] }}</a></td>
             <td style="width: 10%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['rasse'] }}</a></td>
-            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['geschlechtscode']|mapgeschlecht }}</a></td>
+            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['geschlechtscode'] | mapgeschlecht }}</a></td>
             <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['geburtsdatum'] }}</a></td>
         </tr>
       {% endfor %}

@@ -1,0 +1,50 @@
+
+/* @page {
+  size: 210mm 297mm;
+  margin: 10mm 13mm 13mm 13mm;
+  column-count:2;
+  column-gap:-10mm;
+  force-page-count: no-force;
+  // background-color: lightgreen;
+} */
+
+body { 
+    width: 184mm; /* 210 - (13 + 13) */
+    height: 274mm; /* 297 - (10 + 13) */
+    margin: 0 auto;
+    padding: 10mm 13mm 13mm 13mm;
+    border: 1px solid black;
+}
+
+/* div { column-span: all; text-align: left } */
+
+p { text-align: left }
+
+div.foot {
+   height: 10mm;
+   background-color: Lightgray;
+}
+
+div.head {
+   height: 90mm;
+}
+
+div.content {
+   height: 174mm;
+}
+
+
+/* .paper-layout { column-span: none; font-size: 7pt; text-align: left } */
+
+/* .hyphen { margin-left: 5mm; } */
+
+.row-grid { 
+    display: grid; 
+    margin: 0; 
+    grid-auto-flow: column;
+    column-gap: 12px;
+    grid-row-gap: 12px;
+    align-items: center;
+    vertical-align: middle;
+}
+

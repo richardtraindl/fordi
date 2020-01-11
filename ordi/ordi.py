@@ -159,7 +159,14 @@ def create_tierhaltung():
 
         id = write_tierhaltung(person_id, tier_id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
-    return render_template('ordi/create_tierhaltung.html', new="true", page_title="Neue Karteikarte")
+    anredewerte = []
+    for key, value in ANREDE.items():
+        anredewerte.append([key, value])
+
+    geschlechtswerte = []
+    for key, value in GESCHLECHT.items():
+        geschlechtswerte.append([key, value])
+    return render_template('ordi/create_tierhaltung.html', anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
@@ -187,7 +194,14 @@ def show_tierhaltung(id):
     for key, value in IMPFUNG.items():
         impfungswerte.append([key, value])
 
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, laboreferenzen=laboreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
+    anredewerte = []
+    for key, value in ANREDE.items():
+        anredewerte.append([key, value])
+
+    geschlechtswerte = []
+    for key, value in GESCHLECHT.items():
+        geschlechtswerte.append([key, value])
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, anredewerte=anredewerte,  geschlechtswerte=geschlechtswerte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, behandlungsdatum=behandlungsdatum, laboreferenzen=laboreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
@@ -213,7 +227,10 @@ def create_tier(id):
         tierhaltung = read_tierhaltung(id)
         newid =  write_tierhaltung(tierhaltung['person_id'], tier_id)
         return redirect(url_for('ordi.show_tierhaltung', id=newid))
-    return render_template('ordi/create_tier.html', new="true", page_title="Neues Tier")
+    geschlechtswerte = []
+    for key, value in GESCHLECHT.items():
+        geschlechtswerte.append([key, value])
+    return render_template('ordi/create_tier.html', geschlechtswerte=geschlechtswerte, new="true", page_title="Neues Tier")
 
 
 @bp.route('/<int:id>/<int:tier_id>/edit_tier', methods=('GET', 'POST'))
@@ -238,7 +255,10 @@ def edit_tier(id, tier_id):
         update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     tierhaltung = read_tierhaltung(id)
-    return render_template('ordi/edit_tier.html', tierhaltung=tierhaltung, page_title="Tier ändern")
+    geschlechtswerte = []
+    for key, value in GESCHLECHT.items():
+        geschlechtswerte.append([key, value])
+    return render_template('ordi/edit_tier.html', tierhaltung=tierhaltung, geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
 
 
 @bp.route('/<int:id>/<int:person_id>/edit_person', methods=('GET', 'POST'))
@@ -297,7 +317,10 @@ def edit_person(id, person_id):
     tierhaltung = read_tierhaltung(id)
     adresse = read_adresse(person_id)
     kontakte = read_kontakte(person_id)
-    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Person ändern")
+    anredewerte = []
+    for key, value in ANREDE.items():
+        anredewerte.append([key, value])
+    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, anredewerte=anredewerte, adresse=adresse, kontakte=kontakte, page_title="Person ändern")
 
 
 @bp.route('/<int:id>/create_behandlung', methods=('GET', 'POST'))
@@ -406,8 +429,11 @@ def create_behandlungsverlauf(id):
         behandlung = request.form['behandlung']
 
         tierhaltung = read_tierhaltung(id)
+        adresse = read_adresse(tierhaltung['person_id'])
         behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
-        return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
+        behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
+        return render_template('ordi/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
+        #return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
     else:
         tierhaltung = read_tierhaltung(id)
         adresse = read_adresse(tierhaltung['person_id'])
@@ -425,6 +451,10 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         diagnose = request.form['diagnose']
         behandlung = request.form['behandlung']
         update_behandlungsverlauf(behandlungsverlauf_id, datum, diagnose, behandlung)
+        behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
+        tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
+        adresse = read_adresse(behandlungsverlauf['person_id'])
+        return render_template('ordi/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
     adresse = read_adresse(behandlungsverlauf['person_id'])
@@ -448,6 +478,9 @@ def build_rechnungszeilen(data):
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
 @login_required
 def create_rechnung(id):
+    artikelwerte = []
+    for key, value in ARTIKEL.items():
+        artikelwerte.append([key, value])
     if(request.method == 'POST'):
         rechnungsjahr = request.form['rechnungsjahr']
         rechnungslfnr = request.form['rechnungslfnr']
@@ -479,7 +512,7 @@ def create_rechnung(id):
             tierhaltung = read_tierhaltung(id)
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
-            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
         tierhaltung = read_tierhaltung(id)
         rechnung_id = write_rechnung(tierhaltung['person_id'], tierhaltung['tier_id'], rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
@@ -504,15 +537,15 @@ def create_rechnung(id):
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
     ausstellungsdatum = date.today().strftime("%Y-%m-%d")
     ausstellungsort = "Wien"
-    artikel = []
-    for art in ARTIKEL:
-        artikel.append(art)
-    return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, ausstellungsdatum=ausstellungsdatum, ausstellungsort=ausstellungsort, rechnungszeile_datum=rechnungszeile_datum, artikel=artikel, page_title="Rechnung")
+    return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, ausstellungsdatum=ausstellungsdatum, ausstellungsort=ausstellungsort, rechnungszeile_datum=rechnungszeile_datum, artikelwerte=artikelwerte, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
 @login_required
 def edit_rechnung(rechnung_id):
+    artikelwerte = []
+    for key, value in ARTIKEL.items():
+        artikelwerte.append([key, value])
     if(request.method == 'POST'):
         rechnungsjahr = request.form['rechnungsjahr']
         rechnungslfnr = request.form['rechnungslfnr']
@@ -542,10 +575,10 @@ def edit_rechnung(rechnung_id):
         if(len(calc.error_msg) > 0):
             flash(calc.error_msg)
             rechnung = read_rechnung(rechnung_id)
-            tierhaltung = read_tierhaltung(rechnung['tierhaltung_id'])
+            tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
-            return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
         else:
             update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
 
@@ -568,10 +601,7 @@ def edit_rechnung(rechnung_id):
     tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
     adresse = read_adresse(tierhaltung['person_id'])
     kontakte = read_kontakte(tierhaltung['person_id'])
-    artikel = []
-    for art in ARTIKEL:
-        artikel.append(art)
-    return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, artikel=artikel, page_title="Rechnung")
+    return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, artikelwerte=artikelwerte, page_title="Rechnung")
 
 
 @bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))

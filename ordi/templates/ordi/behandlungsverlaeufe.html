@@ -34,7 +34,7 @@
             <th width="18%">Tiername</th>
             <th width="12%">Tierart</th>
             <th width="10%">Rasse</th>
-            <th width="6%"Geschl.</th>
+            <th width="6%">Geschl.</th>
             <th width="8%">Geb.Datum</th>
         </tr>
       {% for behandlungsverlauf in behandlungsverlaeufe %}
@@ -47,7 +47,7 @@
             <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['tiername'] }}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['tierart'] }}</a></td>
             <td style="width: 10%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['rasse'] }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geschlechtcode']|mapgeschlecht }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geschlechtscode'] | mapgeschlecht }}</a></td>
             <td style="width: 8%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geburtsdatum'] }}</a></td>
         </tr>
       {% endfor %}

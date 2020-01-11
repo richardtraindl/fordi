@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Behandlungsverlauf</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='print.css') }}">
+    </head>
+    <body>
+        <div class="head">
+            <div class="row-grid">
+                <p style="justify-items: end; text-align: right;" ><img src="{{ url_for('static', filename='img/logo.png') }}"></p>
+            </div>
+            <div>
+                <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
+
+                <p>
+                   {{- tierhaltung['vorname'] -}} &nbsp; 
+                   {{- tierhaltung['familienname'] -}} &nbsp; 
+                   {{- tierhaltung['titel'] -}}
+                </p>
+
+                <p>{{- adresse['strasse'] -}}</p>
+
+                <p>
+                    {{- adresse['postleitzahl'] -}} &nbsp; 
+                    {{- adresse['ort'] -}}
+                </p>
+            <div>
+
+            <div class="row-grid">
+                <p>Patient: &nbsp;
+                    {{- tierhaltung['tiername'] -}} &nbsp;
+                    {{- tierhaltung['tierart'] -}} &nbsp;
+                    {{- tierhaltung['geburtsdatum'] -}}
+                </p>
+                <p style="justify-items: end; text-align: right;">{{- behandlungsverlauf['datum'] -}}</p>
+            </div>
+
+            <div>
+                <p>Diagnose: &nbsp; {{- behandlungsverlauf['diagnose'] -}}</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <p>{{- behandlungsverlauf['behandlung'] -}}</p>
+        </div>
+
+        <div class="foot">
+            <p>
+                1070 Tierarztpraxis Kaiserstrasse, 
+                Tel. 01 944 5 944, 0699 1 944 5 944 
+                ATU 56934599
+            </p>
+        </div>
+    </body>
+</html>
+ 
+  
+
+

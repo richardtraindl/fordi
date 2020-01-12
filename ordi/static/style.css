@@ -6,10 +6,10 @@
 * { font-size: 16px; line-height: 18px }
 html { background: #eee; padding: 10px; }
 body { width: 1280px; max-width: 100%; margin: 0 auto; background-color: White; }
-h1, h1 a { margin:0; padding: 0; font-size: 28px; }
-h2, h2 a { margin: 6px 0; padding: 0; font-size: 24px; text-decoration: underline; }
-h3, h3 a { margin: 0; padding: 0; font-size: 20px; }
-p, label, input { margin: 0; padding: 0 }
+h1, h1 a { margin: auto 0; padding: 0; font-size: 28px; }
+h2, h2 a { margin: auto 0; padding: 0; font-size: 24px; text-decoration: underline; }
+h3, h3 a { margin: auto 0; padding: 0; font-size: 20px; }
+p, label, input { margin: auto 0; padding: 0 }
 a { color: #377ba8; text-decoration: none;}
 
 #content-wrapper { padding: 8px; background-color: #EEE; }
@@ -18,9 +18,14 @@ a { color: #377ba8; text-decoration: none;}
 
 header { 
     background: Lightgray;
-    padding: 4px 16px 4px 16px;
-} 
-header p { justify-items: end; text-align: right; }
+    width: 100%; 
+    margin: 0 auto;
+    padding: 8px 0px 8px 0px;
+    display: grid; 
+    grid-template-columns: auto auto auto;
+    /* grid-template-columns: 40% 40% 20%; 
+    justify-content: end; */
+}
 
 nav { background: Lightgray; margin-top: 1px; padding: 8px 0px 6px 0px; }
 nav a, 
@@ -32,36 +37,15 @@ nav a:active {
 }
 
 .row-grid { 
-    display: grid; 
-}
-.row-grid { 
+    display: inline-grid; 
     margin: 0; 
-    grid-auto-flow: column;
+    grid-auto-flow: row;
     column-gap: 12px;
-    grid-row-gap: 12px;
+    grid-row-gap: 6px;
     align-items: center;
     vertical-align: middle;
-}
-
-.twocols {
-    display: inline-grid; 
-    grid-template-columns: auto auto; 
-    grid-template-rows: auto; 
-    grid-auto-flow: row;
-    align-items: center;
     justify-items: start;
 }
-.twocols > * { margin: 4px 6px 0 0 }
-
-.fourcols {
-    display: inline-grid; 
-    grid-template-columns: auto auto auto auto;
-    grid-template-rows: auto; 
-    grid-auto-flow: row;
-    align-items: center;
-    justify-items: start;
-}
-.fourcols > * { margin: 4px 6px 0 0 }
 
 .flex-container {
     display: flex; 
@@ -135,5 +119,6 @@ textarea {
   padding-bottom: 30px;
 }
 
-#neue_zeile input[type=text], #neue_zeile textarea, #neue_zeile select { display: none; }
-/* background-color: #fdfd96; */
+#neue_zeile input[type=text], #neue_zeile textarea, #neue_zeile select { 
+    display: none; 
+}

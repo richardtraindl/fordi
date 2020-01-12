@@ -1,11 +1,16 @@
 
-    <div class="twocols person">
+    <!-- div class="twocols person" !-->
+    <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         <label for="anredecode">Anrede</label>
         <select name="anredecode">
         {% if tierhaltung %}
             {% set anredecode = tierhaltung['anredecode'] %}
         {% else %}
-            {% set anredecode = request.form['anredecode'] | int %}
+            {% if request.form['anredecode'] %}
+                {% set anredecode = request.form['anredecode'] | int %}
+            {% else %}
+                {% set anredecode = 0 %}
+            {% endif %}
         {% endif %}
         {%- for anredewert in anredewerte -%}
           {%- if anredewert[1] == anredecode -%}

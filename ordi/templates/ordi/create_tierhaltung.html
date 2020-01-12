@@ -9,7 +9,8 @@
 
 {% block content %}
     <form method="post">
-        <div class="twocols">
+        <!--div class="twocols" !-->
+        <div class="row-grid" style="grid-template-columns: auto auto;">
             {% include 'ordi/_form_for_person.html' %}
             {% include 'ordi/_form_for_tier.html' %}
         </div>
@@ -17,8 +18,8 @@
         <div class="small-gap"></div>
 
         <div class="flex-container">
-                <div><input type="submit" value="Speichern"></div>
-                <p class="btn"><a href="{{ url_for('ordi.index') }}">Abbrechen</a></p>
+            <div><input type="submit" value="Speichern"></div>
+            <p class="btn"><a href="{{ url_for('ordi.index') }}">Abbrechen</a></p>
         </div>
     </form>
 

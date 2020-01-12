@@ -5,10 +5,10 @@
     </head>
     <body>
         <div class="head">
-            <div class="row-grid">
-                <p style="justify-items: end; text-align: right;" ><img src="{{ url_for('static', filename='img/logo.png') }}"></p>
+            <div style="padding-bottom: 15mm; text-align: right;">
+                <p><img src="{{ url_for('static', filename='img/print_logo.png') }}"></p>
             </div>
-            <div>
+            <div style="padding-bottom: 20mm;">
                 <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
 
                 <p>
@@ -23,15 +23,15 @@
                     {{- adresse['postleitzahl'] -}} &nbsp; 
                     {{- adresse['ort'] -}}
                 </p>
-            <div>
+            </div>
 
-            <div class="row-grid">
+            <div style="display: grid; grid-template-columns: auto auto;">
                 <p>Patient: &nbsp;
                     {{- tierhaltung['tiername'] -}} &nbsp;
                     {{- tierhaltung['tierart'] -}} &nbsp;
                     {{- tierhaltung['geburtsdatum'] -}}
                 </p>
-                <p style="justify-items: end; text-align: right;">{{- behandlungsverlauf['datum'] -}}</p>
+                <p style="text-align: right;">{{- behandlungsverlauf['datum'] -}}</p>
             </div>
 
             <div>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="foot">
-            <p>
+            <p style="height: 10mm; line-height: 10mm; text-align: left;">
                 1070 Tierarztpraxis Kaiserstrasse, 
                 Tel. 01 944 5 944, 0699 1 944 5 944 
                 ATU 56934599

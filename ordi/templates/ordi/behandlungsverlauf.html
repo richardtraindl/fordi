@@ -9,7 +9,7 @@
 
 {% block content %}
     <div>
-        <div class="twocols">
+        <div class="row-grid" style="grid-template-columns: auto auto;">
             {% include 'ordi/_person.html' %}
 
             {% include 'ordi/_tier.html' %}
@@ -24,7 +24,7 @@
         <form method="post" action="{{ url_for('ordi.create_behandlungsverlauf', id=tierhaltung['id']) }}">
     {% endif %}
 
-    <div class="twocols">
+    <div class="row-grid" style="grid-template-columns: auto auto;">
       {% if behandlungsverlauf %}
         <label for="datum">Datum</label>
         <input size="10" type="text" name="datum" id="datum" class="date" value="{{ behandlungsverlauf['datum'] }}" required>

@@ -9,7 +9,7 @@
 
 {% block content %}
     <div>
-        <div class="twocols">
+        <div class="row-grid" style="grid-template-columns: auto auto;">
             {% include 'ordi/_person.html' %}
 
             {% include 'ordi/_tier.html' %}
@@ -30,7 +30,7 @@
 
     {% if rechnung %}
       <div>
-        <div class="fourcols">
+        <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
             <label for="rechnungsjahr">Rechnungsjahr</label>
             <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ rechnung['rechnungsjahr'] }}" required>
             
@@ -45,7 +45,7 @@
         </div>
       </div>
       <div>
-        <div class="twocols">
+        <div class="row-grid" style="grid-template-columns: auto auto;">
             <label for="diagnose">Diagnose</label>
             <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
             
@@ -55,7 +55,7 @@
       <div>
       {% else %}
       <div>
-        <div class="fourcols">
+        <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
             <label for="rechnungsjahr">Rechnungsjahr</label>
             <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ request.form['rechnungsjahr'] }}" required>
             
@@ -70,7 +70,7 @@
         </div>
       </div>
       <div>
-        <div class="twocols">
+        <div class="row-grid" style="grid-template-columns: auto auto;">
             <label for="diagnose">Diagnose</label>
             <textarea style="width: 480px; height: 42px;" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
             

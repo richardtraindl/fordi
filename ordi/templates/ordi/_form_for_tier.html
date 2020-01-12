@@ -1,5 +1,6 @@
 
-    <div class="twocols tier">
+    <!-- div class="twocols tier" !-->
+    <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         <label for="tiername">Tiername</label>
         {% if tierhaltung %}
             <input size="20" name="tiername" value="{{ tierhaltung['tiername'] }}" required>    
@@ -39,7 +40,11 @@
         {% if tierhaltung %}
             {% set geschlechtscode = tierhaltung['geschlechtscode'] %}
         {% else %}
-            {% set geschlechtscode = request.form['geschlechtscode'] | int %}                
+            {% if request.form['geschlechtscode'] %}
+                {% set geschlechtscode = request.form['geschlechtscode'] | int %}
+            {% else %}
+                {% set geschlechtscode = 0 %}
+            {% endif %}
         {% endif %}
         <select name="geschlechtscode">
         {%- for geschlechtswert in geschlechtswerte -%}

@@ -432,7 +432,7 @@ def create_behandlungsverlauf(id):
         adresse = read_adresse(tierhaltung['person_id'])
         behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-        return render_template('ordi/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
+        return render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
         #return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
     else:
         tierhaltung = read_tierhaltung(id)
@@ -454,7 +454,7 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
         tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
         adresse = read_adresse(behandlungsverlauf['person_id'])
-        return render_template('ordi/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
+        return render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
     adresse = read_adresse(behandlungsverlauf['person_id'])

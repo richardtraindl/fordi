@@ -5,8 +5,18 @@
     </head>
     <body>
         <div class="head">
-            <div style="padding-bottom: 15mm; text-align: right;">
-                <p><img src="{{ url_for('static', filename='img/print_logo.png') }}"></p>
+            <div style="width: 100%; padding-bottom: 15mm; display: inline-grid; justify-content: end; align-items: center; grid-template-columns: auto auto;">
+                <div style="padding-right: 5mm; text-align: right;">
+                    <p style="margin: 0; text-align: center; text-decoration: underline;">TIERARZTPRAXIS</p>
+                    <p style="margin: 0; text-align: center; padding-bottom: 4px;">Kaiserstrasse</p>
+                    <p style="text-align: right;">
+                        Dr. Elfriede Koppensteiner<br>
+                        Mag. Gerold Koppensteiner
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <p><img src="{{ url_for('static', filename='img/logo.png') }}"></p>
+                </div>
             </div>
             <div style="padding-bottom: 20mm;">
                 <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>

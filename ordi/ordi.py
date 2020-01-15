@@ -1,7 +1,7 @@
 
 
 from datetime import date
-import re
+import re, os
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
@@ -427,18 +427,23 @@ def create_behandlungsverlauf(id):
             datum = date.today().strftime("%Y-%m-%d")
         diagnose = request.form['diagnose']
         behandlung = request.form['behandlung']
-
         tierhaltung = read_tierhaltung(id)
         adresse = read_adresse(tierhaltung['person_id'])
+        kontakte = read_kontakte(behandlungsverlauf['person_id'])
         behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-        return render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
-        #return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf_id))
+        html = render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf)
+        file = open('c:\\temp\\behandlungsverlauf.html', 'w')
+        file.write(html)
+        file.close()
+        cmd = "c:\\eprog\\wkhtmltopdf\\bin\\wkhtmltopdf.exe c:\\temp\\behandlungsverlauf.html c:\\temp\\behandlungsverlauf.pdf"
+        os.system(cmd)
+        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kon
     else:
         tierhaltung = read_tierhaltung(id)
         adresse = read_adresse(tierhaltung['person_id'])
         kontakte = read_kontakte(tierhaltung['person_id'])
-    return render_template('ordi/behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+        return render_template('ordi/behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/edit_behandlungsverlauf', methods=('GET', 'POST'))
@@ -454,7 +459,14 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
         tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
         adresse = read_adresse(behandlungsverlauf['person_id'])
-        return render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
+        kontakte = read_kontakte(behandlungsverlauf['person_id'])
+        html = render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf)
+        file = open('c:\\temp\\behandlungsverlauf.html', 'w')
+        file.write(html)
+        file.close()
+        cmd = "c:\\eprog\\wkhtmltopdf\\bin\\wkhtmltopdf.exe c:\\temp\\behandlungsverlauf.html c:\\temp\\behandlungsverlauf.pdf"
+        os.system(cmd)
+        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
     adresse = read_adresse(behandlungsverlauf['person_id'])

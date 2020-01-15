@@ -2,59 +2,9 @@
 <html>
     <head>
         <title>Behandlungsverlauf</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='print.css') }}">
     </head>
     <body>
-        <div class="head">
-            <div style="width: 100%; padding-bottom: 15mm; display: inline-grid; justify-content: end; align-items: center; grid-template-columns: auto auto;">
-                <div style="padding-right: 5mm; text-align: right;">
-                    <p style="margin: 0; text-align: center; text-decoration: underline;">TIERARZTPRAXIS</p>
-                    <p style="margin: 0; text-align: center; padding-bottom: 4px;">Kaiserstrasse</p>
-                    <p style="text-align: right;">
-                        Dr. Elfriede Koppensteiner<br>
-                        Mag. Gerold Koppensteiner
-                    </p>
-                </div>
-                <div style="text-align: right;">
-                    <p><img src="{{ url_for('static', filename='img/logo.png') }}"></p>
-                </div>
-            </div>
-            <div style="padding-bottom: 20mm;">
-                <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
-
-                <p>
-                   {{- tierhaltung['vorname'] -}} &nbsp; 
-                   {{- tierhaltung['familienname'] -}} &nbsp; 
-                   {{- tierhaltung['titel'] -}}
-                </p>
-
-                <p>{{- adresse['strasse'] -}}</p>
-
-                <p>
-                    {{- adresse['postleitzahl'] -}} &nbsp; 
-                    {{- adresse['ort'] -}}
-                </p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: auto auto;">
-                <p>Patient: &nbsp;
-                    {{- tierhaltung['tiername'] -}} &nbsp;
-                    {{- tierhaltung['tierart'] -}} &nbsp;
-                    {{- tierhaltung['geburtsdatum'] -}}
-                </p>
-                <p style="text-align: right;">{{- behandlungsverlauf['datum'] -}}</p>
-            </div>
-
-            <div>
-                <p>Diagnose: &nbsp; {{- behandlungsverlauf['diagnose'] -}}</p>
-            </div>
-        </div>
-
-        <div class="content">
-            <p>{{- behandlungsverlauf['behandlung'] -}}</p>
-        </div>
-
-        <div class="foot">
+        <div class="footer">
             <p style="height: 10mm; line-height: 10mm; text-align: left;">
                 1070 Tierarztpraxis Kaiserstrasse, 
                 Tel. 01 944 5 944, 0699 1 944 5 944 

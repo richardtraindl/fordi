@@ -8,6 +8,8 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
+from flask_wkhtmltopdf import Wkhtmltopdf
+
 from ordi.auth import login_required
 from ordi.db import get_db
 from ordi.dbaccess import *
@@ -16,6 +18,7 @@ from ordi.values import *
 
 bp = Blueprint('ordi', __name__)
 
+wkhtmltopdf = Wkhtmltopdf()
 
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
@@ -432,13 +435,15 @@ def create_behandlungsverlauf(id):
         kontakte = read_kontakte(behandlungsverlauf['person_id'])
         behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-        html = render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf)
-        file = open('c:\\temp\\behandlungsverlauf.html', 'w')
-        file.write(html)
+        
+        pdf = render_template_to_pdf('ordi/prints/print_behandlungsverlauf.html', download=True, save=False, param='hello')
+        #html = render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf)
+        file = open('/home/richard/behandlungsverlauf.pdf', 'w')
+        file.write(pdf)
         file.close()
-        cmd = "c:\\eprog\\wkhtmltopdf\\bin\\wkhtmltopdf.exe c:\\temp\\behandlungsverlauf.html c:\\temp\\behandlungsverlauf.pdf"
-        os.system(cmd)
-        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kon
+        #cmd = "c:\\eprog\\wkhtmltopdf\\bin\\wkhtmltopdf.exe c:\\temp\\behandlungsverlauf.html c:\\temp\\behandlungsverlauf.pdf"
+        #os.system(cmd)
+        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
     else:
         tierhaltung = read_tierhaltung(id)
         adresse = read_adresse(tierhaltung['person_id'])
@@ -460,7 +465,12 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
         adresse = read_adresse(behandlungsverlauf['person_id'])
         kontakte = read_kontakte(behandlungsverlauf['person_id'])
-        os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        pdf = render_template_to_pdf('ordi/prints/print_behandlungsverlauf.html', download=True, save=False, param='hello')
+        file = open('/home/richard/behandlungsverlauf.pdf', 'w')
+        file.write(pdf)
+        file.close()
+        """os.path.join(app.config['UPLOAD_FOLDER'], filename)
         html = render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf)
         file = open('c:\\temp\\behandlungsverlauf.html', 'w')
         file.write(html)
@@ -473,12 +483,9 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         file = open('c:\\temp\\footer.html', 'w')
         file.write(footer)
         file.close()
-                               
-                               
-                               
         cmd = "c:\\eprog\\wkhtmltopdf\\bin\\wkhtmltopdf.exe c:\\temp\\behandlungsverlauf.html c:\\temp\\behandlungsverlauf.pdf"
-        os.system(cmd)
-        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+        os.system(cmd)"""
+        return wkhtmltopdf.render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
     adresse = read_adresse(behandlungsverlauf['person_id'])

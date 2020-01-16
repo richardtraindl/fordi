@@ -15,6 +15,7 @@ from ordi.db import get_db
 from ordi.dbaccess import *
 from ordi.business import *
 from ordi.values import *
+from ordi.wkhtmltopdf import *
 
 bp = Blueprint('ordi', __name__)
 
@@ -435,14 +436,7 @@ def create_behandlungsverlauf(id):
         kontakte = read_kontakte(behandlungsverlauf['person_id'])
         behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-        
-        pdf = render_template_to_pdf('ordi/prints/print_behandlungsverlauf.html', download=True, save=False, param='hello')
-        #html = render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf)
-        file = open('/home/richard/behandlungsverlauf.pdf', 'w')
-        file.write(pdf)
-        file.close()
-        #cmd = "c:\\eprog\\wkhtmltopdf\\bin\\wkhtmltopdf.exe c:\\temp\\behandlungsverlauf.html c:\\temp\\behandlungsverlauf.pdf"
-        #os.system(cmd)
+        render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
         return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
     else:
         tierhaltung = read_tierhaltung(id)
@@ -465,27 +459,8 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
         adresse = read_adresse(behandlungsverlauf['person_id'])
         kontakte = read_kontakte(behandlungsverlauf['person_id'])
-
-        pdf = render_template_to_pdf('ordi/prints/print_behandlungsverlauf.html', download=True, save=False, param='hello')
-        file = open('/home/richard/behandlungsverlauf.pdf', 'w')
-        file.write(pdf)
-        file.close()
-        """os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        html = render_template('ordi/prints/print_behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=adresse, behandlungsverlauf=behandlungsverlauf)
-        file = open('c:\\temp\\behandlungsverlauf.html', 'w')
-        file.write(html)
-        file.close()
-        header = render_template('ordi/prints/header.html')
-        file = open('c:\\temp\\header.html', 'w')
-        file.write(header)
-        file.close()
-        footer = render_template('ordi/prints/footer.html')
-        file = open('c:\\temp\\footer.html', 'w')
-        file.write(footer)
-        file.close()
-        cmd = "c:\\eprog\\wkhtmltopdf\\bin\\wkhtmltopdf.exe c:\\temp\\behandlungsverlauf.html c:\\temp\\behandlungsverlauf.pdf"
-        os.system(cmd)"""
-        return wkhtmltopdf.render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+        render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
+        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
     adresse = read_adresse(behandlungsverlauf['person_id'])

@@ -18,3 +18,5 @@ build/
 *.sqlite
 
 *.geany
+
+ordi.sh

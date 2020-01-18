@@ -1,41 +1,44 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Behandlungsverlauf</title>
     </head>
     <body>
-            <div style="padding-bottom: 20mm;">
-                <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
+        <div style="padding-bottom: 20mm;">
+            <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
 
-                <p>
-                   {{- tierhaltung['vorname'] -}} &nbsp; 
-                   {{- tierhaltung['familienname'] -}} &nbsp; 
-                   {{- tierhaltung['titel'] -}}
-                </p>
+            <p>
+               {{- tierhaltung['vorname'] -}} &nbsp; 
+               {{- tierhaltung['familienname'] -}} &nbsp; 
+               {{- tierhaltung['titel'] -}}
+            </p>
 
-                <p>{{- adresse['strasse'] -}}</p>
+            <p>{{- adresse['strasse'] -}}</p>
 
-                <p>
-                    {{- adresse['postleitzahl'] -}} &nbsp; 
-                    {{- adresse['ort'] -}}
-                </p>
-            </div>
+            <p>
+                {{- adresse['postleitzahl'] -}} &nbsp; 
+                {{- adresse['ort'] -}}
+            </p>
+        </div>
+        <table border="0" align="right" width="100%">
+            <thead border="0" align="right">
+                <tr border="0" align="right">
+                    <td border="0" align="left" width="70%">&nbsp;</td>
+                    <td border="0" align="right" width="30%">&nbsp;</td>
+                </tr>
+            </thead>
+            <tbody style="border: 0px;" border="0">
+                <tr border="0">
+                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tierhaltung['tiername'] -}} &nbsp; {{- tierhaltung['tierart'] -}} &nbsp; {{- tierhaltung['geburtsdatum'] -}}</td>
+                    <td border="0" width="30%" align="right">{{- behandlungsverlauf['datum'] -}}</td>
+                </tr>
+            </tbody>
+        </table>
 
-            <div style="display: grid; grid-template-columns: auto auto;">
-                <p>Patient: &nbsp;
-                    {{- tierhaltung['tiername'] -}} &nbsp;
-                    {{- tierhaltung['tierart'] -}} &nbsp;
-                    {{- tierhaltung['geburtsdatum'] -}}
-                </p>
-                <p style="text-align: right;">{{- behandlungsverlauf['datum'] -}}</p>
-            </div>
-
-            <div>
-                <p>Diagnose: &nbsp; {{- behandlungsverlauf['diagnose'] -}}</p>
-            </div>
+        <div>
+            <p>Diagnose: &nbsp; {{- behandlungsverlauf['diagnose'] -}}</p>
         </div>
 
-        <div class="content">
+        <div>
             <p>{{- behandlungsverlauf['behandlung'] -}}</p>
         </div>
     </body>

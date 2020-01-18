@@ -8,18 +8,14 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flask_wkhtmltopdf import Wkhtmltopdf
-
 from ordi.auth import login_required
 from ordi.db import get_db
 from ordi.dbaccess import *
 from ordi.business import *
 from ordi.values import *
-from ordi.wkhtmltopdf import *
+from ordi.createpdf import *
 
 bp = Blueprint('ordi', __name__)
-
-wkhtmltopdf = Wkhtmltopdf()
 
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
@@ -436,8 +432,10 @@ def create_behandlungsverlauf(id):
         kontakte = read_kontakte(behandlungsverlauf['person_id'])
         behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-        render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
-        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+        html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse)
+        html2pdf(html)
+        #render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
+        return html # render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
     else:
         tierhaltung = read_tierhaltung(id)
         adresse = read_adresse(tierhaltung['person_id'])
@@ -459,8 +457,12 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
         adresse = read_adresse(behandlungsverlauf['person_id'])
         kontakte = read_kontakte(behandlungsverlauf['person_id'])
-        render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
-        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+        html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse)
+        html2pdf(html)
+        #html = render_template('ordi/prints/print_behandlungsverlauf2.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse)
+        #return render_pdf(HTML(string=html))
+        #render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
+        return html #render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
     adresse = read_adresse(behandlungsverlauf['person_id'])

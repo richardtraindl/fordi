@@ -109,7 +109,9 @@ def read_tierhaltung_by_children(person_id, tier_id):
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
         "SELECT * FROM tierhaltung, person, tier"
-        " WHERE tierhaltung.person_id = ? AND tierhaltung.tier_id = ?",
+        " WHERE tierhaltung.person_id = person.id"
+        " AND tierhaltung.tier_id = tier.id"
+        " AND tierhaltung.person_id = ? AND tierhaltung.tier_id = ?",
         (person_id, tier_id,)
     )
     tierhaltung = cursor.fetchone()
@@ -212,7 +214,7 @@ def read_behandlungsverlauf(behandlungsverlauf_id):
 def read_rechnung(rechnung_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
-    cursor.execute("SELECT * FROM rechnung WHERE rechnung.id = ?",(rechnung_id,))
+    cursor.execute("SELECT * FROM rechnung WHERE id = ?",(rechnung_id,))
     rechnung = cursor.fetchone()
     cursor.close()
     return rechnung

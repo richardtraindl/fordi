@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div style="padding-bottom: 20mm;">
+            <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
+
+            <p>
+               {{- tierhaltung['vorname'] -}} &nbsp; 
+               {{- tierhaltung['familienname'] -}} &nbsp; 
+               {{- tierhaltung['titel'] -}}
+            </p>
+
+            <p>{{- adresse['strasse'] -}}</p>
+
+            <p>
+                {{- adresse['postleitzahl'] -}} &nbsp; 
+                {{- adresse['ort'] -}}
+            </p>
+        </div>
+        
+        <div>
+            <p>Rechnung: &nbsp; {{- rechnung['rechnungsjahr'] -}} / {{- rechnung['rechnungslfnr'] -}}</p>
+        </div>
+
+        <table border="0" width="100%">
+            <thead border="0">
+                <tr border="0">
+                    <td border="0" width="70%">&nbsp;</td>
+                    <td border="0" width="30%">&nbsp;</td>
+                </tr>
+            </thead>
+            <tbody border="0">
+                <tr border="0">
+                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tierhaltung['tiername'] -}} &nbsp; {{- tierhaltung['tierart'] -}} &nbsp; {{- tierhaltung['geburtsdatum'] -}}</td>
+                    <td border="0" width="30%" align="right">{{- rechnung['ausstellungsdatum'] -}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <p>Chip: &nbsp; {{- tierhaltung['chip_nummer'] -}}</p>
+        </div>
+
+        <div>
+            <p>Diagnose: &nbsp; {{- rechnung['diagnose'] -}}</p>
+        </div>
+
+        <div>
+            <p>Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen.</p>
+        </div>
+
+        <div class="gap"></div>
+
+        <table border="0" align="left" width="100%">
+            <thead border="0" align="left">
+                <tr border="0" align="left">
+                    <td border="0" align="left" width="20%">Datum</td>
+                    <td border="0" align="left" width="60%">Artikel</td>
+                    <td border="0" align="left" width="20%">Betrag</td>
+                </tr>
+            </thead>
+            <tbody style="border: 0px;" border="0">
+            {% for rechnungszeile in rechnungszeilen %}
+                <tr border="0">
+                    <td border="0" width="20%" align="left">{{- rechnungszeile['datum'] -}}</td>
+                    <td border="0" width="60%" align="left">{{- rechnungszeile['artikelcode'] | mapartikel -}} &nbsp; {{- rechnungszeile['artikel'] -}}</td>
+                    <td border="0" width="20%" align="right">{{- rechnungszeile['betrag'] -}}</td>
+                </tr>
+            {% endfor %}
+                <tr border="0">
+                    <td border="0" width="20%" align="left">Endsumme Brutto EUR</td>
+                    <td border="0" width="60%" align="left">&nbsp;</td>
+                    <td border="0" width="20%" align="right">{{- rechnung['brutto_summe'] -}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <p>Zahlung: {{- rechnung['bezahlung'] -}}</p>
+        </div>
+    </body>
+</html>

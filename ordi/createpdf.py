@@ -50,14 +50,16 @@ class CustomPDF(HTML2PDF):
 
         self.set_font('Arial', '', 10)
 
-        # Add a page number
+        bankverbindung = 'Bankverbindung HYPO NOE Landesbank AG, IBAN: AT96 5300 0016 5501 9002'
+        self.cell(w=0, h=5, txt=bankverbindung, ln=1, align='L')
+
         kontakt = '1070 Tierarztpraxis Kaiserstrasse, Tel. 01 944 5 944, 0699 1 944 5 944 ATU 56934599'
-        self.cell(0, 5, kontakt, 0, 0, 'L')
+        self.cell(w=0, h=5, txt=kontakt, align='L')
 
 
-def html2pdf(html):
+def html2pdf(html, path_and_filename):
     pdf = CustomPDF()
     pdf.add_page()
     pdf.write_html(html)
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', 'output.pdf')
-    pdf.output(filename)
+    pdf.output(path_and_filename)
+

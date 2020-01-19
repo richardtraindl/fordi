@@ -37,8 +37,9 @@ def create_app(test_config=None):
     app.register_blueprint(ordi.bp)
     app.add_url_rule('/', endpoint='index')
 
-    from .util.filters import mapanrede, mapgeschlecht
+    from .util.filters import mapanrede, mapgeschlecht, mapartikel
     app.jinja_env.filters['mapanrede'] = mapanrede
     app.jinja_env.filters['mapgeschlecht'] = mapgeschlecht
+    app.jinja_env.filters['mapartikel'] = mapartikel
 
     return app

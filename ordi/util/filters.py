@@ -1,6 +1,6 @@
 
 
-from ..values import ANREDE, GESCHLECHT, KONTAKT
+from ..values import ANREDE, GESCHLECHT, KONTAKT, ARTIKEL
 from .helper import reverse_lookup
 
 
@@ -23,4 +23,11 @@ def mapkontakt(kontaktcode):
     if(kontakt == None):
         kontakt = ""
     return kontakt
+
+
+def mapartikel(artikelcode):
+    artikel = reverse_lookup(ARTIKEL, artikelcode)
+    if(artikel == None):
+        artikel = ""
+    return artikel
 

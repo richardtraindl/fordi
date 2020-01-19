@@ -4,7 +4,7 @@ from datetime import date
 import re, os
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 )
 from werkzeug.exceptions import abort
 
@@ -429,13 +429,13 @@ def create_behandlungsverlauf(id):
         behandlung = request.form['behandlung']
         tierhaltung = read_tierhaltung(id)
         adresse = read_adresse(tierhaltung['person_id'])
-        kontakte = read_kontakte(behandlungsverlauf['person_id'])
+        kontakte = read_kontakte(tierhaltung['person_id'])
         behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
         html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse)
         html2pdf(html)
-        #render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
-        return html # render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', 'output.pdf')
+        return send_file(filename, as_attachment=True)
     else:
         tierhaltung = read_tierhaltung(id)
         adresse = read_adresse(tierhaltung['person_id'])
@@ -459,10 +459,8 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         kontakte = read_kontakte(behandlungsverlauf['person_id'])
         html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse)
         html2pdf(html)
-        #html = render_template('ordi/prints/print_behandlungsverlauf2.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse)
-        #return render_pdf(HTML(string=html))
-        #render_behandlungsverlauf_pdf(behandlungsverlauf, tierhaltung, adresse)
-        return html #render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+        filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', 'output.pdf')
+        return send_file(filename, as_attachment=True)
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
     adresse = read_adresse(behandlungsverlauf['person_id'])

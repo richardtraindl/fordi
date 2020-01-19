@@ -32,8 +32,8 @@
         <label for="diagnose">Diagnose</label>
         <input size="40" type="text" name="diagnose" id="diagnose" value="{{ behandlungsverlauf['diagnose'] }}" required>
 
-        <label for="behandlung">Behandlung</label>
-        <textarea style="width: 100%; height: 120" name="behandlung" id="behandlung" required>{{ behandlungsverlauf['behandlung'] }}</textarea>
+        <label style="align-items: top;" for="behandlung">Behandlung</label>
+        <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" required>{{ behandlungsverlauf['behandlung'] }}</textarea>
       {% else %}
         <label for="datum">Datum</label>
         <input size="10" type="text" name="datum" id="datum" class="date" value="{{ request.form['datum'] }}" required>
@@ -41,8 +41,8 @@
         <label for="diagnose">Diagnose</label>
         <input size="40" type="text" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}" required>
 
-        <label for="behandlung">Behandlung</label>
-        <textarea style="width: 100%; height: 120px" name="behandlung" id="behandlung" required>{{ request.form['behandlung'] }}</textarea>
+        <label style="align-items: top;" for="behandlung">Behandlung</label>
+        <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" required>{{ request.form['behandlung'] }}</textarea>
       {% endif %}
     </div>
 

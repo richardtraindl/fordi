@@ -103,7 +103,7 @@
                     <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile['datum'] }}" required></td>
                     {% set artikelcode = rechnungszeile['artikelcode'] %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ rechnungszeile['artikel'] }}</textarea></td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" required>{{ rechnungszeile['artikel'] }}</textarea></td>
                     <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ rechnungszeile['betrag'] }}</textarea></td>
                     <td style="width: 6%">
                         <a class="zeile_loeschen" rechnungszeile_id="{{ rechnungszeile['id'] }}" href="#">Zeile löschen</a>
@@ -112,16 +112,16 @@
                 </tr>
               {% endfor %}
             {% else %}
-                {% for req_rechnungszeile in req_rechnungszeilen %}
+                {% for rechnungszeile in rechnungszeilen %}
                   <tr>
-                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ req_rechnungszeile[0] or rechnungszeile_datum }}"></td>
-                    {% set artikelcode = req_rechnungszeile[1] | int %}
+                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile.datum or rechnungszeile_datum }}"></td>
+                    {% set artikelcode = rechnungszeile.artikelcode | int %}
                     <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ req_rechnungszeile[2] }}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{ req_rechnungszeile[3] }}</textarea></td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ rechnungszeile.artikel }}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{ rechnungszeile.betrag }}</textarea></td>
                     <td style="width: 6%">
-                        <a class="zeile_loeschen" rechnungszeile_id="{{ req_rechnungszeile[4] }}" href="#">Zeile löschen</a>
-                        <input type="hidden" name="rechnungszeile_id[]" value="{{ req_rechnungszeile[4] }}">
+                        <a class="zeile_loeschen" rechnungszeile_id="{{ rechnungszeile.id }}" href="#">Zeile löschen</a>
+                        <input type="hidden" name="rechnungszeile_id[]" value="{{ rechnungszeile.id }}">
                     </td>
                   </tr>
                 {% endfor %}
@@ -143,7 +143,9 @@
 
       <div class="small-gap"></div>
 
-      <div><input type="submit" value="Rechnung drucken"></div>
+      <div>
+        <p><input type="submit" value="Rechnung drucken"></p>
+      </div>
     </form>
 
     <script>
@@ -199,7 +201,7 @@
         function delete_newrow($obj) {
             $obj.closest("tr").remove();
         };
-
+        
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
@@ -226,6 +228,7 @@
                 }
                 return false; 
             });
+
          });
     </script>
 {% endblock %}

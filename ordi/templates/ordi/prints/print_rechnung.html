@@ -56,17 +56,17 @@
         <table border="0" align="left" width="100%">
             <thead border="0" align="left">
                 <tr border="0" align="left">
-                    <td border="0" align="left" width="20%">Datum</td>
-                    <td border="0" align="left" width="60%">Artikel</td>
-                    <td border="0" align="left" width="20%">Betrag</td>
+                    <td border="0" align="left" width="20%">&nbsp;</td>
+                    <td border="0" align="left" width="60%">&nbsp;</td>
+                    <td border="0" align="left" width="20%">&nbsp;</td>
                 </tr>
             </thead>
             <tbody style="border: 0px;" border="0">
             {% for rechnungszeile in rechnungszeilen %}
                 <tr border="0">
                     <td border="0" width="20%" align="left">{{- rechnungszeile['datum'] -}}</td>
-                    <td border="0" width="60%" align="left">{{- rechnungszeile['artikelcode'] | mapartikel -}} &nbsp; {{- rechnungszeile['artikel'] -}}</td>
-                    <td border="0" width="20%" align="right">{{- rechnungszeile['betrag'] -}}</td>
+                    <td border="0" width="60%" align="left">{{- rechnungszeile['artikel'] -}}</td>
+                    <td border="0" width="20%" align="right">{{- '{0:0.2f}'.format(rechnungszeile['betrag'] | float) -}}</td>
                 </tr>
             {% endfor %}
                 <tr border="0">

@@ -6,6 +6,7 @@ venv/
 __pycache__/
 
 instance/
+downloads/
 
 .pytest_cache/
 .coverage

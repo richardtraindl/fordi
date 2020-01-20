@@ -2,7 +2,7 @@
 from flask import request
 from .values import *
 
-
+### Tier
 class cTier:
     def __init__(self, 
                  id="", 
@@ -55,6 +55,48 @@ def build_and_validate_tier(request):
     if(len(tier.geburtsdatum) == 0):
         return tier, "Geburtsdatum erforderlich. "
     return tier, ""
+### Tier
+
+
+### person
+class cPerson:
+    def __init__(self, 
+                 id="", 
+                 anredecode="", 
+                 titel="", 
+                 familienname="", 
+                 vorname="", 
+                 notiz="", 
+                 merkmal="", 
+                 kunde=""):
+        self.id = id
+        self.anredecode = tieranredecodename
+        self.titel = titel
+        self.familienname = familienname
+        self.vorname = vorname
+        self.notiz = viren
+        self.merkmal = merkmal
+        self.kunde = kunde
+        
+def build_and_validate_person(request):
+    if(request.form.get('kunde')):
+        kunde = "1"
+    else:
+        kunde = "0"
+    person = cPerson("", 
+                 request.form['id'], 
+                 request.form['anredecode'], 
+                 request.form['titel'],
+                 request.form['familienname'],
+                 request.form['vorname'],
+                 request.form['notiz'],
+                 request.form['merkmal'],
+                 kunde)
+
+    if(len(person.familienname) == 0):
+        return person, "Familienname erforderlich."
+    return person, ""
+### person
 
 
 class cCalc:

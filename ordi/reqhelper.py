@@ -70,7 +70,7 @@ class cPerson:
                  merkmal="", 
                  kunde=""):
         self.id = id
-        self.anredecode = tieranredecodename
+        self.anredecode = anredecode
         self.titel = titel
         self.familienname = familienname
         self.vorname = vorname
@@ -84,7 +84,6 @@ def build_and_validate_person(request):
     else:
         kunde = "0"
     person = cPerson("", 
-                 request.form['id'], 
                  request.form['anredecode'], 
                  request.form['titel'],
                  request.form['familienname'],
@@ -97,6 +96,54 @@ def build_and_validate_person(request):
         return person, "Familienname erforderlich."
     return person, ""
 ### person
+
+
+### adresse
+class cAdresse:
+    def __init__(self, 
+                 id="", 
+                 person_id="", 
+                 strasse="", 
+                 postleitzahl="", 
+                 ort=""):
+        self.id = id
+        self.person_id = person_id
+        self.strasse = strasse
+        self.postleitzahl = postleitzahl
+        self.ort = ort
+
+def build_and_validate_adresse(request):
+    adresse = cAdresse("", 
+                 request.form['person_id'], 
+                 request.form['strasse'],
+                 request.form['postleitzahl'],
+                 request.form['ort'])
+    return adresse, ""
+### adresse
+
+
+### kontakt
+class cKontakt:
+    def __init__(self, 
+                 id="", 
+                 person_id="", 
+                 kontaktcode="", 
+                 kontakt="", 
+                 kontakt_intern=""):
+        self.id = id
+        self.person_id = person_id
+        self.kontaktcode = kontaktcode
+        self.kontakt = kontakt
+        self.kontakt_intern = kontakt_intern
+        
+def build_and_validate_kontakt(request):
+    kontakt = cKontakt("", 
+                 request.form['person_id'], 
+                 request.form['kontaktcode'], 
+                 request.form['kontakt'],
+                 request.form['kontakt_intern'])
+    return kontakt, ""
+### kontakt
 
 
 class cCalc:

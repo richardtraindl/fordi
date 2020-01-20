@@ -1,39 +1,44 @@
 
-    <!-- div class="twocols tier" !-->
     <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
+        {% if tierhaltung %}
+            <input type="hidden" name="tier_id" value="{{- tierhaltung['tier_id'] -}}">
+        {% else %}
+            <input type="hidden" name="tier_id" value="">
+        {% endif %}
+
         <label for="tiername">Tiername</label>
         {% if tierhaltung %}
-            <input size="20" name="tiername" value="{{ tierhaltung['tiername'] }}" required>    
+            <input size="20" name="tiername" value="{{- tierhaltung['tiername'] -}}" required>
         {% else %}
-            <input size="20" name="tiername" value="{{ request.form['tiername'] }}" required>
+            <input size="20" name="tiername" value="{{- request.form['tiername'] -}}" required>
         {% endif %}
 
         <label for="tierart">Tierart</label>
         {% if tierhaltung %}
-            <input size="20" name="tierart" value="{{ tierhaltung['tierart'] }}" required>
+            <input size="20" name="tierart" value="{{- tierhaltung['tierart'] -}}" required>
         {% else %}
-            <input size="20" name="tierart" value="{{ request.form['tierart'] }}" required>
+            <input size="20" name="tierart" value="{{- request.form['tierart'] -}}" required>
         {% endif %}
 
         <label for="rasse">Rasse</label>
         {% if tierhaltung %}
-            <input size="20" name="rasse" value="{{ tierhaltung['rasse'] }}">
+            <input size="20" name="rasse" value="{{- tierhaltung['rasse'] -}}">
         {% else %}
-            <input size="20" name="rasse" value="{{ request.form['rasse'] }}">
+            <input size="20" name="rasse" value="{{- request.form['rasse'] -}}">
         {% endif %}
 
         <label for="farbe">Farbe</label>
         {% if tierhaltung %}
-            <input size="20" name="farbe" value="{{ tierhaltung['farbe'] }}">
+            <input size="20" name="farbe" value="{{- tierhaltung['farbe'] -}}">
         {% else %}
-            <input size="20" name="farbe" value="{{ request.form['farbe'] }}">
+            <input size="20" name="farbe" value="{{- request.form['farbe'] -}}">
         {% endif %}
 
         <label for="geburtsdatum">Geburtsdatum</label>
         {% if tierhaltung %}
-            <input size="10" class="date" name="geburtsdatum" value="{{ tierhaltung['geburtsdatum'] }}" required>
+            <input size="10" class="date" name="geburtsdatum" value="{{- tierhaltung['geburtsdatum'] -}}" required>
         {% else %}
-            <input size="10" class="date" name="geburtsdatum" value="{{ request.form['geburtsdatum'] }}" required>
+            <input size="10" class="date" name="geburtsdatum" value="{{- request.form['geburtsdatum'] -}}" required>
         {% endif %}
 
         <label for="geschlechtscode">Geschlecht</label>
@@ -58,16 +63,16 @@
 
         <label for="chip_nummer">Chip Nummer</label>
         {% if tierhaltung %}
-            <input size="20" name="chip_nummer" value="{{ tierhaltung['chip_nummer'] }}">    
+            <input size="20" name="chip_nummer" value="{{- tierhaltung['chip_nummer'] -}}">
         {% else %}
-            <input size="20" name="chip_nummer" value="{{ request.form['chip_nummer'] }}">
+            <input size="20" name="chip_nummer" value="{{- request.form['chip_nummer'] -}}">
         {% endif %}
 
         <label for="eu_passnummer">EU Passnummer</label>
         {% if tierhaltung %}
-            <input size="20" name="eu_passnummer" value="{{ tierhaltung['eu_passnummer'] }}">
+            <input size="20" name="eu_passnummer" value="{{- tierhaltung['eu_passnummer'] -}}">
         {% else %}
-            <input size="20" name="eu_passnummer" value="{{ request.form['eu_passnummer'] }}">
+            <input size="20" name="eu_passnummer" value="{{- request.form['eu_passnummer'] -}}">
         {% endif %}
 
         <label for="patient">Patient</label>
@@ -91,16 +96,16 @@
 
         <label for="viren">Viren</label>
         {% if tierhaltung %}
-            <input size="20" name="viren" value="{{ tierhaltung['viren'] }}">
+            <input size="20" name="viren" value="{{- tierhaltung['viren'] -}}">
         {% else %}
-            <input size="20" name="viren" value="{{ request.form['viren'] }}">
+            <input size="20" name="viren" value="{{- request.form['viren'] -}}">
         {% endif %}
 
         <label for="merkmal">Merkmal</label>
         {% if tierhaltung %}
-            <input size="20" name="merkmal" value="{{ tierhaltung['merkmal'] }}">
+            <input size="20" name="merkmal" value="{{- tierhaltung['merkmal'] -}}">
         {% else %}
-            <input size="20" name="merkmal" value="{{ request.form['merkmal'] }}">
+            <input size="20" name="merkmal" value="{{- request.form['merkmal'] -}}">
         {% endif %}
     </div>
 

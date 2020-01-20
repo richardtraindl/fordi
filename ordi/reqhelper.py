@@ -1,4 +1,6 @@
 
+from datetime import date
+
 from flask import request
 from .values import *
 
@@ -35,7 +37,7 @@ def build_and_validate_tier(request):
         patient = "1"
     else:
         patient = "0"
-    tier = cTier("", 
+    tier = cTier(request.form['tier_id'], 
                  request.form['tiername'], 
                  request.form['tierart'], 
                  request.form['rasse'],
@@ -67,15 +69,13 @@ class cPerson:
                  familienname="", 
                  vorname="", 
                  notiz="", 
-                 merkmal="", 
                  kunde=""):
         self.id = id
         self.anredecode = anredecode
         self.titel = titel
         self.familienname = familienname
         self.vorname = vorname
-        self.notiz = viren
-        self.merkmal = merkmal
+        self.notiz = notiz
         self.kunde = kunde
         
 def build_and_validate_person(request):
@@ -83,13 +83,12 @@ def build_and_validate_person(request):
         kunde = "1"
     else:
         kunde = "0"
-    person = cPerson("", 
+    person = cPerson(request.form['person_id'], 
                  request.form['anredecode'], 
                  request.form['titel'],
                  request.form['familienname'],
                  request.form['vorname'],
                  request.form['notiz'],
-                 request.form['merkmal'],
                  kunde)
 
     if(len(person.familienname) == 0):
@@ -113,21 +112,21 @@ class cAdresse:
         self.ort = ort
 
 def build_and_validate_adresse(request):
-    adresse = cAdresse("", 
-                 request.form['person_id'], 
-                 request.form['strasse'],
-                 request.form['postleitzahl'],
-                 request.form['ort'])
+    adresse = cAdresse(request.form['adresse_id'], 
+                       request.form['person_id'],
+                       request.form['strasse'],
+                       request.form['postleitzahl'],
+                       request.form['ort'])
     return adresse, ""
 ### adresse
 
 
-### kontakt
+### kontakte
 class cKontakt:
     def __init__(self, 
                  id="", 
                  person_id="", 
-                 kontaktcode="", 
+                 kontaktcode="1", # fix 1 für Telefon
                  kontakt="", 
                  kontakt_intern=""):
         self.id = id
@@ -136,14 +135,25 @@ class cKontakt:
         self.kontakt = kontakt
         self.kontakt_intern = kontakt_intern
         
-def build_and_validate_kontakt(request):
-    kontakt = cKontakt("", 
-                 request.form['person_id'], 
-                 request.form['kontaktcode'], 
-                 request.form['kontakt'],
-                 request.form['kontakt_intern'])
-    return kontakt, ""
-### kontakt
+def build_and_validate_kontakte(request):
+    kontakte = []
+    bad_chars = [';', ':', '-', '/', ' ', '\n']
+
+    kontakt1_intern = ''.join(i for i in request.form['kontakt1'] if not i in bad_chars)
+    kontakte.append(cKontakt(request.form['kontakt1_id'], 
+                             request.form['person_id'], 
+                             "1", # fix 1 für Telefon
+                             request.form['kontakt1'],
+                             kontakt1_intern))
+
+    kontakt2_intern = ''.join(i for i in request.form['kontakt2'] if not i in bad_chars)
+    kontakte.append(cKontakt(request.form['kontakt2_id'], 
+                             request.form['person_id'], 
+                             "1", # fix 1 für Telefon
+                             request.form['kontakt2'],
+                             kontakt2_intern))
+    return kontakte, ""
+### kontakte
 
 
 class cCalc:
@@ -157,9 +167,6 @@ class cCalc:
 
 def calc_rechnung(rechnungszeilen):
     calc = cCalc()
-
-    if(len(rechnungszeilen) == 0):
-        return calc, "Mindestens eine Rechnungszeile erforderlich."
 
     for rechnungszeile in rechnungszeilen:
         try:
@@ -249,7 +256,6 @@ def build_and_validate_rechnung(request):
     return rechnung, ""
 
 
-
 class cRechnungszeile:
     def __init__(self, id="", 
                        rechnung_id="", 
@@ -273,6 +279,7 @@ def build_and_validate_rechnungszeilen(request):
         request.form.getlist('betrag[]')
     )
     rechnungszeilen = []
+    error = ""
     for idx in range(len(data[0])):
         rechnungszeile = cRechnungszeile(data[0][idx],
                                          "",
@@ -280,19 +287,21 @@ def build_and_validate_rechnungszeilen(request):
                                          data[2][idx],
                                          data[3][idx],
                                          data[4][idx])
-        if(len(rechnungszeile.id) == 0 and 
+        if(len(rechnungszeile.id) == 0 and len(rechnungszeile.datum) == 0 and
            (len(rechnungszeile.artikelcode) == 0 or rechnungszeile.artikelcode == "0") and
            len(rechnungszeile.artikel) == 0 and len(rechnungszeile.betrag) == 0):
             continue
 
-        if(len(rechnungszeile.datum) == 0):
-            rechnungszeile.datum = date.today().strftime("%Y-%m-%d")
+        """if(len(rechnungszeile.datum) == 0):
+            rechnungszeile.datum = date.today().strftime("%Y-%m-%d")"""
 
         if(len(rechnungszeile.artikel) == 0):
-            return rechnungszeilen, "Fehlende Artikelbeschreibung."
+            error = "Fehlende Artikelbeschreibung."
 
         rechnungszeilen.append(rechnungszeile)
-    return rechnungszeilen, ""
 
+    if(len(rechnungszeilen) == 0):
+        return rechnungszeilen, "Mindestens eine Rechnungszeile erforderlich."
 
-               
+    return rechnungszeilen, error
+

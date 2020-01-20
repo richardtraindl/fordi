@@ -143,8 +143,13 @@
 
       <div class="small-gap"></div>
 
-      <div>
-        <p><input type="submit" value="Rechnung drucken"></p>
+      <div class="flex-container">
+        <p><input type="submit" value="rechnen"></p>
+        {% if rechnung %}
+            <p><a class="btn" href="{{ url_for('ordi.print_rechnung', rechnung_id=rechnung['id']) }}">Rechnung drucken</a></p>
+        {% else %}
+            <p><a class="btn" href="#">Rechnung drucken</a></p>
+        {% endif %}
       </div>
     </form>
 

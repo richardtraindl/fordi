@@ -15,6 +15,7 @@ from ordi.createpdf import *
 
 bp = Blueprint('ordi', __name__)
 
+
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
@@ -94,69 +95,31 @@ def abfragen():
 @login_required
 def create_tierhaltung():
     if(request.method == 'POST'):
-        anredecode = request.form['anredecode']
-        titel = request.form['titel']
-        familienname = request.form['familienname']
-        vorname = request.form['vorname']
-        notiz = request.form['notiz']
-        if(request.form.get('kunde')):
-            kunde = 1
-        else:
-            kunde = 0
-
-        tiername = request.form['tiername']
-        tierart = request.form['tierart']
-        rasse = request.form['rasse']
-        farbe = request.form['farbe']
-        viren = request.form['viren']
-        merkmal = request.form['merkmal']
-        geburtsdatum = request.form['geburtsdatum']
-        geschlechtscode = request.form['geschlechtscode']
-        chip_nummer = request.form['chip_nummer']
-        eu_passnummer = request.form['eu_passnummer']
-        if(request.form.get('patient')):
-            patient = 1
-        else:
-            patient = 0
-
-        error = ""
-        if(len(familienname) == 0):
-            error += "Familienname erforderlich. "
-        if(len(tiername) == 0):
-            error += "Tiername erforderlich. "
-        if(len(tierart) == 0):
-            error += "Tierart erforderlich. "
-        if(len(geburtsdatum) == 0):
-            error += "Geburtsdatum erforderlich. "
+        person, error = build_and_validate_person(request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
-        person_id = write_person(anredecode, titel, familienname, vorname, notiz, kunde)
+        tier, error = build_and_validate_tier(request)
+        if(len(error) > 0):
+            flash(error)
+            return render_template('ordi/create_tierhaltung.html')
 
-        tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)
+        person_id = write_person(person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
+        tier_id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
 
-        strasse = request.form['strasse']
-        postleitzahl = request.form['postleitzahl']
-        ort = request.form['ort']
-        if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
-            write_adresse(person_id, strasse, postleitzahl, ort)
+        adresse = build_and_validate_adresse(request)[0]
+        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
+            write_adresse(person_id, adresse.strasse, adresse.postleitzahl, adresse.ort)
 
-        kontaktartcode = 1 # fix für Telefon
-        kontakt1 = request.form['kontakt1']
-        if(len(kontakt1) > 0):
-            bad_chars = [';', ':', '-', '/', ' ', '\n']
-            kontakt_intern1 = ''.join(i for i in kontakt1 if not i in bad_chars)
-            write_kontakt(person_id, kontaktartcode, kontakt1, kontakt_intern1)
-
-        kontakt2 = request.form['kontakt2']
-        if(len(kontakt2) > 0):
-            bad_chars = [';', ':', '-', '/', ' ', '\n']
-            kontakt_intern2 = ''.join(i for i in kontakt2 if not i in bad_chars)
-            write_kontakt(person_id, kontaktartcode, kontakt2, kontakt_intern2)
+        kontakte = build_and_validate_kontakte(request)[0]
+        for kontakt in kontakte:
+            if(len(kontakt.kontakt) > 0):
+                write_kontakt(person_id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
 
         id = write_tierhaltung(person_id, tier_id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
+
     anredewerte = []
     for key, value in ANREDE.items():
         anredewerte.append([key, value])
@@ -206,25 +169,15 @@ def show_tierhaltung(id):
 @login_required
 def create_tier(id):
     if(request.method == 'POST'):
-        tiername = request.form['tiername']
-        tierart = request.form['tierart']
-        rasse = request.form['rasse']
-        farbe = request.form['farbe']
-        viren = request.form['viren']
-        merkmal = request.form['merkmal']
-        geburtsdatum = request.form['geburtsdatum']
-        geschlechtscode = int(request.form['geschlechtscode'])
-        chip_nummer = request.form['chip_nummer']
-        eu_passnummer = request.form['eu_passnummer']
-        if(request.form.get('patient')):
-            patient = 1
-        else:
-            patient = 0
-
-        tier_id = write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)
+        tier, error = build_and_validate_tier(request)
+        if(len(error) > 0):
+            flash(error)
+            return render_template('ordi/create_tier.html', id=id)
+        tier_id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
         tierhaltung = read_tierhaltung(id)
         newid =  write_tierhaltung(tierhaltung['person_id'], tier_id)
         return redirect(url_for('ordi.show_tierhaltung', id=newid))
+
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
@@ -235,23 +188,13 @@ def create_tier(id):
 @login_required
 def edit_tier(id, tier_id):
     if(request.method == 'POST'):
-        tiername = request.form['tiername']
-        tierart = request.form['tierart']
-        rasse = request.form['rasse']
-        farbe = request.form['farbe']
-        viren = request.form['viren']
-        merkmal = request.form['merkmal']
-        geburtsdatum = request.form['geburtsdatum']
-        geschlechtscode = request.form['geschlechtscode']
-        chip_nummer = request.form['chip_nummer']
-        eu_passnummer = request.form['eu_passnummer']
-        if(request.form.get('patient')):
-            patient = 1
-        else:
-            patient = 0
-
-        update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)
+        tier, error = build_and_validate_tier(request)
+        if(len(error) > 0):
+            flash(error)
+            return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
+        update_tier(tier.id, tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
+
     tierhaltung = read_tierhaltung(id)
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
@@ -263,55 +206,34 @@ def edit_tier(id, tier_id):
 @login_required
 def edit_person(id, person_id):
     if(request.method == 'POST'):
-        anredecode = request.form['anredecode']
-        titel = request.form['titel']
-        familienname = request.form['familienname']
-        vorname = request.form['vorname']
-        notiz = request.form['notiz']
-        if(request.form.get('kunde')):
-            kunde = 1
-        else:
-            kunde = 0
-        update_person(person_id, anredecode, titel, familienname, vorname, notiz, kunde)
+        person, error = build_and_validate_person(request)
+        if(len(error) > 0):
+            flash(error)
+            return render_template('ordi/edit_person.html', id=id, person_id=person_id)
+        update_person(person.id, person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
 
-        strasse = request.form['strasse']
-        postleitzahl = request.form['postleitzahl']
-        ort = request.form['ort']
-        adresse = read_adresse(person_id)
-        if(adresse):
-            if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
-                update_adresse(adresse['id'], strasse, postleitzahl, ort)
+        adresse = build_and_validate_adresse(request)[0]
+        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
+            if(len(adresse.id) > 0):
+                update_adresse(adresse.id, adresse.strasse, adresse.postleitzahl, adresse.ort)
             else:
-                delete_db_adresse(adresse['id'])
+                write_adresse(adresse.person_id, adresse.strasse, adresse.postleitzahl, adresse.ort)
         else:
-            if(len(strasse) > 0 or len(postleitzahl) > 0 or len(ort) > 0):
-                write_adresse(person_id, strasse, postleitzahl, ort)
+            if(len(adresse.id) > 0):
+                delete_db_adresse(adresse.id)
 
-        kontakte = read_kontakte(person_id)
-        kontaktartcode = 1 # fix für Telefon
-        bad_chars = [';', ':', '-', '/', ' ', '\n']
-        kontakt1 = request.form['kontakt1']
-        kontakt_intern1 = ''.join(i for i in kontakt1 if not i in bad_chars)
-        if(len(kontakte) > 0):
-            if(len(kontakt1) > 0):
-                update_kontakt(kontakte[0]['id'], kontaktartcode, kontakt1, kontakt_intern1)
+        kontakte = build_and_validate_kontakte(request)[0]
+        for kontakt in kontakte:
+            if(len(kontakt.kontakt) > 0):
+                if(len(kontakt.id) > 0):
+                    update_kontakt(kontakt.id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
+                else:
+                    write_kontakt(kontakt.person_id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
             else:
-                delete_db_kontakt(kontakte[0]['id'])
-        else:
-            if(len(kontakt1) > 0):
-                write_kontakt(person_id, kontaktartcode, kontakt1, kontakt_intern1)
-
-        kontakt2 = request.form['kontakt2']
-        kontakt_intern2 = ''.join(i for i in kontakt2 if not i in bad_chars)
-        if(len(kontakte) > 1):
-            if(len(kontakt2) > 0):
-                update_kontakt(kontakte[1]['id'], kontaktartcode, kontakt2, kontakt_intern2)
-            else:
-                delete_db_kontakt(kontakte[1]['id'])
-        else:
-            if(len(kontakt2) > 0):
-                write_kontakt(person_id, kontaktartcode, kontakt2, kontakt_intern2)
+                if(len(kontakt.id) > 0):
+                    delete_db_kontakt(kontakt.id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
+
     tierhaltung = read_tierhaltung(id)
     adresse = read_adresse(person_id)
     kontakte = read_kontakte(person_id)
@@ -498,7 +420,7 @@ def create_rechnung(id):
                 update_rechnungszeile(rechnungszeile.id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)
             else:
                 write_rechnungszeile(rechnung_id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)                
-        return redirect(url_for('ordi.print_rechnung', rechnung_id=rechnung_id))
+        return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
 
     tierhaltung = read_tierhaltung(id)
     adresse = read_adresse(tierhaltung['person_id'])
@@ -543,7 +465,7 @@ def edit_rechnung(rechnung_id):
                 update_rechnungszeile(rechnungszeile.id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)                
             else:
                 write_rechnungszeile(rechnung_id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)
-        return redirect(url_for('ordi.print_rechnung', rechnung_id=rechnung_id))
+        return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
 
     rechnung = read_rechnung(rechnung_id)
     rechnungszeilen = read_rechnungszeilen(rechnung_id)

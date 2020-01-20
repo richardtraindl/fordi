@@ -3,6 +3,60 @@ from flask import request
 from .values import *
 
 
+class cTier:
+    def __init__(self, 
+                 id="", 
+                 tiername="", 
+                 tierart="", 
+                 rasse="", 
+                 farbe="", 
+                 viren="", 
+                 merkmal="", 
+                 geburtsdatum="", 
+                 geschlechtscode="",
+                 chip_nummer ="",
+                 eu_passnummer ="",
+                 patient = ""):
+        self.id = id
+        self.tiername = tiername
+        self.tierart = tierart
+        self.rasse = rasse
+        self.farbe = farbe
+        self.viren = viren
+        self.merkmal = merkmal
+        self.geburtsdatum = geburtsdatum
+        self.geschlechtscode = geschlechtscode
+        self.chip_nummer = chip_nummer
+        self.eu_passnummer = eu_passnummer
+        self.patient = patient
+
+def build_and_validate_tier(request):
+    if(request.form.get('patient')):
+        patient = "1"
+    else:
+        patient = "0"
+    tier = cTier("", 
+                 request.form['tiername'], 
+                 request.form['tierart'], 
+                 request.form['rasse'],
+                 request.form['farbe'],
+                 request.form['viren'],
+                 request.form['merkmal'],
+                 request.form['geburtsdatum'],
+                 request.form['geschlechtscode'],
+                 request.form['chip_nummer'],
+                 request.form['eu_passnummer'],
+                 patient)
+
+    if(len(tier.tiername) == 0):
+        return tier, "Tiername erforderlich. "
+    if(len(tier.tierart) == 0):
+        return tier, "Tierart erforderlich. "
+    if(len(tier.geburtsdatum) == 0):
+        return tier, "Geburtsdatum erforderlich. "
+    return tier, ""
+
+
 class cCalc:
     def __init__(self, brutto_summe=0, netto_summe=0, steuerbetrag_zwanzig=0, steuerbetrag_dreizehn=0, steuerbetrag_zehn=0):
         self.brutto_summe = brutto_summe

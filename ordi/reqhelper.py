@@ -171,6 +171,27 @@ def build_behandlungen(request):
         req_behandlungen.append(req_behandlung)
     return req_behandlungen
 
+def fill_and_validate_behandlungen(req_behandlungen):
+    behandlungen = []
+    for req_behandlung in req_behandlungen:
+        behandlung = cBehandlung(req_behandlung['behandlung_id'], 
+                                 None,
+                                 req_behandlung['behandlungsdatum'], 
+                                 req_behandlung['gewicht'], 
+                                 req_behandlung['diagnose'], 
+                                 req_behandlung['laborwerte1'], 
+                                 req_behandlung['laborwerte2'],
+                                 req_behandlung['arzneien'],
+                                 req_behandlung['arzneimittel'],
+                                 req_behandlung['impfungen_extern'])
+        flag, error = behandlung.validate()
+        if(flag == False):
+            behandlungen.append(behandlung)
+        else:
+            return None, error
+
+    return behandlungen, error
+
 
 def fill_and_validate_rechnung(request):
     try:

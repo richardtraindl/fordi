@@ -1,6 +1,4 @@
-from datetime import date
 
-from flask import request
 from .values import *
 
 ### Tier
@@ -31,31 +29,14 @@ class cTier:
         self.eu_passnummer = eu_passnummer
         self.patient = patient
 
-def build_and_validate_tier(request):
-    if(request.form.get('patient')):
-        patient = "1"
-    else:
-        patient = "0"
-    tier = cTier(request.form['tier_id'], 
-                 request.form['tiername'], 
-                 request.form['tierart'], 
-                 request.form['rasse'],
-                 request.form['farbe'],
-                 request.form['viren'],
-                 request.form['merkmal'],
-                 request.form['geburtsdatum'],
-                 request.form['geschlechtscode'],
-                 request.form['chip_nummer'],
-                 request.form['eu_passnummer'],
-                 patient)
-
-    if(len(tier.tiername) == 0):
-        return tier, "Tiername erforderlich. "
-    if(len(tier.tierart) == 0):
-        return tier, "Tierart erforderlich. "
-    if(len(tier.geburtsdatum) == 0):
-        return tier, "Geburtsdatum erforderlich. "
-    return tier, ""
+    def validate(self):
+        if(len(self.tiername) == 0):
+            return False, "Tiername erforderlich."
+        if(len(self.tierart) == 0):
+            return False, "Tierart erforderlich."
+        if(len(self.geburtsdatum) == 0):
+            return False, "Geburtsdatum erforderlich."
+        return True, ""
 ### Tier
 
 
@@ -76,23 +57,11 @@ class cPerson:
         self.vorname = vorname
         self.notiz = notiz
         self.kunde = kunde
-        
-def build_and_validate_person(request):
-    if(request.form.get('kunde')):
-        kunde = "1"
-    else:
-        kunde = "0"
-    person = cPerson(request.form['person_id'], 
-                 request.form['anredecode'], 
-                 request.form['titel'],
-                 request.form['familienname'],
-                 request.form['vorname'],
-                 request.form['notiz'],
-                 kunde)
 
-    if(len(person.familienname) == 0):
-        return person, "Familienname erforderlich."
-    return person, ""
+    def validate(self):
+        if(len(self.familienname) == 0):
+            return False, "Familienname erforderlich."
+        return True, ""
 ### person
 
 
@@ -110,13 +79,8 @@ class cAdresse:
         self.postleitzahl = postleitzahl
         self.ort = ort
 
-def build_and_validate_adresse(request):
-    adresse = cAdresse(request.form['adresse_id'], 
-                       request.form['person_id'],
-                       request.form['strasse'],
-                       request.form['postleitzahl'],
-                       request.form['ort'])
-    return adresse, ""
+    def validate(self):
+        return True, ""
 ### adresse
 
 
@@ -132,27 +96,59 @@ class cKontakt:
         self.person_id = person_id
         self.kontaktcode = kontaktcode
         self.kontakt = kontakt
-        self.kontakt_intern = kontakt_intern
-        
-def build_and_validate_kontakte(request):
-    kontakte = []
-    bad_chars = [';', ':', '-', '/', ' ', '\n']
+        bad_chars = [';', ':', '-', '/', ' ', '\n']
+        self.kontakt_intern = ''.join(i for i in self.kontakt if not i in bad_chars)
+        #self.kontakt_intern = kontakt_intern
 
-    kontakt1_intern = ''.join(i for i in request.form['kontakt1'] if not i in bad_chars)
-    kontakte.append(cKontakt(request.form['kontakt1_id'], 
-                             request.form['person_id'], 
-                             "1", # fix 1 für Telefon
-                             request.form['kontakt1'],
-                             kontakt1_intern))
-
-    kontakt2_intern = ''.join(i for i in request.form['kontakt2'] if not i in bad_chars)
-    kontakte.append(cKontakt(request.form['kontakt2_id'], 
-                             request.form['person_id'], 
-                             "1", # fix 1 für Telefon
-                             request.form['kontakt2'],
-                             kontakt2_intern))
-    return kontakte, ""
+    def validate(self):
+        return True, ""
 ### kontakte
+
+
+### rechnung
+class cRechnung:
+    def __init__(self, id=None, 
+                       person_id=None,
+                       tier_id=None, 
+                       rechnungsjahr=None, 
+                       rechnungslfnr=None,  
+                       ausstellungsdatum=None,
+                       ausstellungsort=None, 
+                       diagnose=None, 
+                       bezahlung=None,
+                       brutto_summe=0, 
+                       netto_summe=0, 
+                       steuerbetrag_zwanzig=0, 
+                       steuerbetrag_dreizehn=0, 
+                       steuerbetrag_zehn=0):
+        self.id = id
+        self.person_id = person_id
+        self.tier_id = tier_id
+        self.rechnungsjahr = rechnungsjahr
+        self.rechnungslfnr = rechnungslfnr
+        if(len(ausstellungsdatum) == 0):
+            self.ausstellungsdatum = date.today().strftime("%Y-%m-%d")
+        else:
+            self.ausstellungsdatum = ausstellungsdatum
+        if(len(ausstellungsort) == 0):
+            self.ausstellungsort = "Wien"
+        else:
+            self.ausstellungsort = ausstellungsort
+        self.diagnose = diagnose
+        self.bezahlung = bezahlung
+        self.brutto_summe = brutto_summe
+        self.netto_summe = netto_summe
+        self.steuerbetrag_zwanzig = steuerbetrag_zwanzig
+        self.steuerbetrag_dreizehn = steuerbetrag_dreizehn
+        self.steuerbetrag_zehn = steuerbetrag_zehn
+
+
+    def validate(self):
+        if(len(request.form['rechnungsjahr']) == 0):
+            return False, "Rechnungsjahr erforderlich."
+        if(len(request.form['rechnungslfnr']) == 0):
+            return False, "Rechnungslfnr erforderlich."
+        return True, ""
 
 
 class cCalc:
@@ -194,65 +190,6 @@ def calc_rechnung(rechnungszeilen):
     return calc, ""
 
 
-class cRechnung:
-    def __init__(self, id="", 
-                       person_id="", 
-                       tier_id="", 
-                       rechnungsjahr="", 
-                       rechnungslfnr="",  
-                       ausstellungsdatum="",
-                       ausstellungsort="", 
-                       diagnose="", 
-                       bezahlung="",
-                       brutto_summe=0, 
-                       netto_summe=0, 
-                       steuerbetrag_zwanzig=0, 
-                       steuerbetrag_dreizehn=0, 
-                       steuerbetrag_zehn=0):
-        self.id = id
-        self.person_id = person_id
-        self.tier_id = tier_id
-        self.rechnungsjahr = rechnungsjahr
-        self.rechnungslfnr = rechnungslfnr
-        self.ausstellungsdatum = ausstellungsdatum
-        self.ausstellungsort = ausstellungsort
-        self.diagnose = diagnose
-        self.bezahlung = bezahlung
-        self.brutto_summe = brutto_summe
-        self.netto_summe = netto_summe
-        self.steuerbetrag_zwanzig = steuerbetrag_zwanzig
-        self.steuerbetrag_dreizehn = steuerbetrag_dreizehn
-        self.steuerbetrag_zehn = steuerbetrag_zehn
-
-
-def build_and_validate_rechnung(request):
-    rechnung = cRechnung()
-    if(len(request.form['rechnungsjahr']) == 0):
-        return rechnung, "Rechnungsjahr erforderlich."
-    rechnung.rechnungsjahr = request.form['rechnungsjahr']
-    
-    if(len(request.form['rechnungslfnr']) == 0):
-        return rechnung, "Rechnungslfnr erforderlich."
-    rechnung.rechnungslfnr = request.form['rechnungslfnr']
-
-    if(len(request.form['ausstellungsdatum']) == 0):
-        rechnung.ausstellungsdatum = date.today().strftime("%Y-%m-%d")
-    else:
-        rechnung.ausstellungsdatum = request.form['ausstellungsdatum']    
-
-    if(len(request.form['ausstellungsort']) == 0):
-        rechnung.ausstellungsort = "Wien"
-    else:
-        rechnung.ausstellungsort = request.form['ausstellungsort']
-
-    rechnung.diagnose = request.form['diagnose']
-    rechnung.bezahlung = request.form['bezahlung']
-    rechnung.brutto_summe = 0
-    rechnung.netto_summe = 0
-    rechnung.steuerbetrag_zwanzig = 0
-    rechnung.steuerbetrag_dreizehn = 0
-    rechnung.steuerbetrag_zehn = 0
-    return rechnung, ""
 
 
 class cRechnungszeile:

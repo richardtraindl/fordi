@@ -1,6 +1,8 @@
 
+import re
 from datetime import date
 from .values import *
+
 
 ### Tier
 class cTier:
@@ -103,6 +105,40 @@ class cKontakt:
     def validate(self):
         return True, ""
 ### kontakte
+
+
+### behandlung
+class cBehandlung:
+    def __init__(self, 
+                 id=None, 
+                 tier_id=None,
+                 behandlungsdatum=None, 
+                 gewicht=None,  
+                 diagnose=None,
+                 laborwerte1=None, 
+                 laborwerte2=None, 
+                 arzneien=None,
+                 arzneimittel=None, 
+                 impfungen_extern=None):
+        self.id = id
+        self.tier_id = tier_id
+        if(len(behandlungsdatum) == 0):
+            self.behandlungsdatum = date.today().strftime("%Y-%m-%d")
+        else:
+            self.behandlungsdatum = behandlungsdatum
+        self.gewicht = gewicht
+        self.diagnose = diagnose
+        self.laborwerte1 = laborwerte1
+        self.laborwerte2 = laborwerte2
+        self.arzneien = arzneien
+        self.arzneimittel = arzneimittel
+        self.impfungen_extern = impfungen_extern
+
+    def validate(self):
+        if(len(self.gewicht) > 0 and re.search(r"\d", self.gewicht) == None):
+            return False, "Zahl für Gewicht erforderlich."
+        return True, ""
+### behandlung
 
 
 ### rechnung

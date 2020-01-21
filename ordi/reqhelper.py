@@ -143,6 +143,35 @@ def fill_and_validate_behandlung(request):
         return None, error
 
 
+def build_behandlungen(request):
+    data = (
+        request.form.getlist('behandlung_id[]'),
+        request.form.getlist('behandlungsdatum[]'),
+        request.form.getlist('gewicht[]'),
+        request.form.getlist('diagnose[]'),
+        request.form.getlist('laborwerte1[]'),
+        request.form.getlist('laborwerte2[]'),
+        request.form.getlist('arzneien[]'),
+        request.form.getlist('arzneimittel[]'),
+        request.form.getlist('impfungen_extern[]')
+    )
+    req_behandlungen = []
+    for idx in range(len(data[0])):
+        req_behandlung = {}
+        req_behandlung['behandlung_id'] = data[0][idx]
+        req_behandlung['behandlungsdatum'] = data[1][idx]
+        req_behandlung['gewicht'] = data[2][idx]
+        req_behandlung['diagnose'] = data[3][idx]
+        req_behandlung['laborwerte1'] = data[4][idx]
+        req_behandlung['laborwerte2'] = data[5][idx]
+        req_behandlung['arzneien'] = data[6][idx]
+        req_behandlung['arzneimittel'] = data[7][idx]
+        req_behandlung['impfungen_extern'] = data[8][idx]
+
+        req_behandlungen.append(req_behandlung)
+    return req_behandlungen
+
+
 def fill_and_validate_rechnung(request):
     try:
         rechnung_id = int(request.form['rechnung_id'])

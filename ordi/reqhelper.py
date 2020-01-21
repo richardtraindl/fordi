@@ -2,8 +2,8 @@
 from datetime import date
 
 from flask import request
-from . values import *
-from . modeles import *
+from ordi.values import *
+from ordi.models import *
 
 
 def fill_and_validate_tier(request):
@@ -38,7 +38,7 @@ def fill_and_validate_tier(request):
 
 def fill_and_validate_person(request):
     try:
-        person_id = int(request.form['person_id']
+        person_id = int(request.form['person_id'])
     except:
         person_id = None
 

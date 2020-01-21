@@ -255,7 +255,7 @@ def create_behandlung(id):
             return redirect(url_for('ordi.show_tierhaltung', id=id))
 
         flag, error = behandlung.validate()
-        if(flag = False):
+        if(flag == False):
             flash(error)
             tierhaltung = read_tierhaltung(id)
             adresse = read_adresse(tierhaltung['person_id'])
@@ -273,21 +273,12 @@ def create_behandlung(id):
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
-def build_behandlungen(data):
-    behandlungen = []
-    for idx in range(len(data[0])):
-        behandlung = []
-        for row in data:
-            behandlung.append(row[idx])
-        behandlungen.append(behandlung)
-    return behandlungen
-
 @bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
 @login_required
 def save_behandlungen(id):
     if(request.method == 'POST'):
         req_behandlungen = build_behandlungen(request)
-        behandlungen, error = fill_and_validate_behandlungen(req_behandlungen):
+        behandlungen, error = fill_and_validate_behandlungen(req_behandlungen)
         if(behandlungen == None):
             flash(error)
             tierhaltung = read_tierhaltung(id)

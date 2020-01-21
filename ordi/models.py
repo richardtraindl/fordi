@@ -183,52 +183,29 @@ class cRechnung:
 
 ### rechnungszeile
 class cRechnungszeile:
-    def __init__(self, id="", 
-                       rechnung_id="", 
-                       datum="", 
-                       artikelcode="", 
-                       artikel="",  
+    def __init__(self, id=None, 
+                       rechnung_id=None, 
+                       datum=None, 
+                       artikelcode=None, 
+                       artikel=None,
                        betrag=0):
         self.id = id
         self.rechnung_id = rechnung_id
-        self.datum = datum
+        if(len(self.datum) == 0):
+            self.datum = date.today().strftime("%Y-%m-%d")
+        else:
+            self.datum = datum
         self.artikelcode = artikelcode
         self.artikel = artikel
         self.betrag = betrag
 
-def build_and_validate_rechnungszeilen(request):
-    data = (
-        request.form.getlist('rechnungszeile_id[]'),
-        request.form.getlist('datum[]'),
-        request.form.getlist('artikelcode[]'),
-        request.form.getlist('artikel[]'),
-        request.form.getlist('betrag[]')
-    )
-    rechnungszeilen = []
-    error = ""
-    for idx in range(len(data[0])):
-        rechnungszeile = cRechnungszeile(data[0][idx],
-                                         "",
-                                         data[1][idx],
-                                         data[2][idx],
-                                         data[3][idx],
-                                         data[4][idx])
-        if(len(rechnungszeile.id) == 0 and len(rechnungszeile.datum) == 0 and
-           (len(rechnungszeile.artikelcode) == 0 or rechnungszeile.artikelcode == "0") and
-           len(rechnungszeile.artikel) == 0 and len(rechnungszeile.betrag) == 0):
-            continue
-
-        """if(len(rechnungszeile.datum) == 0):
-            rechnungszeile.datum = date.today().strftime("%Y-%m-%d")"""
-
-        if(len(rechnungszeile.artikel) == 0):
-            error = "Fehlende Artikelbeschreibung."
-
-        rechnungszeilen.append(rechnungszeile)
-
-    if(len(rechnungszeilen) == 0):
-        return rechnungszeilen, "Mindestens eine Rechnungszeile erforderlich."
-
-    return rechnungszeilen, error
+    def validate(self):
+        if(len(self.artikelcode) == 0 or self.artikelcode == 0):
+            return False, "Fehlende Artikelart."
+        if(len(self.artikel) == 0):
+            return False, "Fehlende Artikelbeschreibung."
+        if(len(self.betrag) == 0):
+            return False, "Fehlender Artikelbetrag."
+        return True, ""
 ### rechnungszeile
 

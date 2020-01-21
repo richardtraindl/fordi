@@ -69,12 +69,12 @@ def fill_and_validate_person(request):
 
 def fill_and_validate_adresse(request):
     try:
-        adresse_id = int(request.form['adresse_id']
+        adresse_id = int(request.form['adresse_id'])
     except:
         adresse_id = None
 
     try:
-        person_id = int(request.form['person_id']
+        person_id = int(request.form['person_id'])
     except:
         person_id = None
 
@@ -89,16 +89,16 @@ def fill_and_validate_adresse(request):
 def fill_and_validate_kontakte(request):
     kontakte = []
     try:
-        kontakt1_id = int(request.form['kontakt1_id']
+        kontakt1_id = int(request.form['kontakt1_id'])
     except:
         kontakt1_id = None
     try:
-        kontakt2_id = int(request.form['kontakt2_id']
+        kontakt2_id = int(request.form['kontakt2_id'])
     except:
         kontakt2_id = None
 
     try:
-        person_id = int(request.form['person_id']
+        person_id = int(request.form['person_id'])
     except:
         person_id = None
 
@@ -117,12 +117,12 @@ def fill_and_validate_kontakte(request):
 
 def fill_and_validate_behandlung(request):
     try:
-        behandlung_id = int(request.form['behandlung_id']
+        behandlung_id = int(request.form['behandlung_id'])
     except:
         behandlung_id = None
 
     try:
-        tier_id = int(request.form['tier_id']
+        tier_id = int(request.form['tier_id'])
     except:
         tier_id = None
 

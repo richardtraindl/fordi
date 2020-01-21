@@ -366,37 +366,39 @@ def create_rechnung(id):
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
 
+    tierhaltung = read_tierhaltung(id)
+    adresse = read_adresse(tierhaltung['person_id'])
+    kontakte = read_kontakte(tierhaltung['person_id'])
+        
     if(request.method == 'POST'):
         rechnung, error = fill_and_validate_rechnung(request)
         req_rechnungszeilen = build_rechnungszeilen(request)
         rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(rechnung == None or rechnungszeilen == None):
             flash(error + zeilen_error)
-            tierhaltung = read_tierhaltung(id)
-            adresse = read_adresse(tierhaltung['person_id'])
-            kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
         flag, error = rechnung.calc(rechnungszeilen)
         if(flag == False):
             flash(error)
-            tierhaltung = read_tierhaltung(id)
-            adresse = read_adresse(tierhaltung['person_id'])
-            kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
-        tierhaltung = read_tierhaltung(id)
         rechnung_id = write_rechnung(tierhaltung['person_id'], tierhaltung['tier_id'], rechnung.rechnungsjahr, rechnung.rechnungslfnr, rechnung.ausstellungsdatum, rechnung.ausstellungsort, rechnung.diagnose, rechnung.bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
         for rechnungszeile in rechnungszeilen:
             if(rechnungszeile.id):
                 update_rechnungszeile(rechnungszeile.id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)
             else:
                 write_rechnungszeile(rechnung_id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)                
-        return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
 
-    tierhaltung = read_tierhaltung(id)
-    adresse = read_adresse(tierhaltung['person_id'])
-    kontakte = read_kontakte(tierhaltung['person_id'])
+        rechnung = read_rechnung(rechnung_id)
+        rechnungszeilen = read_rechnungszeilen(rechnung_id)
+        html = render_template('ordi/prints/print_rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, tierhaltung=tierhaltung, adresse=adresse)
+        filename = str(rechnung['id']) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
+        path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+        html2pdf(html, path_and_filename)
+        return send_file(path_and_filename, as_attachment=True)
+        #return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
+
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
     ausstellungsdatum = date.today().strftime("%Y-%m-%d")
     ausstellungsort = "Wien"
@@ -410,25 +412,22 @@ def edit_rechnung(rechnung_id):
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
 
+    rechnung = read_rechnung(rechnung_id)
+    tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
+    adresse = read_adresse(rechnung['person_id'])
+    kontakte = read_kontakte(rechnung['person_id'])
+
     if(request.method == 'POST'):
         rechnung, error = fill_and_validate_rechnung(request)
         req_rechnungszeilen = build_rechnungszeilen(request)
         rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(rechnung == None or rechnungszeilen == None):
             flash(error + zeilen_error)
-            rechnung = read_rechnung(rechnung_id)
-            tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
-            adresse = read_adresse(tierhaltung['person_id'])
-            kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
         flag, error = rechnung.calc(rechnungszeilen)
         if(flag == False):
             flash(error)
-            rechnung = read_rechnung(rechnung_id)
-            tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
-            adresse = read_adresse(tierhaltung['person_id'])
-            kontakte = read_kontakte(tierhaltung['person_id'])
             return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
         else:
             update_rechnung(rechnung_id, rechnung.rechnungsjahr, rechnung.rechnungslfnr, rechnung.ausstellungsdatum, rechnung.ausstellungsort, rechnung.diagnose, rechnung.bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
@@ -438,14 +437,19 @@ def edit_rechnung(rechnung_id):
                 update_rechnungszeile(rechnungszeile.id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)                
             else:
                 write_rechnungszeile(rechnung_id, rechnungszeile.datum, rechnungszeile.artikelcode, rechnungszeile.artikel, rechnungszeile.betrag)
-        return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
+
+        rechnung = read_rechnung(rechnung_id)
+        rechnungszeilen = read_rechnungszeilen(rechnung_id)
+        html = render_template('ordi/prints/print_rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, tierhaltung=tierhaltung, adresse=adresse)
+        filename = str(rechnung['id']) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
+        path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+        html2pdf(html, path_and_filename)
+        return send_file(path_and_filename, as_attachment=True)
+        #return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
 
     rechnung = read_rechnung(rechnung_id)
     rechnungszeilen = read_rechnungszeilen(rechnung_id)
     rechnungszeile_datum = date.today().strftime("%Y-%m-%d")
-    tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
-    adresse = read_adresse(tierhaltung['person_id'])
-    kontakte = read_kontakte(tierhaltung['person_id'])
     return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, rechnungszeile_datum=rechnungszeile_datum, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, artikelwerte=artikelwerte, page_title="Rechnung")
 
 

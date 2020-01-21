@@ -247,28 +247,15 @@ def edit_person(id, person_id):
 @login_required
 def create_behandlung(id):
     if(request.method == 'POST'):
-        error = None
-        behandlungsdatum = request.form['behandlungsdatum']
-        gewicht = request.form['gewicht']
-        diagnose = request.form['diagnose']
-        laborwerte1 = request.form['laborwerte1']
-        laborwerte2 = request.form['laborwerte2']
-        arzneien = request.form['arzneien']
-        arzneimittel = request.form['arzneimittel']
-        impfungen_extern = request.form['impfungen_extern']
+        behandlung, error = fill_and_validate_behandlung(request)
 
-        if(len(gewicht) == 0 and len(diagnose) == 0 and len(laborwerte1) == 0 and
-           len(laborwerte2) == 0 and len(arzneien) == 0 and len(arzneimittel) == 0 and
-           len(impfungen_extern) == 0):
+        if(len(behandlung.gewicht) == 0 and len(behandlung.diagnose) == 0 and len(behandlung.laborwerte1) == 0 and
+           len(behandlung.laborwerte2) == 0 and len(behandlung.arzneien) == 0 and len(behandlung.arzneimittel) == 0 and
+           len(behandlung.impfungen_extern) == 0):
             return redirect(url_for('ordi.show_tierhaltung', id=id))
 
-        if(len(behandlungsdatum) == 0):
-            behandlungsdatum = date.today().strftime("%Y-%m-%d")
-            #good_chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-            #behandlungsdatum = ''.join(i for i in request.form['behandlungsdatum'] if i in good_chars)
-
-        if(len(gewicht) > 0 and re.search(r"\d", gewicht) == None):
-            error = "Zahl für Gewicht erforderlich."
+        flag, error = behandlung.validate()
+        if(flag = False):
             flash(error)
             tierhaltung = read_tierhaltung(id)
             adresse = read_adresse(tierhaltung['person_id'])
@@ -277,7 +264,7 @@ def create_behandlung(id):
             return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
 
         tierhaltung = read_tierhaltung(id)
-        behandlung_id = write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
+        behandlung_id = write_behandlung(tierhaltung['tier_id'], behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
         if(len(impfungen_extern) > 0):
             impfungstexte = impfungen_extern.split(', ')
         else:
@@ -299,39 +286,23 @@ def build_behandlungen(data):
 @login_required
 def save_behandlungen(id):
     if(request.method == 'POST'):
-        data = (
-            request.form.getlist('behandlungsdatum[]'),
-            request.form.getlist('diagnose[]'),
-            request.form.getlist('laborwerte1[]'),
-            request.form.getlist('laborwerte2[]'),
-            request.form.getlist('arzneien[]'),
-            request.form.getlist('arzneimittel[]'),
-            request.form.getlist('impfungen_extern[]'),
-            request.form.getlist('gewicht[]'),
-            request.form.getlist('behandlung_id[]'),
-        )
-        behandlungen = build_behandlungen(data)
-        tierhaltung = read_tierhaltung(id)
+        req_behandlungen = build_behandlungen(request)
+        behandlungen, error = fill_and_validate_behandlungen(req_behandlungen):
+        if(behandlungen == None):
+            flash(error)
+            tierhaltung = read_tierhaltung(id)
+            adresse = read_adresse(tierhaltung['person_id'])
+            kontakte = read_kontakte(tierhaltung['person_id'])
+            return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_behandlungen=req_behandlungen)
 
+        tierhaltung = read_tierhaltung(id)
         for behandlung in behandlungen:
-            behandlungsdatum = behandlung[0]
-            diagnose = behandlung[1]
-            laborwerte1 = behandlung[2]
-            laborwerte2 = behandlung[3]
-            arzneien = behandlung[4]
-            arzneimittel = behandlung[5]
-            impfungen_extern = behandlung[6]
-            gewicht = behandlung[7]
-            behandlung_id = behandlung[8]
-            if(len(gewicht) > 0 or len(diagnose) > 0 or len(laborwerte1) > 0 or
-               len(laborwerte2) > 0 or len(arzneien) > 0 or len(arzneimittel) > 0 or
-               len(impfungen_extern) > 0):
-                if(len(behandlung_id) == 0):
-                    behandlung_id = write_behandlung(tierhaltung['tier_id'], behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
-                else:
-                    update_behandlung(behandlung_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)
-            if(len(impfungen_extern) > 0):
-                impfungstexte = impfungen_extern.split(',')
+            if(len(behandlung_id) == 0):
+                behandlung_id = write_behandlung(tierhaltung['tier_id'], behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
+            else:
+                update_behandlung(behandlung_id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
+            if(len(behandlung.impfungen_extern) > 0):
+                impfungstexte = behandlung.impfungen_extern.split(',')
             else:
                 impfungstexte = []
             save_or_delete_impfungen(behandlung_id, impfungstexte)

@@ -4,18 +4,18 @@ from .values import *
 ### Tier
 class cTier:
     def __init__(self, 
-                 id="", 
-                 tiername="", 
-                 tierart="", 
-                 rasse="", 
-                 farbe="", 
-                 viren="", 
-                 merkmal="", 
-                 geburtsdatum="", 
-                 geschlechtscode="",
-                 chip_nummer ="",
-                 eu_passnummer ="",
-                 patient = ""):
+                 id=None, 
+                 tiername=None, 
+                 tierart=None, 
+                 rasse=None, 
+                 farbe=None, 
+                 viren=None, 
+                 merkmal=None, 
+                 geburtsdatum=None, 
+                 geschlechtscode=None,
+                 chip_nummer=None,
+                 eu_passnummer=None,
+                 patient=None):
         self.id = id
         self.tiername = tiername
         self.tierart = tierart
@@ -43,13 +43,13 @@ class cTier:
 ### person
 class cPerson:
     def __init__(self, 
-                 id="", 
-                 anredecode="", 
-                 titel="", 
-                 familienname="", 
-                 vorname="", 
-                 notiz="", 
-                 kunde=""):
+                 id=None, 
+                 anredecode=None, 
+                 titel=None, 
+                 familienname=None, 
+                 vorname=None, 
+                 notiz=None, 
+                 kunde=None):
         self.id = id
         self.anredecode = anredecode
         self.titel = titel
@@ -68,11 +68,11 @@ class cPerson:
 ### adresse
 class cAdresse:
     def __init__(self, 
-                 id="", 
-                 person_id="", 
-                 strasse="", 
-                 postleitzahl="", 
-                 ort=""):
+                 id=None, 
+                 person_id=None, 
+                 strasse=None, 
+                 postleitzahl=None, 
+                 ort=None):
         self.id = id
         self.person_id = person_id
         self.strasse = strasse
@@ -87,18 +87,17 @@ class cAdresse:
 ### kontakte
 class cKontakt:
     def __init__(self, 
-                 id="", 
-                 person_id="", 
+                 id=None, 
+                 person_id=None, 
                  kontaktcode="1", # fix 1 für Telefon
-                 kontakt="", 
-                 kontakt_intern=""):
+                 kontakt=None, 
+                 kontakt_intern=None):
         self.id = id
         self.person_id = person_id
         self.kontaktcode = kontaktcode
         self.kontakt = kontakt
         bad_chars = [';', ':', '-', '/', ' ', '\n']
         self.kontakt_intern = ''.join(i for i in self.kontakt if not i in bad_chars)
-        #self.kontakt_intern = kontakt_intern
 
     def validate(self):
         return True, ""
@@ -142,56 +141,47 @@ class cRechnung:
         self.steuerbetrag_dreizehn = steuerbetrag_dreizehn
         self.steuerbetrag_zehn = steuerbetrag_zehn
 
-
     def validate(self):
-        if(len(request.form['rechnungsjahr']) == 0):
+        if(len(self.rechnungsjahr) == 0):
             return False, "Rechnungsjahr erforderlich."
-        if(len(request.form['rechnungslfnr']) == 0):
+        if(len(self.rechnungslfnr) == 0):
             return False, "Rechnungslfnr erforderlich."
         return True, ""
 
+    def calc(self, rechnungszeilen):
+        self.brutto_summe = 0
+        self.steuerbetrag_zwanzig = 0
+        self.steuerbetrag_dreizehn = 0
+        self.steuerbetrag_zehn = 0
 
-class cCalc:
-    def __init__(self, brutto_summe=0, netto_summe=0, steuerbetrag_zwanzig=0, steuerbetrag_dreizehn=0, steuerbetrag_zehn=0):
-        self.brutto_summe = brutto_summe
-        self.netto_summe = netto_summe
-        self.steuerbetrag_zwanzig = steuerbetrag_zwanzig
-        self.steuerbetrag_dreizehn = steuerbetrag_dreizehn
-        self.steuerbetrag_zehn = steuerbetrag_zehn
+        for rechnungszeile in rechnungszeilen:
+            try:
+                artikelcode = int(rechnungszeile.artikelcode)
+                steuersatz = ARTIKEL_STEUER[artikelcode]
+            except:
+                return False, "Falsche Artikelart."
+            try:
+                str_betrag = rechnungszeile.betrag.replace(",", ".")
+                betrag = float(str_betrag)
+                betrag = round(betrag, 2)
+            except:
+                return False, "Betrag ist keine Zahl."
 
+            self.brutto_summe += betrag
+            nettobetrag = round(betrag * 100 / (100 + steuersatz))
+            if(steuersatz == 20):
+                self.steuerbetrag_zwanzig += (betrag - nettobetrag)
+            elif(steuersatz == 13):
+                self.steuerbetrag_dreizehn += (betrag - nettobetrag)
+            else: # steuersatz == 10
+                self.steuerbetrag_zehn += (betrag - nettobetrag)
 
-def calc_rechnung(rechnungszeilen):
-    calc = cCalc()
-
-    for rechnungszeile in rechnungszeilen:
-        try:
-            artikelcode = int(rechnungszeile.artikelcode)
-            steuersatz = ARTIKEL_STEUER[artikelcode]
-        except:
-            return calc, "Falsche Artikelart."
-
-        try:
-            str_betrag = rechnungszeile.betrag.replace(",", ".")
-            betrag = float(str_betrag)
-            betrag = round(betrag, 2)
-        except:
-            return calc, "Betrag ist keine Zahl."
-
-        calc.brutto_summe += betrag
-        nettobetrag = round(betrag * 100 / (100 + steuersatz))
-        if(steuersatz == 20):
-            calc.steuerbetrag_zwanzig += (betrag - nettobetrag)
-        elif(steuersatz == 13):
-            calc.steuerbetrag_dreizehn += (betrag - nettobetrag)
-        else: # steuersatz == 10
-            calc.steuerbetrag_zehn += (betrag - nettobetrag)
-
-    calc.netto_summe = calc.brutto_summe - (calc.steuerbetrag_zwanzig + calc.steuerbetrag_dreizehn + calc.steuerbetrag_zehn)
-    return calc, ""
+        self.netto_summe = self.brutto_summe - (self.steuerbetrag_zwanzig + self.steuerbetrag_dreizehn + self.steuerbetrag_zehn)
+        return True, ""
+### rechnung
 
 
-
-
+### rechnungszeile
 class cRechnungszeile:
     def __init__(self, id="", 
                        rechnung_id="", 
@@ -240,3 +230,5 @@ def build_and_validate_rechnungszeilen(request):
         return rechnungszeilen, "Mindestens eine Rechnungszeile erforderlich."
 
     return rechnungszeilen, error
+### rechnungszeile
+

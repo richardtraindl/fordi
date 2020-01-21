@@ -95,24 +95,24 @@ def abfragen():
 @login_required
 def create_tierhaltung():
     if(request.method == 'POST'):
-        person, error = build_and_validate_person(request)
-        if(len(error) > 0):
+        person, error = fill_and_validate_person(request)
+        if(person == None):
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
-        tier, error = build_and_validate_tier(request)
-        if(len(error) > 0):
+        tier, error = fill_and_validate_tier(request)
+        if(tier == None):
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
         person_id = write_person(person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
         tier_id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
 
-        adresse = build_and_validate_adresse(request)[0]
+        adresse = fill_and_validate_adresse(request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
             write_adresse(person_id, adresse.strasse, adresse.postleitzahl, adresse.ort)
 
-        kontakte = build_and_validate_kontakte(request)[0]
+        kontakte = fill_and_validate_kontakte(request)[0]
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
                 write_kontakt(person_id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
@@ -169,8 +169,8 @@ def show_tierhaltung(id):
 @login_required
 def create_tier(id):
     if(request.method == 'POST'):
-        tier, error = build_and_validate_tier(request)
-        if(len(error) > 0):
+        tier, error = fill_and_validate_tier(request)
+        if(tier == None):
             flash(error)
             return render_template('ordi/create_tier.html', id=id)
         tier_id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
@@ -188,8 +188,8 @@ def create_tier(id):
 @login_required
 def edit_tier(id, tier_id):
     if(request.method == 'POST'):
-        tier, error = build_and_validate_tier(request)
-        if(len(error) > 0):
+        tier, error = fill_and_validate_tier(request)
+        if(tier == None):
             flash(error)
             return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
         update_tier(tier.id, tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
@@ -206,31 +206,31 @@ def edit_tier(id, tier_id):
 @login_required
 def edit_person(id, person_id):
     if(request.method == 'POST'):
-        person, error = build_and_validate_person(request)
-        if(len(error) > 0):
+        person, error = fill_and_validate_person(request)
+        if(person == None):
             flash(error)
             return render_template('ordi/edit_person.html', id=id, person_id=person_id)
         update_person(person.id, person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
 
-        adresse = build_and_validate_adresse(request)[0]
+        adresse = fill_and_validate_adresse(request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
-            if(len(adresse.id) > 0):
+            if(adresse.id):
                 update_adresse(adresse.id, adresse.strasse, adresse.postleitzahl, adresse.ort)
             else:
                 write_adresse(adresse.person_id, adresse.strasse, adresse.postleitzahl, adresse.ort)
         else:
-            if(len(adresse.id) > 0):
+            if(adresse.id):
                 delete_db_adresse(adresse.id)
 
-        kontakte = build_and_validate_kontakte(request)[0]
+        kontakte = fill_and_validate_kontakte(request)[0]
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
-                if(len(kontakt.id) > 0):
+                if(kontakt.id):
                     update_kontakt(kontakt.id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
                 else:
                     write_kontakt(kontakt.person_id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
             else:
-                if(len(kontakt.id) > 0):
+                if(kontakt.id):
                     delete_db_kontakt(kontakt.id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
@@ -396,22 +396,23 @@ def create_rechnung(id):
         artikelwerte.append([key, value])
 
     if(request.method == 'POST'):
-        rechnung, error = build_and_validate_rechnung(request)
-        rechnungszeilen, zeilen_error = build_and_validate_rechnungszeilen(request)
-        if(len(error) > 0 or len(zeilen_error) > 0):
+        rechnung, error = fill_and_validate_rechnung(request)
+        req_rechnungszeilen = build_rechnungszeilen(request)
+        rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
+        if(rechnung == None or rechnungszeilen == None):
             flash(error + zeilen_error)
             tierhaltung = read_tierhaltung(id)
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
-            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
-        calc, calc_error = calc_rechnung(rechnungszeilen)
-        if(len(calc_error) > 0):
-            flash(calc_error)
+        flag, error = rechnung.calc(rechnungszeilen)
+        if(flag == False):
+            flash(error)
             tierhaltung = read_tierhaltung(id)
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
-            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
         tierhaltung = read_tierhaltung(id)
         rechnung_id = write_rechnung(tierhaltung['person_id'], tierhaltung['tier_id'], rechnung.rechnungsjahr, rechnung.rechnungslfnr, rechnung.ausstellungsdatum, rechnung.ausstellungsort, rechnung.diagnose, rechnung.bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
@@ -439,24 +440,25 @@ def edit_rechnung(rechnung_id):
         artikelwerte.append([key, value])
 
     if(request.method == 'POST'):
-        rechnung, error = build_and_validate_rechnung(request)
-        rechnungszeilen, zeilen_error = build_and_validate_rechnungszeilen(request)
-        if(len(error) > 0 or len(zeilen_error) > 0):
+        rechnung, error = fill_and_validate_rechnung(request)
+        req_rechnungszeilen = build_rechnungszeilen(request)
+        rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
+        if(rechnung == None or rechnungszeilen == None):
             flash(error + zeilen_error)
             rechnung = read_rechnung(rechnung_id)
             tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
-            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
-        calc, calc_error = calc_rechnung(rechnungszeilen)
-        if(len(calc_error) > 0):
-            flash(calc_error)
+        flag, error = rechnung.calc(rechnungszeilen)
+        if(flag == False):
+            flash(error)
             rechnung = read_rechnung(rechnung_id)
             tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
-            return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', rechnung_id=rechnung_id, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, req_rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
         else:
             update_rechnung(rechnung_id, rechnung.rechnungsjahr, rechnung.rechnungslfnr, rechnung.ausstellungsdatum, rechnung.ausstellungsort, rechnung.diagnose, rechnung.bezahlung, calc.brutto_summe, calc.netto_summe, calc.steuerbetrag_zwanzig, calc.steuerbetrag_dreizehn, calc.steuerbetrag_zehn)
 

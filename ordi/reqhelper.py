@@ -29,11 +29,9 @@ def fill_and_validate_tier(request):
                  request.form['chip_nummer'],
                  request.form['eu_passnummer'],
                  patient)
+
     flag, error = tier.validate()
-    if(flag):
-        return tier, error
-    else:
-        return None, error
+    return tier, error
 
 
 def fill_and_validate_person(request):
@@ -61,10 +59,7 @@ def fill_and_validate_person(request):
                      kunde)
 
     flag, error = person.validate()
-    if(flag):
-        return person, error
-    else:
-        return None, error
+    return person, error
 
 
 def fill_and_validate_adresse(request):
@@ -83,6 +78,7 @@ def fill_and_validate_adresse(request):
                        request.form['strasse'],
                        request.form['postleitzahl'],
                        request.form['ort'])
+
     return adresse, ""
 
 
@@ -112,6 +108,7 @@ def fill_and_validate_kontakte(request):
                              "1", # fix 1 für Telefon
                              request.form['kontakt2'],
                              ""))
+
     return kontakte, ""
 
 
@@ -136,11 +133,9 @@ def fill_and_validate_behandlung(request):
                              request.form['arzneien'],
                              request.form['arzneimittel'], 
                              request.form['impfungen_extern'])
+
     flag, error = behandlung.validate()
-    if(flag):
-        return behandlung, error
-    else:
-        return None, error
+    return behandlung, error
 
 
 def build_behandlungen(request):
@@ -168,14 +163,34 @@ def build_behandlungen(request):
         req_behandlung['arzneimittel'] = data[7][idx]
         req_behandlung['impfungen_extern'] = data[8][idx]
 
+        if(len(req_behandlung['behandlung_id']) == 0 and 
+           len(req_behandlung['gewicht']) == 0 and
+           len(req_behandlung['diagnose']) == 0 and
+           len(req_behandlung['laborwerte1']) == 0 and
+           len(req_behandlung['laborwerte2']) == 0 and
+           len(req_behandlung['arzneien']) == 0 and
+           len(req_behandlung['arzneimittel']) == 0 and
+           len(req_behandlung['impfungen_extern']) == 0):
+            continue
+
         req_behandlungen.append(req_behandlung)
     return req_behandlungen
 
 def fill_and_validate_behandlungen(req_behandlungen):
     behandlungen = []
+
     for req_behandlung in req_behandlungen:
-        behandlung = cBehandlung(req_behandlung['behandlung_id'], 
-                                 None,
+        try:
+            behandlung_id = int(req_behandlung['behandlung_id'])
+        except:
+            behandlung_id = None
+        try:
+            tier_id = int(req_behandlung['tier_id'])
+        except:
+            tier_id = None
+
+        behandlung = cBehandlung(behandlung_id, 
+                                 tier_id, 
                                  req_behandlung['behandlungsdatum'], 
                                  req_behandlung['gewicht'], 
                                  req_behandlung['diagnose'], 
@@ -184,13 +199,14 @@ def fill_and_validate_behandlungen(req_behandlungen):
                                  req_behandlung['arzneien'],
                                  req_behandlung['arzneimittel'],
                                  req_behandlung['impfungen_extern'])
+
         flag, error = behandlung.validate()
-        if(flag == False):
+        if(flag):
             behandlungen.append(behandlung)
         else:
-            return None, error
+            return behandlungen, error
 
-    return behandlungen, error
+    return behandlungen, ""
 
 
 def fill_and_validate_rechnung(request):
@@ -245,10 +261,7 @@ def fill_and_validate_rechnung(request):
                          0)
 
     flag, error = rechnung.validate()
-    if(flag):
-        return rechnung, error
-    else:
-        return None, error
+    return rechnung, error
 
 
 def build_rechnungszeilen(request):
@@ -267,30 +280,50 @@ def build_rechnungszeilen(request):
         req_rechnungszeile['artikelcode'] = data[2][idx]
         req_rechnungszeile['artikel'] = data[3][idx]
         req_rechnungszeile['betrag'] = data[4][idx]
-        if(len(req_rechnungszeile['id']) == 0 and len(req_rechnungszeile['datum']) == 0 and
+
+        if(len(req_rechnungszeile['rechnungszeile_id']) == 0 and 
            (len(req_rechnungszeile['artikelcode']) == 0 or req_rechnungszeile['artikelcode'] == "0") and
-           len(req_rechnungszeile['artikel']) == 0 and len(req_rechnungszeile['betrag']) == 0):
+           len(req_rechnungszeile['artikel']) == 0 and 
+           len(req_rechnungszeile['betrag']) == 0):
             continue
+
         req_rechnungszeilen.append(req_rechnungszeile)
     return req_rechnungszeilen
 
 def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
     rechnungszeilen = []
+    return_error = ""
+
     for req_rechnungszeile in req_rechnungszeilen:
-        rechnungszeile = cRechnungszeile(req_rechnungszeile['rechnungszeile_id'], 
-                                         None, 
+        try:
+            rechnungszeile_id = int(req_rechnungszeile['rechnungszeile_id'])
+        except:
+            rechnungszeile_id = None
+
+        try:
+            rechnung_id = int(req_rechnungszeile['rechnung_id'])
+        except:
+            rechnung_id = None
+
+        try:
+            artikelcode = int(req_rechnungszeile['artikelcode'])
+        except:
+            artikelcode = None
+
+        rechnungszeile = cRechnungszeile(rechnungszeile_id, 
+                                         rechnung_id, 
                                          req_rechnungszeile['datum'], 
-                                         req_rechnungszeile['artikelcode'], 
+                                         artikelcode, 
                                          req_rechnungszeile['artikel'],
                                          req_rechnungszeile['betrag'])
+
         flag, error = rechnungszeile.validate()
-        if(flag == False):
+        if(flag):
             rechnungszeilen.append(rechnungszeile)
         else:
-            return None, error
+            return rechnungszeilen, error
 
-    if(len(rechnungszeilen) > 0):
-        return rechnungszeilen, error
+    if(len(rechnungszeilen) == 0):
+        return rechnungszeilen, "Mindestens eine Rechnungszeile erforderlich."
     else:
-        return None, "Mindestens eine Rechnungszeile erforderlich."
-
+        return rechnungszeilen, ""

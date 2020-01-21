@@ -42,7 +42,10 @@
             <tbody>
               {% for behandlung in behandlungen %}
                 <tr>
-                    <td style="width: 8%"><input type="text" name="behandlungsdatum[]" class="date" value="{{ behandlung[0]['behandlungsdatum'] }}"></td>
+                    <td style="width: 8%">
+                        <input type="hidden" name="behandlung_id[]" value="{{ behandlung[0]['id'] }}">
+                        <input type="text" name="behandlungsdatum[]" class="date" value="{{ behandlung[0]['behandlungsdatum'] }}">
+                    </td>
                     <td style="width: 30%"><textarea name="diagnose[]">{{ behandlung[0]['diagnose'] }}</textarea></td>
                     <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{ behandlung[0]['laborwerte1'] }}</textarea></td>
                     <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{ behandlung[0]['laborwerte2'] }}</textarea></td>
@@ -64,20 +67,21 @@
                     <td style="width: 4%"><textarea name="gewicht[]">{{ behandlung[0]['gewicht'] }}</textarea></td>
                     <td style="width: 5%">
                         <a class="zeile_loeschen" tierhaltung_id="{{ tierhaltung['id'] }}" behandlung_id="{{ behandlung[0]['id'] }}" href="#">Zeile löschen</a>
-                        <input type="hidden" name="behandlung_id[]" value="{{ behandlung[0]['id'] }}">
                     </td>
                 </tr>
               {% endfor %}
                 <tr class="edit-focus">
-                    <td style="width: 8%"><input type="text" name="behandlungsdatum[]" class="date" value="{{ request.form['behandlungsdatum'] or behandlungsdatum }}"></td>
-                    <td style="width: 30%"><textarea name="diagnose[]" id="new-diagnose">{{ request.form['diagnose'] }}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{ request.form['laborwerte1'] }}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{ request.form['laborwerte2'] }}</textarea></td>
-                    <td style="width: 14%"><textarea name="arzneien[]">{{ request.form['arzneien'] }}</textarea></td>
-                    <td style="width: 7%"><textarea name="arzneimittel[]">{{ request.form['arzneimittel'] }}</textarea></td>
-                    <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly>{{ request.form['impfungen_extern'] }}</textarea></td>
-                    <td style="width: 4%"><textarea name="gewicht[]">{{ request.form['gewicht'] }}</textarea></td>
-                    <td style="width: 5%"><input type="hidden" name="behandlung_id[]" value=""></td>
+                    <td style="width: 8%">
+                        <input type="hidden" name="behandlung_id[]" value="">
+                        <input type="text" name="behandlungsdatum[]" class="date" value="{{- datum -}}">
+                    </td>
+                    <td style="width: 30%"><textarea name="diagnose[]" id="new-diagnose"></textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor"></textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor"></textarea></td>
+                    <td style="width: 14%"><textarea name="arzneien[]"></textarea></td>
+                    <td style="width: 7%"><textarea name="arzneimittel[]"></textarea></td>
+                    <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly></textarea></td>
+                    <td style="width: 4%"><textarea name="gewicht[]"></textarea></td>
                 </tr>
             </tbody>
         </table>

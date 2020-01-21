@@ -21,64 +21,33 @@
   {% if rechnung %}
     <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">
   {% else %}
-    {% if rechnung_id %}
-    <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung_id) }}">
-    {% else %}
     <form method="post" action="{{ url_for('ordi.create_rechnung', id=tierhaltung['id']) }}">
-    {% endif %}
   {% endif %}
 
-    {% if rechnung %}
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
             <label for="rechnungsjahr">Rechnungsjahr</label>
-            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ rechnung['rechnungsjahr'] }}" required>
+            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{- request.form['rechnungsjahr'] or rechnung['rechnungsjahr'] -}}" required>
             
             <label for="rechnungslfnr">Rechnungslfnr</label>
-            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{ rechnung['rechnungslfnr'] }}" required>
+            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{- request.form['rechnungslfnr'] or rechnung['rechnungslfnr'] -}}" required>
             
             <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ rechnung['ausstellungsdatum'] }}" required>
+            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or rechnung['ausstellungsdatum'] or datum -}}" required>
             
             <label for="ausstellungsort">Ausstellungsort</label>
-            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{ rechnung['ausstellungsort'] }}" required>
+            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{- request.form['ausstellungsort'] or rechnung['ausstellungsort'] or ort -}}" required>
         </div>
       </div>
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto;">
             <label for="diagnose">Diagnose</label>
-            <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{ rechnung['diagnose'] }}</textarea>
+            <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{- request.form['diagnose'] or rechnung['diagnose'] -}}</textarea>
             
             <label for="bezahlung">Bezahlung</label>
-            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ rechnung['bezahlung'] }}">
+            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{- request.form['bezahlung'] or rechnung['bezahlung'] -}}">
         </div>
       <div>
-      {% else %}
-      <div>
-        <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
-            <label for="rechnungsjahr">Rechnungsjahr</label>
-            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{ request.form['rechnungsjahr'] }}" required>
-            
-            <label for="rechnungslfnr">Rechnungslfnr</label>
-            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{ request.form['rechnungslfnr'] }}" required>
-            
-            <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{ request.form['ausstellungsdatum'] or ausstellungsdatum }}" required>
-            
-            <label for="ausstellungsort">Ausstellungsort</label>
-            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{ request.form['ausstellungsort'] or ausstellungsort }}" required>
-        </div>
-      </div>
-      <div>
-        <div class="row-grid" style="grid-template-columns: auto auto;">
-            <label for="diagnose">Diagnose</label>
-            <textarea style="width: 480px; height: 42px;" name="diagnose" id="diagnose">{{ request.form['diagnose'] }}</textarea>
-            
-            <label for="bezahlung">Bezahlung</label>
-            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{ request.form['bezahlung'] }}">
-        </div>
-      </div>
-      {% endif %}
 
       <div class="gap"></div>
 
@@ -97,45 +66,31 @@
       <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
-            {% if rechnung %}
               {% for rechnungszeile in rechnungszeilen %}
                 <tr>
-                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile['datum'] }}" required></td>
-                    {% set artikelcode = rechnungszeile['artikelcode'] %}
-                    <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" required>{{ rechnungszeile['artikel'] }}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ rechnungszeile['betrag'] }}</textarea></td>
-                    <td style="width: 6%">
-                        <a class="zeile_loeschen" rechnungszeile_id="{{ rechnungszeile['id'] }}" href="#">Zeile löschen</a>
-                        <input type="hidden" name="rechnungszeile_id[]" value="{{ rechnungszeile['id'] }}">
-                    </td>
+                  <td style="width: 10%">
+                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rechnungszeile['id'] -}}">
+                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile['datum'] }}" required>
+                  </td>
+                  {% set artikelcode = rechnungszeile['artikelcode'] %}
+                  <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
+                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" required>{{ rechnungszeile['artikel'] }}</textarea></td>
+                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{ rechnungszeile['betrag'] }}</textarea></td>
+                  <td style="width: 6%">
+                    <a class="zeile_loeschen" rechnungszeile_id="{{ rechnungszeile['id'] }}" href="#">Zeile löschen</a>
+                  </td>
                 </tr>
               {% endfor %}
-            {% else %}
-                {% for rechnungszeile in rechnungszeilen %}
-                  <tr>
-                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile.datum or rechnungszeile_datum }}"></td>
-                    {% set artikelcode = rechnungszeile.artikelcode | int %}
-                    <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{ rechnungszeile.artikel }}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{ rechnungszeile.betrag }}</textarea></td>
-                    <td style="width: 6%">
-                        <a class="zeile_loeschen" rechnungszeile_id="{{ rechnungszeile.id }}" href="#">Zeile löschen</a>
-                        <input type="hidden" name="rechnungszeile_id[]" value="{{ rechnungszeile.id }}">
-                    </td>
-                  </tr>
-                {% endfor %}
-            {% endif %}
                 <tr id="neue_zeile">
-                    <td style="width: 10%"><input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile_datum }}"></td>
-                    {% set artikelcode = 0 %}
-                    <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
-                    <td style="width: 6%">
-                        <a href="#" onclick="newrow($(this));">neue Zeile</a>
-                        <input type="hidden" name="rechnungszeile_id[]" value="">
-                    </td>
+                  <td style="width: 10%">
+                      <input type="hidden" name="rechnungszeile_id[]" value="">
+                      <input type="text" style="width: 100%" name="datum[]" class="date" value="{{ rechnungszeile_datum }}">
+                  </td>
+                  {% set artikelcode = 0 %}
+                  <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
+                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
+                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
+                  <td style="width: 6%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
                 </tr>
             </tbody>
         </table>
@@ -143,13 +98,8 @@
 
       <div class="small-gap"></div>
 
-      <div class="flex-container">
-        <p><input type="submit" value="rechnen"></p>
-        {% if rechnung %}
-            <p><a class="btn" href="{{ url_for('ordi.print_rechnung', rechnung_id=rechnung['id']) }}">Rechnung drucken</a></p>
-        {% else %}
-            <p><a class="btn" href="#">Rechnung drucken</a></p>
-        {% endif %}
+      <div>
+        <input type="submit" value="Rechnung drucken">
       </div>
     </form>
 
@@ -171,6 +121,8 @@
             }
             $obj.closest("tbody").append(
               '<tr id="neue_zeile">' +
+                '<input type="hidden" name="rechnungszeile_id[]" value="">' +
+                '<input type="hidden" name="rechnung_id[]" value="">' +
                 '<td style="width: 10%">' + 
                     '<input type="text" style="width: 100%" name="datum[]" class="date" value="' + year + "-" + month + "-" + day + '">' + 
                 '</td>' + 
@@ -197,7 +149,6 @@
                 '</td>' + 
                 '<td style="width: 6%">' + 
                     '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
-                    '<input type="hidden" name="rechnungszeile_id[]" value="">' +
                 '</td>' +
               '</tr>'
             );

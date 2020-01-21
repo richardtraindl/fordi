@@ -179,9 +179,9 @@ class cRechnung:
         self.steuerbetrag_zehn = steuerbetrag_zehn
 
     def validate(self):
-        if(len(self.rechnungsjahr) == 0):
+        if(self.rechnungsjahr == None):
             return False, "Rechnungsjahr erforderlich."
-        if(len(self.rechnungslfnr) == 0):
+        if(self.rechnungslfnr == None):
             return False, "Rechnungslfnr erforderlich."
         return True, ""
 
@@ -220,15 +220,16 @@ class cRechnung:
 
 ### rechnungszeile
 class cRechnungszeile:
-    def __init__(self, id=None, 
-                       rechnung_id=None, 
-                       datum=None, 
-                       artikelcode=None, 
-                       artikel=None,
-                       betrag=0):
+    def __init__(self, 
+                 id=None, 
+                 rechnung_id=None, 
+                 datum=None, 
+                 artikelcode=None, 
+                 artikel=None,
+                 betrag=0):
         self.id = id
         self.rechnung_id = rechnung_id
-        if(len(self.datum) == 0):
+        if(len(datum) == 0):
             self.datum = date.today().strftime("%Y-%m-%d")
         else:
             self.datum = datum
@@ -237,11 +238,11 @@ class cRechnungszeile:
         self.betrag = betrag
 
     def validate(self):
-        if(len(self.artikelcode) == 0 or self.artikelcode == 0):
+        if(self.artikelcode == None or self.artikelcode == 0):
             return False, "Fehlende Artikelart."
         if(len(self.artikel) == 0):
             return False, "Fehlende Artikelbeschreibung."
-        if(len(self.betrag) == 0):
+        if(self.betrag == None):
             return False, "Fehlender Artikelbetrag."
         return True, ""
 ### rechnungszeile

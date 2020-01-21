@@ -115,6 +115,34 @@ def fill_and_validate_kontakte(request):
     return kontakte, ""
 
 
+def fill_and_validate_behandlung(request):
+    try:
+        behandlung_id = int(request.form['behandlung_id']
+    except:
+        behandlung_id = None
+
+    try:
+        tier_id = int(request.form['tier_id']
+    except:
+        tier_id = None
+
+    behandlung = cBehandlung(behandlung_id, 
+                             tier_id,
+                             request.form['behandlungsdatum'], 
+                             request.form['gewicht'],  
+                             request.form['diagnose'],
+                             request.form['laborwerte1'], 
+                             request.form['laborwerte2'], 
+                             request.form['arzneien'],
+                             request.form['arzneimittel'], 
+                             request.form['impfungen_extern'])
+    flag, error = behandlung.validate()
+    if(flag):
+        return behandlung, error
+    else:
+        return None, error
+
+
 def fill_and_validate_rechnung(request):
     try:
         rechnung_id = int(request.form['rechnung_id'])

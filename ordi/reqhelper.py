@@ -196,9 +196,8 @@ def build_rechnungszeilen(request):
         req_rechnungszeilen.append(req_rechnungszeile)
     return req_rechnungszeilen
 
-def fill_and_validate_rechnungszeilen(request):
+def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
     rechnungszeilen = []
-    req_rechnungszeilen = build_rechnungszeilen(request)
     for req_rechnungszeile in req_rechnungszeilen:
         rechnungszeile = cRechnungszeile(req_rechnungszeile['rechnungszeile_id'], 
                                          None, 

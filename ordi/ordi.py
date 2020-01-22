@@ -135,14 +135,34 @@ def create_tierhaltung():
 @login_required
 def show_tierhaltung(id):
     tierhaltung = read_tierhaltung(id)
-    adresse = read_adresse(tierhaltung['person_id'])
-    kontakte = read_kontakte(tierhaltung['person_id'])
+    
+    ctier = cTier(tierhaltung['tier_id'], tierhaltung['tiername'], tierhaltung['tierart'], tierhaltung['rasse'], tierhaltung['farbe'], 
+                  tierhaltung['viren'], tierhaltung['merkmal'], tierhaltung['geburtsdatum'], tierhaltung['geschlechtscode'],
+                  tierhaltung['chip_nummer'], tierhaltung['eu_passnummer'], tierhaltung['patient'])
 
-    behandlungen = []
-    tmpbehandlungen = read_behandlungen(id)
-    for tmpbehandlung in tmpbehandlungen:
-        tmpimpfungen = read_impfungen(tmpbehandlung['id'])
-        behandlungen.append([tmpbehandlung, tmpimpfungen])
+    cperson = cPerson(tierhaltung['person_id'], tierhaltung['anredecode=None'], tierhaltung['titel'], 
+                      tierhaltung['familienname'], tierhaltung['vorname'], tierhaltung['notiz'], tierhaltung['kunde'])
+
+    adresse = read_adresse(tierhaltung['person_id'])
+    cperson.adresse = cAdresse( adresse['id'], adresse[person_id'], adresse['strasse'], adresse['postleitzahl'], adresse['ort'])
+
+    kontakte = read_kontakte(tierhaltung['person_id'])
+    for kontakt in kontakte:
+         cperson.kontakte.append(cKontakt(kontakt['id'], kontakt['person_id'], kontakt['kontaktcode'], kontakt['kontakt'], kontakt['kontakt_intern'])
+
+    cbehandlungen = []
+    behandlungen = read_behandlungen(ctier.id)
+    for behandlung in behandlungen:
+        cbehandlung = cBehandlung(behandlung['id'], behandlung['tier_id'], behandlung['behandlungsdatum'], behandlung['gewicht'],  
+                                  behandlung['diagnose'], behandlung['laborwerte1'], behandlung['laborwerte2'], behandlung['arzneien'],
+                                  behandlung['arzneimittel'], behandlung['impfungen_extern'])
+
+        impfungen = read_impfungen(cbehandlung.id)
+        for impfung in impfungen:
+            cbehandlung.impfungen.append(impfung)
+
+        cbehandlungen.append(cbehandlung)
+
     datum = date.today().strftime("%Y-%m-%d")
 
     laboreferenzen = []
@@ -160,7 +180,8 @@ def show_tierhaltung(id):
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, anredewerte=anredewerte,  geschlechtswerte=geschlechtswerte, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen, datum=datum, laboreferenzen=laboreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
+    return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=cbehandlungen, datum=datum, 
+                           anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, laboreferenzen=laboreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
@@ -245,11 +266,11 @@ def edit_person(id, person_id):
 @login_required
 def create_behandlung(id):
     if(request.method == 'POST'):
-        behandlung, error = fill_and_validate_behandlung(request)
+        cbehandlung, error = fill_and_validate_behandlung(request)
 
-        if(len(behandlung.gewicht) == 0 and len(behandlung.diagnose) == 0 and len(behandlung.laborwerte1) == 0 and
-           len(behandlung.laborwerte2) == 0 and len(behandlung.arzneien) == 0 and len(behandlung.arzneimittel) == 0 and
-           len(behandlung.impfungen_extern) == 0):
+        if(cbehandlung.id == None and len(cbehandlung.gewicht) == 0 and len(cbehandlung.diagnose) == 0 and len(cbehandlung.laborwerte1) == 0 and
+           len(cbehandlung.laborwerte2) == 0 and len(cbehandlung.arzneien) == 0 and len(cbehandlung.arzneimittel) == 0 and
+           len(cbehandlung.impfungen_extern) == 0):
             return redirect(url_for('ordi.show_tierhaltung', id=id))
 
         if(len(error) > 0):
@@ -258,7 +279,7 @@ def create_behandlung(id):
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
             #behandlungen = read_behandlungen(id)
-            return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte) #behandlungen=behandlungen
+            return render_template('ordi/tierhaltung.html', id=id, tier=ctier, person=cperson, behandlungen=cbehandlungen)
 
         #tierhaltung = read_tierhaltung(id)
         behandlung.id = write_behandlung(behandlung.tier_id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)

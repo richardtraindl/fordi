@@ -211,7 +211,10 @@ def read_behandlung(behandlung_id):
     cursor.execute("SELECT * FROM behandlung WHERE behandlung.id = ?", (behandlung_id,))
     behandlung = cursor.fetchone()
     cursor.close()
-    return behandlung
+    cbehandlung = cBehandlung(int(behandlung['id']), int(behandlung['tier_id']), behandlung['behandlungsdatum'], behandlung['gewicht'],  
+                                  behandlung['diagnose'], behandlung['laborwerte1'], behandlung['laborwerte2'], behandlung['arzneien'],
+                                  behandlung['arzneimittel'], behandlung['impfungen_extern'])
+    return cbehandlung
 
 
 def read_impfungen(behandlung_id):

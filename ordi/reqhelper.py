@@ -138,7 +138,7 @@ def fill_and_validate_behandlung(request):
     return behandlung, error
 
 
-def build_behandlungen(request):
+def build_behandlungen(request):    
     data = (
         request.form.getlist('behandlung_id[]'),
         request.form.getlist('behandlungsdatum[]'),
@@ -154,6 +154,7 @@ def build_behandlungen(request):
     for idx in range(len(data[0])):
         req_behandlung = {}
         req_behandlung['behandlung_id'] = data[0][idx]
+        req_behandlung['tier_id'] = request.form['tier_id']
         req_behandlung['behandlungsdatum'] = data[1][idx]
         req_behandlung['gewicht'] = data[2][idx]
         req_behandlung['diagnose'] = data[3][idx]
@@ -276,6 +277,7 @@ def build_rechnungszeilen(request):
     for idx in range(len(data[0])):
         req_rechnungszeile = {}
         req_rechnungszeile['rechnungszeile_id'] = data[0][idx]
+        req_rechnungszeile['rechnung_id'] = request.form['rechnung_id']        
         req_rechnungszeile['datum'] = data[1][idx]
         req_rechnungszeile['artikelcode'] = data[2][idx]
         req_rechnungszeile['artikel'] = data[3][idx]

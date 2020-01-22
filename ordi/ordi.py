@@ -105,19 +105,19 @@ def create_tierhaltung():
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
-        person_id = write_person(person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
-        tier_id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
+        person.id = write_person(person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
+        tier.id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
 
         adresse = fill_and_validate_adresse(request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
-            write_adresse(person_id, adresse.strasse, adresse.postleitzahl, adresse.ort)
+            write_adresse(person.id, adresse.strasse, adresse.postleitzahl, adresse.ort)
 
         kontakte = fill_and_validate_kontakte(request)[0]
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
-                write_kontakt(person_id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
+                write_kontakt(person.id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
 
-        id = write_tierhaltung(person_id, tier_id)
+        id = write_tierhaltung(person.id, tier.id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     anredewerte = []
@@ -170,9 +170,9 @@ def create_tier(id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tier.html', id=id)
-        tier_id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
+        tier.id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
         tierhaltung = read_tierhaltung(id)
-        newid =  write_tierhaltung(tierhaltung['person_id'], tier_id)
+        newid =  write_tierhaltung(tierhaltung['person_id'], tier.id)
         return redirect(url_for('ordi.show_tierhaltung', id=newid))
 
     geschlechtswerte = []
@@ -256,16 +256,16 @@ def create_behandlung(id):
             tierhaltung = read_tierhaltung(id)
             adresse = read_adresse(tierhaltung['person_id'])
             kontakte = read_kontakte(tierhaltung['person_id'])
-            behandlungen = read_behandlungen(id)
-            return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=behandlungen)
+            #behandlungen = read_behandlungen(id)
+            return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte) #behandlungen=behandlungen
 
-        tierhaltung = read_tierhaltung(id)
-        behandlung_id = write_behandlung(tierhaltung['tier_id'], behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
+        #tierhaltung = read_tierhaltung(id)
+        behandlung.id = write_behandlung(behandlung.tier_id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
         if(len(impfungen_extern) > 0):
             impfungstexte = impfungen_extern.split(', ')
         else:
             impfungstexte = []
-        save_or_delete_impfungen(behandlung_id, impfungstexte)
+        save_or_delete_impfungen(behandlung.id, impfungstexte)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 

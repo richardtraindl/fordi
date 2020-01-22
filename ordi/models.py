@@ -144,6 +144,20 @@ class cBehandlung:
 ### behandlung
 
 
+### impfung
+class CImpfung:
+    def __init__(self, id=None, behandlung_id=None, impfungscode=None):
+        self.id = id
+        self.behandlung_id = behandlung_id
+        self.impfungscode = impfungscode
+
+    def validate(self):
+        if(self.impfungscode == None):
+            return False, "Impfungscode erforderlich."
+        return True, ""
+### impfung
+
+
 ### rechnung
 class cRechnung:
     def __init__(self, id=None, 

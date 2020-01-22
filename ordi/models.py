@@ -60,6 +60,8 @@ class cPerson:
         self.vorname = vorname
         self.notiz = notiz
         self.kunde = kunde
+        self.adresse = None
+        self.kontakte = []
 
     def validate(self):
         if(len(self.familienname) == 0):
@@ -133,6 +135,7 @@ class cBehandlung:
         self.arzneien = arzneien
         self.arzneimittel = arzneimittel
         self.impfungen_extern = impfungen_extern
+        self.impfungen = []
 
     def validate(self):
         if(len(self.gewicht) > 0 and re.search(r"\d", self.gewicht) == None):
@@ -177,6 +180,7 @@ class cRechnung:
         self.steuerbetrag_zwanzig = steuerbetrag_zwanzig
         self.steuerbetrag_dreizehn = steuerbetrag_dreizehn
         self.steuerbetrag_zehn = steuerbetrag_zehn
+        self.rechnungszeilen = []
 
     def validate(self):
         if(self.rechnungsjahr == None):
@@ -185,13 +189,13 @@ class cRechnung:
             return False, "Rechnungslfnr erforderlich."
         return True, ""
 
-    def calc(self, rechnungszeilen):
+    def calc(self):
         self.brutto_summe = 0
         self.steuerbetrag_zwanzig = 0
         self.steuerbetrag_dreizehn = 0
         self.steuerbetrag_zehn = 0
 
-        for rechnungszeile in rechnungszeilen:
+        for rechnungszeile in self.rechnungszeilen:
             try:
                 artikelcode = int(rechnungszeile.artikelcode)
                 steuersatz = ARTIKEL_STEUER[artikelcode]

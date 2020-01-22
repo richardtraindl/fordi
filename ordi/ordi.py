@@ -95,29 +95,29 @@ def abfragen():
 @login_required
 def create_tierhaltung():
     if(request.method == 'POST'):
-        person, error = fill_and_validate_person(request)
+        cperson, error = fill_and_validate_person(request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
-        tier, error = fill_and_validate_tier(request)
+        ctier, error = fill_and_validate_tier(request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
-        person.id = write_person(person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
-        tier.id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
+        cperson.id = write_person(cperson.anredecode, cperson.titel, cperson.familienname, cperson.vorname, cperson.notiz, cperson.kunde)
+        ctier.id = write_tier(ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
 
-        adresse = fill_and_validate_adresse(request)[0]
-        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
-            write_adresse(person.id, adresse.strasse, adresse.postleitzahl, adresse.ort)
+        cadresse = fill_and_validate_adresse(request)[0]
+        if(len(cadresse.strasse) > 0 or len(cadresse.postleitzahl) > 0 or len(cadresse.ort) > 0):
+            cadresse.id = write_adresse(cperson.id, cadresse.strasse, cadresse.postleitzahl, cadresse.ort)
 
-        kontakte = fill_and_validate_kontakte(request)[0]
-        for kontakt in kontakte:
-            if(len(kontakt.kontakt) > 0):
-                write_kontakt(person.id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
+        ckontakte = fill_and_validate_kontakte(request)[0]
+        for ckontakt in ckontakte:
+            if(len(ckontakt.kontakt) > 0):
+                ckontakt.id = write_kontakt(cperson.id, ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern)
 
-        id = write_tierhaltung(person.id, tier.id)
+        id = write_tierhaltung(cperson.id, ctier.id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     anredewerte = []
@@ -127,6 +127,7 @@ def create_tierhaltung():
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
+
     return render_template('ordi/create_tierhaltung.html', anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
 
 

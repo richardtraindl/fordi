@@ -3,6 +3,7 @@
 
 from ordi.db import get_db
 from ordi.values import IMPFUNG
+from ordi.models import *
 
 
 def read_tierhaltungen(familienname, tiername, kunde, patient):
@@ -129,7 +130,8 @@ def read_person(person_id):
     )
     person = cursor.fetchone()
     cursor.close()
-    return person
+    cperson = cPerson(int(person['id']), int(person['anredecode']), person['titel'], person['familienname'], person['vorname'], person['notiz'], int(person['kunde']))
+    return cperson
 
 
 def read_tier(tier_id):
@@ -142,7 +144,10 @@ def read_tier(tier_id):
     )
     tier = cursor.fetchone()
     cursor.close()
-    return tier
+    ctier = cTier(int(tier['id']), tier['tiername'], tier['tierart'], tier['rasse'], tier['farbe'], 
+                  tier['viren'], tier['merkmal'], tier['geburtsdatum'], int(tier['geschlechtscode']),
+                  tier['chip_nummer'], tier['eu_passnummer'], int(tier['patient']))
+    return ctier
 
 
 def read_adresse(person_id):
@@ -155,6 +160,7 @@ def read_adresse(person_id):
     )
     adresse = cursor.fetchone()
     cursor.close()
+    cadresse = cAdresse(int(adresse['id']), int(adresse[person_id']), adresse['strasse'], adresse['postleitzahl'], adresse['ort'])
     return adresse
 
 
@@ -168,7 +174,10 @@ def read_kontakte(person_id):
     )
     kontakte = cursor.fetchall()
     cursor.close()
-    return kontakte
+    ckontakte = []
+    for kontakt in kontakte:
+         ckontakte.append(cKontakt(int(kontakt['id']), int(kontakt['person_id']), int(kontakt['kontaktcode']), kontakt['kontakt'], kontakt['kontakt_intern'])
+    return ckontakte
 
 
 def read_behandlungen(id):
@@ -180,8 +189,20 @@ def read_behandlungen(id):
         (id,)
     )
     behandlungen = cursor.fetchall()
+    cbehandlungen = []
+    for behandlung in behandlungen:
+        cbehandlung = cBehandlung(int(behandlung['id']), int(behandlung['tier_id']), behandlung['behandlungsdatum'], behandlung['gewicht'],  
+                                  behandlung['diagnose'], behandlung['laborwerte1'], behandlung['laborwerte2'], behandlung['arzneien'],
+                                  behandlung['arzneimittel'], behandlung['impfungen_extern'])
+
+        cursor.execute("SELECT * FROM impfung WHERE behandlung_id = ?", (cbehandlung.id,))
+        impfungen = cursor.fetchall()
+        for impfung in impfungen:
+            cimpfung = CImpfung(int(impfung['id']), int(impfung['behandlung_id']), int(impfung['impfungscode '])) 
+            cbehandlung.impfungen.append(cimpfung)
+        cbehandlungen.append(cbehandlung)
     cursor.close()
-    return behandlungen
+    return cbehandlungen
 
 
 def read_behandlung(behandlung_id):

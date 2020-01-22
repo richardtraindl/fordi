@@ -154,7 +154,7 @@ def build_behandlungen(request):
     for idx in range(len(data[0])):
         req_behandlung = {}
         req_behandlung['behandlung_id'] = data[0][idx]
-        req_behandlung['tier_id'] = request.form['tier_id']
+        req_behandlung['tier_id'] = ""
         req_behandlung['behandlungsdatum'] = data[1][idx]
         req_behandlung['gewicht'] = data[2][idx]
         req_behandlung['diagnose'] = data[3][idx]

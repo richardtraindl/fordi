@@ -247,7 +247,7 @@ class cRechnungszeile:
                  betrag=0):
         self.id = id
         self.rechnung_id = rechnung_id
-        if(len(datum) == 0):
+        if(datum == None):
             self.datum = date.today().strftime("%Y-%m-%d")
         else:
             self.datum = datum

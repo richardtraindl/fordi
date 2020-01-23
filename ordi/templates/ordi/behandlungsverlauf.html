@@ -19,36 +19,25 @@
     <div class="small-gap"></div>
 
     {% if behandlungsverlauf %}
-        <form method="post" action="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">
+      <form method="post" action="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf.id) }}">
     {% else %}
-        <form method="post" action="{{ url_for('ordi.create_behandlungsverlauf', id=tierhaltung['id']) }}">
+      <form method="post" action="{{ url_for('ordi.create_behandlungsverlauf', id=id) }}">
     {% endif %}
 
-    <div class="row-grid" style="grid-template-columns: auto auto;">
-      {% if behandlungsverlauf %}
+      <div class="row-grid" style="grid-template-columns: auto auto;">
         <label for="datum">Datum</label>
-        <input size="10" type="text" name="datum" id="datum" class="date" value="{{ behandlungsverlauf['datum'] }}" required>
+        <input size="10" type="text" name="datum" id="datum" class="date" value="{{ request.form['datum'] or behandlungsverlauf.datum }}" required>
 
         <label for="diagnose">Diagnose</label>
-        <input size="40" type="text" name="diagnose" id="diagnose" value="{{ behandlungsverlauf['diagnose'] }}" required>
+        <input size="40" type="text" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] or behandlungsverlauf.diagnose }}" required>
 
         <label style="align-items: top;" for="behandlung">Behandlung</label>
-        <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" required>{{ behandlungsverlauf['behandlung'] }}</textarea>
-      {% else %}
-        <label for="datum">Datum</label>
-        <input size="10" type="text" name="datum" id="datum" class="date" value="{{ request.form['datum'] }}" required>
+        <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" required>{{ request.form['behandlung'] or behandlungsverlauf.behandlung. }}</textarea>
+      </div>
 
-        <label for="diagnose">Diagnose</label>
-        <input size="40" type="text" name="diagnose" id="diagnose" value="{{ request.form['diagnose'] }}" required>
+      <div class="small-gap"></div>
 
-        <label style="align-items: top;" for="behandlung">Behandlung</label>
-        <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" required>{{ request.form['behandlung'] }}</textarea>
-      {% endif %}
-    </div>
-
-        <div class="small-gap"></div>
-
-        <div><input type="submit" value="Behandlungsverlauf drucken"></div>
+      <div><input type="submit" value="Behandlungsverlauf drucken"></div>
     </form>
 
     <script>

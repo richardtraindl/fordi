@@ -12,16 +12,16 @@
                {{- tierhaltung['titel'] -}}
             </p>
 
-            <p>{{- adresse['strasse'] -}}</p>
+            <p>{{- adresse.strasse -}}</p>
 
             <p>
-                {{- adresse['postleitzahl'] -}} &nbsp; 
-                {{- adresse['ort'] -}}
+                {{- adresse.postleitzahl -}} &nbsp; 
+                {{- adresse.ort -}}
             </p>
         </div>
         
         <div>
-            <p>Rechnung: &nbsp; {{- rechnung['rechnungsjahr'] -}} / {{- rechnung['rechnungslfnr'] -}}</p>
+            <p>Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}</p>
         </div>
 
         <table border="0" width="100%">
@@ -34,7 +34,7 @@
             <tbody border="0">
                 <tr border="0">
                     <td border="0" width="70%" align="left">Patient &nbsp; {{- tierhaltung['tiername'] -}} &nbsp; {{- tierhaltung['tierart'] -}} &nbsp; {{- tierhaltung['geburtsdatum'] -}}</td>
-                    <td border="0" width="30%" align="right">{{- rechnung['ausstellungsdatum'] -}}</td>
+                    <td border="0" width="30%" align="right">{{- rechnung.ausstellungsdatum -}}</td>
                 </tr>
             </tbody>
         </table>
@@ -44,7 +44,7 @@
         </div>
 
         <div>
-            <p>Diagnose: &nbsp; {{- rechnung['diagnose'] -}}</p>
+            <p>Diagnose: &nbsp; {{- rechnung.diagnose -}}</p>
         </div>
 
         <div>
@@ -64,21 +64,21 @@
             <tbody style="border: 0px;" border="0">
             {% for rechnungszeile in rechnungszeilen %}
                 <tr border="0">
-                    <td border="0" width="20%" align="left">{{- rechnungszeile['datum'] -}}</td>
-                    <td border="0" width="60%" align="left">{{- rechnungszeile['artikel'] -}}</td>
-                    <td border="0" width="20%" align="right">{{- '{0:0.2f}'.format(rechnungszeile['betrag'] | float) -}}</td>
+                    <td border="0" width="20%" align="left">{{- rechnungszeile.datum -}}</td>
+                    <td border="0" width="60%" align="left">{{- rechnungszeile.artikel -}}</td>
+                    <td border="0" width="20%" align="right">{{- '{0:0.2f}'.format(rechnungszeile.betrag | float) -}}</td>
                 </tr>
             {% endfor %}
                 <tr border="0">
                     <td border="0" width="20%" align="left">Endsumme Brutto EUR</td>
                     <td border="0" width="60%" align="left">&nbsp;</td>
-                    <td border="0" width="20%" align="right">{{- rechnung['brutto_summe'] -}}</td>
+                    <td border="0" width="20%" align="right">{{- rechnung.brutto_summe -}}</td>
                 </tr>
             </tbody>
         </table>
 
         <div>
-            <p>Zahlung: {{- rechnung['bezahlung'] -}}</p>
+            <p>Zahlung: {{- rechnung.bezahlung -}}</p>
         </div>
     </body>
 </html>

@@ -43,14 +43,14 @@
               {% for behandlung in behandlungen %}
                 <tr>
                     <td style="width: 8%">
-                        <input type="hidden" name="behandlung_id[]" value="{{ behandlung.id }}">
-                        <input type="text" name="behandlungsdatum[]" class="date" value="{{ behandlung.behandlungsdatum }}">
+                        <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}">
+                        <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung.behandlungsdatum -}}">
                     </td>
-                    <td style="width: 30%"><textarea name="diagnose[]">{{ behandlung.diagnose }}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{ behandlung.laborwerte1 }}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{ behandlung.laborwerte2 }}</textarea></td>
-                    <td style="width: 14%"><textarea name="arzneien[]">{{ behandlung.arzneien }}</textarea></td>
-                    <td style="width: 7%"><textarea name="arzneimittel[]">{{ behandlung.arzneimittel }}</textarea></td>
+                    <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung.diagnose -}}</textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{- behandlung.laborwerte1 -}}</textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{- behandlung.laborwerte2 -}}</textarea></td>
+                    <td style="width: 14%"><textarea name="arzneien[]">{{- behandlung.arzneien -}}</textarea></td>
+                    <td style="width: 7%"><textarea name="arzneimittel[]">{{- behandlung.arzneimittel -}}</textarea></td>
                     <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly>
                             {%- set vars = {'selected': False} -%}
                             {%- for impfungswert in impfungswerte -%}
@@ -64,9 +64,9 @@
                             {%- endfor -%}
                         </textarea>
                     </td>
-                    <td style="width: 4%"><textarea name="gewicht[]">{{ behandlung.gewicht }}</textarea></td>
+                    <td style="width: 4%"><textarea name="gewicht[]">{{- behandlung.gewicht -}}</textarea></td>
                     <td style="width: 5%">
-                        <a class="zeile_loeschen" tierhaltung_id="{{ id }}" behandlung_id="{{ behandlung.id }}" href="#">Zeile löschen</a>
+                        <a class="zeile_loeschen" tierhaltung_id="{{- id -}}" behandlung_id="{{- behandlung.id -}}" href="#">Zeile löschen</a>
                     </td>
                 </tr>
               {% endfor %}
@@ -96,7 +96,7 @@
     <p style="display: none">
         <select id="laboreferenzen" style="height: 240px" multiple>
         {%- for referenz in laboreferenzen -%}
-            <option value="{{- loop.index }}">{{- referenz -}}</option>
+            <option value="{{- loop.index -}}">{{- referenz -}}</option>
         {%- endfor -%}
         </select>
     </p>
@@ -104,7 +104,7 @@
     <p style="display: none">
         <select id="impfungswerte" style="height: 240px" multiple>
         {%- for impfungswert in impfungswerte -%}
-            <option value="{{- impfungswert[1] }}">{{- impfungswert[0] -}}</option>
+            <option value="{{- impfungswert[1] -}}">{{- impfungswert[0] -}}</option>
         {%- endfor -%}
         </select>
     </p>

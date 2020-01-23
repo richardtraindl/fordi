@@ -361,9 +361,9 @@ def create_rechnung(id):
             else:
                 crechnungszeile.id = write_rechnungszeile(rechnung_id, crechnungszeile.datum, crechnungszeile.artikelcode, crechnungszeile.artikel, crechnungszeile.betrag)
 
-        rechnung = read_rechnung(rechnung_id)
-        rechnungszeilen = read_rechnungszeilen(rechnung_id)
-        html = render_template('ordi/prints/print_rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, 
+        crechnung = read_rechnung(rechnung_id)
+        crechnungszeilen = read_rechnungszeilen(rechnung_id)
+        html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, rechnungszeilen=crechnungszeilen, 
                                tierhaltung=tierhaltung, adresse=cperson.adresse)
         filename = str(rechnung['id']) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
         path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
@@ -383,7 +383,7 @@ def edit_rechnung(rechnung_id):
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
 
-    rechnung = read_rechnung(rechnung_id)
+    crechnung = read_rechnung(rechnung_id)
     tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
     cperson = read_person(tierhaltung['person_id'])
     cperson.adresse = read_adresse_for_person(cperson.id)
@@ -411,16 +411,16 @@ def edit_rechnung(rechnung_id):
             else:
                 crechnungszeile.id = write_rechnungszeile(rechnung_id, crechnungszeile.datum, crechnungszeile.artikelcode, crechnungszeile.artikel, crechnungszeile.betrag)
 
-        rechnung = read_rechnung(rechnung_id)
-        rechnungszeilen = read_rechnungszeilen(rechnung_id)
-        html = render_template('ordi/prints/print_rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, tierhaltung=tierhaltung, adresse=cperson.adresse)
+        crechnung = read_rechnung(rechnung_id)
+        crechnungszeilen = read_rechnungszeilen(rechnung_id)
+        html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, rechnungszeilen=crechnungszeilen, tierhaltung=tierhaltung, adresse=cperson.adresse)
         filename = str(rechnung['id']) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
         path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
         html2pdf(html, path_and_filename)
         return send_file(path_and_filename, as_attachment=True)
 
-    rechnung = read_rechnung(rechnung_id)
-    rechnungszeilen = read_rechnungszeilen(rechnung_id)
+    crechnung = read_rechnung(rechnung_id)
+    crechnungszeilen = read_rechnungszeilen(rechnung_id)
     return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnungszeilen, artikelwerte=artikelwerte, id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
 
 

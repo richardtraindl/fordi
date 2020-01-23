@@ -242,35 +242,6 @@ def edit_person(id, person_id):
     return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, anredewerte=anredewerte, adresse=cadresse, kontakte=ckontakte, page_title="Person ändern")
 
 
-@bp.route('/<int:id>/create_behandlung', methods=('GET', 'POST'))
-@login_required
-def create_behandlung(id):
-    if(request.method == 'POST'):
-        cbehandlung, error = fill_and_validate_behandlung(request)
-
-        if(cbehandlung.id == None and len(cbehandlung.gewicht) == 0 and len(cbehandlung.diagnose) == 0 and len(cbehandlung.laborwerte1) == 0 and
-           len(cbehandlung.laborwerte2) == 0 and len(cbehandlung.arzneien) == 0 and len(cbehandlung.arzneimittel) == 0 and
-           len(cbehandlung.impfungen_extern) == 0):
-            return redirect(url_for('ordi.show_tierhaltung', id=id))
-
-        if(len(error) > 0):
-            flash(error)
-            tierhaltung = read_tierhaltung(id)
-            adresse = read_adresse(tierhaltung['person_id'])
-            kontakte = read_kontakte(tierhaltung['person_id'])
-            #behandlungen = read_behandlungen(id)
-            return render_template('ordi/tierhaltung.html', id=id, tier=ctier, person=cperson, behandlungen=cbehandlungen)
-
-        #tierhaltung = read_tierhaltung(id)
-        behandlung.id = write_behandlung(behandlung.tier_id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
-        if(len(impfungen_extern) > 0):
-            impfungstexte = impfungen_extern.split(', ')
-        else:
-            impfungstexte = []
-        save_or_delete_impfungen(behandlung.id, impfungstexte)
-    return redirect(url_for('ordi.show_tierhaltung', id=id))
-
-
 @bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
 @login_required
 def save_behandlungen(id):

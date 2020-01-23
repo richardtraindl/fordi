@@ -591,12 +591,16 @@ def read_rechnungszeilen_for_rechnung(rechnung_id):
 
     crechnungszeilen = []
     for rechnungszeile in rechnungszeilen:
+        try:
+            betrag = float(rechnungszeile['betrag'].replace(',','.'))
+        except:
+            betrag = 0.0
         crechnungszeile = cRechnungszeile(int(rechnungszeile['id']), 
                                           int(rechnungszeile['rechnung_id']), 
                                           rechnungszeile['datum'], 
                                           int(rechnungszeile['artikelcode']), 
                                           rechnungszeile['artikel'],
-                                          float(rechnungszeile['betrag']))
+                                          betrag)
         crechnungszeilen.append(crechnungszeile)
     return crechnungszeilen
 

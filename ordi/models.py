@@ -124,7 +124,7 @@ class cBehandlung:
                  impfungen_extern=None):
         self.id = id
         self.tier_id = tier_id
-        if(len(behandlungsdatum) == 0):
+        if(behandlungsdatum == None):
             self.behandlungsdatum = date.today().strftime("%Y-%m-%d")
         else:
             self.behandlungsdatum = behandlungsdatum

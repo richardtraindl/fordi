@@ -160,8 +160,11 @@ def read_adresse(person_id):
     )
     adresse = cursor.fetchone()
     cursor.close()
-    cadresse = cAdresse(int(adresse['id']), int(adresse[person_id']), adresse['strasse'], adresse['postleitzahl'], adresse['ort'])
-    return adresse
+    if(adresse):
+        cadresse = cAdresse(int(adresse['id']), int(adresse['person_id']), adresse['strasse'], adresse['postleitzahl'], adresse['ort'])
+    else:
+        cadresse = None
+    return cadresse
 
 
 def read_kontakte(person_id):
@@ -176,17 +179,17 @@ def read_kontakte(person_id):
     cursor.close()
     ckontakte = []
     for kontakt in kontakte:
-         ckontakte.append(cKontakt(int(kontakt['id']), int(kontakt['person_id']), int(kontakt['kontaktcode']), kontakt['kontakt'], kontakt['kontakt_intern'])
+        ckontakte.append(cKontakt(int(kontakt['id']), int(kontakt['person_id']), int(kontakt['kontaktcode']), kontakt['kontakt'], kontakt['kontakt_intern']))
     return ckontakte
 
 
-def read_behandlungen(id):
+def read_behandlungen(tier_id):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute(
-        "SELECT * FROM behandlung JOIN tierhaltung ON behandlung.tier_id = tierhaltung.tier_id"
-        " WHERE tierhaltung.id = ? ORDER BY behandlungsdatum ASC",
-        (id,)
+        "SELECT * FROM behandlung JOIN tier ON behandlung.tier_id = tier.id"
+        " WHERE tier.id = ? ORDER BY behandlungsdatum ASC",
+        (tier_id,)
     )
     behandlungen = cursor.fetchall()
     cbehandlungen = []

@@ -2,40 +2,40 @@
     <!--div class="twocols tier" !-->
     <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         <p>Tiername</p>
-        <p>{{ tierhaltung['tiername'] }}</p>
+        <p>{{ tier.tiername }}</p>
 
         <p>Tierart</p>
-        <p>{{ tierhaltung['tierart'] }}</p>
+        <p>{{ tier.tierart }}</p>
 
         <p>Rasse</p>
-        <p>{{ tierhaltung['rasse'] }}</p>
+        <p>{{ tier.rasse }}</p>
 
         <p>Farbe</p>
-        <p>{{ tierhaltung['farbe'] }}</p>
+        <p>{{ tier.farbe }}</p>
 
         <p>Geburtsdatum</p>
-        <p>{{ tierhaltung['geburtsdatum'] }}</p>
+        <p>{{ tier.geburtsdatum }}</p>
 
         <p>Geschlecht</p>
-        <p>{{tierhaltung['geschlechtscode'] | mapgeschlecht }}</p>
+        <p>{{tier.geschlechtscode | mapgeschlecht }}</p>
 
         <p>Chip Nummer</p>
-        <p>{{ tierhaltung['chip_nummer'] }}</p>
+        <p>{{ tier.chip_nummer }}</p>
 
         <p>EU Passnummer</p>
-        <p>{{ tierhaltung['eu_passnummer'] }}</p>
+        <p>{{ tier.eu_passnummer }}</p>
 
         <p>Patient</p>
-        {% if tierhaltung['patient'] == 0 %}
+        {% if tier.patient == 0 %}
             <input type="checkbox" name="patient" value="0" disabled>
         {% else %}
             <input type="checkbox" name="patient" value="1" checked disabled>
         {% endif %}
 
         <p>Viren</p>
-        <p>{{ tierhaltung['viren'] }}</p>
+        <p>{{ tier.viren }}</p>
 
         <p>Merkmal</p>
-        <p>{{ tierhaltung['merkmal'] }}</p>
+        <p>{{ tier.merkmal }}</p>
     </div>
 

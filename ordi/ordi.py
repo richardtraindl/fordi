@@ -136,32 +136,12 @@ def create_tierhaltung():
 def show_tierhaltung(id):
     tierhaltung = read_tierhaltung(id)
     
-    ctier = cTier(tierhaltung['tier_id'], tierhaltung['tiername'], tierhaltung['tierart'], tierhaltung['rasse'], tierhaltung['farbe'], 
-                  tierhaltung['viren'], tierhaltung['merkmal'], tierhaltung['geburtsdatum'], tierhaltung['geschlechtscode'],
-                  tierhaltung['chip_nummer'], tierhaltung['eu_passnummer'], tierhaltung['patient'])
+    cperson = read_person(tierhaltung['person_id'])
+    cperson.adresse = read_adresse(tierhaltung['person_id'])
+    cperson.kontakte = read_kontakte(tierhaltung['person_id'])
 
-    cperson = cPerson(tierhaltung['person_id'], tierhaltung['anredecode=None'], tierhaltung['titel'], 
-                      tierhaltung['familienname'], tierhaltung['vorname'], tierhaltung['notiz'], tierhaltung['kunde'])
-
-    adresse = read_adresse(tierhaltung['person_id'])
-    cperson.adresse = cAdresse( adresse['id'], adresse[person_id'], adresse['strasse'], adresse['postleitzahl'], adresse['ort'])
-
-    kontakte = read_kontakte(tierhaltung['person_id'])
-    for kontakt in kontakte:
-         cperson.kontakte.append(cKontakt(kontakt['id'], kontakt['person_id'], kontakt['kontaktcode'], kontakt['kontakt'], kontakt['kontakt_intern'])
-
-    cbehandlungen = []
-    behandlungen = read_behandlungen(ctier.id)
-    for behandlung in behandlungen:
-        cbehandlung = cBehandlung(behandlung['id'], behandlung['tier_id'], behandlung['behandlungsdatum'], behandlung['gewicht'],  
-                                  behandlung['diagnose'], behandlung['laborwerte1'], behandlung['laborwerte2'], behandlung['arzneien'],
-                                  behandlung['arzneimittel'], behandlung['impfungen_extern'])
-
-        impfungen = read_impfungen(cbehandlung.id)
-        for impfung in impfungen:
-            cbehandlung.impfungen.append(impfung)
-
-        cbehandlungen.append(cbehandlung)
+    ctier = read_tier(tierhaltung['tier_id'])
+    cbehandlungen = read_behandlungen(ctier.id)
 
     datum = date.today().strftime("%Y-%m-%d")
 
@@ -296,16 +276,18 @@ def create_behandlung(id):
 def save_behandlungen(id):
     if(request.method == 'POST'):
         req_behandlungen = build_behandlungen(request)
-        behandlungen, error = fill_and_validate_behandlungen(req_behandlungen)
+        cbehandlungen, error = fill_and_validate_behandlungen(req_behandlungen)
         if(len(error) > 0):
             flash(error)
             tierhaltung = read_tierhaltung(id)
-            adresse = read_adresse(tierhaltung['person_id'])
-            kontakte = read_kontakte(tierhaltung['person_id'])
-            return render_template('ordi/show_tierhaltung.html', tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, behandlungen=req_behandlungen)
+            cperson = read_person(tierhaltung['person_id'])
+            cperson.adresse = read_adresse(tierhaltung['person_id'])
+            cperson.kontakte = read_kontakte(tierhaltung['person_id'])
+            ctier = read_tier(tierhaltung['tier_id'])
+            return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=cbehandlungen)
 
         tierhaltung = read_tierhaltung(id)
-        for behandlung in behandlungen:
+        for behandlung in cbehandlungen:
             if(behandlung.id):
                 update_behandlung(behandlung.id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
             else:

@@ -9,9 +9,9 @@
 
 {% block content %}
     <div class="row-grid" style="grid-template-columns: auto auto;">
-        <p><a href="{{ url_for('ordi.edit_person', id=tierhaltung['id'], person_id=tierhaltung['person_id']) }}">Person ändern</a></p>
+        <p><a href="{{ url_for('ordi.edit_person', id=id, person_id=person.id) }}">Person ändern</a></p>
 
-        <p><a href="{{ url_for('ordi.edit_tier', id=tierhaltung['id'], tier_id=tierhaltung['tier_id']) }}">Tier ändern</a></p>
+        <p><a href="{{ url_for('ordi.edit_tier', id=id, tier_id=tier.id) }}">Tier ändern</a></p>
 
         {% include 'ordi/_person.html' %}
     
@@ -36,26 +36,26 @@
         </thead>
     </table>
 
-    <form method="post" action="{{ url_for('ordi.save_behandlungen', id=tierhaltung['id']) }}">
+    <form method="post" action="{{ url_for('ordi.save_behandlungen', id=id) }}">
       <div id="scroller" style="max-height: 40vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
               {% for behandlung in behandlungen %}
                 <tr>
                     <td style="width: 8%">
-                        <input type="hidden" name="behandlung_id[]" value="{{ behandlung[0]['id'] }}">
-                        <input type="text" name="behandlungsdatum[]" class="date" value="{{ behandlung[0]['behandlungsdatum'] }}">
+                        <input type="hidden" name="behandlung_id[]" value="{{ behandlung.id }}">
+                        <input type="text" name="behandlungsdatum[]" class="date" value="{{ behandlung.behandlungsdatum }}">
                     </td>
-                    <td style="width: 30%"><textarea name="diagnose[]">{{ behandlung[0]['diagnose'] }}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{ behandlung[0]['laborwerte1'] }}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{ behandlung[0]['laborwerte2'] }}</textarea></td>
-                    <td style="width: 14%"><textarea name="arzneien[]">{{ behandlung[0]['arzneien'] }}</textarea></td>
-                    <td style="width: 7%"><textarea name="arzneimittel[]">{{ behandlung[0]['arzneimittel'] }}</textarea></td>
+                    <td style="width: 30%"><textarea name="diagnose[]">{{ behandlung.diagnose }}</textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{ behandlung.laborwerte1 }}</textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{ behandlung.laborwerte2 }}</textarea></td>
+                    <td style="width: 14%"><textarea name="arzneien[]">{{ behandlung.arzneien }}</textarea></td>
+                    <td style="width: 7%"><textarea name="arzneimittel[]">{{ behandlung.arzneimittel }}</textarea></td>
                     <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly>
                             {%- set vars = {'selected': False} -%}
                             {%- for impfungswert in impfungswerte -%}
-                                {%- for impfung in behandlung[1] -%}
-                                    {%- if impfung['impfungscode']|string == impfungswert[1]|string -%}
+                                {%- for impfung in behandlung.impfungen -%}
+                                    {%- if impfung.impfungscode | string == impfungswert[1]|string -%}
                                         {%- if vars.selected -%}, {%- endif -%}
                                         {{- impfungswert[0] -}}
                                         {%- if vars.update({'selected': True}) -%} {%- endif -%}
@@ -64,9 +64,9 @@
                             {%- endfor -%}
                         </textarea>
                     </td>
-                    <td style="width: 4%"><textarea name="gewicht[]">{{ behandlung[0]['gewicht'] }}</textarea></td>
+                    <td style="width: 4%"><textarea name="gewicht[]">{{ behandlung.gewicht }}</textarea></td>
                     <td style="width: 5%">
-                        <a class="zeile_loeschen" tierhaltung_id="{{ tierhaltung['id'] }}" behandlung_id="{{ behandlung[0]['id'] }}" href="#">Zeile löschen</a>
+                        <a class="zeile_loeschen" tierhaltung_id="{{ id }}" behandlung_id="{{ behandlung.id }}" href="#">Zeile löschen</a>
                     </td>
                 </tr>
               {% endfor %}

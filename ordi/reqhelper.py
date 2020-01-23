@@ -179,6 +179,7 @@ def build_behandlungen(request):
 
 def fill_and_validate_behandlungen(req_behandlungen):
     behandlungen = []
+    return_error = ""
 
     for req_behandlung in req_behandlungen:
         try:
@@ -202,12 +203,11 @@ def fill_and_validate_behandlungen(req_behandlungen):
                                  req_behandlung['impfungen_extern'])
 
         flag, error = behandlung.validate()
-        if(flag):
-            behandlungen.append(behandlung)
-        else:
-            return behandlungen, error
+        if(flag == False):
+            return_error = error
+        behandlungen.append(behandlung)
 
-    return behandlungen, ""
+    return behandlungen, return_error
 
 
 def fill_and_validate_rechnung(request):
@@ -320,12 +320,12 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
                                          req_rechnungszeile['betrag'])
 
         flag, error = rechnungszeile.validate()
-        if(flag):
-            rechnungszeilen.append(rechnungszeile)
-        else:
-            return rechnungszeilen, error
+        if(flag == False):
+            return_error = error
+        rechnungszeilen.append(rechnungszeile)
 
     if(len(rechnungszeilen) == 0):
-        return rechnungszeilen, "Mindestens eine Rechnungszeile erforderlich."
+        return rechnungszeilen, return_error + "Mindestens eine Rechnungszeile erforderlich."
     else:
-        return rechnungszeilen, ""
+        return rechnungszeilen, return_error
+

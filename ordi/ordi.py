@@ -448,9 +448,9 @@ def delete_rechnung(rechnung_id):
 @bp.route('/<int:rechnungszeile_id>/delete_rechnungszeile', methods=('GET',))
 @login_required
 def delete_rechnungszeile(rechnungszeile_id):
-    rechnungszeile = read_rechnungszeile(rechnungszeile_id)
+    crechnungszeile = read_rechnungszeile(rechnungszeile_id)
     delete_db_rechnungszeile(rechnungszeile_id)
-    return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnungszeile['rechnung_id']))
+    return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnungszeile.rechnung_id))
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))

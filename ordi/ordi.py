@@ -384,7 +384,7 @@ def edit_rechnung(rechnung_id):
         artikelwerte.append([key, value])
 
     crechnung = read_rechnung(rechnung_id)
-    tierhaltung = read_tierhaltung_by_children(rechnung['person_id'], rechnung['tier_id'])
+    tierhaltung = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
     cperson = read_person(tierhaltung['person_id'])
     cperson.adresse = read_adresse_for_person(cperson.id)
     cperson.kontakte = read_kontakte_for_person(cperson.id)
@@ -420,7 +420,7 @@ def edit_rechnung(rechnung_id):
         return send_file(path_and_filename, as_attachment=True)
 
     crechnung = read_rechnung(rechnung_id)
-    crechnungszeilen = read_rechnungszeilen(rechnung_id)
+    crechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
     return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnungszeilen, artikelwerte=artikelwerte, id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
 
 

@@ -502,28 +502,8 @@ def read_rechnung(rechnung_id):
     cursor.execute("SELECT * FROM rechnung WHERE id = ?",(rechnung_id,))
     rechnung = cursor.fetchone()
     cursor.close()
-    if(rechnung):
-        try:
-            brutto_summe = float(rechnung['brutto_summe'].replace(',','.'))
-        except:
-            brutto_summe = 0.0
-        try:
-            netto_summe = float(rechnung['netto_summe'].replace(',','.'))
-        except:
-            netto_summe = 0.0
-        try:
-            steuerbetrag_zwanzig = float(rechnung['steuerbetrag_zwanzig'].replace(',','.'))
-        except:
-            steuerbetrag_zwanzig = 0.0
-        try:
-            steuerbetrag_dreizehn = float(rechnung['steuerbetrag_dreizehn'].replace(',','.'))
-        except:
-            steuerbetrag_dreizehn = 0.0
-        try:
-            steuerbetrag_zehn = float(rechnung['steuerbetrag_zehn'].replace(',','.'))
-        except:
-            steuerbetrag_zehn = 0.0
 
+    if(rechnung):
         crechnung = cRechnung(int(rechnung['id']), 
                               int(rechnung['person_id']),
                               int(rechnung['tier_id']), 
@@ -533,11 +513,11 @@ def read_rechnung(rechnung_id):
                               rechnung['ausstellungsort'], 
                               rechnung['diagnose'], 
                               rechnung['bezahlung'],
-                              brutto_summe,
-                              netto_summe,
-                              steuerbetrag_zwanzig,
-                              steuerbetrag_dreizehn,
-                              steuerbetrag_zehn)
+                              float(rechnung['brutto_summe']),
+                              float(rechnung['netto_summe']),
+                              float(rechnung['steuerbetrag_zwanzig']),
+                              float(rechnung['steuerbetrag_dreizehn']),
+                              float(rechnung['steuerbetrag_zehn']))
     else:
         crechnung = None
     return crechnung
@@ -591,16 +571,12 @@ def read_rechnungszeilen_for_rechnung(rechnung_id):
 
     crechnungszeilen = []
     for rechnungszeile in rechnungszeilen:
-        try:
-            betrag = float(rechnungszeile['betrag'].replace(',','.'))
-        except:
-            betrag = 0.0
         crechnungszeile = cRechnungszeile(int(rechnungszeile['id']), 
                                           int(rechnungszeile['rechnung_id']), 
                                           rechnungszeile['datum'], 
                                           int(rechnungszeile['artikelcode']), 
                                           rechnungszeile['artikel'],
-                                          betrag)
+                                          float(rechnungszeile['betrag']))
         crechnungszeilen.append(crechnungszeile)
     return crechnungszeilen
 

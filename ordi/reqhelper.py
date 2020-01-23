@@ -277,7 +277,7 @@ def build_rechnungszeilen(request):
     for idx in range(len(data[0])):
         req_rechnungszeile = {}
         req_rechnungszeile['rechnungszeile_id'] = data[0][idx]
-        req_rechnungszeile['rechnung_id'] = request.form['rechnung_id']        
+        req_rechnungszeile['rechnung_id'] = ""
         req_rechnungszeile['datum'] = data[1][idx]
         req_rechnungszeile['artikelcode'] = data[2][idx]
         req_rechnungszeile['artikel'] = data[3][idx]
@@ -312,12 +312,17 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
         except:
             artikelcode = None
 
+        try:
+            betrag = float(req_rechnungszeile['betrag'].replace(",", "."))
+        except:
+            betrag = None
+
         rechnungszeile = cRechnungszeile(rechnungszeile_id, 
                                          rechnung_id, 
                                          req_rechnungszeile['datum'], 
                                          artikelcode, 
                                          req_rechnungszeile['artikel'],
-                                         req_rechnungszeile['betrag'])
+                                         betrag)
 
         flag, error = rechnungszeile.validate()
         if(flag == False):

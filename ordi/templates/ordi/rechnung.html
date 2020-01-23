@@ -18,7 +18,7 @@
 
     <div class="gap"></div>
 
-  {% if rechnung %}
+  {% if rechnung.id %}
     <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung.id) }}">
   {% else %}
     <form method="post" action="{{ url_for('ordi.create_rechnung', id=id) }}">
@@ -66,7 +66,7 @@
       <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
-              {% for rechnungszeile in rechnungszeilen %}
+              {% for rechnungszeile in rechnung.rechnungszeilen %}
                 <tr>
                   <td style="width: 10%">
                     <input type="hidden" name="rechnungszeile_id[]" value="{{- rechnungszeile.id -}}">

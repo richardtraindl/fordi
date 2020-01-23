@@ -318,9 +318,11 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         return send_file(path_and_filename, as_attachment=True)
     behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
     tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
-    adresse = read_adresse(behandlungsverlauf['person_id'])
-    kontakte = read_kontakte(behandlungsverlauf['person_id'])
-    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=adresse, kontakte=kontakte, page_title="Behandlungsverlauf")
+    cperson = read_person(tierhaltung['person_id'])
+    cperson.adresse = read_adresse_for_person(cperson.id)
+    cperson.kontakte = read_kontakte_for_person(cperson.id)
+    ctier = read_tier(tierhaltung['tier_id'])
+    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, id=id, person=cperson, tier=ctier, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))

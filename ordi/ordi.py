@@ -137,11 +137,11 @@ def show_tierhaltung(id):
     tierhaltung = read_tierhaltung(id)
     
     cperson = read_person(tierhaltung['person_id'])
-    cperson.adresse = read_adresse(tierhaltung['person_id'])
-    cperson.kontakte = read_kontakte(tierhaltung['person_id'])
+    cperson.adresse = read_adresse_for_person(cperson.id)
+    cperson.kontakte = read_kontakte_for_person(cperson.id)
 
     ctier = read_tier(tierhaltung['tier_id'])
-    cbehandlungen = read_behandlungen(ctier.id)
+    cbehandlungen = read_behandlungen_for_tier(ctier.id)
 
     datum = date.today().strftime("%Y-%m-%d")
 

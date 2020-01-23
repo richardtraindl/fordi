@@ -357,15 +357,6 @@ def delete_db_behandlung(behandlung_id):
 
 
 # impfung
-def read_impfungen_for_behandlung(behandlung_id):
-    dbcon = get_db()
-    cursor = dbcon.cursor()
-    cursor.execute("SELECT * FROM impfung WHERE behandlung_id = ?", (behandlung_id,))
-    impfungen = cursor.fetchall()
-    cursor.close()
-    return impfungen
-
-
 def save_or_delete_impfungen(behandlung_id, impfungstexte):
     dbcon = get_db()
     cursor = dbcon.cursor()

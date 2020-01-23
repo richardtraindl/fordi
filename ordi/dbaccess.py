@@ -511,7 +511,7 @@ def read_rechnung(rechnung_id):
                               rechnung['ausstellungsdatum'],
                               rechnung['ausstellungsort'], 
                               rechnung['diagnose'], 
-                              int(rechnung['bezahlung']),
+                              rechnung['bezahlung'],
                               float(rechnung['brutto_summe']), 
                               float(rechnung['netto_summe']), 
                               float(rechnung['steuerbetrag_zwanzig']), 

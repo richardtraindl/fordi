@@ -576,7 +576,17 @@ def read_rechnungszeilen_for_rechnung(rechnung_id):
     cursor.execute("SELECT * FROM rechnungszeile WHERE rechnung_id = ?",(rechnung_id,))
     rechnungszeilen = cursor.fetchall()
     cursor.close()
-    return rechnungszeilen
+
+    crechnungszeilen = []
+    rechnungszeile in rechnungszeilen:
+        crechnungszeile = cRechnungszeile(int(rechnungszeile['id']), 
+                                          int(rechnungszeile['rechnung_id']), 
+                                          rechnungszeile['datum'], 
+                                          int(rechnungszeile['artikelcode']), 
+                                          rechnungszeile['artikel'],
+                                          float(rechnungszeile['betrag']))
+        crechnungszeilen.append(crechnungszeile)
+    return crechnungszeilen
 
 
 def read_rechnungszeile(rechnungszeile_id):

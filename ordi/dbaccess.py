@@ -511,7 +511,24 @@ def read_rechnung(rechnung_id):
     cursor.execute("SELECT * FROM rechnung WHERE id = ?",(rechnung_id,))
     rechnung = cursor.fetchone()
     cursor.close()
-    return rechnung
+    if(rechnung):
+        crechnung = cRechnung(int(rechnung['id']), 
+                              int(rechnung['person_id']),
+                              int(rechnung['tier_id']), 
+                              int(rechnung['rechnungsjahr']), 
+                              int(rechnung['rechnungslfnr']),  
+                              rechnung['ausstellungsdatum'],
+                              rechnung['ausstellungsort'], 
+                              rechnung['diagnose'], 
+                              int(rechnung['bezahlung']),
+                              float(rechnung['brutto_summe']), 
+                              float(rechnung['netto_summe']), 
+                              float(rechnung['steuerbetrag_zwanzig']), 
+                              float(rechnung['steuerbetrag_dreizehn']), 
+                              float(rechnung['steuerbetrag_zehn']))
+    else:
+        crechnung = None
+    return crechnung
 
 
 def write_rechnung(person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):

@@ -191,7 +191,7 @@ def edit_tier(id, tier_id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
-        update_tier(tier.id, ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
+        update_tier(ctier.id, ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     tierhaltung = read_tierhaltung(id)
@@ -252,8 +252,8 @@ def save_behandlungen(id):
             flash(error)
             tierhaltung = read_tierhaltung(id)
             cperson = read_person(tierhaltung['person_id'])
-            cperson.adresse = read_adresse(tierhaltung['person_id'])
-            cperson.kontakte = read_kontakte(tierhaltung['person_id'])
+            cperson.adresse = read_adresse_for_person(tierhaltung['person_id'])
+            cperson.kontakte = read_kontakte_for_person(tierhaltung['person_id'])
             ctier = read_tier(tierhaltung['tier_id'])
             return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=cbehandlungen)
 

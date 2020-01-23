@@ -168,13 +168,13 @@ def show_tierhaltung(id):
 @login_required
 def create_tier(id):
     if(request.method == 'POST'):
-        tier, error = fill_and_validate_tier(request)
+        ctier, error = fill_and_validate_tier(request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tier.html', id=id)
-        tier.id = write_tier(tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
+        ctier.id = write_tier(ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
         tierhaltung = read_tierhaltung(id)
-        newid =  write_tierhaltung(tierhaltung['person_id'], tier.id)
+        newid =  write_tierhaltung(tierhaltung['person_id'], ctier.id)
         return redirect(url_for('ordi.show_tierhaltung', id=newid))
 
     geschlechtswerte = []
@@ -187,11 +187,11 @@ def create_tier(id):
 @login_required
 def edit_tier(id, tier_id):
     if(request.method == 'POST'):
-        tier, error = fill_and_validate_tier(request)
+        ctier, error = fill_and_validate_tier(request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
-        update_tier(tier.id, tier.tiername, tier.tierart, tier.rasse, tier.farbe, tier.viren, tier.merkmal, tier.geburtsdatum, tier.geschlechtscode, tier.chip_nummer, tier.eu_passnummer, tier.patient)
+        update_tier(tier.id, ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     tierhaltung = read_tierhaltung(id)
@@ -205,41 +205,41 @@ def edit_tier(id, tier_id):
 @login_required
 def edit_person(id, person_id):
     if(request.method == 'POST'):
-        person, error = fill_and_validate_person(request)
+        cperson, error = fill_and_validate_person(request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/edit_person.html', id=id, person_id=person_id)
-        update_person(person.id, person.anredecode, person.titel, person.familienname, person.vorname, person.notiz, person.kunde)
+        update_person(cperson.id, cperson.anredecode, cperson.titel, cperson.familienname, cperson.vorname, cperson.notiz, cperson.kunde)
 
-        adresse = fill_and_validate_adresse(request)[0]
-        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
-            if(adresse.id):
-                update_adresse(adresse.id, adresse.strasse, adresse.postleitzahl, adresse.ort)
+        cadresse = fill_and_validate_adresse(request)[0]
+        if(len(cadresse.strasse) > 0 or len(cadresse.postleitzahl) > 0 or len(cadresse.ort) > 0):
+            if(cadresse.id):
+                update_adresse(cadresse.id, cadresse.strasse, cadresse.postleitzahl, cadresse.ort)
             else:
-                write_adresse(adresse.person_id, adresse.strasse, adresse.postleitzahl, adresse.ort)
+                write_adresse(cadresse.person_id, cadresse.strasse, cadresse.postleitzahl, cadresse.ort)
         else:
-            if(adresse.id):
-                delete_db_adresse(adresse.id)
+            if(cadresse.id):
+                delete_db_adresse(cadresse.id)
 
-        kontakte = fill_and_validate_kontakte(request)[0]
-        for kontakt in kontakte:
-            if(len(kontakt.kontakt) > 0):
-                if(kontakt.id):
-                    update_kontakt(kontakt.id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
+        ckontakte = fill_and_validate_kontakte(request)[0]
+        for ckontakt in ckontakte:
+            if(len(ckontakt.kontakt) > 0):
+                if(ckontakt.id):
+                    update_kontakt(ckontakt.id, ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern)
                 else:
-                    write_kontakt(kontakt.person_id, kontakt.kontaktcode, kontakt.kontakt, kontakt.kontakt_intern)
+                    write_kontakt(ckontakt.person_id, ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern)
             else:
-                if(kontakt.id):
-                    delete_db_kontakt(kontakt.id)
+                if(ckontakt.id):
+                    delete_db_kontakt(ckontakt.id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     tierhaltung = read_tierhaltung(id)
-    adresse = read_adresse(person_id)
-    kontakte = read_kontakte(person_id)
+    cadresse = read_adresse_for_person(person_id)
+    ckontakte = read_kontakte_for_person(person_id)
     anredewerte = []
     for key, value in ANREDE.items():
         anredewerte.append([key, value])
-    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, anredewerte=anredewerte, adresse=adresse, kontakte=kontakte, page_title="Person ändern")
+    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, anredewerte=anredewerte, adresse=cadresse, kontakte=ckontakte, page_title="Person ändern")
 
 
 @bp.route('/<int:id>/create_behandlung', methods=('GET', 'POST'))

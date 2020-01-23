@@ -569,7 +569,7 @@ def read_rechnungszeilen_for_rechnung(rechnung_id):
     cursor.close()
 
     crechnungszeilen = []
-    rechnungszeile in rechnungszeilen:
+    for rechnungszeile in rechnungszeilen:
         crechnungszeile = cRechnungszeile(int(rechnungszeile['id']), 
                                           int(rechnungszeile['rechnung_id']), 
                                           rechnungszeile['datum'], 

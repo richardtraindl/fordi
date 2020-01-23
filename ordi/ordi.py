@@ -291,9 +291,11 @@ def create_behandlungsverlauf(id):
         return send_file(path_and_filename, as_attachment=True)
     else:
         tierhaltung = read_tierhaltung(id)
-        cadresse = read_adresse_for_person(tierhaltung['person_id'])
-        ckontakte = read_kontakte_for_person(tierhaltung['person_id'])
-        return render_template('ordi/behandlungsverlauf.html', tierhaltung=tierhaltung, adresse=cadresse, kontakte=ckontakte, page_title="Behandlungsverlauf")
+        cperson = read_person(tierhaltung['person_id'])
+        cperson.adresse = read_adresse_for_person(cperson.id)
+        cperson.kontakte = read_kontakte_for_person(cperson.id)
+        ctier = read_tier(tierhaltung['tier_id'])
+        return render_template('ordi/behandlungsverlauf.html', id=id, person=cperson, tier=ctier, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/edit_behandlungsverlauf', methods=('GET', 'POST'))

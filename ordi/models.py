@@ -179,7 +179,7 @@ class cRechnung:
         self.tier_id = tier_id
         self.rechnungsjahr = rechnungsjahr
         self.rechnungslfnr = rechnungslfnr
-        if(len(ausstellungsdatum) == 0):
+        if(ausstellungsdatum == None):
             self.ausstellungsdatum = date.today().strftime("%Y-%m-%d")
         else:
             self.ausstellungsdatum = ausstellungsdatum

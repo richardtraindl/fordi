@@ -362,7 +362,7 @@ def create_rechnung(id):
                 crechnungszeile.id = write_rechnungszeile(rechnung_id, crechnungszeile.datum, crechnungszeile.artikelcode, crechnungszeile.artikel, crechnungszeile.betrag)
 
         crechnung = read_rechnung(rechnung_id)
-        crechnungszeilen = read_rechnungszeilen(rechnung_id)
+        crechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
         html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, rechnungszeilen=crechnungszeilen, 
                                tierhaltung=tierhaltung, adresse=cperson.adresse)
         filename = str(rechnung['id']) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
@@ -412,7 +412,7 @@ def edit_rechnung(rechnung_id):
                 crechnungszeile.id = write_rechnungszeile(rechnung_id, crechnungszeile.datum, crechnungszeile.artikelcode, crechnungszeile.artikel, crechnungszeile.betrag)
 
         crechnung = read_rechnung(rechnung_id)
-        crechnungszeilen = read_rechnungszeilen(rechnung_id)
+        crechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
         html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, rechnungszeilen=crechnungszeilen, tierhaltung=tierhaltung, adresse=cperson.adresse)
         filename = str(rechnung['id']) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
         path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)

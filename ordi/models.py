@@ -8,17 +8,17 @@ from .values import *
 class cTier:
     def __init__(self, 
                  id=None, 
-                 tiername=None, 
-                 tierart=None, 
-                 rasse=None, 
-                 farbe=None, 
-                 viren=None, 
-                 merkmal=None, 
+                 tiername="", 
+                 tierart="", 
+                 rasse="", 
+                 farbe="", 
+                 viren="", 
+                 merkmal="", 
                  geburtsdatum=None, 
                  geschlechtscode=None,
-                 chip_nummer=None,
-                 eu_passnummer=None,
-                 patient=None):
+                 chip_nummer="",
+                 eu_passnummer=",
+                 patient=1):
         self.id = id
         self.tiername = tiername
         self.tierart = tierart
@@ -34,11 +34,11 @@ class cTier:
 
     def validate(self):
         if(len(self.tiername) == 0):
-            return False, "Tiername erforderlich."
+            return False, "Tiername fehlt. "
         if(len(self.tierart) == 0):
-            return False, "Tierart erforderlich."
-        if(len(self.geburtsdatum) == 0):
-            return False, "Geburtsdatum erforderlich."
+            return False, "Tierart fehlt. "
+        if(self.geburtsdatum == None):
+            return False, "Geburtsdatum fehlt. "
         return True, ""
 ### Tier
 
@@ -47,12 +47,12 @@ class cTier:
 class cPerson:
     def __init__(self, 
                  id=None, 
-                 anredecode=None, 
-                 titel=None, 
-                 familienname=None, 
-                 vorname=None, 
-                 notiz=None, 
-                 kunde=None):
+                 anredecode=0, 
+                 titel="", 
+                 familienname="", 
+                 vorname="", 
+                 notiz="", 
+                 kunde=1):
         self.id = id
         self.anredecode = anredecode
         self.titel = titel
@@ -65,7 +65,7 @@ class cPerson:
 
     def validate(self):
         if(len(self.familienname) == 0):
-            return False, "Familienname erforderlich."
+            return False, "Familienname fehlt. "
         return True, ""
 ### person
 
@@ -75,9 +75,9 @@ class cAdresse:
     def __init__(self, 
                  id=None, 
                  person_id=None, 
-                 strasse=None, 
-                 postleitzahl=None, 
-                 ort=None):
+                 strasse="", 
+                 postleitzahl="", 
+                 ort=""):
         self.id = id
         self.person_id = person_id
         self.strasse = strasse
@@ -94,9 +94,9 @@ class cKontakt:
     def __init__(self, 
                  id=None, 
                  person_id=None, 
-                 kontaktcode="1", # fix 1 für Telefon
-                 kontakt=None, 
-                 kontakt_intern=None):
+                 kontaktcode=1, # fix 1 für Telefon
+                 kontakt="", 
+                 kontakt_intern=""):
         self.id = id
         self.person_id = person_id
         self.kontaktcode = kontaktcode
@@ -116,18 +116,15 @@ class cBehandlung:
                  tier_id=None,
                  behandlungsdatum=None, 
                  gewicht=None,  
-                 diagnose=None,
-                 laborwerte1=None, 
-                 laborwerte2=None, 
-                 arzneien=None,
-                 arzneimittel=None, 
-                 impfungen_extern=None):
+                 diagnose="",
+                 laborwerte1="", 
+                 laborwerte2="", 
+                 arzneien="",
+                 arzneimittel="", 
+                 impfungen_extern=""):
         self.id = id
         self.tier_id = tier_id
-        if(behandlungsdatum == None):
-            self.behandlungsdatum = date.today().strftime("%Y-%m-%d")
-        else:
-            self.behandlungsdatum = behandlungsdatum
+        self.behandlungsdatum = behandlungsdatum
         self.gewicht = gewicht
         self.diagnose = diagnose
         self.laborwerte1 = laborwerte1
@@ -138,8 +135,8 @@ class cBehandlung:
         self.impfungen = []
 
     def validate(self):
-        if(len(self.gewicht) > 0 and re.search(r"\d", self.gewicht) == None):
-            return False, "Zahl für Gewicht erforderlich."
+        if(self.behandlungsdatum == None):
+            return False, "Behandlungsdatum fehlt. "
         return True, ""
 ### behandlung
 
@@ -153,7 +150,7 @@ class CImpfung:
 
     def validate(self):
         if(self.impfungscode == None):
-            return False, "Impfungscode erforderlich."
+            return False, "Impfungscode fehlt. "
         return True, ""
 ### impfung
 
@@ -166,9 +163,9 @@ class cRechnung:
                        rechnungsjahr=None, 
                        rechnungslfnr=None,  
                        ausstellungsdatum=None,
-                       ausstellungsort=None, 
-                       diagnose=None, 
-                       bezahlung=None,
+                       ausstellungsort="", 
+                       diagnose="", 
+                       bezahlung="",
                        brutto_summe=0, 
                        netto_summe=0, 
                        steuerbetrag_zwanzig=0, 
@@ -179,14 +176,8 @@ class cRechnung:
         self.tier_id = tier_id
         self.rechnungsjahr = rechnungsjahr
         self.rechnungslfnr = rechnungslfnr
-        if(ausstellungsdatum == None):
-            self.ausstellungsdatum = date.today().strftime("%Y-%m-%d")
-        else:
-            self.ausstellungsdatum = ausstellungsdatum
-        if(len(ausstellungsort) == 0):
-            self.ausstellungsort = "Wien"
-        else:
-            self.ausstellungsort = ausstellungsort
+        self.ausstellungsdatum = ausstellungsdatum
+        self.ausstellungsort = ausstellungsort
         self.diagnose = diagnose
         self.bezahlung = bezahlung
         self.brutto_summe = brutto_summe
@@ -198,9 +189,13 @@ class cRechnung:
 
     def validate(self):
         if(self.rechnungsjahr == None):
-            return False, "Rechnungsjahr erforderlich."
+            return False, "Rechnungsjahr fehlt. "
         if(self.rechnungslfnr == None):
-            return False, "Rechnungslfnr erforderlich."
+            return False, "Rechnungslfnr fehlt. "
+        if(self.ausstellungsdatum == None):
+            return False, "Ausstellungsdatum fehlt. "
+        if(len(self.ausstellungsort) == 0):
+            return False, "Ausstellungsort fehlt. "
         return True, ""
 
     def calc(self):
@@ -242,26 +237,23 @@ class cRechnungszeile:
                  id=None, 
                  rechnung_id=None, 
                  datum=None, 
-                 artikelcode=None, 
+                 artikelcode=0, 
                  artikel="",
                  betrag=None):
         self.id = id
         self.rechnung_id = rechnung_id
-        if(datum == None):
-            self.datum = date.today().strftime("%Y-%m-%d")
-        else:
-            self.datum = datum
+        self.datum = datum
         self.artikelcode = artikelcode
         self.artikel = artikel
         self.betrag = betrag
 
     def validate(self):
         if(self.artikelcode == None or self.artikelcode == 0):
-            return False, "Fehlende Artikelart."
+            return False, "Artikelart fehlt. "
         if(len(self.artikel) == 0):
-            return False, "Fehlende Artikelbeschreibung."
+            return False, "Artikelbeschreibung fehlt. "
         if(self.betrag == None):
-            return False, "Fehlender Artikelbetrag."
+            return False, "Artikelbetrag fehlt. "
         return True, ""
 ### rechnungszeile
 

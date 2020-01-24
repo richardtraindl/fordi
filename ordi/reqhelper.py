@@ -191,10 +191,17 @@ def fill_and_validate_behandlungen(req_behandlungen):
         except:
             tier_id = None
 
+        if(len((req_behandlung['gewicht']) > 0):
+            try:
+                gewicht = float(req_behandlung['gewicht'].replace(",", "."))
+            except:
+                gewicht = None
+                return_error = "Zahl für Gewicht erforderlich. "
+
         behandlung = cBehandlung(behandlung_id, 
                                  tier_id, 
                                  req_behandlung['behandlungsdatum'], 
-                                 req_behandlung['gewicht'], 
+                                 gewicht, 
                                  req_behandlung['diagnose'], 
                                  req_behandlung['laborwerte1'], 
                                  req_behandlung['laborwerte2'],
@@ -204,7 +211,7 @@ def fill_and_validate_behandlungen(req_behandlungen):
 
         flag, error = behandlung.validate()
         if(flag == False):
-            return_error = error
+            return_error += error
         behandlungen.append(behandlung)
 
     return behandlungen, return_error

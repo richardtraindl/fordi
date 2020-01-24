@@ -27,16 +27,16 @@
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
             <label for="rechnungsjahr">Rechnungsjahr</label>
-            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{- request.form['rechnungsjahr'] or rechnung.rechnungsjahr -}}" required>
+            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{- request.form['rechnungsjahr'] or rechnung.rechnungsjahr or '' -}}" required>
             
             <label for="rechnungslfnr">Rechnungslfnr</label>
-            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{- request.form['rechnungslfnr'] or rechnung.rechnungslfnr -}}" required>
+            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{- request.form['rechnungslfnr'] or rechnung.rechnungslfnr or '' -}}" required>
             
             <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or rechnung.ausstellungsdatum or datum -}}" required>
+            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or datum or rechnung.ausstellungsdatum or '' -}}" required>
             
             <label for="ausstellungsort">Ausstellungsort</label>
-            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{- request.form['ausstellungsort'] or rechnung.ausstellungsort or ort -}}" required>
+            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{- request.form['ausstellungsort'] or ort or rechnung.ausstellungsort -}}" required>
         </div>
       </div>
       <div>
@@ -45,7 +45,7 @@
             <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{- request.form['diagnose'] or rechnung.diagnose -}}</textarea>
             
             <label for="bezahlung">Bezahlung</label>
-            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{- request.form['bezahlung'] or rechnung.bezahlung -}}">
+            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{- request.form['bezahlung'] or rechnung.bezahlung or '' -}}">
         </div>
       <div>
 

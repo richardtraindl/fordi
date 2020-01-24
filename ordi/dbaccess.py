@@ -513,11 +513,11 @@ def read_rechnung(rechnung_id):
                               rechnung['ausstellungsort'], 
                               rechnung['diagnose'], 
                               rechnung['bezahlung'],
-                              float(rechnung['brutto_summe'].replace(",", ".")),
-                              float(rechnung['netto_summe'].replace(",", ".")),
-                              float(rechnung['steuerbetrag_zwanzig'].replace(",", ".")),
-                              float(rechnung['steuerbetrag_dreizehn'].replace(",", ".")),
-                              float(rechnung['steuerbetrag_zehn'].replace(",", ".")))
+                              float(rechnung['brutto_summe']),
+                              float(rechnung['netto_summe']),
+                              float(rechnung['steuerbetrag_zwanzig']),
+                              float(rechnung['steuerbetrag_dreizehn']),
+                              float(rechnung['steuerbetrag_zehn']))
     else:
         crechnung = None
     return crechnung

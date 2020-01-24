@@ -576,7 +576,7 @@ def read_rechnungszeilen_for_rechnung(rechnung_id):
                                           rechnungszeile['datum'], 
                                           int(rechnungszeile['artikelcode']), 
                                           rechnungszeile['artikel'],
-                                          float(rechnungszeile['betrag'].replace(",", ".")))
+                                          float(rechnungszeile['betrag']))
         crechnungszeilen.append(crechnungszeile)
     return crechnungszeilen
 

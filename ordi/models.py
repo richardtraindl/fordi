@@ -243,8 +243,8 @@ class cRechnungszeile:
                  rechnung_id=None, 
                  datum=None, 
                  artikelcode=None, 
-                 artikel=None,
-                 betrag=0):
+                 artikel="",
+                 betrag=None):
         self.id = id
         self.rechnung_id = rechnung_id
         if(datum == None):

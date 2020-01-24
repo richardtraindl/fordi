@@ -284,7 +284,7 @@ def build_rechnungszeilen(request):
         req_rechnungszeile['betrag'] = data[4][idx]
 
         if(len(req_rechnungszeile['rechnungszeile_id']) == 0 and 
-           (len(req_rechnungszeile['artikelcode']) == 0 or req_rechnungszeile['artikelcode'] == "0") and
+           req_rechnungszeile['artikelcode'] == "0" and
            len(req_rechnungszeile['artikel']) == 0 and 
            len(req_rechnungszeile['betrag']) == 0):
             continue
@@ -310,12 +310,14 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
         try:
             artikelcode = int(req_rechnungszeile['artikelcode'])
         except:
-            artikelcode = None
+            artikelcode = None          
+            return_error = "Falsche Artikelbezeichnung. "
 
         try:
             betrag = float(req_rechnungszeile['betrag'].replace(",", "."))
         except:
             betrag = None
+            return_error += "Betrag muss eine Zahl sein. "
 
         rechnungszeile = cRechnungszeile(rechnungszeile_id, 
                                          rechnung_id, 
@@ -330,7 +332,7 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
         rechnungszeilen.append(rechnungszeile)
 
     if(len(rechnungszeilen) == 0):
-        return rechnungszeilen, return_error + "Mindestens eine Rechnungszeile erforderlich."
+        return rechnungszeilen, return_error + "Mindestens eine Rechnungszeile erforderlich. "
     else:
         return rechnungszeilen, return_error
 

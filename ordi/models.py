@@ -211,9 +211,7 @@ class cRechnung:
             except:
                 return False, "Falsche Artikelart."
             try:
-                str_betrag = rechnungszeile.betrag.replace(",", ".")
-                betrag = float(str_betrag)
-                betrag = round(betrag, 2)
+                betrag = round(rechnungszeile.betrag, 2)
             except:
                 return False, "Betrag ist keine Zahl."
 

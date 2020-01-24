@@ -396,6 +396,7 @@ def edit_rechnung(rechnung_id):
 
     if(request.method == 'POST'):
         crechnung, error = fill_and_validate_rechnung(request)
+        crechnung.id = rechnung_id
         req_rechnungszeilen = build_rechnungszeilen(request)
         crechnung.rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(len(error) > 0 or len(zeilen_error) > 0):

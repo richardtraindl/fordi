@@ -64,7 +64,7 @@
                             {%- endfor -%}
                         </textarea>
                     </td>
-                    <td style="width: 4%"><textarea name="gewicht[]">{{- behandlung.gewicht -}}</textarea></td>
+                    <td style="width: 4%"><textarea name="gewicht[]">{{- behandlung.gewicht | sn -}}</textarea></td>
                     <td style="width: 5%">
                         <a class="zeile_loeschen" tierhaltung_id="{{- id -}}" behandlung_id="{{- behandlung.id -}}" href="#">Zeile löschen</a>
                     </td>

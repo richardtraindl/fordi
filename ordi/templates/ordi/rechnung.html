@@ -18,7 +18,7 @@
 
     <div class="gap"></div>
 
-  {% if rechnung.id %}
+  {% if rechnung and rechnung.id %}
     <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung.id) }}">
   {% else %}
     <form method="post" action="{{ url_for('ordi.create_rechnung', id=id) }}">
@@ -66,21 +66,23 @@
       <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
-              {% for rechnungszeile in rechnung.rechnungszeilen %}
+            {% if rechnung %}
+              {% for rechnungszeile in rechnungszeilen %}
                 <tr>
                   <td style="width: 10%">
                     <input type="hidden" name="rechnungszeile_id[]" value="{{- rechnungszeile.id -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile.datum | sn -}}" required>
+                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile.datum | sn -}}">
                   </td>
                   {% set artikelcode = rechnungszeile.artikelcode %}
                   <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" required>{{- rechnungszeile.artikel -}}</textarea></td>
-                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" required>{{- rechnungszeile.betrag | sn -}}</textarea></td>
+                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rechnungszeile.artikel -}}</textarea></td>
+                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rechnungszeile.betrag | sn -}}</textarea></td>
                   <td style="width: 6%">
                     <a class="zeile_loeschen" rechnungszeile_id="{{- rechnungszeile.id -}}" href="#">Zeile löschen</a>
                   </td>
                 </tr>
               {% endfor %}
+            {% endif %}
                 <tr id="neue_zeile">
                   <td style="width: 10%">
                       <input type="hidden" name="rechnungszeile_id[]" value="">

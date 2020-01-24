@@ -186,19 +186,17 @@ def fill_and_validate_behandlungen(req_behandlungen):
             behandlung_id = int(req_behandlung['behandlung_id'])
         except:
             behandlung_id = None
+
         try:
             tier_id = int(req_behandlung['tier_id'])
         except:
             tier_id = None
 
-        if(len(req_behandlung['gewicht']) == 0):
+        try:
+            gewicht = float(req_behandlung['gewicht'].replace(",", "."))
+        except:
             gewicht = None
-        else:
-            try:
-                gewicht = float(req_behandlung['gewicht'].replace(",", "."))
-            except:
-                gewicht = None
-                return_error = "Zahl für Gewicht erforderlich. "
+            return_error += "Gewicht muss eine Zahl sein. "
 
         behandlung = cBehandlung(behandlung_id, 
                                  tier_id, 
@@ -212,8 +210,8 @@ def fill_and_validate_behandlungen(req_behandlungen):
                                  req_behandlung['impfungen_extern'])
 
         flag, error = behandlung.validate()
-        if(flag == False):
-            return_error += error
+        if(flag == False and len(return_error) == 0):
+            return_error = error
         behandlungen.append(behandlung)
 
     return behandlungen, return_error
@@ -320,13 +318,17 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
             artikelcode = int(req_rechnungszeile['artikelcode'])
         except:
             artikelcode = None          
-            return_error = "Falsche Artikelbezeichnung. "
+            return_error += "Falsche Artikelbezeichnung. "
 
-        try:
-            betrag = float(req_rechnungszeile['betrag'].replace(",", "."))
-        except:
+        if(len(req_rechnungszeile['betrag']) == 0):
             betrag = None
-            return_error += "Betrag muss eine Zahl sein. "
+            return_error += "Betrag fehlt. "
+        else:
+            try:
+                betrag = float(req_rechnungszeile['betrag'].replace(",", "."))
+            except:
+                betrag = None
+                return_error += "Betrag muss eine Zahl sein. "
 
         rechnungszeile = cRechnungszeile(rechnungszeile_id, 
                                          rechnung_id, 
@@ -336,7 +338,7 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
                                          betrag)
 
         flag, error = rechnungszeile.validate()
-        if(flag == False):
+        if(flag == False and len(return_error) == 0):
             return_error = error
         rechnungszeilen.append(rechnungszeile)
 

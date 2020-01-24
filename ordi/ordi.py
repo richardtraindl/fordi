@@ -342,7 +342,7 @@ def create_rechnung(id):
     if(request.method == 'POST'):
         crechnung, error = fill_and_validate_rechnung(request)
         req_rechnungszeilen = build_rechnungszeilen(request)
-        crechnung.crechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
+        crechnung.rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(len(error) > 0 or len(zeilen_error) > 0):
             flash(error + zeilen_error)
             return render_template('ordi/rechnung.html', rechnung=crechnung, artikelwerte=artikelwerte, 
@@ -360,7 +360,7 @@ def create_rechnung(id):
                                      crechnung.netto_summe, crechnung.steuerbetrag_zwanzig, crechnung.steuerbetrag_dreizehn, 
                                      crechnung.steuerbetrag_zehn)
 
-        for crechnungszeile in crechnung.crechnungszeilen:
+        for crechnungszeile in crechnung.rechnungszeilen:
             if(crechnungszeile.id):
                 update_rechnungszeile(crechnungszeile.id, crechnungszeile.datum, crechnungszeile.artikelcode, crechnungszeile.artikel, crechnungszeile.betrag)
             else:

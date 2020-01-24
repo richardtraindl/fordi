@@ -513,11 +513,11 @@ def read_rechnung(rechnung_id):
                               rechnung['ausstellungsort'], 
                               rechnung['diagnose'], 
                               rechnung['bezahlung'],
-                              float(rechnung['brutto_summe']),
-                              float(rechnung['netto_summe']),
-                              float(rechnung['steuerbetrag_zwanzig']),
-                              float(rechnung['steuerbetrag_dreizehn']),
-                              float(rechnung['steuerbetrag_zehn']))
+                              float(rechnung['brutto_summe'].replace(",", ".")),
+                              float(rechnung['netto_summe'].replace(",", ".")),
+                              float(rechnung['steuerbetrag_zwanzig'].replace(",", ".")),
+                              float(rechnung['steuerbetrag_dreizehn'].replace(",", ".")),
+                              float(rechnung['steuerbetrag_zehn'].replace(",", ".")))
     else:
         crechnung = None
     return crechnung
@@ -576,7 +576,7 @@ def read_rechnungszeilen_for_rechnung(rechnung_id):
                                           rechnungszeile['datum'], 
                                           int(rechnungszeile['artikelcode']), 
                                           rechnungszeile['artikel'],
-                                          float(rechnungszeile['betrag']))
+                                          float(rechnungszeile['betrag'].replace(",", ".")))
         crechnungszeilen.append(crechnungszeile)
     return crechnungszeilen
 
@@ -593,7 +593,7 @@ def read_rechnungszeile(rechnungszeile_id):
                                           rechnungszeile['datum'], 
                                           int(rechnungszeile['artikelcode']), 
                                           rechnungszeile['artikel'],
-                                          float(rechnungszeile['betrag']))
+                                          float(rechnungszeile['betrag'].replace(",", ".")))
     else:
         crechnungszeile = None
     return crechnungszeile

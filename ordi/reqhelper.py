@@ -191,7 +191,9 @@ def fill_and_validate_behandlungen(req_behandlungen):
         except:
             tier_id = None
 
-        if(len(req_behandlung['gewicht']) > 0):
+        if(len(req_behandlung['gewicht']) == 0):
+            gewicht = None
+        else:
             try:
                 gewicht = float(req_behandlung['gewicht'].replace(",", "."))
             except:

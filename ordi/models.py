@@ -17,7 +17,7 @@ class cTier:
                  geburtsdatum=None, 
                  geschlechtscode=None,
                  chip_nummer="",
-                 eu_passnummer=",
+                 eu_passnummer="",
                  patient=1):
         self.id = id
         self.tiername = tiername

@@ -4,19 +4,19 @@
     </head>
     <body>
         <div style="padding-bottom: 20mm;">
-            <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
+            <p>{{- person['anredecode'] | mapanrede -}}</p>
 
             <p>
-               {{- tierhaltung['vorname'] -}} &nbsp; 
-               {{- tierhaltung['familienname'] -}} &nbsp; 
-               {{- tierhaltung['titel'] -}}
+               {{- person['vorname'] -}} &nbsp; 
+               {{- person['familienname'] -}} &nbsp; 
+               {{- person['titel'] -}}
             </p>
 
-            <p>{{- adresse['strasse'] -}}</p>
+            <p>{{- person.adresse['strasse'] -}}</p>
 
             <p>
-                {{- adresse['postleitzahl'] -}} &nbsp; 
-                {{- adresse['ort'] -}}
+                {{- person.adresse['postleitzahl'] -}} &nbsp; 
+                {{- person.adresse['ort'] -}}
             </p>
         </div>
         <table border="0" width="100%">
@@ -28,7 +28,7 @@
             </thead>
             <tbody border="0">
                 <tr border="0">
-                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tierhaltung['tiername'] -}} &nbsp; {{- tierhaltung['tierart'] -}} &nbsp; {{- tierhaltung['geburtsdatum'] -}}</td>
+                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tier['tiername'] -}} &nbsp; {{- tier['tierart'] -}} &nbsp; {{- tier['geburtsdatum'] -}}</td>
                     <td border="0" width="30%" align="right">{{- behandlungsverlauf['datum'] -}}</td>
                 </tr>
             </tbody>

@@ -134,13 +134,9 @@ def create_tierhaltung():
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
 @login_required
 def show_tierhaltung(id):
-    tierhaltung = read_tierhaltung(id)
-    
-    cperson = read_person(tierhaltung['person_id'])
+    ctierhaltung, cperson, ctier = read_tierhaltung(id)
     cperson.adresse = read_adresse_for_person(cperson.id)
     cperson.kontakte = read_kontakte_for_person(cperson.id)
-
-    ctier = read_tier(tierhaltung['tier_id'])
     cbehandlungen = read_behandlungen_for_tier(ctier.id)
 
     datum = date.today().strftime("%Y-%m-%d")
@@ -174,8 +170,8 @@ def create_tier(id):
             flash(error)
             return render_template('ordi/create_tier.html', id=id)
         ctier.id = write_tier(ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
-        tierhaltung = read_tierhaltung(id)
-        newid =  write_tierhaltung(tierhaltung['person_id'], ctier.id)
+        ctierhaltung = read_tierhaltung(id)[0]
+        newid =  write_tierhaltung(ctierhaltung.id, ctier.id)
         return redirect(url_for('ordi.show_tierhaltung', id=newid))
 
     geschlechtswerte = []
@@ -195,11 +191,11 @@ def edit_tier(id, tier_id):
         update_tier(ctier.id, ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
-    tierhaltung = read_tierhaltung(id)
+    ctierhaltung, cperson, ctier = read_tierhaltung(id)
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
-    return render_template('ordi/edit_tier.html', tierhaltung=tierhaltung, geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
+    return render_template('ordi/edit_tier.html', id=id, tier=ctier, geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
 
 
 @bp.route('/<int:id>/<int:person_id>/edit_person', methods=('GET', 'POST'))
@@ -234,13 +230,13 @@ def edit_person(id, person_id):
                     delete_db_kontakt(ckontakt.id)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
-    tierhaltung = read_tierhaltung(id)
-    cadresse = read_adresse_for_person(person_id)
-    ckontakte = read_kontakte_for_person(person_id)
+    ctierhaltung, cperson, ctier = read_tierhaltung(id)
+    cadresse = read_adresse_for_person(cperson.id)
+    ckontakte = read_kontakte_for_person(cperson.id)
     anredewerte = []
     for key, value in ANREDE.items():
         anredewerte.append([key, value])
-    return render_template('ordi/edit_person.html', tierhaltung=tierhaltung, anredewerte=anredewerte, adresse=cadresse, kontakte=ckontakte, page_title="Person ändern")
+    return render_template('ordi/edit_person.html', id=id, person=cperson, anredewerte=anredewerte, page_title="Person ändern")
 
 
 @bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
@@ -251,19 +247,17 @@ def save_behandlungen(id):
         creq_behandlungen, error = fill_and_validate_behandlungen(req_behandlungen)
         if(len(error) > 0):
             flash(error)
-            tierhaltung = read_tierhaltung(id)
-            cperson = read_person(tierhaltung['person_id'])
-            cperson.adresse = read_adresse_for_person(tierhaltung['person_id'])
-            cperson.kontakte = read_kontakte_for_person(tierhaltung['person_id'])
-            ctier = read_tier(tierhaltung['tier_id'])
+            ctierhaltung, cperson, ctier = read_tierhaltung(id)
+            cperson.adresse = read_adresse_for_person(cperson.id)
+            cperson.kontakte = read_kontakte_for_person(cperson.id)
             return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=creq_behandlungen)
 
-        tierhaltung = read_tierhaltung(id)
+        ctierhaltung = read_tierhaltung(id)
         for behandlung in creq_behandlungen:
             if(behandlung.id):
                 update_behandlung(behandlung.id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
             else:
-                behandlung.id = write_behandlung(tierhaltung['tier_id'], behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)                
+                behandlung.id = write_behandlung(ctierhaltung.tier_id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
             if(len(behandlung.impfungen_extern) > 0):
                 impfungstexte = behandlung.impfungen_extern.split(',')
             else:
@@ -281,21 +275,19 @@ def create_behandlungsverlauf(id):
             datum = date.today().strftime("%Y-%m-%d")
         diagnose = request.form['diagnose']
         behandlung = request.form['behandlung']
-        tierhaltung = read_tierhaltung(id)
-        cadresse = read_adresse_for_person(tierhaltung['person_id'])
-        behandlungsverlauf_id = write_behandlungsverlauf(tierhaltung['person_id'], tierhaltung['tier_id'], datum, diagnose, behandlung)
+        ctierhaltung, cperson, ctier = read_tierhaltung(id)
+        cperson.adresse = read_adresse_for_person(ctierhaltung.person_id)
+        behandlungsverlauf_id = write_behandlungsverlauf(cperson.id, ctier.id, datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-        html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=cadresse)
-        filename = str(behandlungsverlauf['id']) + "_behandlungsverlauf_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
+        html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, person=cperson, tier=ctier)
+        filename = str(behandlungsverlauf['id']) + "_behandlungsverlauf_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
         path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
         html2pdf(html, path_and_filename)
         return send_file(path_and_filename, as_attachment=True)
     else:
-        tierhaltung = read_tierhaltung(id)
-        cperson = read_person(tierhaltung['person_id'])
+        ctierhaltung, cperson, ctier = read_tierhaltung(id)
         cperson.adresse = read_adresse_for_person(cperson.id)
         cperson.kontakte = read_kontakte_for_person(cperson.id)
-        ctier = read_tier(tierhaltung['tier_id'])
         datum = date.today().strftime("%Y-%m-%d")
         return render_template('ordi/behandlungsverlauf.html', id=id, person=cperson, tier=ctier, datum=datum, page_title="Behandlungsverlauf")
 
@@ -311,20 +303,19 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
         behandlung = request.form['behandlung']
         update_behandlungsverlauf(behandlungsverlauf_id, datum, diagnose, behandlung)
         behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-        tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
-        cadresse = read_adresse_for_person(behandlungsverlauf['person_id'])
-        html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, tierhaltung=tierhaltung, adresse=cadresse)
-        filename = str(behandlungsverlauf['id']) + "_behandlungsverlauf_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
+        ctierhaltung, cperson, ctier = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
+        cperson.adresse = read_adresse_for_person(cperson.id)
+        html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, person=cperson, tier=ctier)
+        filename = str(behandlungsverlauf['id']) + "_behandlungsverlauf_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
         path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
         html2pdf(html, path_and_filename)
         return send_file(path_and_filename, as_attachment=True)
-    behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-    tierhaltung = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
-    cperson = read_person(tierhaltung['person_id'])
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    cperson.kontakte = read_kontakte_for_person(cperson.id)
-    ctier = read_tier(tierhaltung['tier_id'])
-    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, id=id, person=cperson, tier=ctier, page_title="Behandlungsverlauf")
+    else:
+        behandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
+        ctierhaltung, cperson, ctier = read_tierhaltung_by_children(behandlungsverlauf['person_id'], behandlungsverlauf['tier_id'])
+        cperson.adresse = read_adresse_for_person(cperson.id)
+        cperson.kontakte = read_kontakte_for_person(cperson.id)
+    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, person=cperson, tier=ctier, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
@@ -390,11 +381,9 @@ def edit_rechnung(rechnung_id):
         artikelwerte.append([key, value])
 
     crechnung = read_rechnung(rechnung_id)
-    tierhaltung = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
-    cperson = read_person(tierhaltung['person_id'])
+    ctierhaltung,cperson, ctier = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
     cperson.adresse = read_adresse_for_person(cperson.id)
     cperson.kontakte = read_kontakte_for_person(cperson.id)
-    ctier = read_tier(tierhaltung['tier_id'])
 
     if(request.method == 'POST'):
         crechnung, error = fill_and_validate_rechnung(request)
@@ -403,7 +392,7 @@ def edit_rechnung(rechnung_id):
         crechnung.rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(len(error) > 0 or len(zeilen_error) > 0):
             flash(error + zeilen_error)
-            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, id=tierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
 
         flag, error = crechnung.calc()
         if(flag == False):

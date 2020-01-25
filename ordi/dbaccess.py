@@ -22,6 +22,34 @@ def read_tierhaltungen(familienname, tiername, kunde, patient):
     return tierhaltungen
 
 
+def fill_tierhaltung_person_and_tier(tierhaltung):
+    ctierhaltung = cTierhaltung(int(tierhaltung['id']), 
+                                int(tierhaltung['person_id']), 
+                                int(tierhaltung['tier_id']))
+
+    cperson = cPerson(int(tierhaltung['person_id']), 
+                      int(tierhaltung['anredecode']), 
+                      tierhaltung['titel'], 
+                      tierhaltung['familienname'], 
+                      tierhaltung['vorname'], 
+                      tierhaltung['notiz'], 
+                      int(tierhaltung['kunde']))
+
+    ctier = cTier(int(tierhaltung['tier_id']), 
+                  tierhaltung['tiername'], 
+                  tierhaltung['tierart'], 
+                  tierhaltung['rasse'], 
+                  tierhaltung['farbe'], 
+                  tierhaltung['viren'], 
+                  tierhaltung['merkmal'], 
+                  tierhaltung['geburtsdatum'], 
+                  int(tierhaltung['geschlechtscode']),
+                  tierhaltung['chip_nummer'], 
+                  tierhaltung['eu_passnummer'], 
+                  int(tierhaltung['patient']))
+
+    return ctierhaltung, cperson, ctier
+
 def read_tierhaltung(id):
     dbcon = get_db()
     cursor = dbcon.cursor()
@@ -34,7 +62,9 @@ def read_tierhaltung(id):
     )
     tierhaltung = cursor.fetchone()
     cursor.close()
-    return tierhaltung
+
+    ctierhaltung, cperson, ctier = fill_tierhaltung_person_and_tier(tierhaltung)
+    return ctierhaltung, cperson, ctier
 
 
 def read_tierhaltung_by_children(person_id, tier_id):
@@ -50,7 +80,9 @@ def read_tierhaltung_by_children(person_id, tier_id):
     )
     tierhaltung = cursor.fetchone()
     cursor.close()
-    return tierhaltung
+
+    ctierhaltung, cperson, ctier = fill_tierhaltung_person_and_tier(tierhaltung)
+    return ctierhaltung, cperson, ctier
 
 
 def write_tierhaltung(person_id, tier_id):

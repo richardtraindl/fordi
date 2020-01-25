@@ -4,6 +4,18 @@ from datetime import date
 from .values import *
 
 
+### Tierhaltung
+class cTierhaltung:
+    def __init__(self, 
+                 id=None, 
+                 person_id=None, 
+                 tier_id=None):
+        self.id = id
+        self.person_id = person_id
+        self.tier_id = tier_id
+### Tierhaltung
+
+
 ### Tier
 class cTier:
     def __init__(self, 

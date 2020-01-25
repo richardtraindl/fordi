@@ -105,20 +105,21 @@ def create_tierhaltung():
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
 
-        cperson.id = write_person(cperson.anredecode, cperson.titel, cperson.familienname, cperson.vorname, cperson.notiz, cperson.kunde)
-        ctier.id = write_tier(ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
+        write_person(cperson)
+        write_tier(ctier)
 
         cadresse = fill_and_validate_adresse(request)[0]
         if(len(cadresse.strasse) > 0 or len(cadresse.postleitzahl) > 0 or len(cadresse.ort) > 0):
-            cadresse.id = write_adresse(cperson.id, cadresse.strasse, cadresse.postleitzahl, cadresse.ort)
+            write_adresse(cadresse)
 
         ckontakte = fill_and_validate_kontakte(request)[0]
         for ckontakt in ckontakte:
             if(len(ckontakt.kontakt) > 0):
-                ckontakt.id = write_kontakt(cperson.id, ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern)
+                ckontakt.id = write_kontakt(ckontakt)
 
-        id = write_tierhaltung(cperson.id, ctier.id)
-        return redirect(url_for('ordi.show_tierhaltung', id=id))
+        ctierhaltung = cTierhaltung(None, cperson.id, ctier.id)
+        write_tierhaltung(ctierhaltung)
+        return redirect(url_for('ordi.show_tierhaltung', id=ctierhaltung.id))
 
     anredewerte = []
     for key, value in ANREDE.items():
@@ -169,10 +170,11 @@ def create_tier(id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tier.html', id=id)
-        ctier.id = write_tier(ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
+        write_tier(ctier)
         ctierhaltung = read_tierhaltung(id)[0]
-        newid =  write_tierhaltung(ctierhaltung.id, ctier.id)
-        return redirect(url_for('ordi.show_tierhaltung', id=newid))
+        new_ctierhaltung = cTierhaltung(None, ctierhaltung.person_id, ctier.id)
+        write_tierhaltung(new_ctierhaltung)
+        return redirect(url_for('ordi.show_tierhaltung', id=new_ctierhaltung.id))
 
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
@@ -188,7 +190,7 @@ def edit_tier(id, tier_id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
-        update_tier(ctier.id, ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, ctier.eu_passnummer, ctier.patient)
+        update_tier(ctier)
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     ctierhaltung, cperson, ctier = read_tierhaltung(id)
@@ -206,14 +208,14 @@ def edit_person(id, person_id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/edit_person.html', id=id, person_id=person_id)
-        update_person(cperson.id, cperson.anredecode, cperson.titel, cperson.familienname, cperson.vorname, cperson.notiz, cperson.kunde)
+        update_person(cperson)
 
         cadresse = fill_and_validate_adresse(request)[0]
         if(len(cadresse.strasse) > 0 or len(cadresse.postleitzahl) > 0 or len(cadresse.ort) > 0):
             if(cadresse.id):
-                update_adresse(cadresse.id, cadresse.strasse, cadresse.postleitzahl, cadresse.ort)
+                update_adresse(cadresse)
             else:
-                write_adresse(cadresse.person_id, cadresse.strasse, cadresse.postleitzahl, cadresse.ort)
+                write_adresse(cadresse)
         else:
             if(cadresse.id):
                 delete_db_adresse(cadresse.id)
@@ -222,9 +224,9 @@ def edit_person(id, person_id):
         for ckontakt in ckontakte:
             if(len(ckontakt.kontakt) > 0):
                 if(ckontakt.id):
-                    update_kontakt(ckontakt.id, ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern)
+                    update_kontakt(ckontakt)
                 else:
-                    write_kontakt(ckontakt.person_id, ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern)
+                    write_kontakt(ckontakt)
             else:
                 if(ckontakt.id):
                     delete_db_kontakt(ckontakt.id)
@@ -244,25 +246,26 @@ def edit_person(id, person_id):
 def save_behandlungen(id):
     if(request.method == 'POST'):
         req_behandlungen = build_behandlungen(request)
-        creq_behandlungen, error = fill_and_validate_behandlungen(req_behandlungen)
+        cbehandlungen, error = fill_and_validate_behandlungen(req_behandlungen)
         if(len(error) > 0):
             flash(error)
             ctierhaltung, cperson, ctier = read_tierhaltung(id)
             cperson.adresse = read_adresse_for_person(cperson.id)
             cperson.kontakte = read_kontakte_for_person(cperson.id)
-            return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=creq_behandlungen)
+            return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=req_behandlungen)
 
-        ctierhaltung = read_tierhaltung(id)
-        for behandlung in creq_behandlungen:
-            if(behandlung.id):
-                update_behandlung(behandlung.id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
+        ctierhaltung = read_tierhaltung(id)[0]
+        for cbehandlung in cbehandlungen:
+            if(cbehandlung.id):
+                update_behandlung(cbehandlung)
             else:
-                behandlung.id = write_behandlung(ctierhaltung.tier_id, behandlung.behandlungsdatum, behandlung.gewicht, behandlung.diagnose, behandlung.laborwerte1, behandlung.laborwerte2, behandlung.arzneien, behandlung.arzneimittel, behandlung.impfungen_extern)
-            if(len(behandlung.impfungen_extern) > 0):
-                impfungstexte = behandlung.impfungen_extern.split(',')
+                cbehandlung.tier_id = ctierhaltung.tier_id
+                write_behandlung(cbehandlung)
+            if(len(cbehandlung.impfungen_extern) > 0):
+                impfungstexte = cbehandlung.impfungen_extern.split(',')
             else:
                 impfungstexte = []
-            save_or_delete_impfungen(behandlung.id, impfungstexte)
+            save_or_delete_impfungen(cbehandlung.id, impfungstexte)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
 
 
@@ -325,11 +328,9 @@ def create_rechnung(id):
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
 
-    tierhaltung = read_tierhaltung(id)
-    cperson = read_person(tierhaltung['person_id'])
+    ctierhaltung, cperson, ctier = read_tierhaltung(id)
     cperson.adresse = read_adresse_for_person(cperson.id)
     cperson.kontakte = read_kontakte_for_person(cperson.id)
-    ctier = read_tier(tierhaltung['tier_id'])
 
     if(request.method == 'POST'):
         crechnung, error = fill_and_validate_rechnung(request)
@@ -338,15 +339,15 @@ def create_rechnung(id):
         if(len(error) > 0 or len(zeilen_error) > 0):
             flash(error + zeilen_error)
             return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                                   id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
+                                   id=id, person=cperson, tier=ctier, page_title="Rechnung")
 
         flag, error = crechnung.calc()
         if(flag == False):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                                   id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
+                                   id=id, person=cperson, tier=ctier, page_title="Rechnung")
 
-        crechnung.id = write_rechnung(tierhaltung['person_id'], tierhaltung['tier_id'], crechnung.rechnungsjahr, 
+        crechnung.id = write_rechnung(cperson.id, ctier.id, crechnung.rechnungsjahr, 
                                      crechnung.rechnungslfnr, crechnung.ausstellungsdatum, crechnung.ausstellungsort, 
                                      crechnung.diagnose, crechnung.bezahlung, crechnung.brutto_summe, 
                                      crechnung.netto_summe, crechnung.steuerbetrag_zwanzig, crechnung.steuerbetrag_dreizehn, 
@@ -370,7 +371,7 @@ def create_rechnung(id):
     datum = date.today().strftime("%Y-%m-%d")
     ort = "Wien"
     return render_template('ordi/rechnung.html', rechnung=None, rechnungszeilen=None, datum=datum, ort=ort, artikelwerte=artikelwerte, 
-                           id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
+                           id=id, person=cperson, tier=ctier, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
@@ -392,12 +393,14 @@ def edit_rechnung(rechnung_id):
         crechnung.rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(len(error) > 0 or len(zeilen_error) > 0):
             flash(error + zeilen_error)
-            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, id=tierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
+                                    artikelwerte=artikelwerte, id=ctierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
 
         flag, error = crechnung.calc()
         if(flag == False):
             flash(error)
-            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
+                                    artikelwerte=artikelwerte, id=tierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
         else:
             update_rechnung(rechnung_id, crechnung.rechnungsjahr, crechnung.rechnungslfnr, crechnung.ausstellungsdatum, crechnung.ausstellungsort, crechnung.diagnose, crechnung.bezahlung, crechnung.brutto_summe, crechnung.netto_summe, crechnung.steuerbetrag_zwanzig, crechnung.steuerbetrag_dreizehn, crechnung.steuerbetrag_zehn)
 
@@ -418,7 +421,8 @@ def edit_rechnung(rechnung_id):
 
     crechnung = read_rechnung(rechnung_id)
     crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
-    return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, artikelwerte=artikelwerte, id=tierhaltung['id'], person=cperson, tier=ctier, page_title="Rechnung")
+    return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, artikelwerte=artikelwerte, 
+                            id=ctierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
 
 
 @bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))

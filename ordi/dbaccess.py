@@ -85,18 +85,18 @@ def read_tierhaltung_by_children(person_id, tier_id):
     return ctierhaltung, cperson, ctier
 
 
-def write_tierhaltung(person_id, tier_id):
+def write_tierhaltung(ctierhaltung):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    id = cursor.execute(
+    ctierhaltung.id = cursor.execute(
         "INSERT INTO tierhaltung (person_id, tier_id)"
         " VALUES (?, ?)",
-        (person_id, tier_id,)
+        (ctierhaltung.person_id, ctierhaltung.tier_id,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return id
+    return True
 
 
 def delete_db_tierhaltung(id):
@@ -113,6 +113,7 @@ def delete_db_tierhaltung(id):
         cursor.execute("DELETE FROM person WHERE id = ?", (tierhaltung['person_id'],))    
     dbcon.commit()
     cursor.close()
+    return True
 # tierhaltung
 
 
@@ -130,32 +131,33 @@ def read_person(person_id):
     cperson = cPerson(int(person['id']), int(person['anredecode']), person['titel'], person['familienname'], person['vorname'], person['notiz'], int(person['kunde']))
     return cperson
 
-def write_person(anredecode, titel, familienname, vorname, notiz, kunde):
+
+def write_person(cperson):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    person_id = cursor.execute(
+    cperson.id = cursor.execute(
         "INSERT INTO person (anredecode, titel, familienname, vorname, notiz, kunde)"
         " VALUES (?, ?, ?, ?, ?, ?)",
-        (anredecode, titel, familienname, vorname, notiz, kunde,)
+        (cperson.anredecode, cperson.titel, cperson.familienname, cperson.vorname, cperson.notiz, cperson.kunde,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return person_id
+    return True
 
 
-def update_person(person_id, anredecode, titel, familienname, vorname, notiz, kunde):
+def update_person(cperson):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
         "UPDATE person SET anredecode = ?, titel = ?, familienname = ?, vorname = ?, notiz = ?, kunde = ?"
-        " WHERE person.id = ?",
-        (anredecode, titel, familienname, vorname, notiz, kunde, person_id,)
+        " WHERE id = ?",
+        (cperson.anredecode, cperson.titel, cperson.familienname, cperson.vorname, cperson.notiz, cperson.kunde, cperson.id,)
     )
     dbcon.commit()
     cursor.close()
-
+    return True
 # person
 
 
@@ -177,31 +179,32 @@ def read_adresse_for_person(person_id):
     return cadresse
 
 
-def write_adresse(person_id, strasse, postleitzahl, ort):
+def write_adresse(cadresse):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    adresse_id = cursor.execute(
+    cadresse.id = cursor.execute(
         "INSERT INTO adresse (person_id, strasse, postleitzahl, ort)"
         " VALUES (?, ?, ?, ?)",
-        (person_id, strasse, postleitzahl, ort,)
+        (cadresse.person_id, cadresse.strasse, cadresse.postleitzahl, cadresse.ort,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return adresse_id
+    return True
 
 
-def update_adresse(adresse_id, strasse, postleitzahl, ort):
+def update_adresse(cadresse):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
         "UPDATE adresse SET strasse = ?, postleitzahl = ?, ort = ?"
         " WHERE id = ?",
-        (strasse, postleitzahl, ort, adresse_id,)
+        (cadresse.strasse, cadresse.postleitzahl, cadresse.ort, cadresse.id,)
     )
     dbcon.commit()
     cursor.close()
+    return True
 
 
 def delete_db_adresse(adresse_id):
@@ -211,6 +214,7 @@ def delete_db_adresse(adresse_id):
     cursor.execute("DELETE FROM adresse WHERE id = ?", (adresse_id,))
     dbcon.commit()
     cursor.close()
+    return True
 # adresse
 
 
@@ -231,31 +235,32 @@ def read_kontakte_for_person(person_id):
     return ckontakte
 
 
-def write_kontakt(person_id, kontaktcode, kontakt, kontakt_intern):
+def write_kontakt(ckontakt):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    kontakt_id = cursor.execute(
+    ckontakt.id = cursor.execute(
         "INSERT INTO kontakt (person_id, kontaktcode, kontakt, kontakt_intern)"
         " VALUES (?, ?, ?, ?)",
-        (person_id, kontaktcode, kontakt, kontakt_intern,)
+        (ckontakt.person_id, ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return kontakt_id
+    return True
 
 
-def update_kontakt(kontakt_id, kontaktcode, kontakt, kontakt_intern):
+def update_kontakt(ckontakt):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
         "UPDATE kontakt SET kontaktcode = ?, kontakt = ?, kontakt_intern = ?"
         " WHERE id = ?",
-        (kontaktcode, kontakt, kontakt_intern, kontakt_id,)
+        (ckontakt.kontaktcode, ckontakt.kontakt, ckontakt.kontakt_intern, ckontakt.id,)
     )
     dbcon.commit()
     cursor.close()
+    return True
 
 
 def delete_db_kontakt(kontakt_id):
@@ -265,6 +270,7 @@ def delete_db_kontakt(kontakt_id):
     cursor.execute("DELETE FROM kontakt WHERE id = ?", (kontakt_id,))
     dbcon.commit()
     cursor.close()
+    return True
 # kontakt
 
 
@@ -285,31 +291,40 @@ def read_tier(tier_id):
     return ctier
 
 
-def write_tier(tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient):
+def write_tier(ctier):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    tier_id = cursor.execute(
-        "INSERT INTO tier (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient)"
+    ctier.id = cursor.execute(
+        "INSERT INTO tier (tiername, tierart, rasse, farbe, viren," 
+        " merkmal, geburtsdatum, geschlechtscode, chip_nummer,"
+        " eu_passnummer, patient)"
         " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient,)
+        (ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, 
+         ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, 
+         ctier.eu_passnummer, ctier.patient,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return tier_id
+    return True
 
 
-def update_tier(tier_id, tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient):
+def update_tier(ctier):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE tier SET tiername = ?, tierart = ?, rasse = ?, farbe = ?, viren = ?, merkmal = ?, geburtsdatum = ?, geschlechtscode = ?, chip_nummer = ?, eu_passnummer = ?, patient = ?"
-        " WHERE tier.id = ?",
-        (tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum, geschlechtscode, chip_nummer, eu_passnummer, patient, tier_id,)
+        "UPDATE tier SET tiername = ?, tierart = ?, rasse = ?, farbe = ?, viren = ?,"
+        " merkmal = ?, geburtsdatum = ?, geschlechtscode = ?, chip_nummer = ?,"
+        " eu_passnummer = ?, patient = ?"
+        " WHERE id = ?",
+        (ctier.tiername, ctier.tierart, ctier.rasse, ctier.farbe, ctier.viren, 
+         ctier.merkmal, ctier.geburtsdatum, ctier.geschlechtscode, ctier.chip_nummer, 
+         ctier.eu_passnummer, ctier.patient, ctier.id,)
     )
     dbcon.commit()
     cursor.close()
+    return True
 # tier
 
 
@@ -351,31 +366,40 @@ def read_behandlung(behandlung_id):
     return cbehandlung
 
 
-def write_behandlung(tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern):
+def write_behandlung(cbehandlung):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    behandlung_id = cursor.execute(
-        "INSERT INTO behandlung (tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern)"
+    cbehandlung.id = cursor.execute(
+        "INSERT INTO behandlung (tier_id, behandlungsdatum, gewicht,"
+        " diagnose, laborwerte1, laborwerte2,"
+        " arzneien, arzneimittel, impfungen_extern)"
         " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (tier_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern,)
+        (cbehandlung.tier_id, cbehandlung.behandlungsdatum, cbehandlung.gewicht, 
+         cbehandlung.diagnose, cbehandlung.laborwerte1, cbehandlung.laborwerte2, 
+         cbehandlung.arzneien, cbehandlung.arzneimittel, cbehandlung.impfungen_extern,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return behandlung_id
+    return True
 
 
-def update_behandlung(behandlung_id, behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern):
+def update_behandlung(cbehandlung):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE behandlung SET behandlungsdatum = ?, gewicht = ?, diagnose = ?, laborwerte1 = ?, laborwerte2 = ?, arzneien = ?, arzneimittel = ?, impfungen_extern = ?"
-        " WHERE behandlung.id = ?",
-        (behandlungsdatum, gewicht, diagnose, laborwerte1, laborwerte2, arzneien, arzneimittel, impfungen_extern, behandlung_id)
+        "UPDATE behandlung SET behandlungsdatum = ?, gewicht = ?, diagnose = ?,"
+        " laborwerte1 = ?, laborwerte2 = ?, arzneien = ?,"
+        " arzneimittel = ?, impfungen_extern = ?"
+        " WHERE id = ?",
+        (cbehandlung.behandlungsdatum, cbehandlung.gewicht, cbehandlung.diagnose, 
+         cbehandlung.laborwerte1, cbehandlung.laborwerte2, cbehandlung.arzneien, 
+         cbehandlung.arzneimittel, cbehandlung.impfungen_extern, cbehandlung.id)
     )
     dbcon.commit()
     cursor.close()
+    return True
 
 
 def delete_db_behandlung(behandlung_id):
@@ -385,6 +409,7 @@ def delete_db_behandlung(behandlung_id):
     cursor.execute("DELETE FROM behandlung WHERE id = ?", (behandlung_id,))
     dbcon.commit()
     cursor.close()
+    return True
 # behandlung
 
 

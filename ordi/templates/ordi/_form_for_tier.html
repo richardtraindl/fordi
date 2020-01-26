@@ -42,7 +42,7 @@
         {% endif %}
 
         <label for="geschlechtscode">Geschlecht</label>
-        {% if tierhaltung %}
+        {% if tier %}
             {% set geschlechtscode = tier.geschlechtscode %}
         {% else %}
             {% if request.form['geschlechtscode'] %}

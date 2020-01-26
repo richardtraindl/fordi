@@ -43,18 +43,18 @@
               {% for behandlung in behandlungen %}
                 <tr>
                     <td style="width: 8%">
-                        <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}">
-                        <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung.behandlungsdatum -}}">
+                        <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] or behandlung.id -}}">
+                        <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung['behandlungsdatum'] or behandlung.behandlungsdatum -}}">
                     </td>
-                    <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung.diagnose -}}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{- behandlung.laborwerte1 -}}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{- behandlung.laborwerte2 -}}</textarea></td>
-                    <td style="width: 14%"><textarea name="arzneien[]">{{- behandlung.arzneien -}}</textarea></td>
-                    <td style="width: 7%"><textarea name="arzneimittel[]">{{- behandlung.arzneimittel -}}</textarea></td>
+                    <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung['diagnose'] or behandlung.diagnose -}}</textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{- behandlung['laborwerte1'] or behandlung.laborwerte1 -}}</textarea></td>
+                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{- behandlung['laborwerte2'] or behandlung.laborwerte2 -}}</textarea></td>
+                    <td style="width: 14%"><textarea name="arzneien[]">{{- behandlung['arzneien'] or behandlung.arzneien -}}</textarea></td>
+                    <td style="width: 7%"><textarea name="arzneimittel[]">{{- behandlung['arzneimittel'] or behandlung.arzneimittel -}}</textarea></td>
                     <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly>
                             {%- set vars = {'selected': False} -%}
                             {%- for impfungswert in impfungswerte -%}
-                                {%- for impfung in behandlung.impfungen -%}
+                                {%- for impfung in (behandlung['impfungen'] or behandlung.impfungen) -%}
                                     {%- if impfung.impfungscode | string == impfungswert[1]|string -%}
                                         {%- if vars.selected -%}, {%- endif -%}
                                         {{- impfungswert[0] -}}
@@ -64,9 +64,9 @@
                             {%- endfor -%}
                         </textarea>
                     </td>
-                    <td style="width: 4%"><textarea name="gewicht[]">{{- behandlung.gewicht | sn -}}</textarea></td>
+                    <td style="width: 4%"><textarea name="gewicht[]">{{- behandlung['gewicht'] or  behandlung.gewicht | sn -}}</textarea></td>
                     <td style="width: 5%">
-                        <a class="zeile_loeschen" tierhaltung_id="{{- id -}}" behandlung_id="{{- behandlung.id -}}" href="#">Zeile löschen</a>
+                        <a class="zeile_loeschen" tierhaltung_id="{{- id -}}" behandlung_id="{{- behandlung['behandlung_id'] or  behandlung.id -}}" href="#">Zeile löschen</a>
                     </td>
                 </tr>
               {% endfor %}

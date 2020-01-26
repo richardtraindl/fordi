@@ -17,21 +17,21 @@ def fill_and_validate_tier(request):
     else:
         patient = 0
 
-    tier = cTier(tier_id, 
-                 request.form['tiername'], 
-                 request.form['tierart'], 
-                 request.form['rasse'],
-                 request.form['farbe'],
-                 request.form['viren'],
-                 request.form['merkmal'],
-                 request.form['geburtsdatum'],
-                 request.form['geschlechtscode'],
-                 request.form['chip_nummer'],
-                 request.form['eu_passnummer'],
-                 patient)
+    ctier = cTier(tier_id, 
+                  request.form['tiername'], 
+                  request.form['tierart'], 
+                  request.form['rasse'],
+                  request.form['farbe'],
+                  request.form['viren'],
+                  request.form['merkmal'],
+                  request.form['geburtsdatum'],
+                  request.form['geschlechtscode'],
+                  request.form['chip_nummer'],
+                  request.form['eu_passnummer'],
+                  patient)
 
-    flag, error = tier.validate()
-    return tier, error
+    flag, error = ctier.validate()
+    return ctier, error
 
 
 def fill_and_validate_person(request):
@@ -50,16 +50,16 @@ def fill_and_validate_person(request):
     else:
         kunde = 0
 
-    person = cPerson(person_id, 
-                     anredecode, 
-                     request.form['titel'],
-                     request.form['familienname'],
-                     request.form['vorname'],
-                     request.form['notiz'],
-                     kunde)
+    cperson = cPerson(person_id, 
+                      anredecode, 
+                      request.form['titel'],
+                      request.form['familienname'],
+                      request.form['vorname'],
+                      request.form['notiz'],
+                      kunde)
 
-    flag, error = person.validate()
-    return person, error
+    flag, error = cperson.validate()
+    return cperson, error
 
 
 def fill_and_validate_adresse(request):
@@ -73,13 +73,13 @@ def fill_and_validate_adresse(request):
     except:
         person_id = None
 
-    adresse = cAdresse(adresse_id, 
-                       person_id,
-                       request.form['strasse'],
-                       request.form['postleitzahl'],
-                       request.form['ort'])
+    cadresse = cAdresse(adresse_id, 
+                        person_id,
+                        request.form['strasse'],
+                        request.form['postleitzahl'],
+                        request.form['ort'])
 
-    return adresse, ""
+    return cadresse, ""
 
 
 def fill_and_validate_kontakte(request):
@@ -123,19 +123,19 @@ def fill_and_validate_behandlung(request):
     except:
         tier_id = None
 
-    behandlung = cBehandlung(behandlung_id, 
-                             tier_id,
-                             request.form['behandlungsdatum'], 
-                             request.form['gewicht'],  
-                             request.form['diagnose'],
-                             request.form['laborwerte1'], 
-                             request.form['laborwerte2'], 
-                             request.form['arzneien'],
-                             request.form['arzneimittel'], 
-                             request.form['impfungen_extern'])
+    cbehandlung = cBehandlung(behandlung_id, 
+                              tier_id,
+                              request.form['behandlungsdatum'], 
+                              request.form['gewicht'],  
+                              request.form['diagnose'],
+                              request.form['laborwerte1'], 
+                              request.form['laborwerte2'], 
+                              request.form['arzneien'],
+                              request.form['arzneimittel'], 
+                              request.form['impfungen_extern'])
 
-    flag, error = behandlung.validate()
-    return behandlung, error
+    flag, error = cbehandlung.validate()
+    return cbehandlung, error
 
 
 def build_behandlungen(request):    
@@ -187,32 +187,32 @@ def fill_and_validate_behandlungen(req_behandlungen):
         except:
             behandlung_id = None
 
-        try:
-            tier_id = int(req_behandlung['tier_id'])
-        except:
-            tier_id = None
+        tier_id = None
 
-        try:
-            gewicht = float(req_behandlung['gewicht'].replace(",", "."))
-        except:
+        if(len(req_behandlung['gewicht']) == 0):
             gewicht = None
-            return_error += "Gewicht muss eine Zahl sein. "
+        else:
+            try:
+                gewicht = float(req_behandlung['gewicht'].replace(",", "."))
+            except:
+                gewicht = None
+                return_error += "Gewicht muss eine Zahl sein. "
 
-        behandlung = cBehandlung(behandlung_id, 
-                                 tier_id, 
-                                 req_behandlung['behandlungsdatum'], 
-                                 gewicht, 
-                                 req_behandlung['diagnose'], 
-                                 req_behandlung['laborwerte1'], 
-                                 req_behandlung['laborwerte2'],
-                                 req_behandlung['arzneien'],
-                                 req_behandlung['arzneimittel'],
-                                 req_behandlung['impfungen_extern'])
+        cbehandlung = cBehandlung(behandlung_id, 
+                                  tier_id, 
+                                  req_behandlung['behandlungsdatum'], 
+                                  gewicht, 
+                                  req_behandlung['diagnose'], 
+                                  req_behandlung['laborwerte1'], 
+                                  req_behandlung['laborwerte2'],
+                                  req_behandlung['arzneien'],
+                                  req_behandlung['arzneimittel'],
+                                  req_behandlung['impfungen_extern'])
 
-        flag, error = behandlung.validate()
+        flag, error = cbehandlung.validate()
         if(flag == False and len(return_error) == 0):
             return_error = error
-        behandlungen.append(behandlung)
+        behandlungen.append(cbehandlung)
 
     return behandlungen, return_error
 
@@ -223,15 +223,8 @@ def fill_and_validate_rechnung(request):
     except:
         rechnung_id = None
 
-    try:
-        person_id = int(request.form['person_id'])
-    except:
-        person_id = None
-
-    try:
-        tier_id = int(request.form['tier_id'])
-    except:
-        tier_id = None
+    person_id = None
+    tier_id = None
 
     try:
         rechnungsjahr = int(request.form['rechnungsjahr'])
@@ -253,23 +246,23 @@ def fill_and_validate_rechnung(request):
     else:
         ausstellungsort = request.form['ausstellungsort']
 
-    rechnung = cRechnung(rechnung_id,
-                         person_id,
-                         tier_id,
-                         rechnungsjahr,
-                         rechnungslfnr,
-                         ausstellungsdatum,
-                         ausstellungsort,
-                         request.form['diagnose'],
-                         request.form['bezahlung'],
-                         0,
-                         0,
-                         0,
-                         0,
-                         0)
+    crechnung = cRechnung(rechnung_id,
+                          person_id,
+                          tier_id,
+                          rechnungsjahr,
+                          rechnungslfnr,
+                          ausstellungsdatum,
+                          ausstellungsort,
+                          request.form['diagnose'],
+                          request.form['bezahlung'],
+                          0,
+                          0,
+                          0,
+                          0,
+                          0)
 
-    flag, error = rechnung.validate()
-    return rechnung, error
+    flag, error = crechnung.validate()
+    return crechnung, error
 
 
 def build_rechnungszeilen(request):
@@ -284,7 +277,7 @@ def build_rechnungszeilen(request):
     for idx in range(len(data[0])):
         req_rechnungszeile = {}
         req_rechnungszeile['rechnungszeile_id'] = data[0][idx]
-        req_rechnungszeile['rechnung_id'] = ""
+        req_rechnungszeile['rechnung_id'] = request.form['rechnung_id']
         req_rechnungszeile['datum'] = data[1][idx]
         req_rechnungszeile['artikelcode'] = data[2][idx]
         req_rechnungszeile['artikel'] = data[3][idx]
@@ -314,11 +307,17 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
         except:
             rechnung_id = None
 
+        if(len(req_rechnungszeile['datum']) == 0):
+            return_error += "Datum fehlt. "
+
         try:
             artikelcode = int(req_rechnungszeile['artikelcode'])
         except:
-            artikelcode = None          
-            return_error += "Falsche Artikelbezeichnung. "
+            artikelcode = 0
+            return_error += "Falsche Artikelart. "
+
+        if(len(req_rechnungszeile['artikel']) == 0):
+            return_error += "Artikeldetail fehlt. "
 
         if(len(req_rechnungszeile['betrag']) == 0):
             betrag = None
@@ -330,20 +329,40 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
                 betrag = None
                 return_error += "Betrag muss eine Zahl sein. "
 
-        rechnungszeile = cRechnungszeile(rechnungszeile_id, 
-                                         rechnung_id, 
-                                         req_rechnungszeile['datum'], 
-                                         artikelcode, 
-                                         req_rechnungszeile['artikel'],
-                                         betrag)
+        crechnungszeile = cRechnungszeile(rechnungszeile_id, 
+                                          rechnung_id, 
+                                          req_rechnungszeile['datum'], 
+                                          artikelcode, 
+                                          req_rechnungszeile['artikel'],
+                                          betrag)
 
-        flag, error = rechnungszeile.validate()
+        flag, error = crechnungszeile.validate()
         if(flag == False and len(return_error) == 0):
             return_error = error
-        rechnungszeilen.append(rechnungszeile)
+        rechnungszeilen.append(crechnungszeile)
 
     if(len(rechnungszeilen) == 0):
         return rechnungszeilen, return_error + "Mindestens eine Rechnungszeile erforderlich. "
     else:
         return rechnungszeilen, return_error
+
+
+def fill_and_validate_behandlungsverlauf(request):
+    try:
+        behandlungsverlauf_id = int(request.form['behandlungsverlauf_id'])
+    except:
+        behandlungsverlauf_id = None
+
+    person_id = None
+    tier_id = None
+
+    cbehandlungsverlauf = cBehandlungsverlauf(behandlungsverlauf_id,
+                                              person_id,
+                                              tier_id,
+                                              request.form['datum'],
+                                              request.form['diagnose'],
+                                              request.form['behandlung'])
+
+    flag, error = cbehandlungsverlauf.validate()
+    return cbehandlungsverlauf, error
 

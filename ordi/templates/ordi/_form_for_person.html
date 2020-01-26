@@ -9,7 +9,7 @@
         <label for="anredecode">Anrede</label>
         <select name="anredecode">
         {% if person %}
-            {% set anredecode = person['anredecode'] %}
+            {% set anredecode = person.anredecode %}
         {% else %}
             {% if request.form['anredecode'] %}
                 {% set anredecode = request.form['anredecode'] | int %}
@@ -109,10 +109,10 @@
             <label for="kontakt1">Telefonnr.</label>
             <input size="20" name="kontakt1" value="{{- request.form['kontakt1'] -}}">
         {% endif %}
-        {% if kontakte and kontakte[1] %}
-            <input type="hidden" name="kontakt2_id" value="{{- kontakte[1]['id'] -}}">
+        {% if person.kontakte and person.kontakte[1] %}
+            <input type="hidden" name="kontakt2_id" value="{{- person.kontakte[1]['id'] -}}">
             <label for="kontakt2">Telefonnr.</label>
-            <input size="20" name="kontakt2" value="{{- kontakte[1].kontakt -}}">
+            <input size="20" name="kontakt2" value="{{- person.kontakte[1].kontakt -}}">
         {% else %}
             <input type="hidden" name="kontakt2_id" value="">
             <label for="kontakt2">Telefonnr.</label>

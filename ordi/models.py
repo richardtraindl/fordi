@@ -1,6 +1,6 @@
 
 import re
-from datetime import date
+from datetime import datetime, date
 from .values import *
 
 
@@ -266,4 +266,31 @@ class cRechnungszeile:
             return False, "Artikelbetrag fehlt. "
         return True, ""
 ### rechnungszeile
+
+
+### behandlungsverlauf
+class cBehandlungsverlauf:
+    def __init__(self, 
+                 id=None, 
+                 person_id=None,
+                 tier_id=None, 
+                 datum=None,
+                 diagnose="", 
+                 behandlung=""):
+        self.id = id
+        self.person_id = person_id
+        self.tier_id = tier_id
+        self.datum = datum
+        self.diagnose = diagnose
+        self.behandlung = behandlung
+
+    def validate(self):
+        if(self.datum == None):
+            return False, "Datum fehlt. "
+        if(len(self.diagnose) == 0):
+            return False, "Diagnose fehlt. "
+        if(len(self.behandlung) == 0):
+            return False, "Behandlung fehlt. "
+        return True, ""
+### behandlungsverlauf
 

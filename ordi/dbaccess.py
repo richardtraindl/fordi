@@ -334,7 +334,7 @@ def read_behandlungen_for_tier(tier_id):
     cursor = dbcon.cursor()
     cursor.execute(
         "SELECT * FROM behandlung JOIN tier ON behandlung.tier_id = tier.id"
-        " WHERE tier.id = ? ORDER BY behandlungsdatum ASC",
+        " WHERE tier.id = ? ORDER BY behandlungsdatum ASC, id ASC",
         (tier_id,)
     )
     behandlungen = cursor.fetchall()
@@ -487,34 +487,43 @@ def read_behandlungsverlauf(behandlungsverlauf_id):
     cursor.execute("SELECT * FROM behandlungsverlauf WHERE id = ?",(behandlungsverlauf_id,))
     behandlungsverlauf = cursor.fetchone()
     cursor.close()
-    return behandlungsverlauf
+    cbehandlungsverlauf = cBehandlungsverlauf(int(behandlungsverlauf['id']), 
+                                              int(behandlungsverlauf['person_id']), 
+                                              int(behandlungsverlauf['tier_id']), 
+                                              behandlungsverlauf['datum'], 
+                                              behandlungsverlauf['diagnose'],  
+                                              behandlungsverlauf['behandlung'])
+    return cbehandlungsverlauf
 
 
-def write_behandlungsverlauf(person_id, tier_id, datum, diagnose, behandlung):
+def write_behandlungsverlauf(cbehandlungsverlauf):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    behandlungsverlauf_id = cursor.execute(
+    cbehandlungsverlauf.id = cursor.execute(
         "INSERT INTO behandlungsverlauf (person_id, tier_id, datum, diagnose, behandlung)"
         " VALUES (?, ?, ?, ?, ?)",
-        (person_id, tier_id, datum, diagnose, behandlung,)
+        (cbehandlungsverlauf.person_id, cbehandlungsverlauf.tier_id, cbehandlungsverlauf.datum, 
+         cbehandlungsverlauf.diagnose, cbehandlungsverlauf.behandlung,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return behandlungsverlauf_id
+    return True
 
 
-def update_behandlungsverlauf(behandlungsverlauf_id, datum, diagnose, behandlung):
+def update_behandlungsverlauf(cbehandlungsverlauf):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
         "UPDATE behandlungsverlauf SET datum = ?, diagnose = ?, behandlung = ?"
         " WHERE id = ?",
-        (datum, diagnose, behandlung, behandlungsverlauf_id,)
+        (cbehandlungsverlauf.datum, cbehandlungsverlauf.diagnose, 
+         cbehandlungsverlauf.behandlung, cbehandlungsverlauf.id,)
     )
     dbcon.commit()
     cursor.close()
+    return True
 
 
 def delete_db_behandlungsverlauf(behandlungsverlauf_id):
@@ -524,6 +533,7 @@ def delete_db_behandlungsverlauf(behandlungsverlauf_id):
     cursor.execute("DELETE FROM behandlungsverlauf WHERE id = ?", (behandlungsverlauf_id,))
     dbcon.commit()
     cursor.close()
+    return True
 # behandlungsverlauf
 
 
@@ -580,32 +590,44 @@ def read_rechnung(rechnung_id):
     return crechnung
 
 
-def write_rechnung(person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):
+def write_rechnung(crechung):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    rechnung_id = cursor.execute(
-        "INSERT INTO rechnung (person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung,"
-        " brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn)"
+    crechung.id = cursor.execute(
+        "INSERT INTO rechnung (person_id, tier_id, rechnungsjahr, rechnungslfnr,"
+        " ausstellungsdatum, ausstellungsort, diagnose,"
+        " bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig,"
+        " steuerbetrag_dreizehn, steuerbetrag_zehn)"
         " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (person_id, tier_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn,)
+        (crechung.person_id, crechung.tier_id, crechung.rechnungsjahr, crechung.rechnungslfnr, 
+         crechung.ausstellungsdatum, crechung.ausstellungsort, crechung.diagnose, 
+         crechung.bezahlung, crechung.brutto_summe, crechung.netto_summe, crechung.steuerbetrag_zwanzig, 
+         crechung.steuerbetrag_dreizehn, crechung.steuerbetrag_zehn,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return rechnung_id
+    return True
 
 
-def update_rechnung(rechnung_id, rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn):
+def update_rechnung(crechnung):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?, ausstellungsort = ?, diagnose = ?, bezahlung = ?, brutto_summe = ?, netto_summe = ?, steuerbetrag_zwanzig = ?, steuerbetrag_dreizehn = ?, steuerbetrag_zehn = ?"
+        "UPDATE rechnung SET rechnungsjahr = ?, rechnungslfnr = ?, ausstellungsdatum = ?,"
+        " ausstellungsort = ?, diagnose = ?, bezahlung = ?,"
+        " brutto_summe = ?, netto_summe = ?, steuerbetrag_zwanzig = ?,"
+        " steuerbetrag_dreizehn = ?, steuerbetrag_zehn = ?"
         " WHERE id = ?",
-        (rechnungsjahr, rechnungslfnr, ausstellungsdatum, ausstellungsort, diagnose, bezahlung, brutto_summe, netto_summe, steuerbetrag_zwanzig, steuerbetrag_dreizehn, steuerbetrag_zehn, rechnung_id,)
+        (crechnung.rechnungsjahr, crechnung.rechnungslfnr, crechnung.ausstellungsdatum, 
+         crechnung.ausstellungsort, crechnung.diagnose, crechnung.bezahlung, 
+         crechnung.brutto_summe, crechnung.netto_summe, crechnung.steuerbetrag_zwanzig, 
+         crechnung.steuerbetrag_dreizehn, crechnung.steuerbetrag_zehn, crechnung.id,)
     )
     dbcon.commit()
     cursor.close()
+    return True
 
 
 def delete_db_rechnung(rechnung_id):
@@ -615,6 +637,7 @@ def delete_db_rechnung(rechnung_id):
     cursor.execute("DELETE FROM rechnung WHERE id = ?", (rechnung_id,))
     dbcon.commit()
     cursor.close()
+    return True
 # rechnung
 
 
@@ -656,31 +679,36 @@ def read_rechnungszeile(rechnungszeile_id):
     return crechnungszeile
 
 
-def write_rechnungszeile(rechnung_id, datum, artikelcode, artikel, betrag):
+def write_rechnungszeile(crechnungszeile):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
-    rechnungszeile_id = cursor.execute(
-        "INSERT INTO rechnungszeile (rechnung_id, datum, artikelcode, artikel, betrag)"
+    crechnungszeile.id = cursor.execute(
+        "INSERT INTO rechnungszeile (rechnung_id, datum, artikelcode,"
+        " artikel, betrag)"
         " VALUES (?, ?, ?, ?, ?)",
-        (rechnung_id, datum, artikelcode, artikel, betrag,)
+        (crechnungszeile.rechnung_id, crechnungszeile.datum, crechnungszeile.artikelcode, 
+         crechnungszeile.artikel, crechnungszeile.betrag,)
     ).lastrowid
     dbcon.commit()
     cursor.close()
-    return rechnungszeile_id
+    return True
 
 
-def update_rechnungszeile(rechnungszeile_id, datum, artikelcode, artikel, betrag):
+def update_rechnungszeile(crechnungszeile):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "UPDATE rechnungszeile SET datum = ?, artikelcode = ?, artikel = ?, betrag = ?"
-        " WHERE rechnungszeile.id = ?",
-        (datum, artikelcode, artikel, betrag, rechnungszeile_id,)
+        "UPDATE rechnungszeile SET datum = ?, artikelcode = ?,"
+        " artikel = ?, betrag = ?"
+        " WHERE id = ?",
+        (crechnungszeile.datum, crechnungszeile.artikelcode, crechnungszeile.artikel, 
+         crechnungszeile.betrag, crechnungszeile.id,)
     )
     dbcon.commit()
     cursor.close()
+    return True
 
 
 def delete_db_rechnungszeile(rechnungszeile_id):

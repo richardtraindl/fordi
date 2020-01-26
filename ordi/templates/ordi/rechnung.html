@@ -23,7 +23,7 @@
   {% else %}
     <form method="post" action="{{ url_for('ordi.create_rechnung', id=id) }}">
   {% endif %}
-
+        <input type="hidden" name="rechnung_id" value="{{- '' or rechnung.id -}}">
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
             <label for="rechnungsjahr">Rechnungsjahr</label>
@@ -70,15 +70,15 @@
               {% for rechnungszeile in rechnungszeilen %}
                 <tr>
                   <td style="width: 10%">
-                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rechnungszeile.id -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile.datum | sn -}}">
+                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rechnungszeile[''] or rechnungszeile.id -}}">
+                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile['datum'] or rechnungszeile.datum | sn -}}">
                   </td>
                   {% set artikelcode = rechnungszeile.artikelcode %}
                   <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
-                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rechnungszeile.artikel -}}</textarea></td>
-                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rechnungszeile.betrag | sn -}}</textarea></td>
+                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rechnungszeile['artikel'] or rechnungszeile.artikel -}}</textarea></td>
+                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rechnungszeile['betrag'] or rechnungszeile.betrag | sn -}}</textarea></td>
                   <td style="width: 6%">
-                    <a class="zeile_loeschen" rechnungszeile_id="{{- rechnungszeile.id -}}" href="#">Zeile löschen</a>
+                    <a class="zeile_loeschen" rechnungszeile_id="{{- rechnungszeile['rechnungszeile_id'] or rechnungszeile.id -}}" href="#">Zeile löschen</a>
                   </td>
                 </tr>
               {% endfor %}

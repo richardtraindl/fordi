@@ -36,15 +36,16 @@
         <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" required>{{- request.form['behandlung'] or behandlungsverlauf.behandlung -}}</textarea>
       </div>
 
-    <div class="small-gap"></div>
+      <div class="small-gap"></div>
 
-    <div class="flex-container">
-      <p><input type="submit" value="Behandlungsverlauf aktualisieren"></p>
-      {% if behandlungsverlauf %}
-        <p><a class="btn" href="{{ url_for('ordi.downloadb', behandlungsverlauf_id=behandlungsverlauf.id) }}">Behandlungsverlauf drucken</a></p>
-      {% else %}
-        <p><a class="btn" href="#" disabled>Behandlungsverlauf drucken</a></p>
-      {% endif %}
+      <div class="flex-container">
+          <p><input type="submit" value="Behandlungsverlauf aktualisieren"></p>
+        {% if behandlungsverlauf %}
+          <p><a class="btn" href="{{ url_for('ordi.downloadb', behandlungsverlauf_id=behandlungsverlauf.id) }}">Behandlungsverlauf drucken</a></p>
+        {% else %}
+          <p><a style="color: Gray" href="#">Behandlungsverlauf drucken</a></p>
+        {% endif %}
+      </div>
     </form>
 
     <script>

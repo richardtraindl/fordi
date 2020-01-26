@@ -4,19 +4,19 @@
     </head>
     <body>
         <div style="padding-bottom: 20mm;">
-            <p>{{- person['anredecode'] | mapanrede -}}</p>
+            <p>{{- person.anredecode | mapanrede -}}</p>
 
             <p>
-               {{- person['vorname'] -}} &nbsp; 
-               {{- person['familienname'] -}} &nbsp; 
-               {{- person['titel'] -}}
+               {{- person.vorname -}} &nbsp; 
+               {{- person.familienname -}} &nbsp; 
+               {{- person.titel -}}
             </p>
 
-            <p>{{- person.adresse['strasse'] -}}</p>
+            <p>{{- person.adresse.strasse -}}</p>
 
             <p>
-                {{- person.adresse['postleitzahl'] -}} &nbsp; 
-                {{- person.adresse['ort'] -}}
+                {{- person.adresse.postleitzahl -}} &nbsp; 
+                {{- person.adresse.ort -}}
             </p>
         </div>
         <table border="0" width="100%">
@@ -28,18 +28,18 @@
             </thead>
             <tbody border="0">
                 <tr border="0">
-                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tier['tiername'] -}} &nbsp; {{- tier['tierart'] -}} &nbsp; {{- tier['geburtsdatum'] -}}</td>
-                    <td border="0" width="30%" align="right">{{- behandlungsverlauf['datum'] -}}</td>
+                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tier.tiername -}} &nbsp; {{- tier['tierart'] -}} &nbsp; {{- tier['geburtsdatum'] -}}</td>
+                    <td border="0" width="30%" align="right">{{- behandlungsverlauf.datum -}}</td>
                 </tr>
             </tbody>
         </table>
 
         <div>
-            <p>Diagnose: &nbsp; {{- behandlungsverlauf['diagnose'] -}}</p>
+            <p>Diagnose: &nbsp; {{- behandlungsverlauf.diagnose -}}</p>
         </div>
 
         <div>
-            <p>{{- behandlungsverlauf['behandlung'] -}}</p>
+            <p>{{- behandlungsverlauf.behandlung -}}</p>
         </div>
     </body>
 </html>

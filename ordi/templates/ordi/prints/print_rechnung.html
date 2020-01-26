@@ -4,19 +4,19 @@
     </head>
     <body>
         <div style="padding-bottom: 20mm;">
-            <p>{{- tierhaltung['anredecode'] | mapanrede -}}</p>
+            <p>{{- person.anredecode | mapanrede -}}</p>
 
             <p>
-               {{- tierhaltung['vorname'] -}} &nbsp; 
-               {{- tierhaltung['familienname'] -}} &nbsp; 
-               {{- tierhaltung['titel'] -}}
+               {{- person.vorname -}} &nbsp; 
+               {{- person.familienname -}} &nbsp; 
+               {{- person.titel -}}
             </p>
 
-            <p>{{- adresse.strasse -}}</p>
+            <p>{{- person.adresse.strasse -}}</p>
 
             <p>
-                {{- adresse.postleitzahl -}} &nbsp; 
-                {{- adresse.ort -}}
+                {{- person.adresse.postleitzahl -}} &nbsp; 
+                {{- person.adresse.ort -}}
             </p>
         </div>
         
@@ -33,14 +33,14 @@
             </thead>
             <tbody border="0">
                 <tr border="0">
-                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tierhaltung['tiername'] -}} &nbsp; {{- tierhaltung['tierart'] -}} &nbsp; {{- tierhaltung['geburtsdatum'] -}}</td>
+                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tier.tiername -}} &nbsp; {{- tier.tierart -}} &nbsp; {{- tier.geburtsdatum -}}</td>
                     <td border="0" width="30%" align="right">{{- rechnung.ausstellungsdatum -}}</td>
                 </tr>
             </tbody>
         </table>
 
         <div>
-            <p>Chip: &nbsp; {{- tierhaltung['chip_nummer'] -}}</p>
+            <p>Chip: &nbsp; {{- tier.chip_nummer -}}</p>
         </div>
 
         <div>
@@ -62,7 +62,7 @@
                 </tr>
             </thead>
             <tbody style="border: 0px;" border="0">
-            {% for rechnungszeile in rechnungszeilen %}
+            {% for rechnungszeile in rechnung.rechnungszeilen %}
                 <tr border="0">
                     <td border="0" width="20%" align="left">{{- rechnungszeile.datum -}}</td>
                     <td border="0" width="60%" align="left">{{- rechnungszeile.artikel -}}</td>

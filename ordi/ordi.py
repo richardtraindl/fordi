@@ -16,6 +16,7 @@ from ordi.createpdf import *
 bp = Blueprint('ordi', __name__)
 
 
+#tierhaltung
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
@@ -36,59 +37,6 @@ def index():
             patient = 0
     tierhaltungen = read_tierhaltungen(familienname, tiername, kunde, patient)
     return render_template('ordi/tierhaltungen.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
-
-
-@bp.route('/behandlungsverlaeufe', methods=('GET', 'POST'))
-@login_required
-def behandlungsverlaeufe():
-    if(request.method == 'POST'):
-        try:
-            behandlungsjahr = int(request.form['behandlungsjahr'])
-        except:
-            behandlungsjahr = None
-    else:
-        behandlungsjahr = None
-    behandlungsverlaeufe = read_behandlungsverlaeufe(behandlungsjahr)
-    if(behandlungsjahr):
-        str_behandlungsjahr = str(behandlungsjahr)
-    else:
-        str_behandlungsjahr = ""
-    return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
-
-
-@bp.route('/rechnungen', methods=('GET', 'POST'))
-@login_required
-def rechnungen():
-    if(request.method == 'POST'):
-        try:
-            rechnungsjahr = int(request.form['rechnungsjahr'])
-        except:
-            rechnungsjahr = None
-    else:
-        rechnungsjahr = None
-    rechnungen = read_rechnungen(rechnungsjahr)
-    if(rechnungsjahr):
-        str_rechnungsjahr = str(rechnungsjahr)
-    else:
-        str_rechnungsjahr = ""
-    return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
-
-
-@bp.route('/abfragen', methods=('GET', 'POST'))
-@login_required
-def abfragen():
-    if(request.method == 'POST'):
-        print(request.form['abfragecode'])
-        try:
-            abfragecode = int(request.form['abfragecode'])
-        except:
-            abfragecode = 0
-        abfragekriterium = request.form['abfragekriterium']
-    else:
-        abfragecode = 0
-        abfragekriterium = ""
-    abfragen = [] # read_abfragen(abfragekriterium)
-    return render_template('ordi/abfragen.html', abfragen=abfragen, abfragekriterium=abfragekriterium, page_title="Abfragen")
 
 
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
@@ -163,6 +111,15 @@ def show_tierhaltung(id):
                            impfungswerte=impfungswerte, page_title="Karteikarte")
 
 
+@bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
+@login_required
+def delete_tierhaltung(id):
+    delete_db_tierhaltung(id)
+    return redirect(url_for('ordi.index'))
+# tierhaltung
+
+
+# tier
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
 @login_required
 def create_tier(id):
@@ -199,8 +156,10 @@ def edit_tier(id, tier_id):
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
     return render_template('ordi/edit_tier.html', id=id, tier=ctier, geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
+# tier
 
 
+# person
 @bp.route('/<int:id>/<int:person_id>/edit_person', methods=('GET', 'POST'))
 @login_required
 def edit_person(id, person_id):
@@ -240,8 +199,10 @@ def edit_person(id, person_id):
     for key, value in ANREDE.items():
         anredewerte.append([key, value])
     return render_template('ordi/edit_person.html', id=id, person=cperson, anredewerte=anredewerte, page_title="Person ändern")
+# person
 
 
+# behandlung
 @bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
 @login_required
 def save_behandlungen(id):
@@ -268,9 +229,35 @@ def save_behandlungen(id):
                 impfungstexte = []
             save_or_delete_impfungen(cbehandlung.id, impfungstexte)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
+    
+
+@bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))
+@login_required
+def delete_behandlung(id, behandlung_id):
+    delete_db_behandlung(behandlung_id)
+    return redirect(url_for('ordi.show_tierhaltung', id=id))
+# behandlung
 
 
 # behandlungsverlauf
+@bp.route('/behandlungsverlaeufe', methods=('GET', 'POST'))
+@login_required
+def behandlungsverlaeufe():
+    if(request.method == 'POST'):
+        try:
+            behandlungsjahr = int(request.form['behandlungsjahr'])
+        except:
+            behandlungsjahr = None
+    else:
+        behandlungsjahr = None
+    behandlungsverlaeufe = read_behandlungsverlaeufe(behandlungsjahr)
+    if(behandlungsjahr):
+        str_behandlungsjahr = str(behandlungsjahr)
+    else:
+        str_behandlungsjahr = ""
+    return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
+
+
 @bp.route('/<int:id>/create_behandlungsverlauf', methods=('GET', 'POST'))
 @login_required
 def create_behandlungsverlauf(id):
@@ -323,10 +310,10 @@ def downloadb(behandlungsverlauf_id):
     html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, person=cperson, tier=ctier)
     filename = str(cbehandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-    try:
+    """try:
         os.remove(path_and_filename)
     except:
-        print("Datei existiert nicht.")
+        print("Datei existiert nicht.")"""
     html2pdf(html, path_and_filename)
     return send_file(path_and_filename, as_attachment=True)
 
@@ -337,6 +324,25 @@ def delete_behandlungsverlauf(behandlungsverlauf_id):
     delete_db_behandlungsverlauf(behandlungsverlauf_id)
     return redirect(url_for('ordi.behandlungsverlaeufe'))
 # behandlungsverlauf
+
+
+#rechnung
+@bp.route('/rechnungen', methods=('GET', 'POST'))
+@login_required
+def rechnungen():
+    if(request.method == 'POST'):
+        try:
+            rechnungsjahr = int(request.form['rechnungsjahr'])
+        except:
+            rechnungsjahr = None
+    else:
+        rechnungsjahr = None
+    rechnungen = read_rechnungen(rechnungsjahr)
+    if(rechnungsjahr):
+        str_rechnungsjahr = str(rechnungsjahr)
+    else:
+        str_rechnungsjahr = ""
+    return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
 
 
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
@@ -377,18 +383,11 @@ def create_rechnung(id):
                 write_rechnungszeile(crechnungszeile)
 
         return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnung.id))
-        #newcrechnung = read_rechnung(crechnung.id)
-        #newcrechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(crechnung.id)
-        #html = render_template('ordi/prints/print_rechnung.html', rechnung=newcrechnung, tierhaltung=tierhaltung, adresse=cperson.adresse)
-        #filename = str(newcrechnung.id) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
-        #path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-        #html2pdf(html, path_and_filename)
-        #return send_file(path_and_filename, as_attachment=True)"""
-
-    datum = date.today().strftime("%Y-%m-%d")
-    ort = "Wien"
-    return render_template('ordi/rechnung.html', rechnung=None, rechnungszeilen=None, datum=datum, ort=ort, artikelwerte=artikelwerte, 
-                           id=id, person=cperson, tier=ctier, page_title="Rechnung")
+    else:
+        datum = date.today().strftime("%Y-%m-%d")
+        ort = "Wien"
+        return render_template('ordi/rechnung.html', rechnung=None, rechnungszeilen=None, datum=datum, ort=ort, artikelwerte=artikelwerte, 
+                               id=id, person=cperson, tier=ctier, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
@@ -405,7 +404,6 @@ def edit_rechnung(rechnung_id):
 
     if(request.method == 'POST'):
         crechnung, error = fill_and_validate_rechnung(request)
-        ##crechnung.id = rechnung_id
         req_rechnungszeilen = build_rechnungszeilen(request)
         crechnung.rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(len(error) > 0 or len(zeilen_error) > 0):
@@ -429,25 +427,25 @@ def edit_rechnung(rechnung_id):
                 write_rechnungszeile(crechnungszeile)
 
         return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
-        #crechnung = read_rechnung(rechnung_id)
-        #crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
-        #html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, tierhaltung=tierhaltung, adresse=cperson.adresse)
-        #filename = str(crechnung.id) + "_rechnung_fuer_" + tierhaltung['familienname'] + "_" + tierhaltung['vorname'] + ".pdf"
-        #path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-        #html2pdf(html, path_and_filename)
-        #return send_file(path_and_filename, as_attachment=True)
-
-    crechnung = read_rechnung(rechnung_id)
-    crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
-    return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, artikelwerte=artikelwerte, 
-                            id=ctierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
+    else:
+        crechnung = read_rechnung(rechnung_id)
+        crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
+        return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, artikelwerte=artikelwerte, 
+                               id=ctierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
 
 
-@bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))
+@bp.route('/<int:rechnung_id>/downloadr', methods=('GET', 'POST'))
 @login_required
-def delete_behandlung(id, behandlung_id):
-    delete_db_behandlung(behandlung_id)
-    return redirect(url_for('ordi.show_tierhaltung', id=id))
+def downloadr(rechnung_id):
+    crechnung = read_rechnung(rechnung_id)
+    crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(crechnung.id)
+    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
+    cperson.adresse = read_adresse_for_person(cperson.id)
+    html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, person=cperson, tier=ctier)
+    filename = str(crechnung.id) + "_rechnung_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+    html2pdf(html, path_and_filename)
+    return send_file(path_and_filename, as_attachment=True)
 
 
 @bp.route('/<int:rechnung_id>/delete_rechnung', methods=('GET',))
@@ -463,11 +461,21 @@ def delete_rechnungszeile(rechnungszeile_id):
     crechnungszeile = read_rechnungszeile(rechnungszeile_id)
     delete_db_rechnungszeile(rechnungszeile_id)
     return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnungszeile.rechnung_id))
+# rechnung
 
 
-@bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
+@bp.route('/abfragen', methods=('GET', 'POST'))
 @login_required
-def delete_tierhaltung(id):
-    delete_db_tierhaltung(id)
-    return redirect(url_for('ordi.index'))
-
+def abfragen():
+    if(request.method == 'POST'):
+        print(request.form['abfragecode'])
+        try:
+            abfragecode = int(request.form['abfragecode'])
+        except:
+            abfragecode = 0
+        abfragekriterium = request.form['abfragekriterium']
+    else:
+        abfragecode = 0
+        abfragekriterium = ""
+    abfragen = [] # read_abfragen(abfragekriterium)
+    return render_template('ordi/abfragen.html', abfragen=abfragen, abfragekriterium=abfragekriterium, page_title="Abfragen")

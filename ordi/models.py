@@ -154,7 +154,7 @@ class cBehandlung:
 
 
 ### impfung
-class CImpfung:
+class cImpfung:
     def __init__(self, id=None, behandlung_id=None, impfungscode=None):
         self.id = id
         self.behandlung_id = behandlung_id

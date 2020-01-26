@@ -347,7 +347,7 @@ def read_behandlungen_for_tier(tier_id):
         cursor.execute("SELECT * FROM impfung WHERE behandlung_id = ?", (cbehandlung.id,))
         impfungen = cursor.fetchall()
         for impfung in impfungen:
-            cimpfung = CImpfung(int(impfung['id']), int(impfung['behandlung_id']), int(impfung['impfungscode '])) 
+            cimpfung = cImpfung(int(impfung['id']), int(impfung['behandlung_id']), int(impfung['impfungscode'])) 
             cbehandlung.impfungen.append(cimpfung)
         cbehandlungen.append(cbehandlung)
     cursor.close()

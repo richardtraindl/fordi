@@ -280,15 +280,11 @@ def create_behandlungsverlauf(id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/behandlungsverlauf.html', id=id, behandlungsverlauf= None, person=cperson, tier=ctier, page_title="Behandlungsverlauf")
-        else:
-            cbehandlungsverlauf.person_id = cperson.id
-            cbehandlungsverlauf.tier_id = ctier.id
-            if(cbehandlungsverlauf.id):
-                update_behandlungsverlauf(cbehandlungsverlauf)
-            else:
-                write_behandlungsverlauf(cbehandlungsverlauf)                
-            path_and_filename = dlbehandlungsverlauf(cbehandlungsverlauf.id)
-            return send_file(path_and_filename, as_attachment=True)
+
+        cbehandlungsverlauf.person_id = cperson.id
+        cbehandlungsverlauf.tier_id = ctier.id
+        write_behandlungsverlauf(cbehandlungsverlauf)
+        return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=cbehandlungsverlauf.id))
     else:
         datum = date.today().strftime("%Y-%m-%d")
         return render_template('ordi/behandlungsverlauf.html', id=id, behandlungsverlauf= None, person=cperson, tier=ctier, datum=datum, page_title="Behandlungsverlauf")
@@ -307,14 +303,15 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
             flash(error)
             return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, 
                                     person=cperson, tier=ctier, page_title="Behandlungsverlauf")
-        else:
-            cbehandlungsverlauf.person_id = cperson.id
-            cbehandlungsverlauf.tier_id = ctier.id
-            update_behandlungsverlauf(cbehandlungsverlauf)
-            path_and_filename = dlbehandlungsverlauf(behandlungsverlauf_id)
-            return send_file(path_and_filename, as_attachment=True)
-    return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, 
-                            person=cperson, tier=ctier, page_title="Behandlungsverlauf")
+
+        cbehandlungsverlauf.person_id = cperson.id
+        cbehandlungsverlauf.tier_id = ctier.id
+        update_behandlungsverlauf(cbehandlungsverlauf)
+        path_and_filename = dlbehandlungsverlauf(behandlungsverlauf_id)
+        return send_file(path_and_filename, as_attachment=True)
+    else:
+        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, 
+                                person=cperson, tier=ctier, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/delete_behandlungsverlauf', methods=('GET',))
@@ -383,19 +380,13 @@ def create_rechnung(id):
 
         crechnung.person_id = cperson.id
         crechnung.tier_id = ctier.id
-        if(crechnung.id):
-            update_rechnung(crechnung)
-        else:
-            write_rechnung(crechnung)
+        write_rechnung(crechnung)
 
         for crechnungszeile in crechnung.rechnungszeilen:
             crechnungszeile.rechnung_id = crechnung.id
-            if(crechnungszeile.id):
-                update_rechnungszeile(crechnungszeile)
-            else:
-                write_rechnungszeile(crechnungszeile)
-        path_and_filename = dlrechnung(rechnung.id)
-        return send_file(path_and_filename, as_attachment=True)
+            write_rechnungszeile(crechnungszeile)
+
+        return redirect(url_for('ordi.edit_rechnung', crechnung_id=crechnung.id))
     else:
         datum = date.today().strftime("%Y-%m-%d")
         ort = "Wien"
@@ -438,7 +429,7 @@ def edit_rechnung(rechnung_id):
                 crechnungszeile.rechnung_id = rechnung_id
                 write_rechnungszeile(crechnungszeile)
 
-        path_and_filename = dlrechnung(rechnung.id)
+        path_and_filename = dlrechnung(crechnung.id)
         return send_file(path_and_filename, as_attachment=True)
     else:
         crechnung = read_rechnung(rechnung_id)

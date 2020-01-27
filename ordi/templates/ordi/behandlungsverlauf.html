@@ -38,7 +38,13 @@
 
       <div class="small-gap"></div>
 
-      <div><input type="submit" value="Behandlungsverlauf drucken"></div>
+      <div>
+      {% if behandlungsverlauf %}
+        <input type="submit" value="Behandlungsverlauf speichern">
+      {% else %}
+        <input type="submit" value="Behandlungsverlauf drucken">
+      {% endif %}
+      </div>
     </form>
 
     <script>

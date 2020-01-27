@@ -23,7 +23,7 @@
     {% else %}
       <form method="post" action="{{ url_for('ordi.create_behandlungsverlauf', id=id) }}">
     {% endif %}
-        <input type="hidden" name="behandlungsverlauf_id" value="{{- request.form['behandlungsverlauf_id'] or behandlungsverlauf.id -}}">
+        <input type="hidden" name="behandlungsverlauf_id" id="behandlungsverlauf_id" value="{{- request.form['behandlungsverlauf_id'] or behandlungsverlauf.id -}}">
 
       <div class="row-grid" style="grid-template-columns: auto auto;">
         <label for="datum">Datum</label>
@@ -38,24 +38,20 @@
 
       <div class="small-gap"></div>
 
-      <div class="flex-container">
-          <p><input type="submit" value="Behandlungsverlauf aktualisieren"></p>
-        {% if behandlungsverlauf %}
-          <p><a class="btn" href="{{ url_for('ordi.downloadb', behandlungsverlauf_id=behandlungsverlauf.id) }}">Behandlungsverlauf drucken</a></p>
-        {% else %}
-          <p><a style="color: Gray" href="#">Behandlungsverlauf drucken</a></p>
-        {% endif %}
+      <div>
+          <p><a class="btn" id="downloadb" href="#">Behandlungsverlauf drucken</a></p>
       </div>
     </form>
 
     <script>
+        function checkb(){
+            return ($('#behandlungsverlauf_id').val().length > 0 &&
+                    $('#datum').val().length > 0 &&
+                    $('#diagnose').val().length > 0 &&
+                    $('#behandlung').val().length > 0);
+        }
+
         $(document).ready(function(){
-            $(".person input").prop("disabled", true);
-            $(".person select").prop("disabled", true);
-
-            $(".tier input").prop("disabled", true);
-            $(".tier select").prop("disabled", true);
-
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
                 dateFormat: "yy-mm-dd",
@@ -64,6 +60,18 @@
             });
 
             $("#diagnose").focus();
+
+            $('#downloadb').click(function(){ 
+                var id = $("#behandlungsverlauf_id").val(); 
+
+                if(checkb()){
+                    window.location = "/" + id.toString() + "/downloadb";
+                }
+                else{
+                    $("form").submit();
+                }
+                return true; 
+            });
         });
     </script>
 {% endblock %}

@@ -310,10 +310,6 @@ def downloadb(behandlungsverlauf_id):
     html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, person=cperson, tier=ctier)
     filename = str(cbehandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-    """try:
-        os.remove(path_and_filename)
-    except:
-        print("Datei existiert nicht.")"""
     html2pdf(html, path_and_filename)
     return send_file(path_and_filename, as_attachment=True)
 

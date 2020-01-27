@@ -258,6 +258,16 @@ def behandlungsverlaeufe():
     return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
 
 
+def dlbehandlungsverlauf(behandlungsverlauf_id):
+    cbehandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
+    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(cbehandlungsverlauf.person_id, cbehandlungsverlauf.tier_id)
+    cperson.adresse = read_adresse_for_person(cperson.id)
+    html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, person=cperson, tier=ctier)
+    filename = str(cbehandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+    html2pdf(html, path_and_filename)
+    return path_and_filename
+
 @bp.route('/<int:id>/create_behandlungsverlauf', methods=('GET', 'POST'))
 @login_required
 def create_behandlungsverlauf(id):
@@ -273,8 +283,12 @@ def create_behandlungsverlauf(id):
         else:
             cbehandlungsverlauf.person_id = cperson.id
             cbehandlungsverlauf.tier_id = ctier.id
-            write_behandlungsverlauf(cbehandlungsverlauf)
-            return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=cbehandlungsverlauf.id))
+            if(cbehandlungsverlauf.id):
+                update_behandlungsverlauf(cbehandlungsverlauf)
+            else:
+                write_behandlungsverlauf(cbehandlungsverlauf)                
+            path_and_filename = dlbehandlungsverlauf(cbehandlungsverlauf.id)
+            return send_file(path_and_filename, as_attachment=True)
     else:
         datum = date.today().strftime("%Y-%m-%d")
         return render_template('ordi/behandlungsverlauf.html', id=id, behandlungsverlauf= None, person=cperson, tier=ctier, datum=datum, page_title="Behandlungsverlauf")
@@ -297,21 +311,10 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
             cbehandlungsverlauf.person_id = cperson.id
             cbehandlungsverlauf.tier_id = ctier.id
             update_behandlungsverlauf(cbehandlungsverlauf)
+            path_and_filename = dlbehandlungsverlauf(behandlungsverlauf_id)
+            return send_file(path_and_filename, as_attachment=True)
     return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, 
                             person=cperson, tier=ctier, page_title="Behandlungsverlauf")
-
-
-@bp.route('/<int:behandlungsverlauf_id>/downloadb', methods=('GET', 'POST'))
-@login_required
-def downloadb(behandlungsverlauf_id):
-    cbehandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(cbehandlungsverlauf.person_id, cbehandlungsverlauf.tier_id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, person=cperson, tier=ctier)
-    filename = str(cbehandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-    html2pdf(html, path_and_filename)
-    return send_file(path_and_filename, as_attachment=True)
 
 
 @bp.route('/<int:behandlungsverlauf_id>/delete_behandlungsverlauf', methods=('GET',))

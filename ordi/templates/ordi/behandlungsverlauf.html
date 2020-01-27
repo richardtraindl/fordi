@@ -39,18 +39,11 @@
       <div class="small-gap"></div>
 
       <div>
-          <p><a class="btn" id="downloadb" href="#">Behandlungsverlauf drucken</a></p>
+        <input type="submit" value="Behandlungsverlauf drucken">
       </div>
     </form>
 
     <script>
-        function checkb(){
-            return ($('#behandlungsverlauf_id').val().length > 0 &&
-                    $('#datum').val().length > 0 &&
-                    $('#diagnose').val().length > 0 &&
-                    $('#behandlung').val().length > 0);
-        }
-
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
@@ -60,18 +53,6 @@
             });
 
             $("#diagnose").focus();
-
-            $('#downloadb').click(function(){ 
-                var id = $("#behandlungsverlauf_id").val(); 
-
-                if(checkb()){
-                    window.location = "/" + id.toString() + "/downloadb";
-                }
-                else{
-                    $("form").submit();
-                }
-                return true; 
-            });
         });
     </script>
 {% endblock %}

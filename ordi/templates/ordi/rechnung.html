@@ -100,14 +100,7 @@
 
       <div class="small-gap"></div>
 
-      <div class="flex-container">
-          <p><input type="submit" value="Rechnung aktualisieren"></p>
-        {% if rechnung and rechnung.id %}
-          <p><a class="btn" href="{{ url_for('ordi.downloadr', rechnung_id=rechnung.id) }}">Rechnung drucken</a></p>
-        {% else %}
-          <p><a style="color: Gray" href="#">Rechnung drucken</a></p>
-        {% endif %}
-      </div>
+      <div><input type="submit" value="Rechnung drucken"></div>
     </form>
 
     <script>

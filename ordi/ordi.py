@@ -344,6 +344,17 @@ def rechnungen():
     return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
 
 
+def dlrechnung(rechnung_id):
+    crechnung = read_rechnung(rechnung_id)
+    crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(crechnung.id)
+    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
+    cperson.adresse = read_adresse_for_person(cperson.id)
+    html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, person=cperson, tier=ctier)
+    filename = str(crechnung.id) + "_rechnung_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+    html2pdf(html, path_and_filename)
+    return path_and_filename
+
 @bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
 @login_required
 def create_rechnung(id):
@@ -372,7 +383,10 @@ def create_rechnung(id):
 
         crechnung.person_id = cperson.id
         crechnung.tier_id = ctier.id
-        write_rechnung(crechnung)
+        if(crechnung.id):
+            update_rechnung(crechnung)
+        else:
+            write_rechnung(crechnung)
 
         for crechnungszeile in crechnung.rechnungszeilen:
             crechnungszeile.rechnung_id = crechnung.id
@@ -380,8 +394,8 @@ def create_rechnung(id):
                 update_rechnungszeile(crechnungszeile)
             else:
                 write_rechnungszeile(crechnungszeile)
-
-        return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnung.id))
+        path_and_filename = dlrechnung(rechnung.id)
+        return send_file(path_and_filename, as_attachment=True)
     else:
         datum = date.today().strftime("%Y-%m-%d")
         ort = "Wien"
@@ -415,9 +429,8 @@ def edit_rechnung(rechnung_id):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
                                     artikelwerte=artikelwerte, id=tierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
-        else:
-            update_rechnung(crechnung)
 
+        update_rechnung(crechnung)
         for crechnungszeile in crechnung.rechnungszeilen:
             if(crechnungszeile.id):
                 update_rechnungszeile(crechnungszeile)
@@ -425,26 +438,13 @@ def edit_rechnung(rechnung_id):
                 crechnungszeile.rechnung_id = rechnung_id
                 write_rechnungszeile(crechnungszeile)
 
-        return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung_id))
+        path_and_filename = dlrechnung(rechnung.id)
+        return send_file(path_and_filename, as_attachment=True)
     else:
         crechnung = read_rechnung(rechnung_id)
         crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
         return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, artikelwerte=artikelwerte, 
                                id=ctierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
-
-
-@bp.route('/<int:rechnung_id>/downloadr', methods=('GET', 'POST'))
-@login_required
-def downloadr(rechnung_id):
-    crechnung = read_rechnung(rechnung_id)
-    crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(crechnung.id)
-    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, person=cperson, tier=ctier)
-    filename = str(crechnung.id) + "_rechnung_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-    html2pdf(html, path_and_filename)
-    return send_file(path_and_filename, as_attachment=True)
 
 
 @bp.route('/<int:rechnung_id>/delete_rechnung', methods=('GET',))

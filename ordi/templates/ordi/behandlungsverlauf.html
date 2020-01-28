@@ -38,11 +38,13 @@
 
       <div class="small-gap"></div>
 
-      <div>
+      <div class="flex-container">
       {% if behandlungsverlauf %}
-        <input type="submit" value="Behandlungsverlauf drucken">
+        <p><span class="btn" style="color: Gray">Behandlungsverlauf speichern</span></p>
+        <p><input type="submit" value="Behandlungsverlauf speichern und drucken"></p>
       {% else %}
-        <input type="submit" value="Behandlungsverlauf speichern">
+        <p><input type="submit" value="Behandlungsverlauf speichern"></p>
+        <p><span class="btn" style="color: Gray">Behandlungsverlauf speichern und drucken</span></p>
       {% endif %}
       </div>
     </form>

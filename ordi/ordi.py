@@ -386,7 +386,7 @@ def create_rechnung(id):
             crechnungszeile.rechnung_id = crechnung.id
             write_rechnungszeile(crechnungszeile)
 
-        return redirect(url_for('ordi.edit_rechnung', crechnung_id=crechnung.id))
+        return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnung.id))
     else:
         datum = date.today().strftime("%Y-%m-%d")
         ort = "Wien"

@@ -100,11 +100,13 @@
 
       <div class="small-gap"></div>
 
-      <div>
+      <div class="flex-container">
       {% if rechnung and rechnung.id %}
-        <input type="submit" value="Rechnung drucken">
+        <p><span class="btn" style="color: Gray">Rechnung speichern</span></p>
+        <input type="submit" value="Rechnung speichern und drucken">
       {% else %}
         <input type="submit" value="Rechnung speichern">
+        <p><span class="btn" style="color: Gray">Rechnung speichern und drucken</span></p>
       {% endif %}
       </div>
     </form>

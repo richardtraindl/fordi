@@ -12,33 +12,34 @@ class HTML2PDF(FPDF, HTMLMixin):
 class CustomPDF(HTML2PDF):
     def header(self):
         # Set up a logo
-        self.image(name=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'img', 'logo.png'), x=173, y=10, h=24) 
+        self.image(name=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'img', 'logo.png'), 
+                   x=160, y=25, w=25, h=25) 
 
         self.set_font('Arial', '', 11)
-        self.cell(112)
+        self.cell(85)
         self.cell(w=50, h=4, txt='', ln=1)
 
         # Add an address
         self.set_font('Arial', '', 11)
-        self.cell(112)
+        self.cell(85)
         text1 = 'TIERARZTPRAXIS'
         self.cell(w=50, h=4, txt=text1, ln=1, align='C')
         
         self.set_font('Arial', 'U', 11)
-        self.cell(112)
+        self.cell(85)
         text2 = 'Kaiserstrasse'
         self.cell(w=50, h=4, txt=text2, ln=1, align='C')
 
         self.set_font('Arial', '', 11)
-        self.cell(112)
+        self.cell(85)
         self.cell(w=50, h=2, txt='', ln=1)
 
         self.set_font('Arial', '', 11)
-        self.cell(112)
+        self.cell(85)
         text3 = 'Dr. Elfriede Koppensteiner'
         self.cell(w=50, h=4, txt=text3, ln=1, align='R')
 
-        self.cell(112)
+        self.cell(85)
         text4 = 'Mag. Gerold Koppensteiner'
         self.cell(w=50, h=4, txt=text4, ln=1, align='R')
 
@@ -46,7 +47,7 @@ class CustomPDF(HTML2PDF):
         self.ln(20)
  
     def footer(self):
-        self.set_y(-10)
+        self.set_y(-27)
 
         self.set_font('Arial', '', 10)
 
@@ -59,6 +60,10 @@ class CustomPDF(HTML2PDF):
 
 def html2pdf(html, path_and_filename):
     pdf = CustomPDF()
+    pdf.l_margin = 22
+    pdf.r_margin = 25
+    pdf.t_margin = 25
+    pdf.b_margin = 17
     pdf.add_page()
     pdf.write_html(html)
     pdf.output(path_and_filename)

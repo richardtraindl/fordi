@@ -67,11 +67,13 @@ def create_tierhaltung():
 
         cadresse = fill_and_validate_adresse(request)[0]
         if(len(cadresse.strasse) > 0 or len(cadresse.postleitzahl) > 0 or len(cadresse.ort) > 0):
+            cadresse.person_id = cperson.id
             write_adresse(cadresse)
 
         ckontakte = fill_and_validate_kontakte(request)[0]
         for ckontakt in ckontakte:
             if(len(ckontakt.kontakt) > 0):
+                ckontakt.person_id = cperson.id
                 ckontakt.id = write_kontakt(ckontakt)
 
         ctierhaltung = cTierhaltung(None, cperson.id, ctier.id)

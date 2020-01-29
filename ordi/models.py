@@ -49,8 +49,6 @@ class cTier:
             return False, "Tiername fehlt. "
         if(len(self.tierart) == 0):
             return False, "Tierart fehlt. "
-        if(self.geburtsdatum == None):
-            return False, "Geburtsdatum fehlt. "
         return True, ""
 ### Tier
 

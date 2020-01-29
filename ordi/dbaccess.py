@@ -12,9 +12,13 @@ def read_tierhaltungen(familienname, tiername, kunde, patient):
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute(
-        "SELECT * FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id"
-        " AND familienname LIKE ? AND tiername LIKE ? AND kunde = ? AND patient = ?"
-        " ORDER BY familienname ASC",
+        'SELECT tierhaltung.id, tierhaltung.person_id, tierhaltung.tier_id, anlagezeit,'
+        ' anredecode, titel, familienname, vorname, notiz, kunde,'
+        ' tiername, tierart, rasse, farbe, viren, merkmal, geburtsdatum as "geburtsdatum [date]", '
+        ' geschlechtscode, chip_nummer, eu_passnummer, patient'
+        ' FROM tierhaltung, person, tier WHERE tierhaltung.person_id = person.id AND tierhaltung.tier_id = tier.id'
+        ' AND familienname LIKE ? AND tiername LIKE ? AND kunde = ? AND patient = ?'
+        ' ORDER BY familienname ASC',
         (familienname + "%", tiername + "%", kunde, patient,)
     )
     tierhaltungen = cursor.fetchall()

@@ -73,7 +73,7 @@
             <td style="width: 14%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['tierart'] }}</a></td>
             <td style="width: 10%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['rasse'] }}</a></td>
             <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['geschlechtscode'] | mapgeschlecht }}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] }}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['geburtsdatum'] | sn }}</a></td>
         </tr>
       {% endfor %}
     </table>

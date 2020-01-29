@@ -41,7 +41,7 @@ sqlcreates = (
        farbe VARCHAR(30), \
        viren VARCHAR(30), \
        merkmal VARCHAR(50), \
-       geburtsdatum DATE NOT NULL, \
+       geburtsdatum DATE, \
        geschlechtscode INTEGER NOT NULL, \
        chip_nummer VARCHAR(30), \
        eu_passnummer VARCHAR(30), \

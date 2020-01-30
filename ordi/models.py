@@ -111,8 +111,9 @@ class cKontakt:
         self.person_id = person_id
         self.kontaktcode = kontaktcode
         self.kontakt = kontakt
-        bad_chars = [';', ':', '-', '/', ' ', '\n']
-        self.kontakt_intern = ''.join(i for i in self.kontakt if not i in bad_chars)
+        if(self.kontakt):
+            bad_chars = [';', ':', '-', '/', ' ', '\n']
+            self.kontakt_intern = ''.join(i for i in self.kontakt if not i in bad_chars)
 
     def validate(self):
         return True, ""

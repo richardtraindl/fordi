@@ -66,7 +66,7 @@
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ tierhaltung['id'] }}"></td>
             <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['anredecode'] | mapanrede }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] | sn }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['titel'] }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['familienname'] }}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['vorname'] }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung['id']) }}">{{ tierhaltung['tiername'] }}</a></td>

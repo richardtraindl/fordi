@@ -31,7 +31,7 @@ class Adresse(db.Model):
     __tablename__ = 'adresse'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
     strasse = db.Column(db.String(40))
     postleitzahl = db.Column(db.String(40))
     ort = db.Column(db.String(40))
@@ -43,7 +43,7 @@ class Kontakt(db.Model):
     __tablename__ = 'kontakt'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
     kontaktcode = db.Column(db.Integer(), nullable=False)
     kontakt = db.Column(db.String(50))
     kontakt_intern = db.Column(db.String(50))
@@ -58,7 +58,7 @@ class Tier(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tiername = db.Column(db.String(30), nullable=False)
     tierart = db.Column(db.String(30))
-    rasse = db.Column(db.String(30), nullable=False)
+    rasse = db.Column(db.String(30))
     farbe = db.Column(db.String(30))
     viren = db.Column(db.String(30))
     merkmal = db.Column(db.String(50))
@@ -76,7 +76,7 @@ class Behandlung(db.Model):
     __tablename__ = 'behandlung'
 
     id = db.Column(db.Integer, primary_key=True)
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'))
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'))
     behandlungsdatum = db.Column(db.DateTime(), nullable=False)
     gewicht = db.Column(db.String(50))
     diagnose = db.Column(db.String(1000))
@@ -94,7 +94,7 @@ class Impfung(db.Model):
     __tablename__ = 'impfung'
 
     id = db.Column(db.Integer, primary_key=True)
-    behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id'))
+    behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id', ondelete='CASCADE'))
     impfungscode = db.Column(db.Integer(), nullable=False)
 
     def __repr__(self):
@@ -112,29 +112,53 @@ class Tierhaltung(db.Model):
     def __repr__(self):
         return '<Tierhaltung %r>' % (self.anlagezeit)
 
-    """CREATE TABLE behandlungsverlauf (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
-       tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
-       datum DATE NOT NULL DEFAULT CURRENT_DATE, \
-       diagnose VARCHAR(255), \
-       behandlung VARCHAR(1000));""",
-    """CREATE TABLE rechnung (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       person_id INTEGER NOT NULL REFERENCES person(id) ON DELETE CASCADE, \
-       tier_id INTEGER NOT NULL REFERENCES tier(id) ON DELETE CASCADE, \
-       rechnungsjahr INTEGER NOT NULL, \
-       rechnungslfnr INTEGER NOT NULL, \
-       ausstellungsdatum DATE NOT NULL DEFAULT CURRENT_DATE, \
-       ausstellungsort VARCHAR(255), \
-       diagnose VARCHAR(255), \
-       bezahlung VARCHAR(255), \
-       brutto_summe DECIMAL(10,2) NOT NULL, \
-       netto_summe DECIMAL(10,2) NOT NULL, \
-       steuerbetrag_zwanzig DECIMAL(10,2) NOT NULL DEFAULT 0, \
-       steuerbetrag_dreizehn DECIMAL(10,2) NOT NULL DEFAULT 0, \
-       steuerbetrag_zehn DECIMAL(10,2) NOT NULL DEFAULT 0);""",
-    """CREATE TABLE rechnungszeile (id INTEGER PRIMARY KEY AUTOINCREMENT, \
-       rechnung_id INTEGER NOT NULL REFERENCES rechnung(id) ON DELETE CASCADE, \
-       datum DATE NOT NULL DEFAULT CURRENT_DATE, \
-       artikelcode INTEGER NOT NULL, \
-       artikel VARCHAR(255), \
-       betrag DECIMAL(10,2) NOT NULL);""")
+
+class Behandlungsverlauf(db.Model):
+    __tablename__ = 'behandlungsverlauf'
+
+    id = db.Column(db.Integer, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'))
+    datum = db.Column(db.DateTime(), nullable=False)
+    diagnose = db.Column(db.String(256))
+    behandlung = db.Column(db.String(1000))
+
+    def __repr__(self):
+        return '<Behandlungsverlauf %r>' % (self.tiername)
+
+
+class Rechnung(db.Model):
+    __tablename__ = 'rechnung'
+
+    id = db.Column(db.Integer, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'))
+    rechnungsjahr = db.Column(db.Integer(), nullable=False)
+    rechnungslfnr = db.Column(db.Integer(), nullable=False)
+    ausstellungsdatum = db.Column(db.DateTime(), nullable=False)
+    ausstellungsort = db.Column(db.String(256))
+    diagnose = db.Column(db.String(256))
+    bezahlung = db.Column(db.String(256))
+    brutto_summe = db.Column(db.Numeric(8, 2))
+    netto_summe = db.Column(db.Numeric(8, 2))
+    steuerbetrag_zwanzig = db.Column(db.Numeric(8, 2))
+    steuerbetrag_dreizehn = db.Column(db.Numeric(8, 2))
+    steuerbetrag_zehn = db.Column(db.Numeric(8, 2))
+
+    def __repr__(self):
+        return '<Rechnung %r>' % (self.id)
+
+
+   class Rechnungszeile(db.Model):
+    __tablename__ = 'rechnungszeile'
+
+    id = db.Column(db.Integer, primary_key=True)
+    rechnung_id = db.Column(db.Integer, db.ForeignKey(rechnung.id', ondelete='CASCADE'))
+    datum = db.Column(db.DateTime(), nullable=False)
+    artikelcode = db.Column(db.Integer(), nullable=False)
+    artikel = db.Column(db.String(256))
+    betrag = db.Column(db.Numeric(8, 2))
+
+    def __repr__(self):
+        return '<rechnungszeile %r>' % (self.id)
+

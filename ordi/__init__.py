@@ -2,6 +2,7 @@
 import os
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
 def create_app(test_config=None):
@@ -10,7 +11,11 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY = 'dev',
-        DATABASE = os.path.join(app.instance_path, 'ordi.sqlite')
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') #'sqlite:////home/richard/dev/flask/fordi/instance/ordi.sqlite',
+        SQLALCHEMY_TRACK_MODIFICATIONS = False,
+        db = SQLAlchemy(app),
+        #DATABASE = os.path.join(app.instance_path, 'ordi.sqlite'),
+        SEND_FILE_MAX_AGE_DEFAULT = 0
     )
 
 

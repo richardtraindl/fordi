@@ -3,6 +3,7 @@ import os
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 
 def create_app(test_config=None):
@@ -11,10 +12,9 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY = 'dev',
-        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') #'sqlite:////home/richard/dev/flask/fordi/instance/ordi.sqlite',
+        #SQLALCHEMY_DATABASE_URI = 'sqlite:///C:\\wse4\\flask\\instance\\ordi.sqlite',
+        SQLALCHEMY_DATABASE_URI = 'sqlite:////home/richard/dev/flask/fordi/instance/ordi.sqlite',
         SQLALCHEMY_TRACK_MODIFICATIONS = False,
-        db = SQLAlchemy(app),
-        #DATABASE = os.path.join(app.instance_path, 'ordi.sqlite'),
         SEND_FILE_MAX_AGE_DEFAULT = 0
     )
 
@@ -32,8 +32,11 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import db
-    db.init_app(app)
+    db = SQLAlchemy(app)
+    migrate = Migrate(app, db)
+
+    from . import db2
+    db2.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)

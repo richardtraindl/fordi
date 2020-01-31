@@ -1,7 +1,7 @@
 
 #from flask import g
 
-from ordi.db import get_db
+from ordi.db2 import get_db
 from ordi.values import IMPFUNG
 from ordi.models import *
 

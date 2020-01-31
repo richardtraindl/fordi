@@ -7,7 +7,7 @@ from flask import Blueprint, flash, g, redirect, render_template, request, url_f
 from werkzeug.exceptions import abort
 
 from ordi.auth import login_required
-from ordi.db import get_db
+from ordi.db2 import get_db
 from ordi.dbaccess import *
 from ordi.reqhelper import *
 from ordi.values import *

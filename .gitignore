@@ -6,6 +6,7 @@ venv/
 __pycache__/
 
 instance/
+migrations/
 downloads/
 
 .pytest_cache/

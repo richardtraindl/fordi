@@ -6,35 +6,46 @@ from ordi.values import *
 from ordi.models import *
 
 
-def fill_and_validate_tier(request):
+def fill_and_validate_tier(tier, request):
     try:
-        tier_id = int(request.form['tier_id'])
+        geschlechtscode = int(request.form['geschlechtscode'])
     except:
-        tier_id = None
+        geschlechtscode = GESCHLECHT['']
+
+    if(len(request.form['geburtsdatum']) > 10):
+        str_geburtsdatum = request.form['geburtsdatum'].split()[0]
+        geburtsdatum = datetime.strptime(str_geburtsdatum, "%Y-%m-%d")
+    else:
+        geburtsdatum = datetime.strptime(request.form['geburtsdatum'], "%Y-%m-%d")
 
     if(request.form.get('patient')):
-        patient = 1
+        patient = True
     else:
-        patient = 0
+        patient = False
 
-    ctier = cTier(tier_id, 
-                  request.form['tiername'], 
-                  request.form['tierart'], 
-                  request.form['rasse'],
-                  request.form['farbe'],
-                  request.form['viren'],
-                  request.form['merkmal'],
-                  request.form['geburtsdatum'],
-                  request.form['geschlechtscode'],
-                  request.form['chip_nummer'],
-                  request.form['eu_passnummer'],
-                  patient)
+    if(tier == None):
+        tier = Tier()
+    tier.tiername=request.form['tiername']
+    tier.tierart=request.form['tierart']
+    tier.rasse=request.form['rasse']
+    tier.farbe=request.form['farbe']
+    tier.viren=request.form['viren']
+    tier.merkmal=request.form['merkmal']
+    tier.geburtsdatum=geburtsdatum
+    tier.geschlechtscode=geschlechtscode
+    tier.chip_nummer=request.form['chip_nummer']
+    tier.eu_passnummer=request.form['eu_passnummer']
+    tier.patient=patient
 
-    flag, error = ctier.validate()
-    return ctier, error
+    error = ""
+    if(len(tier.tiername) == 0):
+        error += "Tiername fehlt. "
+    if(len(tier.tierart) == 0):
+        error += "Tierart fehlt. "
+    return tier, error
 
 
-def fill_and_validate_person(request):
+def fill_and_validate_person(person, request):
     try:
         person_id = int(request.form['person_id'])
     except:
@@ -43,26 +54,29 @@ def fill_and_validate_person(request):
     try:
         anredecode = int(request.form['anredecode'])
     except:
-        anredecode = 0
+        anredecode = ANREDE['']
 
     if(request.form.get('kunde')):
-        kunde = 1
+        kunde = True
     else:
-        kunde = 0
+        kunde = False
 
-    cperson = cPerson(person_id, 
-                      anredecode, 
-                      request.form['titel'],
-                      request.form['familienname'],
-                      request.form['vorname'],
-                      request.form['notiz'],
-                      kunde)
+    if(person == None):
+        person = Person()
+    person.anredecode=anredecode
+    person.titel=request.form['titel']
+    person.familienname=request.form['familienname']
+    person.vorname=request.form['vorname']
+    person.notiz=request.form['notiz']
+    person.kunde=kunde
 
-    flag, error = cperson.validate()
-    return cperson, error
+    error = ""
+    if(len(person.familienname) == 0):
+        error += "Familienname fehlt. "
+    return person, error
 
 
-def fill_and_validate_adresse(request):
+def fill_and_validate_adresse(adresse, request):
     try:
         adresse_id = int(request.form['adresse_id'])
     except:
@@ -73,17 +87,16 @@ def fill_and_validate_adresse(request):
     except:
         person_id = None
 
-    cadresse = cAdresse(adresse_id, 
-                        person_id,
-                        request.form['strasse'],
-                        request.form['postleitzahl'],
-                        request.form['ort'])
+    if(adresse == None):
+        adresse = Adresse(person_id=person_id)
+    adresse.strasse=request.form['strasse']
+    adresse.postleitzahl=request.form['postleitzahl']
+    adresse.ort=request.form['ort']
 
-    return cadresse, ""
+    return adresse, ""
 
 
-def fill_and_validate_kontakte(request):
-    kontakte = []
+def fill_and_validate_kontakte(kontakte, request):
     try:
         kontakt1_id = int(request.form['kontakt1_id'])
     except:
@@ -97,17 +110,30 @@ def fill_and_validate_kontakte(request):
         person_id = int(request.form['person_id'])
     except:
         person_id = None
+        
+    if(len(request.form['kontakt1']) > 0):
+        bad_chars = [';', ':', '-', '/', ' ', '\n']
+        kontakt1_intern = ''.join(i for i in request.form['kontakt1'] if not i in bad_chars)
+    else:
+        kontakt1_intern = ""
 
-    kontakte.append(cKontakt(kontakt1_id, 
-                             person_id, 
-                             "1", # fix 1 für Telefon
-                             request.form['kontakt1'],
-                            ""))
-    kontakte.append(cKontakt(kontakt2_id, 
-                             person_id, 
-                             "1", # fix 1 für Telefon
-                             request.form['kontakt2'],
-                             ""))
+    if(len(request.form['kontakt2']) > 0):
+        bad_chars = [';', ':', '-', '/', ' ', '\n']
+        kontakt2_intern = ''.join(i for i in request.form['kontakt2'] if not i in bad_chars)
+    else:
+        kontakt2_intern = ""
+
+    if(len(kontakte) == 0):
+        kontakte.append(Kontakt(person_id=person_id))
+    kontakte[0].kontaktcode=1 # fix 1 für Telefon
+    kontakte[0].kontakt=request.form['kontakt1']
+    kontakte[0].kontakt_intern=kontakt1_intern
+
+    if(len(kontakte) < 2):
+        kontakte.append(Kontakt(person_id=person_id))
+    kontakte[1].kontaktcode=1 # fix 1 für Telefon
+    kontakte[1].kontakt=request.form['kontakt2']
+    kontakte[1].kontakt_intern=kontakt2_intern
 
     return kontakte, ""
 
@@ -123,19 +149,19 @@ def fill_and_validate_behandlung(request):
     except:
         tier_id = None
 
-    cbehandlung = cBehandlung(behandlung_id, 
-                              tier_id,
-                              request.form['behandlungsdatum'], 
-                              request.form['gewicht'],  
-                              request.form['diagnose'],
-                              request.form['laborwerte1'], 
-                              request.form['laborwerte2'], 
-                              request.form['arzneien'],
-                              request.form['arzneimittel'], 
-                              request.form['impfungen_extern'])
+    behandlung = Behandlung(behandlung_id, 
+                            tier_id,
+                            request.form['behandlungsdatum'], 
+                            request.form['gewicht'],  
+                            request.form['diagnose'],
+                            request.form['laborwerte1'], 
+                            request.form['laborwerte2'], 
+                            request.form['arzneien'],
+                            request.form['arzneimittel'], 
+                            request.form['impfungen_extern'])
 
-    flag, error = cbehandlung.validate()
-    return cbehandlung, error
+    flag, error = behandlung.validate()
+    return behandlung, error
 
 
 def build_behandlungen(request):    

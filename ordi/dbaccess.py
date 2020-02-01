@@ -3,7 +3,7 @@
 
 from ordi.db2 import get_db
 from ordi.values import IMPFUNG
-from ordi.models import *
+from ordi.models2 import *
 
 
 # tierhaltung

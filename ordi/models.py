@@ -1,5 +1,7 @@
 
-from app import db
+from datetime import datetime
+from . import db
+
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -38,6 +40,7 @@ class Adresse(db.Model):
 
     def __repr__(self):
         return '<Adresse %r>' % (self.strasse)
+
 
 class Kontakt(db.Model):
     __tablename__ = 'kontakt'
@@ -87,7 +90,7 @@ class Behandlung(db.Model):
     impfungen_extern = db.Column(db.String(100))
 
     def __repr__(self):
-        return '<Behandlung %r>' % (self.diagnose)
+        return '<Behandlung %r>' % (self.id)
 
 
 class Impfung(db.Model):
@@ -107,10 +110,10 @@ class Tierhaltung(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'))
-    anlagezeit = db.Column(db.DateTime(), nullable=False)
+    anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<Tierhaltung %r>' % (self.anlagezeit)
+        return '<Tierhaltung %r>' % (self.id)
 
 
 class Behandlungsverlauf(db.Model):
@@ -149,11 +152,11 @@ class Rechnung(db.Model):
         return '<Rechnung %r>' % (self.id)
 
 
-   class Rechnungszeile(db.Model):
+class Rechnungszeile(db.Model):
     __tablename__ = 'rechnungszeile'
 
     id = db.Column(db.Integer, primary_key=True)
-    rechnung_id = db.Column(db.Integer, db.ForeignKey(rechnung.id', ondelete='CASCADE'))
+    rechnung_id = db.Column(db.Integer, db.ForeignKey('rechnung.id', ondelete='CASCADE'))
     datum = db.Column(db.DateTime(), nullable=False)
     artikelcode = db.Column(db.Integer(), nullable=False)
     artikel = db.Column(db.String(256))

@@ -7,8 +7,11 @@ from flask import Blueprint, flash, g, redirect, render_template, request, url_f
 from werkzeug.exceptions import abort
 
 from ordi.auth import login_required
+from . import db
+from ordi.models import *
 from ordi.db2 import get_db
 from ordi.dbaccess import *
+#from ordi.reqhelper2 import *
 from ordi.reqhelper import *
 from ordi.values import *
 from ordi.createpdf import *
@@ -28,14 +31,16 @@ def index():
         familienname = request.form['familienname']
         tiername = request.form['tiername']
         if(request.form.get('kunde')):
-            kunde = 1
+            kunde = True
         else:
-            kunde = 0
+            kunde = False
         if(request.form.get('patient')):
-            patient = 1
+            patient = True
         else:
-            patient = 0
-    tierhaltungen = read_tierhaltungen(familienname, tiername, kunde, patient)
+            patient = False
+    tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Tierhaltung.person_id == Person.id) \
+        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Person.familienname.like(familienname + "%"), Tier.tiername.like(tiername + "%"), Person.kunde==kunde, Tier.patient==patient).all()
     return render_template('ordi/tierhaltungen.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
 
 
@@ -51,34 +56,40 @@ def create_tierhaltung():
         geschlechtswerte.append([key, value])
 
     if(request.method == 'POST'):
-        cperson, error = fill_and_validate_person(request)
+        person, error = fill_and_validate_person(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html', person=cperson, tier=None, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', person=person, tier=None, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
 
-        ctier, error = fill_and_validate_tier(request)
+        tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tierhaltung.html')
-            return render_template('ordi/create_tierhaltung.html', person=cperson, tier=ctier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
 
-        write_person(cperson)
-        write_tier(ctier)
+        db.session.add(person)
+        db.session.commit()
 
-        cadresse = fill_and_validate_adresse(request)[0]
-        if(len(cadresse.strasse) > 0 or len(cadresse.postleitzahl) > 0 or len(cadresse.ort) > 0):
-            cadresse.person_id = cperson.id
-            write_adresse(cadresse)
+        db.session.add(tier)
+        db.session.commit()
 
-        ckontakte = fill_and_validate_kontakte(request)[0]
-        for ckontakt in ckontakte:
-            if(len(ckontakt.kontakt) > 0):
-                ckontakt.person_id = cperson.id
-                ckontakt.id = write_kontakt(ckontakt)
+        adresse = fill_and_validate_adresse(None, request)[0]
+        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
+            #adresse.person_id=person.id
+            db.session.add(adresse)
+            db.session.commit()
 
-        ctierhaltung = cTierhaltung(None, cperson.id, ctier.id)
-        write_tierhaltung(ctierhaltung)
-        return redirect(url_for('ordi.show_tierhaltung', id=ctierhaltung.id))
+        kontakte = fill_and_validate_kontakte([], request)[0]
+        for kontakt in kontakte:
+            if(len(kontakt.kontakt) > 0):
+                #kontakt.person_id=person.id
+                db.session.add(kontakt)
+                db.session.commit()
+
+        tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
+        db.session.add(tierhaltung)
+        db.session.commit()
+        return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
         return render_template('ordi/create_tierhaltung.html', person=None, tier=None, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
 
@@ -126,15 +137,18 @@ def delete_tierhaltung(id):
 @login_required
 def create_tier(id):
     if(request.method == 'POST'):
-        ctier, error = fill_and_validate_tier(request)
+        tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tier.html', id=id)
-        write_tier(ctier)
-        ctierhaltung = read_tierhaltung(id)[0]
-        new_ctierhaltung = cTierhaltung(None, ctierhaltung.person_id, ctier.id)
-        write_tierhaltung(new_ctierhaltung)
-        return redirect(url_for('ordi.show_tierhaltung', id=new_ctierhaltung.id))
+        db.session.add(tier)
+        db.session.commit()
+
+        tierhaltung = Tierhaltung.query.get(id)
+        new_tierhaltung = Tierhaltung(person_id=tierhaltung.person_id, tier_id = tier.id)
+        db.session.add(new_tierhaltung)
+        db.session.commit()
+        return redirect(url_for('ordi.show_tierhaltung', id=new_tierhaltung.id))
 
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
@@ -146,11 +160,12 @@ def create_tier(id):
 @login_required
 def edit_tier(id, tier_id):
     if(request.method == 'POST'):
-        ctier, error = fill_and_validate_tier(request)
+        tier = db.session.query(Tier).get(tier_id)
+        tier, error = fill_and_validate_tier(tier, request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
-        update_tier(ctier)
+        db.session.commit()
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     ctierhaltung, cperson, ctier = read_tierhaltung(id)
@@ -166,32 +181,34 @@ def edit_tier(id, tier_id):
 @login_required
 def edit_person(id, person_id):
     if(request.method == 'POST'):
-        cperson, error = fill_and_validate_person(request)
+        person = db.session.query(Person).get(person_id)
+        person, error = fill_and_validate_person(person, request)
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/edit_person.html', id=id, person_id=person_id)
-        update_person(cperson)
+        db.session.commit()
 
-        cadresse = fill_and_validate_adresse(request)[0]
-        if(len(cadresse.strasse) > 0 or len(cadresse.postleitzahl) > 0 or len(cadresse.ort) > 0):
-            if(cadresse.id):
-                update_adresse(cadresse)
-            else:
-                write_adresse(cadresse)
+        adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
+        adresse = fill_and_validate_adresse(adresse, request)[0]
+        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
+            if(adresse.id == None):
+                db.session.add(adresse)
         else:
-            if(cadresse.id):
-                delete_db_adresse(cadresse.id)
+            if(adresse.id):
+                db.session.delete(adresse)
+        db.session.commit()
 
-        ckontakte = fill_and_validate_kontakte(request)[0]
-        for ckontakt in ckontakte:
-            if(len(ckontakt.kontakt) > 0):
-                if(ckontakt.id):
-                    update_kontakt(ckontakt)
-                else:
-                    write_kontakt(ckontakt)
+        kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
+        kontakte = fill_and_validate_kontakte(kontakte, request)[0]
+        for kontakt in kontakte:
+            if(len(kontakt.kontakt) > 0):
+                if(kontakt.id == None):
+                    db.session.add(kontakt)
             else:
-                if(ckontakt.id):
-                    delete_db_kontakt(ckontakt.id)
+                if(kontakt.id):
+                    db.session.delete(kontakt)
+        db.session.commit()
+
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     ctierhaltung, cperson, ctier = read_tierhaltung(id)

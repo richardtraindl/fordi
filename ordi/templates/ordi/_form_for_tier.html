@@ -7,39 +7,19 @@
         {% endif %}
 
         <label for="tiername">Tiername</label>
-        {% if tier %}
-            <input size="20" name="tiername" value="{{- tier.tiername -}}" required>
-        {% else %}
-            <input size="20" name="tiername" value="{{- request.form['tiername'] -}}" required>
-        {% endif %}
+        <input size="20" name="tiername" value="{{- request.form['tiername'] or tier.tiername -}}" required>
 
         <label for="tierart">Tierart</label>
-        {% if tier %}
-            <input size="20" name="tierart" value="{{- tier.tierart -}}" required>
-        {% else %}
-            <input size="20" name="tierart" value="{{- request.form['tierart'] -}}" required>
-        {% endif %}
+        <input size="20" name="tierart" value="{{- request.form['tierart'] or tier.tierart -}}" required>
 
         <label for="rasse">Rasse</label>
-        {% if tier %}
-            <input size="20" name="rasse" value="{{- tier.rasse -}}">
-        {% else %}
-            <input size="20" name="rasse" value="{{- request.form['rasse'] -}}">
-        {% endif %}
+        <input size="20" name="rasse" value="{{- request.form['rasse'] or tier.rasse -}}">
 
         <label for="farbe">Farbe</label>
-        {% if tier %}
-            <input size="20" name="farbe" value="{{- tier.farbe -}}">
-        {% else %}
-            <input size="20" name="farbe" value="{{- request.form['farbe'] -}}">
-        {% endif %}
+        <input size="20" name="farbe" value="{{- request.form['farbe'] or tier.farbe -}}">
 
         <label for="geburtsdatum">Geburtsdatum</label>
-        {% if tier %}
-            <input size="10" class="date" name="geburtsdatum" value="{{- tier.geburtsdatum -}}" required>
-        {% else %}
-            <input size="10" class="date" name="geburtsdatum" value="{{- request.form['geburtsdatum'] -}}" required>
-        {% endif %}
+        <input size="10" class="date" name="geburtsdatum" value="{{- request.form['geburtsdatum'] or tier.geburtsdatum -}}" required>
 
         <label for="geschlechtscode">Geschlecht</label>
         {% if tier %}
@@ -62,18 +42,10 @@
         </select>
 
         <label for="chip_nummer">Chip Nummer</label>
-        {% if tier %}
-            <input size="20" name="chip_nummer" value="{{- tier.chip_nummer -}}">
-        {% else %}
-            <input size="20" name="chip_nummer" value="{{- request.form['chip_nummer'] -}}">
-        {% endif %}
+        <input size="20" name="chip_nummer" value="{{- request.form['chip_nummer'] or tier.chip_nummer -}}">
 
         <label for="eu_passnummer">EU Passnummer</label>
-        {% if tier %}
-            <input size="20" name="eu_passnummer" value="{{- tier.eu_passnummer -}}">
-        {% else %}
-            <input size="20" name="eu_passnummer" value="{{- request.form['eu_passnummer'] -}}">
-        {% endif %}
+        <input size="20" name="eu_passnummer" value="{{- request.form['eu_passnummer'] or tier.eu_passnummer -}}">
 
         <label for="patient">Patient</label>
         {% if tier %}
@@ -95,17 +67,9 @@
         {% endif %}
 
         <label for="viren">Viren</label>
-        {% if tier %}
-            <input size="20" name="viren" value="{{- tier.viren -}}">
-        {% else %}
-            <input size="20" name="viren" value="{{- request.form['viren'] -}}">
-        {% endif %}
+        <input size="20" name="viren" value="{{- request.form['viren'] or tier.viren -}}">
 
         <label for="merkmal">Merkmal</label>
-        {% if tier %}
-            <input size="20" name="merkmal" value="{{- tier.merkmal -}}">
-        {% else %}
-            <input size="20" name="merkmal" value="{{- request.form['merkmal'] -}}">
-        {% endif %}
+        <input size="20" name="merkmal" value="{{- request.form['merkmal'] or tier.merkmal -}}">
     </div>
 

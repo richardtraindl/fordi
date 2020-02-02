@@ -27,32 +27,16 @@
         </select>
         
         <label for="titel">Titel</label>
-        {% if person %}
-            <input size="5" name="titel" value="{{- person.titel -}}">
-        {% else %}
-            <input size="5" name="titel" value="{{- request.form['titel'] -}}">
-        {% endif %}
+        <input size="5" name="titel" value="{{- request.form['titel']  or person.titel -}}">
 
         <label for="familienname">Familienname</label>
-        {% if person %}
-            <input size="20" name="familienname" value="{{- person.familienname -}}" required>
-        {% else %}
-            <input size="20" name="familienname" value="{{- request.form['familienname'] -}}" required>
-        {% endif %}
+        <input size="20" name="familienname" value="{{- request.form['familienname'] or person.familienname -}}" required>
 
         <label for="vorname">Vorname</label>
-        {% if person %}
-            <input size="20" name="vorname" value="{{- person.vorname -}}">
-        {% else %}
-            <input size="20" name="vorname" value="{{- request.form['vorname'] -}}">
-        {% endif %}
+        <input size="20" name="vorname" value="{{- request.form['vorname'] or person.vorname -}}">
 
         <label for="notiz">Notiz</label>
-        {% if person %}
-            <input size="20" name="notiz" value="{{- person.notiz -}}">
-        {% else %}
-            <input size="20" name="notiz" value="{{- request.form['notiz'] -}}">
-        {% endif %}
+        <input size="20" name="notiz" value="{{- request.form['notiz'] or person.notiz -}}">
 
         <label for="kunde">Kunden Kennzeichen</label>
         {% if person %}
@@ -73,46 +57,34 @@
             {% endif %}
         {% endif %}
 
-        {% if person.adresse %}
-            <input type="hidden" name="adresse_id" value="{{- person.adresse.id -}}">
+        {% if adresse %}
+            <input type="hidden" name="adresse_id" value="{{- adresse.id -}}">
         {% else %}
             <input type="hidden" name="adresse_id]" value="">
         {% endif %}
 
         <label for="postleitzahl">Postleitzahl</label>
-        {% if person.adresse %}
-            <input size="5" name="postleitzahl" value="{{- person.adresse.postleitzahl -}}">
-        {% else %}
-            <input size="5" name="postleitzahl" value="{{- request.form['postleitzahl'] -}}">
-        {% endif %}
+        <input size="5" name="postleitzahl" value="{{- request.form['postleitzahl'] or adresse.postleitzahl -}}">
         
         <label for="ort">Ort</label>
-        {% if person.adresse %}
-            <input size="20" name="ort" value="{{- person.adresse.ort -}}">
-        {% else %}
-            <input size="20" name="ort" value="{{- request.form['ort'] -}}">
-        {% endif %}
+        <input size="20" name="ort" value="{{- request.form['ort'] or adresse.ort -}}">
 
         <label for="strasse">Straße</label>
-        {% if person.adresse %}
-            <input size="20" name="strasse" value="{{- person.adresse.strasse -}}">
-        {% else %}
-            <input size="20" name="strasse" value="{{- request.form['strasse'] -}}">
-        {% endif %}
+        <input size="20" name="strasse" value="{{- request.form['strasse'] or adresse.strasse -}}">
 
-        {% if person.kontakte and person.kontakte[0] %}
-            <input type="hidden" name="kontakt1_id" value="{{- person.kontakte[0].id -}}">
+        {% if kontakte[0] %}
+            <input type="hidden" name="kontakt1_id" value="{{- kontakte[0].id -}}">
             <label for="kontakt1">Telefonnr.</label>
-            <input size="20" name="kontakt1" value="{{- person.kontakte[0].kontakt -}}">
+            <input size="20" name="kontakt1" value="{{- kontakte[0].kontakt -}}">
         {% else %}
             <input type="hidden" name="kontakt1_id" value="">
             <label for="kontakt1">Telefonnr.</label>
             <input size="20" name="kontakt1" value="{{- request.form['kontakt1'] -}}">
         {% endif %}
-        {% if person.kontakte and person.kontakte[1] %}
-            <input type="hidden" name="kontakt2_id" value="{{- person.kontakte[1]['id'] -}}">
+        {% if kontakte[1] %}
+            <input type="hidden" name="kontakt2_id" value="{{- kontakte[1].id -}}">
             <label for="kontakt2">Telefonnr.</label>
-            <input size="20" name="kontakt2" value="{{- person.kontakte[1].kontakt -}}">
+            <input size="20" name="kontakt2" value="{{- kontakte[1].kontakt -}}">
         {% else %}
             <input type="hidden" name="kontakt2_id" value="">
             <label for="kontakt2">Telefonnr.</label>

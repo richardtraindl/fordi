@@ -7,6 +7,8 @@ from ordi.models import *
 
 
 def fill_and_validate_tier(tier, request):
+    error = ""
+
     try:
         geschlechtscode = int(request.form['geschlechtscode'])
     except:
@@ -14,9 +16,13 @@ def fill_and_validate_tier(tier, request):
 
     if(len(request.form['geburtsdatum']) > 10):
         str_geburtsdatum = request.form['geburtsdatum'].split()[0]
-        geburtsdatum = datetime.strptime(str_geburtsdatum, "%Y-%m-%d")
     else:
-        geburtsdatum = datetime.strptime(request.form['geburtsdatum'], "%Y-%m-%d")
+        str_geburtsdatum = request.form['geburtsdatum']
+    try:
+        geburtsdatum = datetime.strptime(str_geburtsdatum, "%Y-%m-%d").date()
+    except:
+        geburtsdatum = None
+        error = "Falsches Geburtsdatum. "
 
     if(request.form.get('patient')):
         patient = True
@@ -37,7 +43,6 @@ def fill_and_validate_tier(tier, request):
     tier.eu_passnummer=request.form['eu_passnummer']
     tier.patient=patient
 
-    error = ""
     if(len(tier.tiername) == 0):
         error += "Tiername fehlt. "
     if(len(tier.tierart) == 0):
@@ -138,21 +143,29 @@ def fill_and_validate_kontakte(kontakte, request):
     return kontakte, ""
 
 
-def fill_and_validate_behandlung(behandlung, request):
-    if(len(request.form['behandlungsdatum']) > 10):
-        str_behandlungsdatum = request.form['behandlungsdatum'].split()[0]
-        behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%Y-%m-%d")
+def fill_and_validate_behandlung(behandlung, req_behandlung):
+    if(len(req_behandlung['behandlungsdatum']) > 10):
+        str_behandlungsdatum = req_behandlung['behandlungsdatum'].split()[0]
     else:
-        behandlungsdatum = datetime.strptime(request.form['behandlungsdatum'], "%Y-%m-%d")
+        str_behandlungsdatum = req_behandlung['behandlungsdatum']
+    try:
+        behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%Y-%m-%d")
+    except:
+        behandlungsdatum = None
+        error = "Falsches Behandlungsdatum. "
 
-    behandlung = Behandlung(behandlungsdatum=behandlungsdatum, 
-                            gewicht=request.form['gewicht'],  
-                            diagnose=request.form['diagnose'],
-                            laborwerte1=request.form['laborwerte1'], 
-                            laborwerte2=request.form['laborwerte2'], 
-                            arzneien=request.form['arzneien'],
-                            arzneimittel=request.form['arzneimittel'], 
-                            impfungen_extern=request.form['impfungen_extern'])
+    if(behandlung == None):
+        behandlung = Behandlung()
+
+    behandlung.behandlungsdatum=behandlungsdatum 
+    behandlung.gewicht=req_behandlung['gewicht'] 
+    behandlung.diagnose=req_behandlung['diagnose']
+    behandlung.laborwerte1=req_behandlung['laborwerte1'] 
+    behandlung.laborwerte2=req_behandlung['laborwerte2']
+    behandlung.arzneien=req_behandlung['arzneien']
+    behandlung.arzneimittel=req_behandlung['arzneimittel']
+    behandlung.impfungen_extern=req_behandlung['impfungen_extern']
+
     return behandlung, ""
 
 
@@ -194,51 +207,6 @@ def build_behandlungen(request):
 
         req_behandlungen.append(req_behandlung)
     return req_behandlungen
-
-def fill_and_validate_behandlungen(req_behandlungen):
-    behandlungen = []
-    return_error = ""
-
-    for req_behandlung in req_behandlungen:
-        try:
-            behandlung_id = int(req_behandlung['behandlung_id'])
-        except:
-            behandlung_id = None
-
-        tier_id = None
-
-        if(len(req_behandlung['behandlungsdatum']) > 10):
-            str_behandlungsdatum = req_behandlung['behandlungsdatum'].split()[0]
-            behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%Y-%m-%d")
-        else:
-            behandlungsdatum = datetime.strptime(req_behandlung['behandlungsdatum'], "%Y-%m-%d")
-
-        if(len(req_behandlung['gewicht']) == 0):
-            gewicht = None
-        else:
-            try:
-                gewicht = float(req_behandlung['gewicht'].replace(",", "."))
-            except:
-                gewicht = None
-                return_error += "Gewicht muss eine Zahl sein. "
-
-        behandlung = Behandlung(id=behandlung_id, 
-                                tier_id=tier_id, 
-                                behandlungsdatum=behandlungsdatum, 
-                                gewicht=gewicht, 
-                                diagnose=req_behandlung['diagnose'], 
-                                laborwerte1=req_behandlung['laborwerte1'], 
-                                laborwerte2=req_behandlung['laborwerte2'],
-                                arzneien=req_behandlung['arzneien'],
-                                arzneimittel=req_behandlung['arzneimittel'],
-                                impfungen_extern=req_behandlung['impfungen_extern'])
-
-        #flag, error = behandlung.validate()
-        #if(flag == False and len(return_error) == 0):
-        #    return_error = error
-        behandlungen.append(behandlung)
-
-    return behandlungen, return_error
 
 
 def fill_and_validate_rechnung(request):
@@ -371,22 +339,23 @@ def fill_and_validate_rechnungszeilen(req_rechnungszeilen):
         return rechnungszeilen, return_error
 
 
-def fill_and_validate_behandlungsverlauf(request):
+def fill_and_validate_behandlungsverlauf(behandlungsverlauf, request):
+    if(len(request.form['datum']) > 10):
+        str_datum = request.form['datum'].split()[0]
+    else:
+        str_datum = request.form['datum']
     try:
-        behandlungsverlauf_id = int(request.form['behandlungsverlauf_id'])
+        datum = datetime.strptime(str_datum, "%Y-%m-%d")
     except:
-        behandlungsverlauf_id = None
+        datum = None
+        error = "Falsches Datum. "
 
-    person_id = None
-    tier_id = None
+    if(behandlungsverlauf == None):
+        behandlungsverlauf = Behandlungsverlauf()
 
-    cbehandlungsverlauf = cBehandlungsverlauf(behandlungsverlauf_id,
-                                              person_id,
-                                              tier_id,
-                                              request.form['datum'],
-                                              request.form['diagnose'],
-                                              request.form['behandlung'])
+    behandlungsverlauf.datum=datum
+    behandlungsverlauf.diagnose=request.form['diagnose']
+    behandlungsverlauf.behandlung=request.form['behandlung']
 
-    flag, error = cbehandlungsverlauf.validate()
-    return cbehandlungsverlauf, error
+    return behandlungsverlauf, ""
 

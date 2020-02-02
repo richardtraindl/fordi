@@ -138,30 +138,22 @@ def fill_and_validate_kontakte(kontakte, request):
     return kontakte, ""
 
 
-def fill_and_validate_behandlung(request):
-    try:
-        behandlung_id = int(request.form['behandlung_id'])
-    except:
-        behandlung_id = None
+def fill_and_validate_behandlung(behandlung, request):
+    if(len(request.form['behandlungsdatum']) > 10):
+        str_behandlungsdatum = request.form['behandlungsdatum'].split()[0]
+        behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%Y-%m-%d")
+    else:
+        behandlungsdatum = datetime.strptime(request.form['behandlungsdatum'], "%Y-%m-%d")
 
-    try:
-        tier_id = int(request.form['tier_id'])
-    except:
-        tier_id = None
-
-    behandlung = Behandlung(behandlung_id, 
-                            tier_id,
-                            request.form['behandlungsdatum'], 
-                            request.form['gewicht'],  
-                            request.form['diagnose'],
-                            request.form['laborwerte1'], 
-                            request.form['laborwerte2'], 
-                            request.form['arzneien'],
-                            request.form['arzneimittel'], 
-                            request.form['impfungen_extern'])
-
-    flag, error = behandlung.validate()
-    return behandlung, error
+    behandlung = Behandlung(behandlungsdatum=behandlungsdatum, 
+                            gewicht=request.form['gewicht'],  
+                            diagnose=request.form['diagnose'],
+                            laborwerte1=request.form['laborwerte1'], 
+                            laborwerte2=request.form['laborwerte2'], 
+                            arzneien=request.form['arzneien'],
+                            arzneimittel=request.form['arzneimittel'], 
+                            impfungen_extern=request.form['impfungen_extern'])
+    return behandlung, ""
 
 
 def build_behandlungen(request):    
@@ -215,6 +207,12 @@ def fill_and_validate_behandlungen(req_behandlungen):
 
         tier_id = None
 
+        if(len(req_behandlung['behandlungsdatum']) > 10):
+            str_behandlungsdatum = req_behandlung['behandlungsdatum'].split()[0]
+            behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%Y-%m-%d")
+        else:
+            behandlungsdatum = datetime.strptime(req_behandlung['behandlungsdatum'], "%Y-%m-%d")
+
         if(len(req_behandlung['gewicht']) == 0):
             gewicht = None
         else:
@@ -224,21 +222,21 @@ def fill_and_validate_behandlungen(req_behandlungen):
                 gewicht = None
                 return_error += "Gewicht muss eine Zahl sein. "
 
-        cbehandlung = cBehandlung(behandlung_id, 
-                                  tier_id, 
-                                  req_behandlung['behandlungsdatum'], 
-                                  gewicht, 
-                                  req_behandlung['diagnose'], 
-                                  req_behandlung['laborwerte1'], 
-                                  req_behandlung['laborwerte2'],
-                                  req_behandlung['arzneien'],
-                                  req_behandlung['arzneimittel'],
-                                  req_behandlung['impfungen_extern'])
+        behandlung = Behandlung(id=behandlung_id, 
+                                tier_id=tier_id, 
+                                behandlungsdatum=behandlungsdatum, 
+                                gewicht=gewicht, 
+                                diagnose=req_behandlung['diagnose'], 
+                                laborwerte1=req_behandlung['laborwerte1'], 
+                                laborwerte2=req_behandlung['laborwerte2'],
+                                arzneien=req_behandlung['arzneien'],
+                                arzneimittel=req_behandlung['arzneimittel'],
+                                impfungen_extern=req_behandlung['impfungen_extern'])
 
-        flag, error = cbehandlung.validate()
-        if(flag == False and len(return_error) == 0):
-            return_error = error
-        behandlungen.append(cbehandlung)
+        #flag, error = behandlung.validate()
+        #if(flag == False and len(return_error) == 0):
+        #    return_error = error
+        behandlungen.append(behandlung)
 
     return behandlungen, return_error
 

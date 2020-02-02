@@ -1,46 +1,46 @@
 
     <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         <p>Anrede</p>
-        <p>{{ person.anredecode | mapanrede }}</p>
+        <p>{{ tierhaltung.Person.anredecode | mapanrede }}</p>
 
         <p>Titel</p>
-        <p>{{ person.titel }}</p>
+        <p>{{ tierhaltung.Person.titel }}</p>
 
         <p>Familienname</p>
-        <p>{{ person.familienname }}</p>
+        <p>{{ tierhaltung.Person.familienname }}</p>
 
         <p>Vorname</p>
-        <p>{{ person.vorname }}</p>
+        <p>{{ tierhaltung.Person.vorname }}</p>
 
         <p>Notiz</p>
-        <p>{{ person.notiz }}</p>
+        <p>{{ tierhaltung.Person.notiz }}</p>
 
         <p>Kunden Kennzeichen</p>
-        {% if person.kunde == 0 %}
+        {% if tierhaltung.Person.kunde == 0 %}
             <input type="checkbox" name="kunde" value="0" disabled>
         {% else %}
             <input type="checkbox" name="kunde" value="1" checked disabled>
         {% endif %}
 
         <p>Postleitzahl</p>
-        <p>{{ person.adresse.postleitzahl }}</p>
+        <p>{{ adresse.postleitzahl }}</p>
 
         <p>Ort</p>
-        <p>{{ person.adresse.ort }}</p>
+        <p>{{ adresse.ort }}</p>
 
         <p>Straße</p>
-        <p>{{ person.adresse.strasse }}</p>
+        <p>{{ adresse.strasse }}</p>
 
-        {% if person.kontakte[0] %}
+        {% if kontakte[0] %}
             <p>Telefonnr.</p>
-            <p>{{ person.kontakte[0].kontakt }}</p>
+            <p>{{ kontakte[0].kontakt }}</p>
         {% else %}
             <p>Telefonnr.</p>
             <p>&nbsp;</p>
         {% endif %}
-        {% if person.kontakte[1] %}
+        {% if kontakte[1] %}
             <p>Telefonnr.</p>
-            <p>{{ person.kontakte[1].kontakt }}</p>
+            <p>{{ kontakte[1].kontakt }}</p>
         {% else %}
             <p>Telefonnr.</p>
             <p>&nbsp;</p>

@@ -9,9 +9,9 @@
 
 {% block content %}
     <div class="row-grid" style="grid-template-columns: auto auto;">
-        <p><a href="{{ url_for('ordi.edit_person', id=id, person_id=person.id) }}">Person ändern</a></p>
+        <p><a href="{{ url_for('ordi.edit_person', id=id, person_id=tierhaltung.Person.id) }}">Person ändern</a></p>
 
-        <p><a href="{{ url_for('ordi.edit_tier', id=id, tier_id=tier.id) }}">Tier ändern</a></p>
+        <p><a href="{{ url_for('ordi.edit_tier', id=id, tier_id=tierhaltung.Tier.id) }}">Tier ändern</a></p>
 
         {% include 'ordi/_person.html' %}
     
@@ -29,62 +29,60 @@
                 <th style="width: 10.9%">Laborwerte*</th>
                 <th style="width: 13.8%">Arzneien</th>
                 <th style="width: 6.9%">AM</th>
-                <th style="width: 9.8%">Impfungen</th>
+                <th style="width: 8.9%">Impfungen</th>
                 <th style="width: 3.9%">Kg</th>
-                <th style="width: 6.2%">&nbsp;</th>
+                <th style="width: 7.1%">&nbsp;</th>
             </tr>
         </thead>
     </table>
 
-    <form method="post" action="{{ url_for('ordi.save_behandlungen', id=id) }}">
+    <form method="post" action="{{ url_for('ordi.save_behandlung', id=id) }}">
       <div id="scroller" style="max-height: 40vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
-            <tbody>
-              {% for behandlung in behandlungen %}
-                <tr>
-                    <td style="width: 8%">
-                        <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] or behandlung.id -}}">
-                        <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung['behandlungsdatum'] or behandlung.behandlungsdatum -}}">
-                    </td>
-                    <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung['diagnose'] or behandlung.diagnose -}}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{- behandlung['laborwerte1'] or behandlung.laborwerte1 -}}</textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{- behandlung['laborwerte2'] or behandlung.laborwerte2 -}}</textarea></td>
-                    <td style="width: 14%"><textarea name="arzneien[]">{{- behandlung['arzneien'] or behandlung.arzneien -}}</textarea></td>
-                    <td style="width: 7%"><textarea name="arzneimittel[]">{{- behandlung['arzneimittel'] or behandlung.arzneimittel -}}</textarea></td>
-                    <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly>
-                            {%- set vars = {'selected': False} -%}
-                            {%- for impfungswert in impfungswerte -%}
-                                {%- for impfung in (behandlung['impfungen'] or behandlung.impfungen) -%}
-                                    {%- if impfung.impfungscode | string == impfungswert[1]|string -%}
-                                        {%- if vars.selected -%}, {%- endif -%}
-                                        {{- impfungswert[0] -}}
-                                        {%- if vars.update({'selected': True}) -%} {%- endif -%}
-                                    {%- endif -%}
-                                {%- endfor -%}
-                            {%- endfor -%}
-                        </textarea>
-                    </td>
-                    <td style="width: 4%"><textarea name="gewicht[]">{{- behandlung['gewicht'] or  behandlung.gewicht | sn -}}</textarea></td>
-                    <td style="width: 5%">
-                        <a class="zeile_loeschen" tierhaltung_id="{{- id -}}" behandlung_id="{{- behandlung['behandlung_id'] or  behandlung.id -}}" href="#">Zeile löschen</a>
-                    </td>
-                </tr>
-              {% endfor %}
-                <tr class="edit-focus">
-                    <td style="width: 8%">
-                        <input type="hidden" name="behandlung_id[]" value="">
-                        <input type="text" name="behandlungsdatum[]" class="date" value="{{- datum -}}">
-                    </td>
-                    <td style="width: 30%"><textarea name="diagnose[]" id="new-diagnose"></textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte1[]" class="labor"></textarea></td>
-                    <td style="width: 11%"><textarea name="laborwerte2[]" class="labor"></textarea></td>
-                    <td style="width: 14%"><textarea name="arzneien[]"></textarea></td>
-                    <td style="width: 7%"><textarea name="arzneimittel[]"></textarea></td>
-                    <td style="width: 10%"><textarea name="impfungen_extern[]" class="impfungen" readonly></textarea></td>
-                    <td style="width: 4%"><textarea name="gewicht[]"></textarea></td>
-                    <td style="width: 5%">&nbsp;</td>
-                </tr>
-            </tbody>
+          <tbody>
+          {% for behandlung in behandlungen %}
+            <tr style="height: 104px">
+              <td style="width: 8%"><p>{{- behandlung.behandlungsdatum -}}"</p></td>
+              <td style="width: 30%"><p>{{- behandlung.diagnose -}}</p></td>
+              <td style="width: 11%"><p>{{- behandlung.laborwerte1 -}}</p></td>
+              <td style="width: 11%"><p>{{- behandlung.laborwerte2 -}}</p></td>
+              <td style="width: 14%"><p>{{- behandlung.arzneien -}}</p></td>
+              <td style="width: 7%"><p>{{- behandlung.arzneimittel -}}</p></td>
+              <td style="width: 9%">
+                <p>{%- set vars = {'selected': False} -%}
+                   {%- for impfungswert in impfungswerte -%}
+                     {%- for impfung in behandlung.impfungen -%}
+                       {%- if impfung.impfungscode | string == impfungswert[1]|string -%}
+                         {%- if vars.selected -%}, {%- endif -%}
+                         {{- impfungswert[0] -}}
+                         {%- if vars.update({'selected': True}) -%} {%- endif -%}
+                       {%- endif -%}
+                     {%- endfor -%}
+                   {%- endfor -%}
+                </p>
+              </td>
+              <td style="width: 4%"><p>{{- behandlung.gewicht | sn -}}</p></td>
+              <td style="width: 6%">
+                <a class="zeile_bearbeiten" tierhaltung_id="{{- id -}}" behandlung_id="{{- behandlung.id -}}" href="#">bearb.</a>
+                <a class="zeile_loeschen" tierhaltung_id="{{- id -}}" behandlung_id="{{- behandlung.id -}}" href="#">löschen</a>
+              </td>
+            </tr>
+          {% endfor %}
+            <tr class="edit-focus">
+              <td style="width: 8%">
+                  <input type="hidden" name="behandlung_id" value="">
+                  <input type="text" name="behandlungsdatum" class="date" value="{{- datum -}}">
+              </td>
+              <td style="width: 30%"><textarea name="diagnose" id="diagnose"></textarea></td>
+              <td style="width: 11%"><textarea name="laborwerte1" class="labor"></textarea></td>
+              <td style="width: 11%"><textarea name="laborwerte2" class="labor"></textarea></td>
+              <td style="width: 14%"><textarea name="arzneien"></textarea></td>
+              <td style="width: 7%"><textarea name="arzneimittel"></textarea></td>
+              <td style="width: 9%"><textarea name="impfungen_extern" class="impfungen" readonly></textarea></td>
+              <td style="width: 4%"><textarea name="gewicht"></textarea></td>
+              <td style="width: 6%">&nbsp;</td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
@@ -137,7 +135,7 @@
                 changeYear: true 
             });
 
-            $("#new-diagnose").focus();
+            $("#diagnose").focus();
 
             var element = document.getElementById("scroller");
             element.scrollTop = element.scrollHeight;

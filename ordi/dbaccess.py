@@ -418,7 +418,7 @@ def delete_db_behandlung(behandlung_id):
 
 
 # impfung
-def save_or_delete_impfungen(behandlung_id, impfungstexte):
+def save_or_delete_impfungen2(behandlung_id, impfungstexte):
     dbcon = get_db()
     cursor = dbcon.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")

@@ -6,12 +6,10 @@ import re, os
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 from werkzeug.exceptions import abort
 
-from ordi.auth import login_required
 from . import db
+from ordi.auth import login_required
 from ordi.models import *
-from ordi.db2 import get_db
 from ordi.dbaccess import *
-#from ordi.reqhelper2 import *
 from ordi.reqhelper import *
 from ordi.values import *
 from ordi.createpdf import *
@@ -87,7 +85,7 @@ def create_tierhaltung():
                 db.session.commit()
 
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
-        db.session.add(tierhaltung)
+        db.session.add(tierhaltung.tier_id)
         db.session.commit()
         return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
@@ -97,10 +95,12 @@ def create_tierhaltung():
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
 @login_required
 def show_tierhaltung(id):
-    ctierhaltung, cperson, ctier = read_tierhaltung(id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    cperson.kontakte = read_kontakte_for_person(cperson.id)
-    cbehandlungen = read_behandlungen_for_tier(ctier.id)
+    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Tierhaltung.person_id == Person.id) \
+        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
+    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+    kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
+    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id==tierhaltung.Tier.id).all()
 
     datum = date.today().strftime("%Y-%m-%d")
 
@@ -119,9 +119,12 @@ def show_tierhaltung(id):
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
-    return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=cbehandlungen, datum=datum, 
-                           anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, laboreferenzen=laboreferenzen, 
-                           impfungswerte=impfungswerte, page_title="Karteikarte")
+    return render_template('ordi/tierhaltung.html', id=id, tierhaltung=tierhaltung, 
+                           adresse=adresse, kontakte=kontakte,
+                           behandlungen=behandlungen, datum=datum, 
+                           anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
+                           laboreferenzen=laboreferenzen, impfungswerte=impfungswerte, 
+                           page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
@@ -222,31 +225,68 @@ def edit_person(id, person_id):
 
 
 # behandlung
-@bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
-@login_required
-def save_behandlungen(id):
-    if(request.method == 'POST'):
-        req_behandlungen = build_behandlungen(request)
-        cbehandlungen, error = fill_and_validate_behandlungen(req_behandlungen)
-        if(len(error) > 0):
-            flash(error)
-            ctierhaltung, cperson, ctier = read_tierhaltung(id)
-            cperson.adresse = read_adresse_for_person(cperson.id)
-            cperson.kontakte = read_kontakte_for_person(cperson.id)
-            return render_template('ordi/tierhaltung.html', id=id, person=cperson, tier=ctier, behandlungen=req_behandlungen)
+def save_or_delete_impfungen(behandlung_id, impfungstexte):
+    impfungen = db.session.query(Impfung).filter(Impfung.behandlung_id==behandlung_id).all()
+    for impfungstext in impfungstexte:
+        try:
+            impfungscode = IMPFUNG[impfungstext]
+        except:
+            print("severe error")
+            cursor.close()
+            return False
+        found = False
+        for impfung in impfungen:
+            if(impfungscode == impfung.impfungscode):
+                found = True
+                break
+        if(found == False):
+            new_impfung = Impfung(behandlung_id=behandlung_id, impfungscode=impfungscode)
+            db.session.add(new_impfung)
+            db.session.commit()
 
-        ctierhaltung = read_tierhaltung(id)[0]
-        for cbehandlung in cbehandlungen:
-            cbehandlung.tier_id = ctierhaltung.tier_id
-            if(cbehandlung.id):
-                update_behandlung(cbehandlung)
-            else:
-                write_behandlung(cbehandlung)
-            if(len(cbehandlung.impfungen_extern) > 0):
-                impfungstexte = cbehandlung.impfungen_extern.split(',')
-            else:
-                impfungstexte = []
-            save_or_delete_impfungen(cbehandlung.id, impfungstexte)
+    for impfung in impfungen:
+        found = False
+        for impfungstext in impfungstexte:
+            impfungscode = IMPFUNG[impfungstext]
+            if(impfungscode == impfung.impfungscode):
+                found = True
+                break
+        if(found == False):
+            db.session.delete(impfung)
+            db.session.commit()
+    return True
+
+@bp.route('/<int:id>/save_behandlung', methods=('GET', 'POST'))
+@login_required
+def save_behandlung(id):
+    if(request.method == 'POST'):
+        try:
+            behandlung_id = int(request['behandlung_id'])
+            behandlung = db.session.query(Behandlung).get(behandlung_id)
+        except:
+            behandlung_id = None
+            behandlung = None
+
+        behandlung = fill_and_validate_behandlung(behandlung, request)[0]
+        if(behandlung.id):
+            db.session.commit()
+        elif(len(behandlung.gewicht) > 0 or
+             len(behandlung.diagnose) > 0 or
+             len(behandlung.laborwerte1) > 0 or
+             len(behandlung.laborwerte2) > 0 or
+             len(behandlung.arzneien) > 0 or
+             len(behandlung.arzneimittel) > 0 or
+             len(behandlung.impfungen_extern) > 0):
+            tierhaltung = db.session.query(Tierhaltung).get(id)
+            behandlung.tier_id = tierhaltung.tier_id
+            db.session.add(behandlung)
+            db.session.commit()
+
+        if(len(behandlung.impfungen_extern) > 0):
+            impfungstexte = behandlung.impfungen_extern.split(',')
+        else:
+            impfungstexte = []
+        save_or_delete_impfungen(behandlung.id, impfungstexte)
     return redirect(url_for('ordi.show_tierhaltung', id=id))
     
 

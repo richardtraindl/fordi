@@ -501,6 +501,8 @@ def create_rechnung(id):
     if(request.method == 'POST'):
         rechnung, error = fill_and_validate_rechnung(None, request)
         req_rechnungszeilen = build_rechnungszeilen(request)
+        if(len(req_rechnungszeilen) == 0):
+            error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
@@ -561,6 +563,8 @@ def edit_rechnung(rechnung_id):
     if(request.method == 'POST'):
         rechnung, error = fill_and_validate_rechnung(rechnung, request)
         req_rechnungszeilen = build_rechnungszeilen(request)
+        if(len(req_rechnungszeilen) == 0):
+            error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 

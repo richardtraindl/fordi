@@ -23,24 +23,24 @@
         {% endif %}
 
         <p>Postleitzahl</p>
-        <p>{{ adresse.postleitzahl }}</p>
+        <p>{{  tierhaltung.Adresse.postleitzahl }}</p>
 
         <p>Ort</p>
-        <p>{{ adresse.ort }}</p>
+        <p>{{  tierhaltung.Adresse.ort }}</p>
 
         <p>Straße</p>
-        <p>{{ adresse.strasse }}</p>
+        <p>{{  tierhaltung.Adresse.strasse }}</p>
 
-        {% if kontakte[0] %}
+        {% if  tierhaltung.Kontakte[0] %}
             <p>Telefonnr.</p>
-            <p>{{ kontakte[0].kontakt }}</p>
+            <p>{{  tierhaltung.Kontakte[0].kontakt }}</p>
         {% else %}
             <p>Telefonnr.</p>
             <p>&nbsp;</p>
         {% endif %}
-        {% if kontakte[1] %}
+        {% if  tierhaltung..Kontakte[1] %}
             <p>Telefonnr.</p>
-            <p>{{ kontakte[1].kontakt }}</p>
+            <p>{{  tierhaltung.Kontakte[1].kontakt }}</p>
         {% else %}
             <p>Telefonnr.</p>
             <p>&nbsp;</p>

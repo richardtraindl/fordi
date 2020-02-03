@@ -158,7 +158,7 @@ def create_tier(id):
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
-    return render_template('ordi/create_tier.html', geschlechtswerte=geschlechtswerte, new="true", page_title="Neues Tier")
+    return render_template('ordi/create_tier.html', tier=None, geschlechtswerte=geschlechtswerte, new="true", page_title="Neues Tier")
 
 
 @bp.route('/<int:id>/<int:tier_id>/edit_tier', methods=('GET', 'POST'))

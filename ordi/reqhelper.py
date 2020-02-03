@@ -223,10 +223,10 @@ def fill_and_validate_rechnung(rechnung, request):
     except:
         rechnungslfnr = None
 
-    if(len(req_behandlung['ausstellungsdatum']) > 10):
-        str_ausstellungsdatum = req_behandlung['ausstellungsdatum'].split()[0]
+    if(len(request.form['ausstellungsdatum']) > 10):
+        str_ausstellungsdatum = request.form['ausstellungsdatum'].split()[0]
     else:
-        str_ausstellungsdatum = req_behandlung['ausstellungsdatum']
+        str_ausstellungsdatum = request.form['ausstellungsdatum']
     try:
         ausstellungsdatum = datetime.strptime(str_ausstellungsdatum, "%Y-%m-%d")
     except:

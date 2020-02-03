@@ -595,15 +595,15 @@ def edit_rechnung(rechnung_id):
 
         db.session.commit() # commit rechnung
 
-        for(new_rechnungszeile in new_rechnungszeilen):
+        for new_rechnungszeile in new_rechnungszeilen:
             if(new_rechnungszeile == None):
                 new_rechnungszeile.rechnung_id = rechnung.id
                 db.session.add(new_rechnungszeile)
         db.session.commit()
 
-        for(rechnungszeile in rechnungszeilen):
+        for rechnungszeile in rechnungszeilen:
             found = False
-            for(new_rechnungszeile in new_rechnungszeilen):
+            for new_rechnungszeile in new_rechnungszeilen:
                 rechnungszeile.id = new_rechnungszeile.id
                 found = True
                 break

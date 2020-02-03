@@ -551,6 +551,7 @@ def edit_rechnung(rechnung_id):
         artikelwerte.append([key, value])
 
     rechnung = db.session.query(Rechnung).get(rechnung_id)
+    rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung.id).all()
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
         .join(Person, Tierhaltung.person_id == Person.id) \
         .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==rechnung.person_id, Tierhaltung.tier_id==rechnung.tier_id).first()
@@ -566,26 +567,26 @@ def edit_rechnung(rechnung_id):
                                    artikelwerte=artikelwerte, id=tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
                                    kontakte=kontakte, page_title="Rechnung")
 
-        rechnungszeilen = []
+        new_rechnungszeilen = []
         for req_rechnungszeile in req_rechnungszeilen:
-            rechnungszeile = None
+            new_rechnungszeile = None
             if(len(req_rechnungszeile['rechnungszeile_id']) > 0):
                 try:
                     rechnungszeile_id = int(req_rechnungszeile['rechnungszeile_id'])
-                    rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
+                    new_rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
                 except:
                     rechnungszeile_id = None
 
-            rechnungszeile, error = fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile)
+            new_rechnungszeile, error = fill_and_validate_rechnungszeile(new_rechnungszeile, req_rechnungszeile)
             if(len(error) > 0):
                 flash(error)
                 return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
                                        artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
                                        kontakte=kontakte, page_title="Rechnung")
             else:
-                rechnungszeilen.append(rechnungszeile)
+                new_rechnungszeilen.append(new_rechnungszeile)
 
-        flag, error = calc_rechnung(rechnung, rechnungszeilen)
+        flag, error = calc_rechnung(rechnung, new_rechnungszeilen)
         if(flag == False):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
@@ -594,29 +595,26 @@ def edit_rechnung(rechnung_id):
 
         db.session.commit() # commit rechnung
 
-        for(rechnungszeile in rechnungszeilen):
-            if(rechnungszeile == None):
-                rechnungszeile.rechnung_id = rechnung.id
-                db.session.add(rechnungszeile)
+        for(new_rechnungszeile in new_rechnungszeilen):
+            if(new_rechnungszeile == None):
+                new_rechnungszeile.rechnung_id = rechnung.id
+                db.session.add(new_rechnungszeile)
         db.session.commit()
 
-        old_rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung.id).all()
-        for(old_rechnungszeile in old_rechnungszeilen):
+        for(rechnungszeile in rechnungszeilen):
             found = False
-            for(rechnungszeile in rechnungszeilen):
-                old_rechnungszeile.id = rechnungszeile.id
+            for(new_rechnungszeile in new_rechnungszeilen):
+                rechnungszeile.id = new_rechnungszeile.id
                 found = True
                 break
             if(found == False):
-                db.session.delete(old_rechnungszeile)
+                db.session.delete(rechnungszeile)
         db.session.commit()
 
         path_and_filename = dl_rechnung(rechnung.id)
         return send_file(path_and_filename, as_attachment=True)
     else:
-        crechnung = read_rechnung(rechnung_id)
-        crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
-        return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, 
+        return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, 
                                artikelwerte=artikelwerte, id=tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
                                kontakte=kontakte, page_title="Rechnung")
 

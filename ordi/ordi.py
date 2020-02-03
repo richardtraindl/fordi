@@ -37,8 +37,10 @@ def index():
         else:
             patient = False
     tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Tierhaltung.person_id == Person.id) \
-        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Person.familienname.like(familienname + "%"), Tier.tiername.like(tiername + "%"), Person.kunde==kunde, Tier.patient==patient).all()
+        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
+        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id) \
+        .filter(Person.familienname.like(familienname + "%"), Tier.tiername.like(tiername + "%"), Person.kunde==kunde, Tier.patient==patient).all()
+
     return render_template('ordi/tierhaltungen.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
 
 
@@ -66,8 +68,6 @@ def create_tierhaltung():
             return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
 
         db.session.add(person)
-        db.session.commit()
-
         db.session.add(tier)
         db.session.commit()
 
@@ -87,6 +87,7 @@ def create_tierhaltung():
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
         db.session.add(tierhaltung)
         db.session.commit()
+
         return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
         return render_template('ordi/create_tierhaltung.html', person=None, tier=None, adresse=None, kontakte=[], anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
@@ -96,11 +97,12 @@ def create_tierhaltung():
 @login_required
 def show_tierhaltung(id):
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Tierhaltung.person_id == Person.id) \
-        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
+        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
+        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
     adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
-    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id==tierhaltung.Tier.id).all()
+    behandlungen = db.session.query(Behandlung, Impfung) \
+		.outerjoin(Impfung, Behandlung.id == Impfung.behandlung_id).filter(Behandlung.tier_id==tierhaltung.Tier.id).all()
 
     datum = date.today().strftime("%Y-%m-%d")
 
@@ -119,6 +121,7 @@ def show_tierhaltung(id):
     geschlechtswerte = []
     for key, value in GESCHLECHT.items():
         geschlechtswerte.append([key, value])
+
     return render_template('ordi/tierhaltung.html', id=id, tierhaltung=tierhaltung, 
                            adresse=adresse, kontakte=kontakte,
                            behandlungen=behandlungen, datum=datum, 
@@ -141,6 +144,10 @@ def delete_tierhaltung(id):
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
 @login_required
 def create_tier(id):
+    geschlechtswerte = []
+    for key, value in GESCHLECHT.items():
+        geschlechtswerte.append([key, value])
+
     if(request.method == 'POST'):
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
@@ -153,17 +160,19 @@ def create_tier(id):
         new_tierhaltung = Tierhaltung(person_id=tierhaltung.person_id, tier_id = tier.id)
         db.session.add(new_tierhaltung)
         db.session.commit()
-        return redirect(url_for('ordi.show_tierhaltung', id=new_tierhaltung.id))
 
-    geschlechtswerte = []
-    for key, value in GESCHLECHT.items():
-        geschlechtswerte.append([key, value])
-    return render_template('ordi/create_tier.html', tier=None, geschlechtswerte=geschlechtswerte, new="true", page_title="Neues Tier")
+        return redirect(url_for('ordi.show_tierhaltung', id=new_tierhaltung.id))
+    else:
+        return render_template('ordi/create_tier.html', tier=None, geschlechtswerte=geschlechtswerte, new="true", page_title="Neues Tier")
 
 
 @bp.route('/<int:id>/<int:tier_id>/edit_tier', methods=('GET', 'POST'))
 @login_required
 def edit_tier(id, tier_id):
+    geschlechtswerte = []
+    for key, value in GESCHLECHT.items():
+        geschlechtswerte.append([key, value])
+
     if(request.method == 'POST'):
         tier = db.session.query(Tier).get(tier_id)
         tier, error = fill_and_validate_tier(tier, request)
@@ -171,13 +180,11 @@ def edit_tier(id, tier_id):
             flash(error)
             return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
         db.session.commit()
-        return redirect(url_for('ordi.show_tierhaltung', id=id))
 
-    tier = db.session.query(Tier).get(tier_id)
-    geschlechtswerte = []
-    for key, value in GESCHLECHT.items():
-        geschlechtswerte.append([key, value])
-    return render_template('ordi/edit_tier.html', id=id, tier=tier, geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
+        return redirect(url_for('ordi.show_tierhaltung', id=id))
+    else:
+        tier = db.session.query(Tier).get(tier_id)
+        return render_template('ordi/edit_tier.html', id=id, tier=tier, geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
 # tier
 
 
@@ -185,6 +192,10 @@ def edit_tier(id, tier_id):
 @bp.route('/<int:id>/<int:person_id>/edit_person', methods=('GET', 'POST'))
 @login_required
 def edit_person(id, person_id):
+    anredewerte = []
+    for key, value in ANREDE.items():
+        anredewerte.append([key, value])
+
     if(request.method == 'POST'):
         person = db.session.query(Person).get(person_id)
         person, error = fill_and_validate_person(person, request)
@@ -197,6 +208,7 @@ def edit_person(id, person_id):
         adresse = fill_and_validate_adresse(adresse, request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
             if(adresse.id == None):
+                adresse.person_id=person_id
                 db.session.add(adresse)
         else:
             if(adresse.id):
@@ -208,6 +220,7 @@ def edit_person(id, person_id):
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
                 if(kontakt.id == None):
+                    kontakt.person_id=person_id
                     db.session.add(kontakt)
             else:
                 if(kontakt.id):
@@ -219,9 +232,6 @@ def edit_person(id, person_id):
     person = db.session.query(Person).get(person_id)
     adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
-    anredewerte = []
-    for key, value in ANREDE.items():
-        anredewerte.append([key, value])
     return render_template('ordi/edit_person.html', id=id, person=person, adresse=adresse, 
                            kontakte=kontakte, anredewerte=anredewerte, page_title="Person ändern")
 # person
@@ -351,8 +361,8 @@ def dl_behandlungsverlauf(behandlungsverlauf_id):
 @login_required
 def create_behandlungsverlauf(id):
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Tierhaltung.person_id == Person.id) \
-        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
+        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
+        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
     adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
@@ -383,8 +393,8 @@ def create_behandlungsverlauf(id):
 def edit_behandlungsverlauf(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Tierhaltung.person_id == Person.id) \
-        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==behandlungsverlauf.person_id, Tierhaltung.tier_id==behandlungsverlauf.tier_id).first()
+        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
+        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==behandlungsverlauf.person_id, Tierhaltung.tier_id==behandlungsverlauf.tier_id).first()
     adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
@@ -493,8 +503,8 @@ def create_rechnung(id):
         artikelwerte.append([key, value])
 
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Tierhaltung.person_id == Person.id) \
-        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
+        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
+        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
     adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
@@ -555,8 +565,8 @@ def edit_rechnung(rechnung_id):
     rechnung = db.session.query(Rechnung).get(rechnung_id)
     rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung.id).all()
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Tierhaltung.person_id == Person.id) \
-        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==rechnung.person_id, Tierhaltung.tier_id==rechnung.tier_id).first()
+        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
+        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==rechnung.person_id, Tierhaltung.tier_id==rechnung.tier_id).first()
     adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 

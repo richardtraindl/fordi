@@ -634,7 +634,7 @@ def delete_rechnungszeile(rechnungszeile_id):
     rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
     db.session.delete(rechnungszeile)
     db.session.commit()
-    return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnungszeile.rechnung_id))
+    return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnungszeile.rechnung_id))
 # rechnung
 
 

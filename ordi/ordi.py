@@ -426,7 +426,16 @@ def rechnungen():
             rechnungsjahr = None
     else:
         rechnungsjahr = None
-    rechnungen = read_rechnungen(rechnungsjahr)
+
+    if(rechnungsjahr):
+        rechnungen = db.session.query(Rechnung, Person, Tier) \
+            .join(Person, Rechnung.person_id == Person.id) \
+            .join(Tier, Rechnung.tier_id == Tier.id).filter(Rechnung.rechnungsjahr==rechnungsjahr).all()
+    else:
+        rechnungen = db.session.query(Rechnung, Person, Tier) \
+            .join(Person, Rechnung.person_id == Person.id) \
+            .join(Tier, Rechnung.tier_id == Tier.id).all()
+        
     if(rechnungsjahr):
         str_rechnungsjahr = str(rechnungsjahr)
     else:
@@ -435,12 +444,15 @@ def rechnungen():
 
 
 def dl_rechnung(rechnung_id):
-    crechnung = read_rechnung(rechnung_id)
-    crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(crechnung.id)
-    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    html = render_template('ordi/prints/print_rechnung.html', rechnung=crechnung, person=cperson, tier=ctier)
-    filename = str(crechnung.id) + "_rechnung_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
+    rechnung = db.session.query(Rechnung).get(rechnung_id)
+    rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung_id).all()
+    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Tierhaltung.person_id == Person.id) \
+        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==rechnung.person_id, Tierhaltung.tier_id==rechnung.tier_id, ).first()
+    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+
+    html = render_template('ordi/prints/print_rechnung.html', rechnung=rechnung, tierhaltung=tierhaltung, adresse=adresse)
+    filename = str(rechnung.id) + "_rechnung_fuer_" + tierhaltung.Person.familienname + "_" + tierhaltung.Person.vorname + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
     html2pdf(html, path_and_filename)
     return path_and_filename
@@ -452,9 +464,11 @@ def create_rechnung(id):
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
 
-    ctierhaltung, cperson, ctier = read_tierhaltung(id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    cperson.kontakte = read_kontakte_for_person(cperson.id)
+    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Tierhaltung.person_id == Person.id) \
+        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
+    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+    kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
     if(request.method == 'POST'):
         crechnung, error = fill_and_validate_rechnung(request)
@@ -462,17 +476,19 @@ def create_rechnung(id):
         crechnung.rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
         if(len(error) > 0 or len(zeilen_error) > 0):
             flash(error + zeilen_error)
-            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                                   id=id, person=cperson, tier=ctier, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
+                                   artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
+                                   kontakte=kontakte, page_title="Rechnung")
 
         flag, error = crechnung.calc()
         if(flag == False):
             flash(error)
-            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                                   id=id, person=cperson, tier=ctier, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
+                                   artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
+                                   kontakte=kontakte, page_title="Rechnung")
 
-        crechnung.person_id = cperson.id
-        crechnung.tier_id = ctier.id
+        crechnung.person_id = tierhaltung.Person.id
+        crechnung.tier_id = tierhaltung.Tier.id
         write_rechnung(crechnung)
 
         for crechnungszeile in crechnung.rechnungszeilen:
@@ -483,8 +499,9 @@ def create_rechnung(id):
     else:
         datum = date.today().strftime("%Y-%m-%d")
         ort = "Wien"
-        return render_template('ordi/rechnung.html', rechnung=None, rechnungszeilen=None, datum=datum, ort=ort, artikelwerte=artikelwerte, 
-                               id=id, person=cperson, tier=ctier, page_title="Rechnung")
+        return render_template('ordi/rechnung.html', rechnung=None, rechnungszeilen=None, datum=datum, ort=ort, 
+                               artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
+                               kontakte=kontakte, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
@@ -494,10 +511,12 @@ def edit_rechnung(rechnung_id):
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
 
-    crechnung = read_rechnung(rechnung_id)
-    ctierhaltung,cperson, ctier = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    cperson.kontakte = read_kontakte_for_person(cperson.id)
+    rechnung = db.session.query(Rechnung).get(rechnung_id)
+    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Tierhaltung.person_id == Person.id) \
+        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==rechnung.person_id, Tierhaltung.tier_id==rechnung.tier_id).first()
+    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+    kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
     if(request.method == 'POST'):
         crechnung, error = fill_and_validate_rechnung(request)
@@ -506,13 +525,15 @@ def edit_rechnung(rechnung_id):
         if(len(error) > 0 or len(zeilen_error) > 0):
             flash(error + zeilen_error)
             return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
-                                    artikelwerte=artikelwerte, id=ctierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
+                                   artikelwerte=artikelwerte, id=tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
+                                   kontakte=kontakte, page_title="Rechnung")
 
         flag, error = crechnung.calc()
         if(flag == False):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
-                                    artikelwerte=artikelwerte, id=tierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
+                                   artikelwerte=artikelwerte, id=tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
+                                   kontakte=kontakte, page_title="Rechnung")
 
         update_rechnung(crechnung)
         for crechnungszeile in crechnung.rechnungszeilen:
@@ -527,22 +548,26 @@ def edit_rechnung(rechnung_id):
     else:
         crechnung = read_rechnung(rechnung_id)
         crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(rechnung_id)
-        return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, artikelwerte=artikelwerte, 
-                               id=ctierhaltung.id, person=cperson, tier=ctier, page_title="Rechnung")
+        return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=crechnung.rechnungszeilen, 
+                               artikelwerte=artikelwerte, id=tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
+                               kontakte=kontakte, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/delete_rechnung', methods=('GET',))
 @login_required
 def delete_rechnung(rechnung_id):
-    delete_db_rechnung(rechnung_id)
+    rechnung = db.session.query(Rechnung).get(rechnung_id)
+    db.session.delete(rechnung)
+    db.session.commit()
     return redirect(url_for('ordi.rechnungen'))
 
 
 @bp.route('/<int:rechnungszeile_id>/delete_rechnungszeile', methods=('GET',))
 @login_required
 def delete_rechnungszeile(rechnungszeile_id):
-    crechnungszeile = read_rechnungszeile(rechnungszeile_id)
-    delete_db_rechnungszeile(rechnungszeile_id)
+    rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
+    db.session.delete(rechnungszeile)
+    db.session.commit()
     return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnungszeile.rechnung_id))
 # rechnung
 

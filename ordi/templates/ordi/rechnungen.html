@@ -13,7 +13,7 @@
         <div class="flex-container">
             <div>
                 <label for="rechnungsjahr">Rechnungsjahr</label>
-                <input type="text" size="10" name="rechnungsjahr" id="rechnungsjahr" value="{{ rechnungsjahr }}">
+                <input type="text" size="10" name="rechnungsjahr" value="{{- rechnungsjahr -}}">
             </div>
             <div>
                 <input type="submit" value="suchen">
@@ -39,20 +39,20 @@
             <th width="4%">Geschl.</th>
             <th width="6%">Geb.Datum</th>
         </tr>
-      {% for rechnung in rechnungen %}
+      {% for r in rechnungen %}
         <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ rechnung['id'] }}"></td>
-            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['rechnungsjahr'] }}</a></td>
-            <td style="width: 2%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['rechnungslfnr'] }}</a></td>
-            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ '{0:0.2f}'.format(rechnung['brutto_summe'] | float) }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['anredecode'] | mapanrede }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['familienname'] }}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['vorname'] }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['tiername'] }}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['tierart'] }}</a></td>
-            <td style="width: 10%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['rasse'] }}</a></td>
-            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['geschlechtscode'] | mapgeschlecht }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung['id']) }}">{{ rechnung['geburtsdatum'] }}</a></td>
+            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- r.Rechnung.id -}}"></td>
+            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungsjahr -}}</a></td>
+            <td style="width: 2%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungslfnr -}}</a></td>
+            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- '{0:0.2f}'.format(r.Rechnung.brutto_summe | float) -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.['anredecode'] | mapanrede -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.familienname'] -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.vorname'] -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tiername'] -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tierart'] -}}</a></td>
+            <td style="width: 10%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.rasse'] -}}</a></td>
+            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode'] | mapgeschlecht -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum'] -}}</a></td>
         </tr>
       {% endfor %}
     </table>

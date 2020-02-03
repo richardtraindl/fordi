@@ -325,11 +325,14 @@ def behandlungsverlaeufe():
 
 
 def dlbehandlungsverlauf(behandlungsverlauf_id):
-    cbehandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(cbehandlungsverlauf.person_id, cbehandlungsverlauf.tier_id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, person=cperson, tier=ctier)
-    filename = str(cbehandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + cperson.familienname + "_" + cperson.vorname + ".pdf"
+    behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
+    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Tierhaltung.person_id == Person.id) \
+        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==behandlungsverlauf.person_id, Tierhaltung.tier_id==behandlungsverlauf.tier_id, ).first()
+    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+    html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
+                            tierhaltung=tierhaltung, adresse=adresse)
+    filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + tierhaltung.Person.familienname + "_" + tierhaltung.Person.vorname + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
     html2pdf(html, path_and_filename)
     return path_and_filename
@@ -368,31 +371,35 @@ def create_behandlungsverlauf(id):
 @bp.route('/<int:behandlungsverlauf_id>/edit_behandlungsverlauf', methods=('GET', 'POST'))
 @login_required
 def edit_behandlungsverlauf(behandlungsverlauf_id):
-    cbehandlungsverlauf = read_behandlungsverlauf(behandlungsverlauf_id)
-    ctierhaltung, cperson, ctier = read_tierhaltung_by_children(cbehandlungsverlauf.person_id, cbehandlungsverlauf.tier_id)
-    cperson.adresse = read_adresse_for_person(cperson.id)
-    cperson.kontakte = read_kontakte_for_person(cperson.id)
+    behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
+    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Tierhaltung.person_id == Person.id) \
+        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==behandlungsverlauf.person_id, Tierhaltung.tier_id==behandlungsverlauf.tier_id).first()
+    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+    kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
+
     if(request.method == 'POST'):
-        cbehandlungsverlauf, error = fill_and_validate_behandlungsverlauf(request)
+        behandlungsverlauf, error = fill_and_validate_behandlungsverlauf(behandlungsverlauf, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, 
-                                    person=cperson, tier=ctier, page_title="Behandlungsverlauf")
+            return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
+                                    tierhaltung=tierhaltung, adresse=adresse, 
+                                    kontakte=kontakte, page_title="Behandlungsverlauf")
 
-        cbehandlungsverlauf.person_id = cperson.id
-        cbehandlungsverlauf.tier_id = ctier.id
-        update_behandlungsverlauf(cbehandlungsverlauf)
+        db.session.commit()
         path_and_filename = dlbehandlungsverlauf(behandlungsverlauf_id)
         return send_file(path_and_filename, as_attachment=True)
     else:
-        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=cbehandlungsverlauf, 
-                                person=cperson, tier=ctier, page_title="Behandlungsverlauf")
+        return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
+                                tierhaltung=tierhaltung, adresse=adresse, 
+                                kontakte=kontakte, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/delete_behandlungsverlauf', methods=('GET',))
 @login_required
 def delete_behandlungsverlauf(behandlungsverlauf_id):
-    delete_db_behandlungsverlauf(behandlungsverlauf_id)
+    db.session.delete(id=behandlungsverlauf_id)
+    db.session.commit()
     return redirect(url_for('ordi.behandlungsverlaeufe'))
 # behandlungsverlauf
 

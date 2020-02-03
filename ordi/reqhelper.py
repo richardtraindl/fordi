@@ -315,7 +315,7 @@ def fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile):
 
     rechnungszeile.datum=datum
     rechnungszeile.artikelcode=artikelcode
-    rechnungszeile.artikel=artikel
+    rechnungszeile.artikel=req_rechnungszeile['artikel']
     rechnungszeile.betrag=betrag
 
     return rechnungszeile, error

@@ -534,7 +534,7 @@ def create_rechnung(id):
             rechnungszeile.rechnung_id = rechnung.id
             db.session.add(rechnungszeile)
         db.session.commit()
-        return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnung.id))
+        return redirect(url_for('ordi.edit_rechnung', rechnung_id=rechnung.id))
     else:
         datum = datetime.now().strftime("%Y-%m-%d")
         ort = "Wien"
@@ -564,7 +564,7 @@ def edit_rechnung(rechnung_id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                                   artikelwerte=artikelwerte, id=tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
+                                   artikelwerte=artikelwerte, id=tierhaltung.Tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
                                    kontakte=kontakte, page_title="Rechnung")
 
         new_rechnungszeilen = []
@@ -581,7 +581,7 @@ def edit_rechnung(rechnung_id):
             if(len(error) > 0):
                 flash(error)
                 return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                                       artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
+                                       artikelwerte=artikelwerte, id=tierhaltung.Tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
                                        kontakte=kontakte, page_title="Rechnung")
             else:
                 new_rechnungszeilen.append(new_rechnungszeile)
@@ -590,7 +590,7 @@ def edit_rechnung(rechnung_id):
         if(flag == False):
             flash(error)
             return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                                   artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
+                                   artikelwerte=artikelwerte, id=tierhaltung.Tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
                                    kontakte=kontakte, page_title="Rechnung")
 
         db.session.commit() # commit rechnung
@@ -615,7 +615,7 @@ def edit_rechnung(rechnung_id):
         return send_file(path_and_filename, as_attachment=True)
     else:
         return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, 
-                               artikelwerte=artikelwerte, id=tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
+                               artikelwerte=artikelwerte, id=tierhaltung.Tierhaltung.id, tierhaltung=tierhaltung, adresse=adresse, 
                                kontakte=kontakte, page_title="Rechnung")
 
 

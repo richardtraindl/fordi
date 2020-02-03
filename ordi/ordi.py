@@ -331,7 +331,7 @@ def behandlungsverlaeufe():
     return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
 
 
-def dlbehandlungsverlauf(behandlungsverlauf_id):
+def dl_behandlungsverlauf(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
         .join(Person, Tierhaltung.person_id == Person.id) \
@@ -397,7 +397,7 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
                                     kontakte=kontakte, page_title="Behandlungsverlauf")
 
         db.session.commit()
-        path_and_filename = dlbehandlungsverlauf(behandlungsverlauf_id)
+        path_and_filename = dl_behandlungsverlauf(behandlungsverlauf_id)
         return send_file(path_and_filename, as_attachment=True)
     else:
         return render_template('ordi/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
@@ -434,7 +434,7 @@ def rechnungen():
     return render_template('ordi/rechnungen.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
 
 
-def dlrechnung(rechnung_id):
+def dl_rechnung(rechnung_id):
     crechnung = read_rechnung(rechnung_id)
     crechnung.rechnungszeilen = read_rechnungszeilen_for_rechnung(crechnung.id)
     ctierhaltung, cperson, ctier = read_tierhaltung_by_children(crechnung.person_id, crechnung.tier_id)
@@ -522,7 +522,7 @@ def edit_rechnung(rechnung_id):
                 crechnungszeile.rechnung_id = rechnung_id
                 write_rechnungszeile(crechnungszeile)
 
-        path_and_filename = dlrechnung(crechnung.id)
+        path_and_filename = dl_rechnung(crechnung.id)
         return send_file(path_and_filename, as_attachment=True)
     else:
         crechnung = read_rechnung(rechnung_id)

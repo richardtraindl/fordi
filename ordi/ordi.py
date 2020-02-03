@@ -9,7 +9,6 @@ from werkzeug.exceptions import abort
 from . import db
 from ordi.auth import login_required
 from ordi.models import *
-from ordi.dbaccess import *
 from ordi.reqhelper import *
 from ordi.values import *
 from ordi.createpdf import *
@@ -41,7 +40,8 @@ def index():
         .outerjoin(Tier, Tierhaltung.tier_id == Tier.id) \
         .filter(Person.familienname.like(familienname + "%"), Tier.tiername.like(tiername + "%"), Person.kunde==kunde, Tier.patient==patient).all()
 
-    return render_template('ordi/tierhaltungen.html', familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Karteikarten")
+    return render_template('ordi/tierhaltungen.html', tierhaltungen=tierhaltungen, familienname=familienname, 
+			   tiername=tiername, kunde=kunde, patient=patient, page_title="Karteikarten")
 
 
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
@@ -64,8 +64,9 @@ def create_tierhaltung():
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html')
-            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
+				   anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
+				   page_title="Neue Karteikarte")
 
         db.session.add(person)
         db.session.add(tier)
@@ -90,7 +91,9 @@ def create_tierhaltung():
 
         return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
-        return render_template('ordi/create_tierhaltung.html', person=None, tier=None, adresse=None, kontakte=[], anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
+        return render_template('ordi/create_tierhaltung.html', person=None, tier=None, 
+			       adresse=None, kontakte=[], anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
+			       page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
@@ -98,35 +101,34 @@ def create_tierhaltung():
 def show_tierhaltung(id):
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
         .outerjoin(Person, Tierhaltung.person_id == Person.id) \
-        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
-    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
-    kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
+        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id) \
+        .outerjoin(Adresse, Person.id == Adresse.person_id) \
+        .outerjoin(Kontakt, Person.id == Kontakt.person_id).filter(Tierhaltung.id == id).first()
     behandlungen = db.session.query(Behandlung, Impfung) \
 		.outerjoin(Impfung, Behandlung.id == Impfung.behandlung_id).filter(Behandlung.tier_id==tierhaltung.Tier.id).all()
 
-    datum = date.today().strftime("%Y-%m-%d")
+    datum = datetime.now().strftime("%Y-%m-%d HH:MM:SS")
 
-    laboreferenzen = []
-    for referenz in LABOR_REFERENZ:
-        laboreferenzen.append(referenz)
-
-    impfungswerte = []
-    for key, value in IMPFUNG.items():
-        impfungswerte.append([key, value])
-
-    anredewerte = []
+    anredewe = []
     for key, value in ANREDE.items():
-        anredewerte.append([key, value])
+        anredewe.append([key, value])
 
-    geschlechtswerte = []
+    geschlechtswe = []
     for key, value in GESCHLECHT.items():
-        geschlechtswerte.append([key, value])
+        geschlechtswe.append([key, value])
 
-    return render_template('ordi/tierhaltung.html', id=id, tierhaltung=tierhaltung, 
-                           adresse=adresse, kontakte=kontakte,
+    laboref = []
+    for ref in LABOR_REFERENZ:
+        laboref.append(ref)
+
+    impfungswe = []
+    for key, value in IMPFUNG.items():
+        impfungswe.append([key, value])
+
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
                            behandlungen=behandlungen, datum=datum, 
-                           anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
-                           laboreferenzen=laboreferenzen, impfungswerte=impfungswerte, 
+                           anredewe=anredewe, geschlechtswe=geschlechtswe, 
+                           laboref=laboref, impfungswe=impfungswe, 
                            page_title="Karteikarte")
 
 

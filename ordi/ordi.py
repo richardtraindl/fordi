@@ -499,7 +499,7 @@ def create_rechnung(id):
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
     if(request.method == 'POST'):
-        rechnung, error = fill_and_validate_rechnung(request)
+        rechnung, error = fill_and_validate_rechnung(None, request)
         req_rechnungszeilen = build_rechnungszeilen(request)
         if(len(error) > 0):
             flash(error)
@@ -536,7 +536,7 @@ def create_rechnung(id):
         db.session.commit()
         return redirect(url_for('ordi.edit_rechnung', rechnung_id=crechnung.id))
     else:
-        datum = date.today().strftime("%Y-%m-%d")
+        datum = datetime.now().strftime("%Y-%m-%d")
         ort = "Wien"
         return render_template('ordi/rechnung.html', rechnung=None, rechnungszeilen=None, datum=datum, ort=ort, 
                                artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 

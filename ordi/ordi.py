@@ -471,14 +471,32 @@ def create_rechnung(id):
     kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
     if(request.method == 'POST'):
-        crechnung, error = fill_and_validate_rechnung(request)
-        req_rechnungszeilen = build_rechnungszeilen(request)
-        crechnung.rechnungszeilen, zeilen_error = fill_and_validate_rechnungszeilen(req_rechnungszeilen)
-        if(len(error) > 0 or len(zeilen_error) > 0):
-            flash(error + zeilen_error)
-            return render_template('ordi/rechnung.html', rechnung=crechnung, rechnungszeilen=req_rechnungszeilen, 
+        rechnung, error = fill_and_validate_rechnung(request)
+        if(len(error) > 0):
+            return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
                                    artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
                                    kontakte=kontakte, page_title="Rechnung")
+        req_rechnungszeilen = build_rechnungszeilen(request)
+        for req_rechnungszeile in req_rechnungszeilen:
+            rechnungszeile = None
+            if(len(req_rechnungszeile['rechnung_id']) > 0):
+                try:
+                    rechnung_id = int(req_rechnungszeile['rechnung_id'])
+                    rechnung = db.session.query(Rechnungszeile).get(rechnung_id)
+                except:
+                    rechnung_id = None
+                    rechnung = None
+
+            rechnung, error = fill_and_validate_rechnung(rechnung, req_rechnungszeile)
+            if(len(error) > 0):
+                return render_template('ordi/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                                       artikelwerte=artikelwerte, id=id, tierhaltung=tierhaltung, adresse=adresse, 
+                                       kontakte=kontakte, page_title="Rechnung")
+            if(rechnung.id == None):
+                rechnung.person_id = tierhaltung.Person.id
+                rechnung.tier_id = tierhaltung.Tier.id
+                db.session.add(rechnung)
+        db.session.commit()
 
         flag, error = crechnung.calc()
         if(flag == False):

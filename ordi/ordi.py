@@ -130,7 +130,9 @@ def show_tierhaltung(id):
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
 @login_required
 def delete_tierhaltung(id):
-    delete_db_tierhaltung(id)
+    tierhaltung = db.session.query(Tierhaltung).get(id)
+    db.session.delete(tierhaltung)
+    db.session.commit()
     return redirect(url_for('ordi.index'))
 # tierhaltung
 
@@ -313,14 +315,19 @@ def behandlungsverlaeufe():
     if(behandlungsjahr):
         begin = str(behandlungsjahr - 1) + "-12-31"
         end = str(behandlungsjahr + 1) + "-01-01"
-        behandlungsverlaeufe = db.session.query(Behandlungsverlauf).filter(Behandlungsverlauf.datum > begin, Behandlungsverlauf.datum < end).all()
+        behandlungsverlaeufe = db.session.query(Behandlungsverlauf, Person, Tier) \
+            .join(Person, Behandlungsverlauf.person_id == Person.id) \
+            .join(Tier, Behandlungsverlauf.tier_id == Tier.id).filter(Behandlungsverlauf.datum > begin, Behandlungsverlauf.datum < end).all()
     else:
-        behandlungsverlaeufe = db.session.query(Behandlungsverlauf).all()
-    #behandlungsverlaeufe = read_behandlungsverlaeufe(behandlungsjahr)
+        behandlungsverlaeufe = db.session.query(Behandlungsverlauf, Person, Tier) \
+            .join(Person, Behandlungsverlauf.person_id == Person.id) \
+            .join(Tier, Behandlungsverlauf.tier_id == Tier.id).all()
+
     if(behandlungsjahr):
         str_behandlungsjahr = str(behandlungsjahr)
     else:
         str_behandlungsjahr = ""
+
     return render_template('ordi/behandlungsverlaeufe.html', behandlungsverlaeufe=behandlungsverlaeufe, behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
 
 
@@ -330,11 +337,14 @@ def dlbehandlungsverlauf(behandlungsverlauf_id):
         .join(Person, Tierhaltung.person_id == Person.id) \
         .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==behandlungsverlauf.person_id, Tierhaltung.tier_id==behandlungsverlauf.tier_id, ).first()
     adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+
     html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
                             tierhaltung=tierhaltung, adresse=adresse)
+
     filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + tierhaltung.Person.familienname + "_" + tierhaltung.Person.vorname + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
     html2pdf(html, path_and_filename)
+
     return path_and_filename
 
 @bp.route('/<int:id>/create_behandlungsverlauf', methods=('GET', 'POST'))
@@ -398,7 +408,8 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
 @bp.route('/<int:behandlungsverlauf_id>/delete_behandlungsverlauf', methods=('GET',))
 @login_required
 def delete_behandlungsverlauf(behandlungsverlauf_id):
-    db.session.delete(id=behandlungsverlauf_id)
+    behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
+    db.session.delete(behandlungsverlauf)
     db.session.commit()
     return redirect(url_for('ordi.behandlungsverlaeufe'))
 # behandlungsverlauf

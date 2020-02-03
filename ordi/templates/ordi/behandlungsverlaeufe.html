@@ -13,7 +13,7 @@
         <div class="flex-container">
             <div>
                 <label for="behandlungsjahr">Behandlungsjahr</label>
-                <input type="text" size="10" name="behandlungsjahr" id="behandlungsjahr" value="{{ behandlungsjahr }}">
+                <input type="text" size="10" name="behandlungsjahr" value="{{- behandlungsjahr -}}">
             </div>
             <div>
                 <input type="submit" value="suchen">
@@ -37,18 +37,18 @@
             <th width="6%">Geschl.</th>
             <th width="8%">Geb.Datum</th>
         </tr>
-      {% for behandlungsverlauf in behandlungsverlaeufe %}
+      {% for b in behandlungsverlaeufe %}
         <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ behandlungsverlauf['id'] }}"></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['datum'] }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['anredecode']|mapanrede }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['familienname'] }}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['vorname'] }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['tiername'] }}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['tierart'] }}</a></td>
-            <td style="width: 10%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['rasse'] }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geschlechtscode'] | mapgeschlecht }}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf['id']) }}">{{ behandlungsverlauf['geburtsdatum'] }}</a></td>
+            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- b.Behandlungsverlauf.id -}}"></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode | mapanrede -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.familienname -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.vorname -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tiername -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
+            <td style="width: 10%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode | mapgeschlecht -}}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum -}}</a></td>
         </tr>
       {% endfor %}
       </table>

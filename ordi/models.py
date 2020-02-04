@@ -68,7 +68,7 @@ class Kontakt(db.Model):
     kontaktcode = db.Column(db.Integer(), nullable=False)
     kontakt = db.Column(db.String(50))
     kontakt_intern = db.Column(db.String(50))
-    person = db.relationship("Person", uselist=False, back_populates="kontakte")
+    person = db.relationship("Person", back_populates="kontakte")
 
     def __repr__(self):
         return '<Kontakt %r>' % (self.kontakt)

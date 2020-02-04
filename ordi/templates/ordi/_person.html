@@ -1,46 +1,46 @@
 
     <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         <p>Anrede</p>
-        <p>{{ tierhaltung.person.anredecode | mapanrede }}</p>
+        <p>{{ person.anredecode | mapanrede }}</p>
 
         <p>Titel</p>
-        <p>{{ tierhaltung.person.titel }}</p>
+        <p>{{ person.titel }}</p>
 
         <p>Familienname</p>
-        <p>{{ tierhaltung.person.familienname }}</p>
+        <p>{{ person.familienname }}</p>
 
         <p>Vorname</p>
-        <p>{{ tierhaltung.person.vorname }}</p>
+        <p>{{ person.vorname }}</p>
 
         <p>Notiz</p>
-        <p>{{ tierhaltung.person.notiz }}</p>
+        <p>{{ person.notiz }}</p>
 
         <p>Kunden Kennzeichen</p>
-        {% if tierhaltung.person.kunde == 0 %}
+        {% if person.kunde == 0 %}
             <input type="checkbox" name="kunde" value="0" disabled>
         {% else %}
             <input type="checkbox" name="kunde" value="1" checked disabled>
         {% endif %}
 
         <p>Postleitzahl</p>
-        <p>{{  tierhaltung.person.adresse.postleitzahl }}</p>
+        <p>{{ person.adresse.postleitzahl }}</p>
 
         <p>Ort</p>
-        <p>{{  tierhaltung.person.adresse.ort }}</p>
+        <p>{{ person.adresse.ort }}</p>
 
         <p>Straße</p>
-        <p>{{  tierhaltung.person.adresse.strasse }}</p>
+        <p>{{  person.adresse.strasse }}</p>
 
-        {% if  tierhaltung.person.kontakte[0] %}
+        {% if person.kontakte[0] %}
             <p>Telefonnr.</p>
-            <p>{{  tierhaltung.person.kontakte[0].kontakt }}</p>
+            <p>{{ person.kontakte[0].kontakt }}</p>
         {% else %}
             <p>Telefonnr.</p>
             <p>&nbsp;</p>
         {% endif %}
-        {% if  tierhaltung.person.kontakte[1] %}
+        {% if person.kontakte[1] %}
             <p>Telefonnr.</p>
-            <p>{{  tierhaltung.person.kontakte[1].kontakt }}</p>
+            <p>{{ person.kontakte[1].kontakt }}</p>
         {% else %}
             <p>Telefonnr.</p>
             <p>&nbsp;</p>

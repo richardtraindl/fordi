@@ -35,7 +35,7 @@ def index():
             patient = True
         else:
             patient = False
-    tierhaltungen = db.session.query(Tierhaltung)
+    tierhaltungen = db.session.query(Tierhaltung) \
         .filter(Person.familienname.like(familienname + "%"), Tier.tiername.like(tiername + "%"), Person.kunde==kunde, Tier.patient==patient).all()
 
     return render_template('ordi/tierhaltungen.html', tierhaltungen=tierhaltungen, familienname=familienname, 

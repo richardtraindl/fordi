@@ -62,18 +62,18 @@
             <th width="6%">Geschl.</th>
             <th width="8%">Geb.Datum</th>
         </tr>
-      {% for t in tierhaltungen %}
+      {% for tierhaltung in tierhaltungen %}
         <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ t.Tierhaltung.id }}"></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Person.anredecode | mapanrede }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Person.titel }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Person.familienname }}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Person.vorname }}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Tier.tiername }}</a></td>
-            <td style="width: 14%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Tier.tierart }}</a></td>
-            <td style="width: 10%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Tier.rasse }}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Tier.geschlechtscode | mapgeschlecht }}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('ordi.show_tierhaltung', id=t.Tierhaltung.id) }}">{{ t.Tier.geburtsdatum | sn }}</a></td>
+            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ tierhaltung.id }}"></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.person.anredecode | mapanrede }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.person.titel }}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.person.familienname }}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.person.vorname }}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.tier.tiername }}</a></td>
+            <td style="width: 14%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.tier.tierart }}</a></td>
+            <td style="width: 10%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.tier.rasse }}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.tier.geschlechtscode | mapgeschlecht }}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{ tierhaltung.tier.geburtsdatum | sn }}</a></td>
         </tr>
       {% endfor %}
     </table>

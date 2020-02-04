@@ -137,6 +137,8 @@ class Behandlungsverlauf(db.Model):
     datum = db.Column(db.DateTime(), nullable=False)
     diagnose = db.Column(db.String(256))
     behandlung = db.Column(db.String(1000))
+    person = db.relationship("Person", uselist=False, lazy='joined')
+    tier = db.relationship("Tier", uselist=False, lazy='joined')
 
     def __repr__(self):
         return '<Behandlungsverlauf %r>' % (self.tiername)
@@ -160,6 +162,8 @@ class Rechnung(db.Model):
     steuerbetrag_dreizehn = db.Column(db.Numeric(8, 2))
     steuerbetrag_zehn = db.Column(db.Numeric(8, 2))
     rechnungszeilen = db.relationship("Rechnungszeile", back_populates="rechnung", lazy='joined')
+    person = db.relationship("Person", uselist=False, lazy='joined')
+    tier = db.relationship("Tier", uselist=False, lazy='joined')
 
     def __repr__(self):
         return '<Rechnung %r>' % (self.id)

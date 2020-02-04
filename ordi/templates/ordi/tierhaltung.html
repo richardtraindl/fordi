@@ -9,15 +9,15 @@
 
 {% block content %}
     <div class="row-grid" style="grid-template-columns: auto auto;">
-        <p><a href="{{ url_for('ordi.edit_person', id=tierhaltung.Tierhaltung.id, person_id=tierhaltung.Person.id) }}">Person ändern</a></p>
+        <p><a href="{{ url_for('ordi.edit_person', id=tierhaltung.id, person_id=tierhaltung.person_id) }}">Person ändern</a></p>
 
-        <p><a href="{{ url_for('ordi.edit_tier', id=tierhaltung.Tierhaltung.id, tier_id=tierhaltung.Tier.id) }}">Tier ändern</a></p>
+        <p><a href="{{ url_for('ordi.edit_tier', id=tierhaltung.id, tier_id=tierhaltung.tier_id) }}">Tier ändern</a></p>
 
         {% include 'ordi/_person.html' %}
-    
+
         {% include 'ordi/_tier.html' %}
     </div>
- 
+
     <div class="gap"></div>
 
     <table class="liste">
@@ -64,7 +64,7 @@
                         {%- endfor -%}
                     </textarea>
                 </td>
-                <td style="width: 4%"><textarea name="gewicht[]" disabled>{{- behandlung['gewicht'] or  behandlung.gewicht | sn -}}</textarea></td>
+                <td style="width: 4%"><textarea name="gewicht[]" disabled>{{- behandlung['gewicht'] or behandlung.gewicht | sn -}}</textarea></td>
                 <td style="width: 6%"><a href="#" onclick="enablerow($(this));">bearb.</a></td>
             </tr>
           {% endfor %}

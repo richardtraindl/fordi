@@ -14,6 +14,20 @@ class User(db.Model):
         return '<User %r>' % (self.username)
 
 
+class Tierhaltung(db.Model):
+    __tablename__ = 'tierhaltung'
+
+    id = db.Column(db.Integer, primary_key=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'))
+    anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    person = relationship("Person", uselist=False, back_populates="tierhaltung", lazy='joined')
+    tier = relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='joined')
+
+    def __repr__(self):
+        return '<Tierhaltung %r>' % (self.id)
+
+
 class Person(db.Model):
     __tablename__ = 'person'
 
@@ -24,7 +38,8 @@ class Person(db.Model):
     vorname = db.Column(db.String(40))
     notiz = db.Column(db.String(200))
     kunde = db.Column(db.Boolean(), nullable=False, default=True)
-    adressen = db.relationship("Adresse", back_populates="person", lazy='joined')
+    tierhaltung = db.relationship("Tierhaltung", back_populates="person")
+    adresse = db.relationship("Adresse", uselist=False, back_populates="person", lazy='joined')
     kontakte = db.relationship("Kontakt", back_populates="person", lazy='joined')
 
     def __repr__(self):
@@ -39,7 +54,7 @@ class Adresse(db.Model):
     strasse = db.Column(db.String(40))
     postleitzahl = db.Column(db.String(40))
     ort = db.Column(db.String(40))
-    person = db.relationship("Person", back_populates="adressen")
+    person = db.relationship("Person", back_populates="adresse")
 
     def __repr__(self):
         return '<Adresse %r>' % (self.strasse)
@@ -74,6 +89,7 @@ class Tier(db.Model):
     chip_nummer = db.Column(db.String(30))
     eu_passnummer = db.Column(db.String(30))
     patient = db.Column(db.Boolean(), nullable=False, default=True)
+    tierhaltung = db.relationship("Tierhaltung", back_populates="tier")
     behandlungen = db.relationship("Behandlung", back_populates="tier", lazy='noload')
 
     def __repr__(self):
@@ -110,18 +126,6 @@ class Impfung(db.Model):
 
     def __repr__(self):
         return '<Impfung %r>' % (self.impfungscode)
-
-
-class Tierhaltung(db.Model):
-    __tablename__ = 'tierhaltung'
-
-    id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'))
-    anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-
-    def __repr__(self):
-        return '<Tierhaltung %r>' % (self.id)
 
 
 class Behandlungsverlauf(db.Model):

@@ -21,8 +21,8 @@ class Tierhaltung(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'))
     anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    person = relationship("Person", uselist=False, back_populates="tierhaltung", lazy='joined')
-    tier = relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='joined')
+    person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='joined')
+    tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='joined')
 
     def __repr__(self):
         return '<Tierhaltung %r>' % (self.id)
@@ -159,6 +159,7 @@ class Rechnung(db.Model):
     steuerbetrag_zwanzig = db.Column(db.Numeric(8, 2))
     steuerbetrag_dreizehn = db.Column(db.Numeric(8, 2))
     steuerbetrag_zehn = db.Column(db.Numeric(8, 2))
+    rechnungszeilen = db.relationship("Rechnungszeile", back_populates="rechnung", lazy='joined')
 
     def __repr__(self):
         return '<Rechnung %r>' % (self.id)
@@ -173,6 +174,7 @@ class Rechnungszeile(db.Model):
     artikelcode = db.Column(db.Integer(), nullable=False)
     artikel = db.Column(db.String(256))
     betrag = db.Column(db.Numeric(8, 2))
+    rechnung = db.relationship("Rechnung", back_populates="rechnungszeilen")
 
     def __repr__(self):
         return '<rechnungszeile %r>' % (self.id)

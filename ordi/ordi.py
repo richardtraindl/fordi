@@ -139,9 +139,9 @@ def delete_tierhaltung(id):
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
 @login_required
 def create_tier(id):
-    geschlechtswerte = []
+    geschlechtswe = []
     for key, value in GESCHLECHT.items():
-        geschlechtswerte.append([key, value])
+        geschlechtswe.append([key, value])
 
     if(request.method == 'POST'):
         tier, error = fill_and_validate_tier(None, request)
@@ -158,28 +158,28 @@ def create_tier(id):
 
         return redirect(url_for('ordi.show_tierhaltung', id=new_tierhaltung.id))
     else:
-        return render_template('ordi/create_tier.html', tier=None, geschlechtswerte=geschlechtswerte, new="true", page_title="Neues Tier")
+        return render_template('ordi/create_tier.html', tier=None, geschlechtswe=geschlechtswe, page_title="Neues Tier")
 
 
 @bp.route('/<int:id>/<int:tier_id>/edit_tier', methods=('GET', 'POST'))
 @login_required
 def edit_tier(id, tier_id):
-    geschlechtswerte = []
+    geschlechtswe = []
     for key, value in GESCHLECHT.items():
-        geschlechtswerte.append([key, value])
+        geschlechtswe.append([key, value])
 
     if(request.method == 'POST'):
         tier = db.session.query(Tier).get(tier_id)
         tier, error = fill_and_validate_tier(tier, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/edit_tier.html', id=id, tier_id=tier_id)
-        db.session.commit()
+            return render_template('ordi/edit_tier.html', id=id, tier=tier, geschlechtswe=geschlechtswe, page_title="Tier ändern")
 
+        db.session.commit()
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     else:
         tier = db.session.query(Tier).get(tier_id)
-        return render_template('ordi/edit_tier.html', id=id, tier=tier, geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
+        return render_template('ordi/edit_tier.html', id=id, tier=tier, geschlechtswe=geschlechtswe, page_title="Tier ändern")
 # tier
 
 
@@ -187,20 +187,20 @@ def edit_tier(id, tier_id):
 @bp.route('/<int:id>/<int:person_id>/edit_person', methods=('GET', 'POST'))
 @login_required
 def edit_person(id, person_id):
-    anredewerte = []
+    anredewe = []
     for key, value in ANREDE.items():
-        anredewerte.append([key, value])
+        anredewe.append([key, value])
 
     if(request.method == 'POST'):
         person = db.session.query(Person).get(person_id)
         person, error = fill_and_validate_person(person, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/edit_person.html', id=id, person_id=person_id)
+            return render_template('ordi/edit_person.html', id=id, person=person, anredewe=anredewe, page_title="Person ändern")
         db.session.commit()
 
-        adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
-        adresse = fill_and_validate_adresse(adresse, request)[0]
+        #adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
+        adresse = fill_and_validate_adresse(person.adresse, request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
             if(adresse.id == None):
                 adresse.person_id=person_id
@@ -210,8 +210,8 @@ def edit_person(id, person_id):
                 db.session.delete(adresse)
         db.session.commit()
 
-        kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
-        kontakte = fill_and_validate_kontakte(kontakte, request)[0]
+        #kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
+        kontakte = fill_and_validate_kontakte(person.kontakte, request)[0]
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
                 if(kontakt.id == None):
@@ -221,14 +221,12 @@ def edit_person(id, person_id):
                 if(kontakt.id):
                     db.session.delete(kontakt)
         db.session.commit()
-
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     person = db.session.query(Person).get(person_id)
-    adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
-    kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
-    return render_template('ordi/edit_person.html', id=id, person=person, adresse=adresse, 
-                           kontakte=kontakte, anredewerte=anredewerte, page_title="Person ändern")
+    #adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
+    #kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
+    return render_template('ordi/edit_person.html', id=id, person=person, anredewe=anredewe, page_title="Person ändern")
 # person
 
 

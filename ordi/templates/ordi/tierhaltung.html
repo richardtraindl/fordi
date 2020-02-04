@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="row-grid" style="grid-template-columns: auto auto;">
-        <p><a href="{{ url_for('ordi.edit_person', id=id, person_id=tierhaltung.Person.id) }}">Person ändern</a></p>
+        <p><a href="{{ url_for('ordi.edit_person', id=tierhaltung.Tierhaltung.id, person_id=tierhaltung.Person.id) }}">Person ändern</a></p>
 
         <p><a href="{{ url_for('ordi.edit_tier', id=tierhaltung.Tierhaltung.id, tier_id=tierhaltung.Tier.id) }}">Tier ändern</a></p>
 
@@ -36,7 +36,7 @@
         </thead>
     </table>
 
-    <form method="post" action="{{ url_for('ordi.save_behandlungen', id=id) }}">
+    <form method="post" action="{{ url_for('ordi.save_behandlungen', id=tierhaltung.Tierhaltung.id) }}">
       <div id="scroller" style="max-height: 40vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
           <tbody>
@@ -53,11 +53,11 @@
                 <td style="width: 7%"><textarea name="arzneimittel[]" disabled>{{- behandlung['arzneimittel'] or behandlung.arzneimittel -}}</textarea></td>
                 <td style="width: 9%"><textarea name="impfungen_extern[]" class="impfungen" readonly disabled>
                         {%- set vars = {'selected': False} -%}
-                        {%- for impfungswert in impfungswerte -%}
+                        {%- for impfungsw in impfungswe -%}
                             {%- for impfung in (behandlung['impfungen'] or behandlung.impfungen) -%}
-                                {%- if impfung.impfungscode | string == impfungswert[1]|string -%}
+                                {%- if impfung.impfungscode | string == impfungsw[1]|string -%}
                                     {%- if vars.selected -%}, {%- endif -%}
-                                    {{- impfungswert[0] -}}
+                                    {{- impfungsw[0] -}}
                                     {%- if vars.update({'selected': True}) -%} {%- endif -%}
                                 {%- endif -%}
                             {%- endfor -%}
@@ -93,16 +93,16 @@
 
     <p style="display: none">
         <select id="laboreferenzen" style="height: 240px" multiple>
-        {%- for referenz in laboreferenzen -%}
-            <option value="{{- loop.index -}}">{{- referenz -}}</option>
+        {%- for ref in laboref -%}
+            <option value="{{- loop.index -}}">{{- ref -}}</option>
         {%- endfor -%}
         </select>
     </p>
 
     <p style="display: none">
         <select id="impfungswerte" style="height: 240px" multiple>
-        {%- for impfungswert in impfungswerte -%}
-            <option value="{{- impfungswert[1] -}}">{{- impfungswert[0] -}}</option>
+        {%- for impfungsw in impfungswe -%}
+            <option value="{{- impfungsw[1] -}}">{{- impfungsw[0] -}}</option>
         {%- endfor -%}
         </select>
     </p>

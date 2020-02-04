@@ -92,8 +92,8 @@ def create_tierhaltung():
         return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
         return render_template('ordi/create_tierhaltung.html', person=None, tier=None, 
-			       adresse=None, kontakte=[], anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
-			       page_title="Neue Karteikarte")
+                               adresse=None, kontakte=[], anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
+                               page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
@@ -102,10 +102,10 @@ def show_tierhaltung(id):
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
         .outerjoin(Person, Tierhaltung.person_id == Person.id) \
         .outerjoin(Tier, Tierhaltung.tier_id == Tier.id) \
-        .outerjoin(Adresse, Person.id == Adresse.person_id) \
-        .outerjoin(Kontakt, Person.id == Kontakt.person_id).filter(Tierhaltung.id == id).first()
-    behandlungen = db.session.query(Behandlung, Impfung) \
-		.outerjoin(Impfung, Behandlung.id == Impfung.behandlung_id).filter(Behandlung.tier_id==tierhaltung.Tier.id).all()
+        .filter(Tierhaltung.id == id).first()
+
+    behandlungen = db.session.query(Behandlung) \
+        .filter(Behandlung.tier_id == tierhaltung.Tier.id).all()
 
     datum = datetime.now().strftime("%Y-%m-%d HH:MM:SS")
 

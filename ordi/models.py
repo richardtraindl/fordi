@@ -24,6 +24,8 @@ class Person(db.Model):
     vorname = db.Column(db.String(40))
     notiz = db.Column(db.String(200))
     kunde = db.Column(db.Boolean(), nullable=False, default=True)
+    adressen = db.relationship("Adresse", back_populates="person", lazy='joined')
+    kontakte = db.relationship("Kontakt", back_populates="person", lazy='joined')
 
     def __repr__(self):
         return '<Person %r>' % (self.familienname)
@@ -37,6 +39,7 @@ class Adresse(db.Model):
     strasse = db.Column(db.String(40))
     postleitzahl = db.Column(db.String(40))
     ort = db.Column(db.String(40))
+    person = db.relationship("Person", back_populates="adressen")
 
     def __repr__(self):
         return '<Adresse %r>' % (self.strasse)
@@ -50,6 +53,7 @@ class Kontakt(db.Model):
     kontaktcode = db.Column(db.Integer(), nullable=False)
     kontakt = db.Column(db.String(50))
     kontakt_intern = db.Column(db.String(50))
+    person = db.relationship("Person", back_populates="kontakte")
 
     def __repr__(self):
         return '<Kontakt %r>' % (self.kontakt)
@@ -70,6 +74,7 @@ class Tier(db.Model):
     chip_nummer = db.Column(db.String(30))
     eu_passnummer = db.Column(db.String(30))
     patient = db.Column(db.Boolean(), nullable=False, default=True)
+    behandlungen = db.relationship("Behandlung", back_populates="tier", lazy='noload')
 
     def __repr__(self):
         return '<Tier %r>' % (self.tiername)
@@ -88,6 +93,8 @@ class Behandlung(db.Model):
     arzneien = db.Column(db.String(256))
     arzneimittel = db.Column(db.String(100))
     impfungen_extern = db.Column(db.String(100))
+    tier = db.relationship("Tier", back_populates="behandlungen")
+    impfungen = db.relationship("Impfung", back_populates="behandlung", lazy='joined')
 
     def __repr__(self):
         return '<Behandlung %r>' % (self.id)
@@ -99,6 +106,7 @@ class Impfung(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id', ondelete='CASCADE'))
     impfungscode = db.Column(db.Integer(), nullable=False)
+    behandlung = db.relationship("Behandlung", back_populates="impfungen")
 
     def __repr__(self):
         return '<Impfung %r>' % (self.impfungscode)

@@ -45,26 +45,24 @@ def index():
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
 @login_required
 def create_tierhaltung():
-    anredewerte = []
+    anredewe = []
     for key, value in ANREDE.items():
-        anredewerte.append([key, value])
+        anredewe.append([key, value])
 
-    geschlechtswerte = []
+    geschlechtswe = []
     for key, value in GESCHLECHT.items():
-        geschlechtswerte.append([key, value])
+        geschlechtswe.append([key, value])
 
     if(request.method == 'POST'):
         person, error = fill_and_validate_person(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html', person=person, tier=None, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, new="true", page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', person=person, tier=None, anredewe=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
 
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
-				   anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
-				   page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, anredewerte=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
 
         db.session.add(person)
         db.session.add(tier)
@@ -86,12 +84,9 @@ def create_tierhaltung():
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
         db.session.add(tierhaltung)
         db.session.commit()
-
         return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
-        return render_template('ordi/create_tierhaltung.html', person=None, tier=None, 
-                               adresse=None, kontakte=[], anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
-                               page_title="Neue Karteikarte")
+        return render_template('ordi/create_tierhaltung.html', person=None, tier=None, anredewe=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
@@ -118,11 +113,7 @@ def show_tierhaltung(id):
     for key, value in IMPFUNG.items():
         impfungswe.append([key, value])
 
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
-                           behandlungen=behandlungen, datum=datum, 
-                           anredewe=anredewe, geschlechtswe=geschlechtswe, 
-                           laboref=laboref, impfungswe=impfungswe, 
-                           page_title="Karteikarte")
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, behandlungen=behandlungen, datum=datum, anredewe=anredewe, geschlechtswe=geschlechtswe, laboref=laboref, impfungswe=impfungswe, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
@@ -155,7 +146,6 @@ def create_tier(id):
         new_tierhaltung = Tierhaltung(person_id=tierhaltung.person_id, tier_id = tier.id)
         db.session.add(new_tierhaltung)
         db.session.commit()
-
         return redirect(url_for('ordi.show_tierhaltung', id=new_tierhaltung.id))
     else:
         return render_template('ordi/create_tier.html', tier=None, geschlechtswe=geschlechtswe, page_title="Neues Tier")

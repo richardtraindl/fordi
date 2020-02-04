@@ -9,11 +9,15 @@
 
 {% block content %}
     <div>
-        <div class="row-grid" style="grid-template-columns: auto auto;">
-            {% include 'ordi/_person.html' %}
+      <div class="row-grid" style="grid-template-columns: auto auto;">
+        {% with person=tierhaltung.person %}
+          {% include 'ordi/_person.html' %}        
+        {% endwith %}
 
-            {% include 'ordi/_tier.html' %}
-        </div>
+        {% with tier=tierhaltung.tier %}
+          {% include 'ordi/_tier.html' %}
+        {% endwith %}
+      </div>
     </div>
 
     <div class="small-gap"></div>

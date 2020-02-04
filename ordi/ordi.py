@@ -99,13 +99,8 @@ def create_tierhaltung():
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
 @login_required
 def show_tierhaltung(id):
-    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
-        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id) \
-        .filter(Tierhaltung.id == id).first()
-
-    behandlungen = db.session.query(Behandlung) \
-        .filter(Behandlung.tier_id == tierhaltung.Tier.id).all()
+    tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
+    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).all()
 
     datum = datetime.now().strftime("%Y-%m-%d HH:MM:SS")
 
@@ -125,8 +120,8 @@ def show_tierhaltung(id):
     for key, value in IMPFUNG.items():
         impfungswe.append([key, value])
 
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
-                           behandlungen=behandlungen, datum=datum, 
+    return render_template('ordi/tierhaltung.html', th=tierhaltung, 
+                           bhen=behandlungen, datum=datum, 
                            anredewe=anredewe, geschlechtswe=geschlechtswe, 
                            laboref=laboref, impfungswe=impfungswe, 
                            page_title="Karteikarte")

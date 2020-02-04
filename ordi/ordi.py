@@ -120,8 +120,8 @@ def show_tierhaltung(id):
     for key, value in IMPFUNG.items():
         impfungswe.append([key, value])
 
-    return render_template('ordi/tierhaltung.html', th=tierhaltung, 
-                           bhen=behandlungen, datum=datum, 
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
+                           behandlungen=behandlungen, datum=datum, 
                            anredewe=anredewe, geschlechtswe=geschlechtswe, 
                            laboref=laboref, impfungswe=impfungswe, 
                            page_title="Karteikarte")

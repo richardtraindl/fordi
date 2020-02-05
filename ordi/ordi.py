@@ -22,8 +22,9 @@ bp = Blueprint('ordi', __name__)
 def index():
     familienname = ""
     tiername = ""
-    kunde = 1
-    patient = 1
+    kunde = True
+    patient = True
+
     if(request.method == 'POST'):
         familienname = request.form['familienname']
         tiername = request.form['tiername']
@@ -42,9 +43,10 @@ def index():
         .filter(Person.familienname.like(familienname + "%"), 
                 Tier.tiername.like(tiername + "%"), 
                 Person.kunde==kunde, Tier.patient==patient).all()
-    print(tierhaltungen)
-    return render_template('ordi/tierhaltungen.html', tierhaltungen=tierhaltungen, familienname=familienname, 
-        tiername=tiername, kunde=kunde, patient=patient, page_title="Karteikarten")
+
+    return render_template('ordi/tierhaltungen.html', tierhaltungen=tierhaltungen, 
+        familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 
+        page_title="Karteikarten")
 
 
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
@@ -62,12 +64,15 @@ def create_tierhaltung():
         person, error = fill_and_validate_person(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html', person=person, tier=None, anredewe=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
+            tier = Tier()
+            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
+                anredewe=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
 
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, anredewerte=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
+                anredewerte=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
 
         db.session.add(person)
         db.session.add(tier)
@@ -100,11 +105,6 @@ def create_tierhaltung():
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
 @login_required
 def show_tierhaltung(id):
-    tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
-    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).all()
-
-    datum = datetime.now().strftime("%Y-%m-%d HH:MM:SS")
-
     anredewerte = []
     for key, value in ANREDE.items():
         anredewerte.append([key, value])
@@ -120,6 +120,10 @@ def show_tierhaltung(id):
     impfungswerte = []
     for key, value in IMPFUNG.items():
         impfungswerte.append([key, value])
+
+    tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
+    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).all()
+    datum = datetime.now().strftime("%Y-%m-%d HH:MM:SS")
 
     return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
         behandlungen=behandlungen, datum=datum, anredewerte=anredewerte, 
@@ -150,6 +154,7 @@ def create_tier(id):
         if(len(error) > 0):
             flash(error)
             return render_template('ordi/create_tier.html', id=id)
+
         db.session.add(tier)
         db.session.commit()
 
@@ -176,10 +181,11 @@ def edit_tier(id, tier_id):
         tier, error = fill_and_validate_tier(tier, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/edit_tier.html', id=id, tier=tier, geschlechtswe=geschlechtswe, page_title="Tier ändern")
-
-        db.session.commit()
-        return redirect(url_for('ordi.show_tierhaltung', id=id))
+            return render_template('ordi/edit_tier.html', id=id, tier=tier, 
+                geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
+        else:
+            db.session.commit()
+            return redirect(url_for('ordi.show_tierhaltung', id=id))
     else:
         tier = db.session.query(Tier).get(tier_id)
         return render_template('ordi/edit_tier.html', id=id, tier=tier, 
@@ -200,10 +206,11 @@ def edit_person(id, person_id):
         person, error = fill_and_validate_person(person, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/edit_person.html', id=id, person=person, anredewe=anredewe, page_title="Person ändern")
+            return render_template('ordi/edit_person.html', id=id, person=person, anredewerte=anredewerte, 
+                page_title="Person ändern")
+
         db.session.commit()
 
-        #adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
         adresse = fill_and_validate_adresse(person.adresse, request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
             if(adresse.id == None):
@@ -214,7 +221,6 @@ def edit_person(id, person_id):
                 db.session.delete(adresse)
         db.session.commit()
 
-        #kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
         kontakte = fill_and_validate_kontakte(person.kontakte, request)[0]
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
@@ -225,11 +231,10 @@ def edit_person(id, person_id):
                 if(kontakt.id):
                     db.session.delete(kontakt)
         db.session.commit()
+
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     person = db.session.query(Person).get(person_id)
-    #adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
-    #kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
     return render_template('ordi/edit_person.html', id=id, person=person, 
         anredewerte=anredewerte, page_title="Person ändern")
 # person

@@ -347,16 +347,13 @@ def behandlungsverlaeufe():
 
 def dl_behandlungsverlauf(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
-    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Tierhaltung.person_id == Person.id) \
-        .join(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.person_id==behandlungsverlauf.person_id, Tierhaltung.tier_id==behandlungsverlauf.tier_id, ).first()
-    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
 
-    html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
-        tierhaltung=tierhaltung, adresse=adresse)
+    html = render_template('ordi/prints/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf)
 
-    filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + tierhaltung.Person.familienname + "_" + tierhaltung.Person.vorname + ".pdf"
+    filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + behandlungsverlauf.person.familienname + \
+        "_" + behandlungsverlauf.person.vorname + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+
     html2pdf(html, path_and_filename)
 
     return path_and_filename

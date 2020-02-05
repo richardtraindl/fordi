@@ -10,11 +10,11 @@
 {% block content %}
     <div>
       <div class="row-grid" style="grid-template-columns: auto auto;">
-        {% with person=tierhaltung.person %}
+        {% with person=behandlungsverlauf.person %}
           {% include 'ordi/_person.html' %}        
         {% endwith %}
 
-        {% with tier=tierhaltung.tier %}
+        {% with tier=behandlungsverlauf.tier %}
           {% include 'ordi/_tier.html' %}
         {% endwith %}
       </div>

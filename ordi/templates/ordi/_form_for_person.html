@@ -27,16 +27,16 @@
         </select>
         
         <label for="titel">Titel</label>
-        <input size="5" name="titel" value="{{- request.form['titel'] or person.titel -}}">
+        <input size="5" name="titel" value="{{- request.form['titel'] or person.titel|sn -}}">
 
         <label for="familienname">Familienname</label>
-        <input size="20" name="familienname" value="{{- request.form['familienname'] or person.familienname -}}" required>
+        <input size="20" name="familienname" value="{{- request.form['familienname'] or person.familienname|sn -}}" required>
 
         <label for="vorname">Vorname</label>
-        <input size="20" name="vorname" value="{{- request.form['vorname'] or person.vorname -}}">
+        <input size="20" name="vorname" value="{{- request.form['vorname'] or person.vorname|sn -}}">
 
         <label for="notiz">Notiz</label>
-        <input size="20" name="notiz" value="{{- request.form['notiz'] or person.notiz -}}">
+        <input size="20" name="notiz" value="{{- request.form['notiz'] or person.notiz|sn -}}">
 
         <label for="kunde">Kunden Kennzeichen</label>
         {% if person %}

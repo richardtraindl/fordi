@@ -23,13 +23,13 @@
         {% endif %}
 
         <p>Postleitzahl</p>
-        <p>{{ person.adresse.postleitzahl }}</p>
+        <p>{{ "" or person.adresse.postleitzahl }}</p>
 
         <p>Ort</p>
-        <p>{{ person.adresse.ort }}</p>
+        <p>{{ "" or person.adresse.ort }}</p>
 
         <p>Straße</p>
-        <p>{{  person.adresse.strasse }}</p>
+        <p>{{ "" or person.adresse.strasse }}</p>
 
         {% if person.kontakte[0] %}
             <p>Telefonnr.</p>

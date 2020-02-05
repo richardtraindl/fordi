@@ -35,23 +35,28 @@ def index():
             patient = True
         else:
             patient = False
-    tierhaltungen = db.session.query(Tierhaltung) \
-        .filter(Person.familienname.like(familienname + "%"), Tier.tiername.like(tiername + "%"), Person.kunde==kunde, Tier.patient==patient).all()
-
+    
+    tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Person, Person.id==Tierhaltung.person_id) \
+        .join(Tier, Tier.id==Tierhaltung.tier_id) \
+        .filter(Person.familienname.like(familienname + "%"), 
+                Tier.tiername.like(tiername + "%"), 
+                Person.kunde==kunde, Tier.patient==patient).all()
+    print(tierhaltungen)
     return render_template('ordi/tierhaltungen.html', tierhaltungen=tierhaltungen, familienname=familienname, 
-			   tiername=tiername, kunde=kunde, patient=patient, page_title="Karteikarten")
+        tiername=tiername, kunde=kunde, patient=patient, page_title="Karteikarten")
 
 
 @bp.route('/create_tierhaltung', methods=('GET', 'POST'))
 @login_required
 def create_tierhaltung():
-    anredewe = []
+    anredewerte = []
     for key, value in ANREDE.items():
-        anredewe.append([key, value])
+        anredewerte.append([key, value])
 
-    geschlechtswe = []
+    geschlechtswerte = []
     for key, value in GESCHLECHT.items():
-        geschlechtswe.append([key, value])
+        geschlechtswerte.append([key, value])
 
     if(request.method == 'POST'):
         person, error = fill_and_validate_person(None, request)
@@ -86,7 +91,10 @@ def create_tierhaltung():
         db.session.commit()
         return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
-        return render_template('ordi/create_tierhaltung.html', person=None, tier=None, anredewe=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
+        person = Person()
+        tier = Tier()
+        return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
+            anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
@@ -97,23 +105,26 @@ def show_tierhaltung(id):
 
     datum = datetime.now().strftime("%Y-%m-%d HH:MM:SS")
 
-    anredewe = []
+    anredewerte = []
     for key, value in ANREDE.items():
-        anredewe.append([key, value])
+        anredewerte.append([key, value])
 
-    geschlechtswe = []
+    geschlechtswerte = []
     for key, value in GESCHLECHT.items():
-        geschlechtswe.append([key, value])
+        geschlechtswerte.append([key, value])
 
-    laboref = []
-    for ref in LABOR_REFERENZ:
-        laboref.append(ref)
+    laborreferenzen = []
+    for referenz in LABOR_REFERENZ:
+        laborreferenzen.append(referenz)
 
-    impfungswe = []
+    impfungswerte = []
     for key, value in IMPFUNG.items():
-        impfungswe.append([key, value])
+        impfungswerte.append([key, value])
 
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, behandlungen=behandlungen, datum=datum, anredewe=anredewe, geschlechtswe=geschlechtswe, laboref=laboref, impfungswe=impfungswe, page_title="Karteikarte")
+    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
+        behandlungen=behandlungen, datum=datum, anredewerte=anredewerte, 
+        geschlechtswerte=geschlechtswerte, laborreferenzen=laborreferenzen, 
+        impfungswerte=impfungswerte, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))
@@ -130,9 +141,9 @@ def delete_tierhaltung(id):
 @bp.route('/<int:id>/create_tier', methods=('GET', 'POST'))
 @login_required
 def create_tier(id):
-    geschlechtswe = []
+    geschlechtswerte = []
     for key, value in GESCHLECHT.items():
-        geschlechtswe.append([key, value])
+        geschlechtswerte.append([key, value])
 
     if(request.method == 'POST'):
         tier, error = fill_and_validate_tier(None, request)
@@ -148,15 +159,17 @@ def create_tier(id):
         db.session.commit()
         return redirect(url_for('ordi.show_tierhaltung', id=new_tierhaltung.id))
     else:
-        return render_template('ordi/create_tier.html', tier=None, geschlechtswe=geschlechtswe, page_title="Neues Tier")
+        tier = Tier()
+        return render_template('ordi/create_tier.html', tier=tier, geschlechtswerte=geschlechtswerte, 
+            page_title="Neues Tier")
 
 
 @bp.route('/<int:id>/<int:tier_id>/edit_tier', methods=('GET', 'POST'))
 @login_required
 def edit_tier(id, tier_id):
-    geschlechtswe = []
+    geschlechtswerte = []
     for key, value in GESCHLECHT.items():
-        geschlechtswe.append([key, value])
+        geschlechtswerte.append([key, value])
 
     if(request.method == 'POST'):
         tier = db.session.query(Tier).get(tier_id)
@@ -169,7 +182,8 @@ def edit_tier(id, tier_id):
         return redirect(url_for('ordi.show_tierhaltung', id=id))
     else:
         tier = db.session.query(Tier).get(tier_id)
-        return render_template('ordi/edit_tier.html', id=id, tier=tier, geschlechtswe=geschlechtswe, page_title="Tier ändern")
+        return render_template('ordi/edit_tier.html', id=id, tier=tier, 
+            geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
 # tier
 
 
@@ -177,9 +191,9 @@ def edit_tier(id, tier_id):
 @bp.route('/<int:id>/<int:person_id>/edit_person', methods=('GET', 'POST'))
 @login_required
 def edit_person(id, person_id):
-    anredewe = []
+    anredewerte = []
     for key, value in ANREDE.items():
-        anredewe.append([key, value])
+        anredewerte.append([key, value])
 
     if(request.method == 'POST'):
         person = db.session.query(Person).get(person_id)
@@ -216,7 +230,8 @@ def edit_person(id, person_id):
     person = db.session.query(Person).get(person_id)
     #adresse = db.session.query(Adresse).filter(Adresse.person_id==person_id).first()
     #kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==person_id).all()
-    return render_template('ordi/edit_person.html', id=id, person=person, anredewe=anredewe, page_title="Person ändern")
+    return render_template('ordi/edit_person.html', id=id, person=person, 
+        anredewerte=anredewerte, page_title="Person ändern")
 # person
 
 
@@ -346,8 +361,8 @@ def create_behandlungsverlauf(id):
     tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
         .outerjoin(Person, Tierhaltung.person_id == Person.id) \
         .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
-    adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
-    kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
+    #adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
+    #kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
     if(request.method == 'POST'):
         behandlungsverlauf, error = fill_and_validate_behandlungsverlauf(None, request)
@@ -355,8 +370,7 @@ def create_behandlungsverlauf(id):
             flash(error)
             return render_template('ordi/behandlungsverlauf.html', id=id, 
                                    behandlungsverlauf=behandlungsverlauf, 
-                                   tierhaltung=tierhaltung, adresse=adresse, 
-                                   kontakte=kontakte, datum=datum, page_title="Behandlungsverlauf")
+                                   datum=datum, page_title="Behandlungsverlauf")
 
         behandlungsverlauf.person_id = tierhaltung.Person.id
         behandlungsverlauf.tier_id = tierhaltung.Tier.id
@@ -365,10 +379,10 @@ def create_behandlungsverlauf(id):
         return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf.id))
     else:
         datum = date.today().strftime("%Y-%m-%d")
+        behandlungsverlauf = Behandlungsverlauf()
         return render_template('ordi/behandlungsverlauf.html', id=id, 
-                               behandlungsverlauf=None, 
-                               tierhaltung=tierhaltung, adresse=adresse, 
-                               kontakte=kontakte, datum=datum, page_title="Behandlungsverlauf")
+                               behandlungsverlauf=behandlungsverlauf, 
+                               datum=datum, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/edit_behandlungsverlauf', methods=('GET', 'POST'))

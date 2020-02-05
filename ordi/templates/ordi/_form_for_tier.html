@@ -7,19 +7,19 @@
         {% endif %}
 
         <label for="tiername">Tiername</label>
-        <input size="20" name="tiername" value="{{- request.form['tiername'] or tier.tiername -}}" required>
+        <input size="20" name="tiername" value="{{- request.form['tiername'] or tier.tiername|sn -}}" required>
 
         <label for="tierart">Tierart</label>
-        <input size="20" name="tierart" value="{{- request.form['tierart'] or tier.tierart -}}" required>
+        <input size="20" name="tierart" value="{{- request.form['tierart'] or tier.tierart|sn -}}" required>
 
         <label for="rasse">Rasse</label>
-        <input size="20" name="rasse" value="{{- request.form['rasse'] or tier.rasse -}}">
+        <input size="20" name="rasse" value="{{- request.form['rasse'] or tier.rasse|sn -}}">
 
         <label for="farbe">Farbe</label>
-        <input size="20" name="farbe" value="{{- request.form['farbe'] or tier.farbe -}}">
+        <input size="20" name="farbe" value="{{- request.form['farbe'] or tier.farbe|sn -}}">
 
         <label for="geburtsdatum">Geburtsdatum</label>
-        <input size="10" class="date" name="geburtsdatum" value="{{- request.form['geburtsdatum'] or tier.geburtsdatum -}}" required>
+        <input size="10" class="date" name="geburtsdatum" value="{{- request.form['geburtsdatum'] or tier.geburtsdatum|sn -}}" required>
 
         <label for="geschlechtscode">Geschlecht</label>
         {% if tier %}
@@ -32,20 +32,20 @@
             {% endif %}
         {% endif %}
         <select name="geschlechtscode">
-        {%- for geschlechtsw in geschlechtswe -%}
-          {%- if geschlechtsw[1] == geschlechtscode -%}
-            <option value="{{- geschlechtsw[1] -}}" selected>{{- geschlechtsw[0] -}}</option>
+        {%- for geschlechtswert in geschlechtswerte -%}
+          {%- if geschlechtswert[1] == geschlechtscode -%}
+            <option value="{{- geschlechtswert[1] -}}" selected>{{- geschlechtswert[0] -}}</option>
           {%- else -%}
-            <option value="{{- geschlechtsw[1] -}}">{{- geschlechtsw[0] -}}</option>
+            <option value="{{- geschlechtswert[1] -}}">{{- geschlechtswert[0] -}}</option>
           {%- endif -%}
         {%- endfor -%}
         </select>
 
         <label for="chip_nummer">Chip Nummer</label>
-        <input size="20" name="chip_nummer" value="{{- request.form['chip_nummer'] or tier.chip_nummer -}}">
+        <input size="20" name="chip_nummer" value="{{- request.form['chip_nummer'] or tier.chip_nummer|sn -}}">
 
         <label for="eu_passnummer">EU Passnummer</label>
-        <input size="20" name="eu_passnummer" value="{{- request.form['eu_passnummer'] or tier.eu_passnummer -}}">
+        <input size="20" name="eu_passnummer" value="{{- request.form['eu_passnummer'] or tier.eu_passnummer|sn -}}">
 
         <label for="patient">Patient</label>
         {% if tier %}
@@ -67,9 +67,9 @@
         {% endif %}
 
         <label for="viren">Viren</label>
-        <input size="20" name="viren" value="{{- request.form['viren'] or tier.viren -}}">
+        <input size="20" name="viren" value="{{- request.form['viren'] or tier.viren|sn -}}">
 
         <label for="merkmal">Merkmal</label>
-        <input size="20" name="merkmal" value="{{- request.form['merkmal'] or tier.merkmal -}}">
+        <input size="20" name="merkmal" value="{{- request.form['merkmal'] or tier.merkmal|sn -}}">
     </div>
 

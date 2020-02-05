@@ -21,8 +21,8 @@ class Tierhaltung(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'))
     anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='joined')
-    tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='joined')
+    person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='immediate')
+    tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='immediate')
 
     def __repr__(self):
         return '<Tierhaltung %r>' % (self.id)
@@ -137,8 +137,8 @@ class Behandlungsverlauf(db.Model):
     datum = db.Column(db.DateTime(), nullable=False)
     diagnose = db.Column(db.String(256))
     behandlung = db.Column(db.String(1000))
-    person = db.relationship("Person", uselist=False, lazy='joined')
-    tier = db.relationship("Tier", uselist=False, lazy='joined')
+    person = db.relationship("Person", uselist=False, lazy='immediate')
+    tier = db.relationship("Tier", uselist=False, lazy='immediate')
 
     def __repr__(self):
         return '<Behandlungsverlauf %r>' % (self.tiername)
@@ -161,9 +161,9 @@ class Rechnung(db.Model):
     steuerbetrag_zwanzig = db.Column(db.Numeric(8, 2))
     steuerbetrag_dreizehn = db.Column(db.Numeric(8, 2))
     steuerbetrag_zehn = db.Column(db.Numeric(8, 2))
+    person = db.relationship("Person", uselist=False, lazy='immediate')
+    tier = db.relationship("Tier", uselist=False, lazy='immediate')
     rechnungszeilen = db.relationship("Rechnungszeile", back_populates="rechnung", lazy='joined')
-    person = db.relationship("Person", uselist=False, lazy='joined')
-    tier = db.relationship("Tier", uselist=False, lazy='joined')
 
     def __repr__(self):
         return '<Rechnung %r>' % (self.id)

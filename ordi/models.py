@@ -163,7 +163,7 @@ class Rechnung(db.Model):
     steuerbetrag_zehn = db.Column(db.Numeric(8, 2))
     person = db.relationship("Person", uselist=False, lazy='immediate')
     tier = db.relationship("Tier", uselist=False, lazy='immediate')
-    rechnungszeilen = db.relationship("Rechnungszeile", back_populates="rechnung", lazy='joined')
+    rechnungszeilen = db.relationship("Rechnungszeile", back_populates="rechnung", lazy='noload')
 
     def __repr__(self):
         return '<Rechnung %r>' % (self.id)

@@ -239,7 +239,7 @@ def fill_and_validate_rechnung(rechnung, request):
     rechnung.rechnungsjahr=rechnungsjahr
     rechnung.rechnungslfnr=rechnungslfnr
     rechnung.ausstellungsdatum=ausstellungsdatum
-    rechnung.ausstellungsort=ausstellungsort
+    rechnung.ausstellungsort=request.form['ausstellungsort']
     rechnung.diagnose=request.form['diagnose']
     rechnung.bezahlung=request.form['bezahlung']
     rechnung.brutto_summe=0

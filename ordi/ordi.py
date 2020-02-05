@@ -367,7 +367,8 @@ def create_behandlungsverlauf(id):
         behandlungsverlauf, error = fill_and_validate_behandlungsverlauf(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/behandlungsverlauf.html', id=id, behandlungsverlauf=behandlungsverlauf, 
+            return render_template('ordi/behandlungsverlauf.html', id=id, 
+                behandlungsverlauf=behandlungsverlauf, 
                 datum=datum, page_title="Behandlungsverlauf")
 
         behandlungsverlauf.person_id = tierhaltung.person.id
@@ -377,7 +378,8 @@ def create_behandlungsverlauf(id):
         return redirect(url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf.id))
     else:
         datum = date.today().strftime("%Y-%m-%d")
-        return render_template('ordi/behandlungsverlauf.html', id=id, person = tierhaltung.person, tier = tierhaltung.tier, 
+        return render_template('ordi/behandlungsverlauf.html', id=id, 
+            person = tierhaltung.person, tier = tierhaltung.tier, 
             behandlungsverlauf=None, datum=datum, page_title="Behandlungsverlauf")
 
 
@@ -496,24 +498,27 @@ def create_rechnung(id):
             error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/rechnung.html', id=id, rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', id=id, rechnung=rechnung, 
+                rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
+                tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
 
         rechnungszeilen = []
         for req_rechnungszeile in req_rechnungszeilen:
             rechnungszeile, error = fill_and_validate_rechnungszeile(None, req_rechnungszeile)
             if(len(error) > 0):
                 flash(error)
-                return render_template('ordi/rechnung.html', id=id, rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                    artikelwerte=artikelwerte, page_title="Rechnung")
+                return render_template('ordi/rechnung.html', id=id, rechnung=rechnung, 
+                    rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
+                    tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
             else:
                 rechnungszeilen.append(rechnungszeile)
 
-        flag, error = calc_and_fill_rechnung(rechnung, rechnungszeilen)
+        error = calc_and_fill_rechnung(rechnung, rechnungszeilen)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/rechnung.html', id=id, rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('ordi/rechnung.html', id=id, rechnung=rechnung, 
+                rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
+                tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
 
         rechnung.person_id = tierhaltung.person.id
         rechnung.tier_id = tierhaltung.tier.id
@@ -528,8 +533,9 @@ def create_rechnung(id):
     else:
         datum = datetime.now().strftime("%Y-%m-%d")
         ort = "Wien"
-        return render_template('ordi/rechnung.html', id=id, rechnung=None, rechnungszeilen=None, datum=datum, ort=ort, 
-            artikelwerte=artikelwerte, page_title="Rechnung")
+        return render_template('ordi/rechnung.html', id=id, rechnung=None, 
+            rechnungszeilen=None, person = tierhaltung.person, tier = tierhaltung.tier, 
+            datum=datum, ort=ort, artikelwerte=artikelwerte, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
@@ -579,7 +585,7 @@ def edit_rechnung(rechnung_id):
         db.session.commit() # commit rechnung
 
         for new_rechnungszeile in new_rechnungszeilen:
-            if(new_rechnungszeile == None):
+            if(new_rechnungszeile.id == None):
                 new_rechnungszeile.rechnung_id = rechnung.id
                 db.session.add(new_rechnungszeile)
         db.session.commit()
@@ -587,9 +593,9 @@ def edit_rechnung(rechnung_id):
         for rechnungszeile in rechnungszeilen:
             found = False
             for new_rechnungszeile in new_rechnungszeilen:
-                rechnungszeile.id = new_rechnungszeile.id
-                found = True
-                break
+                if(rechnungszeile.id == new_rechnungszeile.id):
+                    found = True
+                    break
             if(found == False):
                 db.session.delete(rechnungszeile)
         db.session.commit()

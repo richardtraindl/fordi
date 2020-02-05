@@ -1,19 +1,19 @@
 <html>
     <body>
         <div style="padding-bottom: 20mm;">
-            <p>{{- person.anredecode | mapanrede -}}</p>
+            <p>{{- rechnung.person.anredecode | mapanrede -}}</p>
 
             <p>
-               {{- person.vorname -}} &nbsp; 
-               {{- person.familienname -}} &nbsp; 
-               {{- person.titel -}}
+               {{- rechnung.person.vorname -}} &nbsp; 
+               {{- rechnung.person.familienname -}} &nbsp; 
+               {{- rechnung.person.titel -}}
             </p>
 
-            <p>{{- person.adresse.strasse -}}</p>
+            <p>{{- rechnung.person.adresse.strasse -}}</p>
 
             <p>
-                {{- person.adresse.postleitzahl -}} &nbsp; 
-                {{- person.adresse.ort -}}
+                {{- rechnung.person.adresse.postleitzahl -}} &nbsp; 
+                {{- rechnung.person.adresse.ort -}}
             </p>
         </div>
         
@@ -30,14 +30,14 @@
             </thead>
             <tbody border="0">
                 <tr border="0">
-                    <td border="0" width="70%" align="left">Patient &nbsp; {{- tier.tiername -}} &nbsp; {{- tier.tierart -}} &nbsp; {{- tier.geburtsdatum -}}</td>
+                    <td border="0" width="70%" align="left">Patient &nbsp; {{- rechnung.tier.tiername -}} &nbsp; {{- rechnung.tier.tierart -}} &nbsp; {{- rechnung.tier.geburtsdatum -}}</td>
                     <td border="0" width="30%" align="right">{{- rechnung.ausstellungsdatum -}}</td>
                 </tr>
             </tbody>
         </table>
 
         <div>
-            <p>Chip: &nbsp; {{- tier.chip_nummer -}}</p>
+            <p>Chip: &nbsp; {{- rechnung.tier.chip_nummer -}}</p>
         </div>
 
         <div>

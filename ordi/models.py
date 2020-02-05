@@ -39,8 +39,8 @@ class Person(db.Model):
     notiz = db.Column(db.String(200))
     kunde = db.Column(db.Boolean(), nullable=False, default=True)
     tierhaltung = db.relationship("Tierhaltung", back_populates="person")
-    adresse = db.relationship("Adresse", uselist=False, back_populates="person", lazy='joined')
-    kontakte = db.relationship("Kontakt", back_populates="person", lazy='joined')
+    adresse = db.relationship("Adresse", uselist=False, cascade="all,delete", back_populates="person", lazy='joined')
+    kontakte = db.relationship("Kontakt", cascade="all,delete", back_populates="person", lazy='joined')
 
     def __repr__(self):
         return '<Person %r>' % (self.familienname)
@@ -90,7 +90,7 @@ class Tier(db.Model):
     eu_passnummer = db.Column(db.String(30))
     patient = db.Column(db.Boolean(), nullable=False, default=True)
     tierhaltung = db.relationship("Tierhaltung", back_populates="tier")
-    behandlungen = db.relationship("Behandlung", back_populates="tier", lazy='noload')
+    behandlungen = db.relationship("Behandlung", cascade="all,delete", back_populates="tier", lazy='noload')
 
     def __repr__(self):
         return '<Tier %r>' % (self.tiername)
@@ -110,7 +110,7 @@ class Behandlung(db.Model):
     arzneimittel = db.Column(db.String(100))
     impfungen_extern = db.Column(db.String(100))
     tier = db.relationship("Tier", back_populates="behandlungen")
-    impfungen = db.relationship("Impfung", back_populates="behandlung", lazy='joined')
+    impfungen = db.relationship("Impfung", cascade="all,delete", back_populates="behandlung", lazy='joined')
 
     def __repr__(self):
         return '<Behandlung %r>' % (self.id)
@@ -163,7 +163,7 @@ class Rechnung(db.Model):
     steuerbetrag_zehn = db.Column(db.Numeric(8, 2))
     person = db.relationship("Person", uselist=False, lazy='immediate')
     tier = db.relationship("Tier", uselist=False, lazy='immediate')
-    rechnungszeilen = db.relationship("Rechnungszeile", back_populates="rechnung", lazy='noload')
+    rechnungszeilen = db.relationship("Rechnungszeile", cascade="all,delete", back_populates="rechnung", lazy='noload')
 
     def __repr__(self):
         return '<Rechnung %r>' % (self.id)

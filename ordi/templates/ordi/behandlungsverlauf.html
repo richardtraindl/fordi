@@ -10,13 +10,18 @@
 {% block content %}
     <div>
       <div class="row-grid" style="grid-template-columns: auto auto;">
-        {% with person=behandlungsverlauf.person %}
-          {% include 'ordi/_person.html' %}        
-        {% endwith %}
+        {% if behandlungsverlauf %}
+            {% with person=behandlungsverlauf.person %}
+              {% include 'ordi/_person.html' %}
+            {% endwith %}
 
-        {% with tier=behandlungsverlauf.tier %}
-          {% include 'ordi/_tier.html' %}
-        {% endwith %}
+            {% with tier=behandlungsverlauf.tier %}
+              {% include 'ordi/_tier.html' %}
+            {% endwith %}
+        {% else %}
+              {% include 'ordi/_person.html' %}
+              {% include 'ordi/_tier.html' %}
+        {% endif %}
       </div>
     </div>
 

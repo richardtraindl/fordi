@@ -358,9 +358,12 @@ def dl_behandlungsverlauf(behandlungsverlauf_id):
 @bp.route('/<int:id>/create_behandlungsverlauf', methods=('GET', 'POST'))
 @login_required
 def create_behandlungsverlauf(id):
-    tierhaltung = db.session.query(Tierhaltung, Person, Tier) \
-        .outerjoin(Person, Tierhaltung.person_id == Person.id) \
-        .outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
+    tierhaltung = db.session.query(Tierhaltung).get(id)
+    print(tierhaltung)
+    print(tierhaltung.person)
+    print(tierhaltung.tier)
+        #.outerjoin(Person, Tierhaltung.person_id == Person.id) \
+        #.outerjoin(Tier, Tierhaltung.tier_id == Tier.id).filter(Tierhaltung.id==id).first()
     #adresse = db.session.query(Adresse).filter(Adresse.person_id==tierhaltung.Person.id).first()
     #kontakte = db.session.query(Kontakt).filter(Kontakt.person_id==tierhaltung.Person.id).all()
 
@@ -380,7 +383,10 @@ def create_behandlungsverlauf(id):
     else:
         datum = date.today().strftime("%Y-%m-%d")
         behandlungsverlauf = Behandlungsverlauf()
+        person = tierhaltung.person
         return render_template('ordi/behandlungsverlauf.html', id=id, 
+                               person = tierhaltung.person,
+                               tier = tierhaltung.tier,
                                behandlungsverlauf=behandlungsverlauf, 
                                datum=datum, page_title="Behandlungsverlauf")
 

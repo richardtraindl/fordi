@@ -8,17 +8,22 @@
 
 
 {% block content %}
-    <div>
-      <div class="row-grid" style="grid-template-columns: auto auto;">
-        {% with person=tierhaltung.person %}
-          {% include 'ordi/_person.html' %}        
+  <div>
+    <div class="row-grid" style="grid-template-columns: auto auto;">
+      {% if rechnung and rechnung.id %}
+        {% with person=rechnung.person %}
+          {% include 'ordi/_person.html' %}
         {% endwith %}
 
-        {% with tier=tierhaltung.tier %}
+        {% with tier=rechnung.tier %}
           {% include 'ordi/_tier.html' %}
         {% endwith %}
-      </div>
+      {% else %}
+          {% include 'ordi/_person.html' %}
+          {% include 'ordi/_tier.html' %}
+      {% endif %}      
     </div>
+  </div>
 
     <div class="gap"></div>
 

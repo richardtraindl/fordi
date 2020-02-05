@@ -10,7 +10,7 @@
 {% block content %}
     <div>
       <div class="row-grid" style="grid-template-columns: auto auto;">
-        {% if behandlungsverlauf %}
+        {% if behandlungsverlauf and behandlungsverlauf.id %}
             {% with person=behandlungsverlauf.person %}
               {% include 'ordi/_person.html' %}
             {% endwith %}
@@ -27,7 +27,7 @@
 
     <div class="small-gap"></div>
 
-    {% if behandlungsverlauf %}
+    {% if behandlungsverlauf and behandlungsverlauf.id %}
       <form method="post" action="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf.id) }}">
     {% else %}
       <form method="post" action="{{ url_for('ordi.create_behandlungsverlauf', id=id) }}">
@@ -48,7 +48,7 @@
       <div class="small-gap"></div>
 
       <div class="flex-container">
-      {% if behandlungsverlauf %}
+      {% if behandlungsverlauf and behandlungsverlauf.id %}
         <p><span class="btn" style="color: Gray">Behandlungsverlauf speichern</span></p>
         <p><input type="submit" value="Behandlungsverlauf speichern und drucken"></p>
       {% else %}

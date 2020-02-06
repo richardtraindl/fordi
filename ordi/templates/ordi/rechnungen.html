@@ -52,7 +52,7 @@
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tierart -}}</a></td>
             <td style="width: 10%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.rasse -}}</a></td>
             <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum|dt -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum -}}</a></td>
         </tr>
       {% endfor %}
     </table>

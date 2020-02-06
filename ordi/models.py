@@ -101,7 +101,7 @@ class Behandlung(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'))
-    behandlungszeit = db.Column(db.DateTime(), nullable=False)
+    behandlungsdatum = db.Column(db.Date(), nullable=False)
     gewicht = db.Column(db.String(50))
     diagnose = db.Column(db.String(1000))
     laborwerte1 = db.Column(db.String(1000))

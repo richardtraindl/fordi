@@ -42,7 +42,7 @@
             <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{- request.form['rechnungslfnr'] or rechnung.rechnungslfnr|sn -}}" required>
             
             <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or datum or rechnung.ausstellungsdatum|sn|dt -}}" required>
+            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or rechnung.ausstellungsdatum|sn or datum -}}" required>
             
             <label for="ausstellungsort">Ausstellungsort</label>
             <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{- request.form['ausstellungsort'] or ort or rechnung.ausstellungsort -}}" required>
@@ -80,7 +80,7 @@
                 <tr>
                   <td style="width: 10%">
                     <input type="hidden" name="rechnungszeile_id[]" value="{{- rechnungszeile[''] or rechnungszeile.id -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile['datum'] or rechnungszeile.datum|dt -}}">
+                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile['datum'] or rechnungszeile.datum -}}">
                   </td>
                   {% set artikelcode = rechnungszeile.artikelcode %}
                   <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>

@@ -36,7 +36,7 @@
 
       <div class="row-grid" style="grid-template-columns: auto auto;">
         <label for="datum">Datum</label>
-        <input size="10" type="text" name="datum" id="datum" class="date" value="{{- request.form['datum'] or behandlungsverlauf.datum or datum -}}" required>
+        <input size="10" type="text" name="datum" id="datum" class="date" value="{{- request.form['datum'] or behandlungsverlauf.datum|dt or datum -}}" required>
 
         <label for="diagnose">Diagnose</label>
         <input size="40" type="text" name="diagnose" id="diagnose" value="{{- request.form['diagnose'] or behandlungsverlauf.diagnose -}}" required>

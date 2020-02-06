@@ -19,7 +19,7 @@
         <input size="20" name="farbe" value="{{- request.form['farbe'] or tier.farbe|sn -}}">
 
         <label for="geburtsdatum">Geburtsdatum</label>
-        <input size="10" class="date" name="geburtsdatum" value="{{- request.form['geburtsdatum'] or tier.geburtsdatum|sn -}}" required>
+        <input size="10" class="date" name="geburtsdatum" value="{{- request.form['geburtsdatum'] or tier.geburtsdatum|sn|dt -}}" required>
 
         <label for="geschlechtscode">Geschlecht</label>
         {% if tier %}

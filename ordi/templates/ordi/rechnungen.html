@@ -45,14 +45,14 @@
             <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungsjahr -}}</a></td>
             <td style="width: 2%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungslfnr -}}</a></td>
             <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- '{0:0.2f}'.format(r.Rechnung.brutto_summe | float) -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.anredecode | mapanrede -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.anredecode|mapanrede -}}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.familienname -}}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.vorname -}}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tiername -}}</a></td>
             <td style="width: 12%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tierart -}}</a></td>
             <td style="width: 10%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.rasse -}}</a></td>
-            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode | mapgeschlecht -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum -}}</a></td>
+            <td style="width: 4%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('ordi.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum|dt -}}</a></td>
         </tr>
       {% endfor %}
     </table>

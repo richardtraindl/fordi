@@ -1,5 +1,6 @@
 
 
+from datetime import date
 from ..values import ANREDE, GESCHLECHT, KONTAKT, ARTIKEL
 from .helper import reverse_lookup
 
@@ -37,3 +38,8 @@ def filter_supress_none(val):
         return val
     else:
         return ''
+
+
+def filter_date_from_datetime(val):
+    return val.date()
+

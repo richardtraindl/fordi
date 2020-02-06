@@ -48,7 +48,7 @@
             <tr>
                 <td style="width: 8%">
                     <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] or behandlung.id -}}" disabled>
-                    <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung['behandlungsdatum'] or behandlung.behandlungsdatum -}}" disabled>
+                    <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung['behandlungsdatum'] or behandlung.behandlungsdatum|dt -}}" disabled>
                 </td>
                 <td style="width: 30%"><textarea name="diagnose[]" disabled>{{- behandlung['diagnose'] or behandlung.diagnose -}}</textarea></td>
                 <td style="width: 11%"><textarea name="laborwerte1[]" class="labor" disabled>{{- behandlung['laborwerte1'] or behandlung.laborwerte1 -}}</textarea></td>

@@ -50,9 +50,6 @@ def create_app(test_config=None):
     migrate.init_app(app, db)
     from . import models
 
-    from . import db2
-    db2.init_app(app)
-
     from . import auth
     app.register_blueprint(auth.bp)
 
@@ -60,10 +57,12 @@ def create_app(test_config=None):
     app.register_blueprint(ordi.bp)
     app.add_url_rule('/', endpoint='index')
 
-    from .util.filters import mapanrede, mapgeschlecht, mapartikel, filter_supress_none
+    from .util.filters import mapanrede, mapgeschlecht, mapartikel, \
+        filter_supress_none, filter_date_from_datetime
     app.jinja_env.filters['mapanrede'] = mapanrede
     app.jinja_env.filters['mapgeschlecht'] = mapgeschlecht
     app.jinja_env.filters['mapartikel'] = mapartikel
     app.jinja_env.filters['sn'] = filter_supress_none
+    app.jinja_env.filters['dt'] = filter_date_from_datetime
 
     return app

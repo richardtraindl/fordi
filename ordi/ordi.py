@@ -122,8 +122,8 @@ def show_tierhaltung(id):
         impfungswerte.append([key, value])
 
     tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
-    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).all()
-    datum = datetime.now().strftime("%Y-%m-%d HH:MM:SS")
+    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).order_by(Behandlung.behandlungsdatum.asc()).all()
+    datum = datetime.today().strftime("%Y-%m-%d")
 
     return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
         behandlungen=behandlungen, datum=datum, anredewerte=anredewerte, 

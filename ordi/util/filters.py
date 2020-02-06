@@ -39,7 +39,3 @@ def filter_supress_none(val):
     else:
         return ''
 
-
-def filter_date_from_datetime(val):
-    return val.date()
-

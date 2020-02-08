@@ -2,9 +2,63 @@
 import os
 from flask import render_template
 from fpdf import FPDF, HTMLMixin
+from html.parser import HTMLParser
 
 
 PDF_DIR_PATH =  os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'pdf')
+
+def split_attrs(attrs):
+    props = []
+    for attr in attrs:
+        if(len(attr) > 1 and attr[0] == "style"):
+            items = attr[1].split(";")
+            for item in items:
+                item = "".join(item.split())
+                props.append(item.split(":"))
+    return props
+
+class MyHTMLParser(HTMLParser):
+    def __init__(self, pdf):
+        super().__init__()
+        self.pdf = pdf
+        self.prop_for_endtag = []
+
+    def handle_starttag(self, tag, attrs):
+        print("Encountered a start tag:", tag)
+        if(tag == "div"):
+            props = split_attrs(attrs)
+            for prop in props:
+                if(prop[0] == "padding-bottom"):
+                    self.prop_for_endtag = prop
+                    continue
+                elif(prop[0] == "padding-top"):
+                    try:
+                        val = int(prop[1].strip('mm'))
+                    except:
+                        print("error")
+                        continue
+                    self.pdf.cell(w=0, h=val, border=1, txt=" sss*** ", ln=1, align='L')
+
+    def handle_endtag(self, tag):
+        print("Encountered an end tag :", tag)
+        if(tag == "div"):
+            if(len(self.prop_for_endtag) > 0):
+                print("fff" + self.prop_for_endtag[0])
+                if(self.prop_for_endtag[0] == "padding-bottom"):
+                    try:
+                        print("fff" + self.prop_for_endtag[1])
+                        val = int(self.prop_for_endtag[1].strip('mm'))
+                        self.pdf.cell(w=0, h=val, border=1, txt=" eee*** ", ln=1, align='L')
+                    except:
+                        print("error")
+                    self.prop_for_endtag.clear()
+
+    def handle_data(self, data):
+        print("Encountered some data  :", str(len(data)) + " " + data)
+        testdata = "".join(data.split())
+        if(len(testdata) > 0):
+            self.pdf.cell(w=0, h=5, border=1, txt=data + " *** ", ln=1, align='L')
+
 
 class HTML2PDF(FPDF, HTMLMixin):
     pass
@@ -65,6 +119,8 @@ def html2pdf(html, path_and_filename):
     pdf.t_margin = 25
     pdf.b_margin = 17
     pdf.add_page()
-    pdf.write_html(html)
+    #pdf.write_html(html)
+    parser = MyHTMLParser(pdf)
+    parser.feed(html) #'<html><head><title>Test</title></head><body><h1>Parse me!</h1><div class="row"><div class="cell">c1</div><div class="cell">c2</div><div class="cell">c3</div></div></body></html>')
     pdf.output(path_and_filename)
 

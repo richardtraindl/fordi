@@ -1,6 +1,6 @@
 <html>
     <body>
-        <div id="fake" style="padding-bottom: 20mm; padding-top: 15mm; font-decoration: underline">
+        <div id="fake" style="padding-bottom: 20mm; padding-top: 5mm; font-decoration: underline">
             <p>{{- behandlungsverlauf.person.anredecode | mapanrede -}}</p>
 
             <p>
@@ -16,20 +16,19 @@
                 {{- behandlungsverlauf.person.adresse.ort -}}
             </p>
         </div>
-        <table border="0" width="100%">
-            <thead border="0">
-                <tr border="0">
-                    <td border="0" width="70%">&nbsp;</td>
-                    <td border="0" width="30%">&nbsp;</td>
-                </tr>
-            </thead>
-            <tbody border="0">
-                <tr border="0">
-                    <td border="0" width="70%" align="left">Patient &nbsp; {{- behandlungsverlauf.tier.tiername -}} &nbsp; {{- behandlungsverlauf.tier.tierart -}} &nbsp; {{- behandlungsverlauf.tier.geburtsdatum -}}</td>
-                    <td border="0" width="30%" align="right">{{- behandlungsverlauf.datum -}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="display: table; width: 100%">
+            <div style="display: table-row; width: 100%">
+                <div style="display: table-cell; width: 123mm">
+                    Patient &nbsp; 
+                    {{- behandlungsverlauf.tier.tiername -}} &nbsp; 
+                    {{- behandlungsverlauf.tier.tierart -}} &nbsp; 
+                    {{- behandlungsverlauf.tier.geburtsdatum -}}
+                </div>
+                <div style="display: table-cell; width: 40mm; text-align: right;">
+                    {{- behandlungsverlauf.datum -}}
+                </div>
+            </div>
+        </div>
 
         <div>
             <p>Diagnose: &nbsp; {{- behandlungsverlauf.diagnose -}}</p>

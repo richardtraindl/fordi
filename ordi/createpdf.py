@@ -7,57 +7,93 @@ from html.parser import HTMLParser
 
 PDF_DIR_PATH =  os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'pdf')
 
-def split_attrs(attrs):
-    props = []
+def find(attrs, attribute):
+    #[('id', 'fake'), 
+    # ('style', 'padding-bottom: 20mm; 
+    #            padding-top: 5mm;
+    #            font-decoration: underline')]
     for attr in attrs:
-        if(len(attr) > 1 and attr[0] == "style"):
-            items = attr[1].split(";")
-            for item in items:
-                item = "".join(item.split())
-                props.append(item.split(":"))
-    return props
+        if(attr[0] == attribute):
+            return attr[1]
+        elif(attribute != "style" and attr[0] == "style"):
+            styledefs = attr[1].split(";")
+            print(styledefs)
+            for styledef in styledefs:
+                styledef = "".join(styledef.split()) #remove whitespace
+                keyval = styledef.split(":")         #split into css-attribute and css-attribute-value
+                if(len(keyval) == 2):
+                    if(keyval[0] == attribute):
+                        return keyval[1]
+    return None
 
 class MyHTMLParser(HTMLParser):
+    MAX_WIDTH = 163
     def __init__(self, pdf):
         super().__init__()
         self.pdf = pdf
-        self.prop_for_endtag = []
+        self.cur_tag = None
+        self.cur_attrs = []
+        self.curr_row_width = 0
 
     def handle_starttag(self, tag, attrs):
         print("Encountered a start tag:", tag)
-        if(tag == "div"):
-            props = split_attrs(attrs)
-            for prop in props:
-                if(prop[0] == "padding-bottom"):
-                    self.prop_for_endtag = prop
-                    continue
-                elif(prop[0] == "padding-top"):
-                    try:
-                        val = int(prop[1].strip('mm'))
-                    except:
-                        print("error")
-                        continue
-                    self.pdf.cell(w=0, h=val, border=1, txt=" sss*** ", ln=1, align='L')
+        print(attrs)
+        self.cur_tag = tag
+        self.cur_attrs = attrs
+
+        padding_top_value = find(attrs, "padding-top")
+        if(padding_top_value):
+            try:
+                value = int(padding_top_value.strip('mm'))
+                self.pdf.cell(w=0, h=value, border=1, txt="top*** ", ln=1, align='L')
+            except:
+                print("error")
 
     def handle_endtag(self, tag):
         print("Encountered an end tag :", tag)
-        if(tag == "div"):
-            if(len(self.prop_for_endtag) > 0):
-                print("fff" + self.prop_for_endtag[0])
-                if(self.prop_for_endtag[0] == "padding-bottom"):
-                    try:
-                        print("fff" + self.prop_for_endtag[1])
-                        val = int(self.prop_for_endtag[1].strip('mm'))
-                        self.pdf.cell(w=0, h=val, border=1, txt=" eee*** ", ln=1, align='L')
-                    except:
-                        print("error")
-                    self.prop_for_endtag.clear()
+        print(self.cur_attrs)
+        padding_bottom_value = find(self.cur_attrs, "padding-bottom")
+        print("VVVVVVVVVVVVVVVVVVVVVv")
+        print(self.cur_attrs)
+        print(padding_bottom_value)
+        if(padding_bottom_value):
+            try:
+                value = int(padding_bottom_value.strip('mm'))
+                self.pdf.cell(w=0, h=value, border=1, txt="bot*** ", ln=1, align='L')
+            except:
+                print("error")
 
     def handle_data(self, data):
         print("Encountered some data  :", str(len(data)) + " " + data)
-        testdata = "".join(data.split())
-        if(len(testdata) > 0):
-            self.pdf.cell(w=0, h=5, border=1, txt=data + " *** ", ln=1, align='L')
+        data = data.strip()
+        if(len(data) > 0):
+            display_value = find(self.cur_attrs, "display")
+            if(display_value and display_value == "table-cell"):
+                align = 'L'
+                text_align_value = find(self.cur_attrs, "text-align")
+                if(text_align_value):
+                    if(text_align_value == "center"):
+                        align = 'C'
+                    elif(text_align_value == "right"):
+                        align = 'R'
+
+                width_value = find(self.cur_attrs, "width")                
+                if(width_value):
+                    try:
+                        value = int(width_value.strip('mm'))
+                        self.curr_row_width += value
+                        print(str(self.curr_row_width))
+                        if(self.curr_row_width >= self.MAX_WIDTH):
+                            self.curr_row_width = 0
+                            ln=1
+                        else:
+                            ln=0                            
+                        self.pdf.cell(w=value, h=5, border=1, txt=data, ln=ln, align=align)
+                    except:
+                        self.curr_row_width = 0
+                        print("error")
+            else:
+                self.pdf.cell(w=0, h=5, border=1, txt=data, ln=1, align='L')
 
 
 class HTML2PDF(FPDF, HTMLMixin):

@@ -21,20 +21,19 @@
             <p>Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}</p>
         </div>
 
-        <table border="0" width="100%">
-            <thead border="0">
-                <tr border="0">
-                    <td border="0" width="70%">&nbsp;</td>
-                    <td border="0" width="30%">&nbsp;</td>
-                </tr>
-            </thead>
-            <tbody border="0">
-                <tr border="0">
-                    <td border="0" width="70%" align="left">Patient &nbsp; {{- rechnung.tier.tiername -}} &nbsp; {{- rechnung.tier.tierart -}} &nbsp; {{- rechnung.tier.geburtsdatum -}}</td>
-                    <td border="0" width="30%" align="right">{{- rechnung.ausstellungsdatum -}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="display: table;">
+            <div style="display: table-row;">
+                <div style="display: table-cell; width: 123mm;">
+                    Patient &nbsp; 
+                    {{- rechnung.tier.tiername -}} &nbsp; 
+                    {{- rechnung.tier.tierart -}} &nbsp; 
+                    {{- rechnung.tier.geburtsdatum -}}
+                </div>
+                <div style="display: table-cell; width: 40mm; text-align: right;">
+                    {{- rechnung.ausstellungsdatum -}}
+                </div>
+            </div>
+        </div>
 
         <div>
             <p>Chip: &nbsp; {{- rechnung.tier.chip_nummer -}}</p>
@@ -48,31 +47,31 @@
             <p>Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen.</p>
         </div>
 
-        <div class="gap"></div>
+        <div style="padding-bottom: 20mm;"></div>
 
-        <table border="0" align="left" width="100%">
-            <thead border="0" align="left">
-                <tr border="0" align="left">
-                    <td border="0" align="left" width="20%">&nbsp;</td>
-                    <td border="0" align="left" width="60%">&nbsp;</td>
-                    <td border="0" align="left" width="20%">&nbsp;</td>
-                </tr>
-            </thead>
-            <tbody style="border: 0px;" border="0">
-            {% for rechnungszeile in rechnung.rechnungszeilen %}
-                <tr border="0">
-                    <td border="0" width="20%" align="left">{{- rechnungszeile.datum -}}</td>
-                    <td border="0" width="60%" align="left">{{- rechnungszeile.artikel -}}</td>
-                    <td border="0" width="20%" align="right">{{- '{0:0.2f}'.format(rechnungszeile.betrag | float) -}}</td>
-                </tr>
-            {% endfor %}
-                <tr border="0">
-                    <td border="0" width="20%" align="left">Endsumme Brutto EUR</td>
-                    <td border="0" width="60%" align="left">&nbsp;</td>
-                    <td border="0" width="20%" align="right">{{- rechnung.brutto_summe -}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="display: table;">
+          {% for rechnungszeile in rechnungszeilen %}
+            <div style="display: table-row;">
+                <div style="display: table-cell; width: 32mm;">
+                    {{- rechnungszeile.datum -}}
+                </div>
+                <div style="display: table-cell; width: 99mm;">
+                    {{- rechnungszeile.artikel -}}
+                </div>
+                <div style="display: table-cell; width: 32mm; text-align: right;">
+                    {{- '{0:0.2f}'.format(rechnungszeile.betrag | float) -}}
+                </div>
+            </div>
+          {% endfor %}
+            <div style="display: table-row;">
+                <div style="display: table-cell; width: 131mm;">
+                    Endsumme Brutto EUR
+                </div>
+                <div style="display: table-cell; width: 32mm; text-align: right;">
+                    {{- '{0:0.2f}'.format(rechnung.brutto_summe | float) -}}
+                </div>
+            </div>
+        </div>
 
         <div>
             <p>Zahlung: {{- rechnung.bezahlung -}}</p>

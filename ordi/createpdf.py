@@ -31,17 +31,14 @@ class MyHTMLParser(HTMLParser):
     def __init__(self, pdf):
         super().__init__()
         self.pdf = pdf
-        self.cur_tag = None
-        self.cur_attrs = []
+        self.stacked_attrs = []
         self.curr_row_width = 0
 
     def handle_starttag(self, tag, attrs):
         print("Encountered a start tag:", tag)
-        print(attrs)
-        self.cur_tag = tag
-        self.cur_attrs = attrs
+        self.stacked_attrs.append(attrs)
 
-        padding_top_value = find(attrs, "padding-top")
+        padding_top_value = find(self.stacked_attrs[-1], "padding-top")
         if(padding_top_value):
             try:
                 value = int(padding_top_value.strip('mm'))
@@ -51,33 +48,30 @@ class MyHTMLParser(HTMLParser):
 
     def handle_endtag(self, tag):
         print("Encountered an end tag :", tag)
-        print(self.cur_attrs)
-        padding_bottom_value = find(self.cur_attrs, "padding-bottom")
-        print("VVVVVVVVVVVVVVVVVVVVVv")
-        print(self.cur_attrs)
-        print(padding_bottom_value)
+        padding_bottom_value = find(self.stacked_attrs[-1], "padding-bottom")
         if(padding_bottom_value):
             try:
                 value = int(padding_bottom_value.strip('mm'))
                 self.pdf.cell(w=0, h=value, border=1, txt="bot*** ", ln=1, align='L')
             except:
                 print("error")
+        self.stacked_attrs.pop()
 
     def handle_data(self, data):
         print("Encountered some data  :", str(len(data)) + " " + data)
         data = data.strip()
         if(len(data) > 0):
-            display_value = find(self.cur_attrs, "display")
+            display_value = find(self.stacked_attrs[-1], "display")
             if(display_value and display_value == "table-cell"):
                 align = 'L'
-                text_align_value = find(self.cur_attrs, "text-align")
+                text_align_value = find(self.stacked_attrs[-1], "text-align")
                 if(text_align_value):
                     if(text_align_value == "center"):
                         align = 'C'
                     elif(text_align_value == "right"):
                         align = 'R'
 
-                width_value = find(self.cur_attrs, "width")                
+                width_value = find(self.stacked_attrs[-1], "width")                
                 if(width_value):
                     try:
                         value = int(width_value.strip('mm'))
@@ -94,7 +88,6 @@ class MyHTMLParser(HTMLParser):
                         print("error")
             else:
                 self.pdf.cell(w=0, h=5, border=1, txt=data, ln=1, align='L')
-
 
 class HTML2PDF(FPDF, HTMLMixin):
     pass
@@ -157,6 +150,6 @@ def html2pdf(html, path_and_filename):
     pdf.add_page()
     #pdf.write_html(html)
     parser = MyHTMLParser(pdf)
-    parser.feed(html) #'<html><head><title>Test</title></head><body><h1>Parse me!</h1><div class="row"><div class="cell">c1</div><div class="cell">c2</div><div class="cell">c3</div></div></body></html>')
+    parser.feed(html)
     pdf.output(path_and_filename)
 

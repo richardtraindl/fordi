@@ -40,6 +40,11 @@ class MyHTMLParser(HTMLParser):
 
         if(tag == "br"):
             self.pdf.cell(w=0, h=5, border=0, txt="", ln=1, align='L')
+            return
+
+        if(tag == "hr"):
+            self.pdf.line(0, 5, 163, 5)
+            return
 
         padding_top_value = find(self.stacked_attrs[-1], "padding-top")
         if(padding_top_value):

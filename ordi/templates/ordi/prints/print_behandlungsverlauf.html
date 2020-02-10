@@ -17,25 +17,33 @@
             </p>
         </div>
 
-        <div style="display: table;">
+        <div style="display: table; padding-bottom: 5mm;">
             <div style="display: table-row;">
                 <div style="display: table-cell; width: 123mm;">
-                    Patient &nbsp; 
-                    {{- behandlungsverlauf.tier.tiername -}} &nbsp; 
-                    {{- behandlungsverlauf.tier.tierart -}} &nbsp; 
-                    {{- behandlungsverlauf.tier.geburtsdatum -}}
+                    Behandlungsverlauf
                 </div>
                 <div style="display: table-cell; width: 40mm; text-align: right;">
                     {{- behandlungsverlauf.datum -}}
                 </div>
             </div>
         </div>
+        
+        <div>
+            <p>
+                Patient &nbsp; 
+                {{- behandlungsverlauf.tier.tiername -}} &nbsp; 
+                {{- behandlungsverlauf.tier.tierart -}} &nbsp; 
+                {%- if behandlungsverlauf.tier.geburtsdatum -%}
+                    geb. &nbsp; {{- behandlungsverlauf.tier.geburtsdatum -}}
+                {%- endif -%}
+            </p>
+        </div>
 
         <div>
             <p>Diagnose: &nbsp; {{- behandlungsverlauf.diagnose -}}</p>
         </div>
 
-        <div>
+        <div style="padding-top: 5mm;">
             <p>{{- behandlungsverlauf.behandlung -}}</p>
         </div>
     </body>

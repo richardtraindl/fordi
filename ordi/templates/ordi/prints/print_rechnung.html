@@ -17,22 +17,26 @@
             </p>
         </div>
         
-        <div>
-            <p>Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}</p>
-        </div>
-
-        <div style="display: table;">
+        <div style="display: table; padding-bottom: 5mm;">
             <div style="display: table-row;">
                 <div style="display: table-cell; width: 123mm;">
-                    Patient &nbsp; 
-                    {{- rechnung.tier.tiername -}} &nbsp; 
-                    {{- rechnung.tier.tierart -}} &nbsp; 
-                    {{- rechnung.tier.geburtsdatum -}}
+                    Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}
                 </div>
                 <div style="display: table-cell; width: 40mm; text-align: right;">
                     {{- rechnung.ausstellungsdatum -}}
                 </div>
             </div>
+        </div>
+
+        <div>
+            <p>
+                Patient: &nbsp; 
+                {{- rechnung.tier.tiername -}} &nbsp; 
+                {{- rechnung.tier.tierart -}} &nbsp; 
+                {%- if rechnung.tier.geburtsdatum -%}
+                    geb. &nbsp; {{- rechnung.tier.geburtsdatum -}}
+                {%- endif -%}
+            </p>
         </div>
 
         <div>
@@ -43,11 +47,9 @@
             <p>Diagnose: &nbsp; {{- rechnung.diagnose -}}</p>
         </div>
 
-        <div>
+        <div style="padding-top: 5mm;">
             <p>Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen.</p>
         </div>
-
-        <div style="padding-bottom: 20mm;"></div>
 
         <div style="display: table;">
           {% for rechnungszeile in rechnungszeilen %}
@@ -63,6 +65,8 @@
                 </div>
             </div>
           {% endfor %}
+        </div>
+        <div style="display: table; padding-bottom: 5mm;">
             <div style="display: table-row;">
                 <div style="display: table-cell; width: 131mm;">
                     Endsumme Brutto EUR
@@ -74,7 +78,7 @@
         </div>
 
         <div>
-            <p>Zahlung: {{- rechnung.bezahlung -}}</p>
+            <p>Zahlung: &nbsp; {{- rechnung.bezahlung -}}</p>
         </div>
     </body>
 </html>

@@ -32,7 +32,7 @@ class MyHTMLParser(HTMLParser):
         super().__init__()
         self.pdf = pdf
         self.stacked_attrs = []
-        self.curr_row_width = 0
+        self.max_y = 0
 
     def handle_starttag(self, tag, attrs):
         print("Encountered a start tag:", tag)
@@ -43,14 +43,20 @@ class MyHTMLParser(HTMLParser):
             return
 
         if(tag == "hr"):
+            no = fpdf.page_no()
             self.pdf.line(0, 5, 163, 5)
+            if(no < fpdf.page_no()):
+                self.max_y = 0
             return
 
         padding_top_value = find(self.stacked_attrs[-1], "padding-top")
         if(padding_top_value):
             try:
                 value = int(padding_top_value.strip('mm'))
-                self.pdf.cell(w=0, h=value, border=0, txt="", ln=1, align='L')
+                no = fpdf.page_no()
+                #self.pdf.cell(w=0, h=value, border=0, txt="", ln=1, align='L')
+                if(no < fpdf.page_no()):
+                    self.max_y = 0
             except:
                 print("error")
 
@@ -60,7 +66,10 @@ class MyHTMLParser(HTMLParser):
         if(padding_bottom_value):
             try:
                 value = int(padding_bottom_value.strip('mm'))
+                no = fpdf.page_no()
                 self.pdf.cell(w=0, h=value, border=0, txt="", ln=1, align='L')
+                if(no < fpdf.page_no()):
+                    self.max_y = 0
             except:
                 print("error")
         self.stacked_attrs.pop()
@@ -82,20 +91,33 @@ class MyHTMLParser(HTMLParser):
             if(width_value):
                 try:
                     value = int(width_value.strip('mm'))
-                    self.curr_row_width += value
-                    print(str(self.curr_row_width))
-                    if(self.curr_row_width >= self.MAX_WIDTH):
-                        self.curr_row_width = 0
-                        ln=1
+                    no = fpdf.page_no()
+                    x = self.fpdf.x
+                    y = self.fpdf.y
+                    self.fpdf.multi_cell(w=value, h=5, border=1, txt=data, align=align)
+                    if(self.fpdf.y > self.max_y and no == fpdf.page_no()):
+                        self.max_y = self.fpdf.y
+                    #self.curr_row_width += value
+                    #print(str(self.curr_row_width))
+                    if(x + value >= self.MAX_WIDTH):
+                        self.fpdf.x = 22
+                        self.fpdf.y = self.max_y
+                        #self.fpdf.ln()
+                        #self.curr_row_width = 0
                     else:
-                        ln=0                            
-                    self.pdf.cell(w=value, h=5, border=1, txt=data, ln=ln, align=align)
+                        self.fpdf.x = x + value
+                        self.fpdf.y = y
                 except:
-                    self.curr_row_width = 0
+                    #self.curr_row_width = 0
+                    self.fpdf.x = 22
+                    self.max_y = 0
                     print("error")
         else:
             if(len(data) > 0):
+                no = fpdf.page_no()
                 self.pdf.cell(w=0, h=5, border=0, txt=data, ln=1, align='L')
+                if(no < fpdf.page_no()):
+                    self.max_y = 0
 
 class HTML2PDF(FPDF, HTMLMixin):
     pass

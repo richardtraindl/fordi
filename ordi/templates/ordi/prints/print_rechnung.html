@@ -69,6 +69,46 @@
 
         <hr>
 
+        <div style="display: table;">
+            <div style="display: table-row;">
+                <div style="display: table-cell; width: 131mm;">
+                    Summe netto EUR
+                </div>
+                <div style="display: table-cell; width: 32mm; text-align: right;">
+                    {{- '{0:0.2f}'.format(rechnung.netto_summe | float) -}}
+                </div>
+            </div>
+
+            <div style="display: table-row;">
+                <div style="display: table-cell; width: 131mm;">
+                    10% Umsatzsteuer
+                </div>
+                <div style="display: table-cell; width: 32mm; text-align: right;">
+                    {{- '{0:0.2f}'.format(rechnung.steuerbetrag_zehn  | float) -}}
+                </div>
+            </div>
+
+            <div style="display: table-row;">
+                <div style="display: table-cell; width: 131mm;">
+                    13% Umsatzsteuer
+                </div>
+                <div style="display: table-cell; width: 32mm; text-align: right;">
+                    {{- '{0:0.2f}'.format(rechnung.steuerbetrag_dreizehn | float) -}}
+                </div>
+            </div>
+
+            <div style="display: table-row;">
+                <div style="display: table-cell; width: 131mm;">
+                    20% Umsatzsteuer
+                </div>
+                <div style="display: table-cell; width: 32mm; text-align: right;">
+                    {{- '{0:0.2f}'.format(rechnung.steuerbetrag_zwanzig  | float) -}}
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
         <div style="display: table; padding-bottom: 5mm;">
             <div style="display: table-row;">
                 <div style="display: table-cell; width: 131mm;">

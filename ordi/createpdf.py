@@ -26,6 +26,11 @@ def find(attrs, attribute):
                         return keyval[1]
     return None
 
+"""supported tags: p, div, br, hr
+   supported attributes: style and within style:
+      width, padding-top, padding-bottom - only in mm
+      display: table, display: table-row, display: table-cell
+"""
 class MyHTMLParser(HTMLParser):
     START_X = 22
     MAX_WIDTH = 163
@@ -41,7 +46,6 @@ class MyHTMLParser(HTMLParser):
         self.stacked_attrs.append(attrs)
 
         if(tag == "br"):
-            #self.fpdf.cell(w=0, h=5, border=0, txt="", ln=1, align='L')
             return
 
         if(tag == "hr"):

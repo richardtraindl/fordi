@@ -9,6 +9,8 @@ instance/
 migrations/
 downloads/
 
+data_extern/
+
 .pytest_cache/
 .coverage
 htmlcov/

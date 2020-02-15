@@ -32,17 +32,20 @@ def find(attrs, attribute):
       display: table, display: table-row, display: table-cell
 """
 class MyHTMLParser(HTMLParser):
-    START_X = 22
-    MAX_WIDTH = 163
     def __init__(self, fpdf):
         super().__init__()
         self.fpdf = fpdf
         self.stacked_attrs = []
         self.max_y = None
         self.max_page = None
+        if(self.fpdf.format == 'A4'):
+            self.MAX_WIDTH = 210 - (self.fpdf.l_margin + self.fpdf.r_margin)
+        else:
+            self.MAX_WIDTH = 0
 
     def handle_starttag(self, tag, attrs):
         print("Encountered a start tag:", tag)
+
         self.stacked_attrs.append(attrs)
 
         if(tag == "br"):
@@ -101,8 +104,8 @@ class MyHTMLParser(HTMLParser):
                         self.max_y = self.fpdf.y
                         self.max_page = self.fpdf.page_no()
 
-                    if(x + value >= self.START_X + self.MAX_WIDTH):
-                        self.fpdf.x = self.START_X
+                    if(x + value >= self.fpdf.l_margin + self.MAX_WIDTH):
+                        self.fpdf.x = self.fpdf.l_margin
                         self.fpdf.y = self.max_y
                         self.fpdf.page = self.max_page
                         self.max_y = None
@@ -127,7 +130,6 @@ class HTML2PDF(FPDF, HTMLMixin):
 
 class CustomPDF(HTML2PDF):
     def header(self):
-        # Set up a logo
         self.image(name=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'img', 'logo.png'), 
                    x=160, y=25, w=25, h=25) 
 
@@ -135,7 +137,6 @@ class CustomPDF(HTML2PDF):
         self.cell(85)
         self.cell(w=50, h=4, txt='', ln=1)
 
-        # Add an address
         self.set_font('Arial', '', 11)
         self.cell(85)
         text1 = 'TIERARZTPRAXIS'
@@ -159,7 +160,6 @@ class CustomPDF(HTML2PDF):
         text4 = 'Mag. Gerold Koppensteiner'
         self.cell(w=50, h=4, txt=text4, ln=1, align='R')
 
-         # Line break
         self.ln(20)
  
     def footer(self):
@@ -175,14 +175,16 @@ class CustomPDF(HTML2PDF):
 
 
 def html2pdf(html, path_and_filename):
-    pdf = CustomPDF()
-    pdf.t_margin = 25
-    pdf.r_margin = 25
-    pdf.b_margin = 25
-    pdf.l_margin = 22
-    pdf.add_page()
-    #pdf.write_html(html)
-    parser = MyHTMLParser(pdf)
+    fpdf = CustomPDF()
+    fpdf.t_margin = 25
+    fpdf.r_margin = 25
+    fpdf.b_margin = 25
+    fpdf.l_margin = 22
+    fpdf.orientation = 'P'
+    fpdf.format = 'A4'
+    fpdf.add_page()
+    #fpdf.write_html(html)
+    parser = MyHTMLParser(fpdf)
     parser.feed(html)
-    pdf.output(path_and_filename)
+    fpdf.output(path_and_filename)
 

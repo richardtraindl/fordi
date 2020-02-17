@@ -1,6 +1,7 @@
 
 
 from datetime import date
+from operator import attrgetter
 import re, os
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
@@ -65,14 +66,16 @@ def create_tierhaltung():
         if(len(error) > 0):
             flash(error)
             tier = Tier()
-            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
-                anredewe=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', 
+                person=person, tier=tier, anredewerte=anredewerte, 
+                geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
 
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
-                anredewerte=anredewe, geschlechtswe=geschlechtswe, page_title="Neue Karteikarte")
+            return render_template('ordi/create_tierhaltung.html', 
+                person=person, tier=tier, anredewerte=anredewerte, 
+                geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
 
         db.session.add(person)
         db.session.add(tier)
@@ -84,7 +87,8 @@ def create_tierhaltung():
             db.session.add(adresse)
             db.session.commit()
 
-        kontakte = fill_and_validate_kontakte([], request)[0]
+        req_kontakte = build_kontakte(request)
+        kontakte = fill_and_validate_kontakte(req_kontakte, request)[0]
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
                 kontakt.person_id=person.id
@@ -97,9 +101,14 @@ def create_tierhaltung():
         return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
     else:
         person = Person()
+        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['Telefon']))
+        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['Telefon']))
+        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['E-Mail']))
+        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['E-Mail']))
         tier = Tier()
-        return render_template('ordi/create_tierhaltung.html', person=person, tier=tier, 
-            anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
+        return render_template('ordi/create_tierhaltung.html', person=person, 
+            tier=tier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
+            page_title="Neue Karteikarte")
 
 
 @bp.route('/<int:id>/show_tierhaltung', methods=('GET',))
@@ -206,8 +215,8 @@ def edit_person(id, person_id):
         person, error = fill_and_validate_person(person, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/edit_person.html', id=id, person=person, anredewerte=anredewerte, 
-                page_title="Person ändern")
+            return render_template('ordi/edit_person.html', id=id, person=person, 
+                anredewerte=anredewerte, page_title="Person ändern")
 
         db.session.commit()
 
@@ -216,25 +225,44 @@ def edit_person(id, person_id):
             if(adresse.id == None):
                 adresse.person_id=person_id
                 db.session.add(adresse)
+                db.session.commit()
         else:
             if(adresse.id):
                 db.session.delete(adresse)
-        db.session.commit()
+                db.session.commit()
 
-        kontakte = fill_and_validate_kontakte(person.kontakte, request)[0]
+        req_kontakte = build_kontakte(request)
+        kontakte = fill_and_validate_kontakte(req_kontakte, request)[0]
         for kontakt in kontakte:
             if(len(kontakt.kontakt) > 0):
                 if(kontakt.id == None):
-                    kontakt.person_id=person_id
+                    #kontakt.person_id=person_id
                     db.session.add(kontakt)
+                db.session.commit()
             else:
                 if(kontakt.id):
+                    kontakt = db.session.query(Kontakt).get(kontakt.id)
                     db.session.delete(kontakt)
-        db.session.commit()
+                    db.session.commit()
 
         return redirect(url_for('ordi.show_tierhaltung', id=id))
 
     person = db.session.query(Person).get(person_id)
+    telcnt = 0
+    mailcnt = 0
+    for kontakt in person.kontakte:
+        if(kontakt.kontaktcode == 1):
+            telcnt += 1
+        elif(kontakt.kontaktcode == 3):
+            mailcnt += 1
+    if(telcnt < 2):
+        for i in range(2 - telcnt):
+            person.kontakte.append(Kontakt(kontaktcode=1))
+    if(mailcnt < 2):
+        for i in range(2 - mailcnt):
+            person.kontakte.append(Kontakt(kontaktcode=3))
+    person.kontakte.sort(key=attrgetter('kontaktcode'))
+
     return render_template('ordi/edit_person.html', id=id, person=person, 
         anredewerte=anredewerte, page_title="Person ändern")
 # person

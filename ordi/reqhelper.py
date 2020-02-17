@@ -101,44 +101,50 @@ def fill_and_validate_adresse(adresse, request):
     return adresse, ""
 
 
-def fill_and_validate_kontakte(kontakte, request):
-    try:
-        kontakt1_id = int(request.form['kontakt1_id'])
-    except:
-        kontakt1_id = None
-    try:
-        kontakt2_id = int(request.form['kontakt2_id'])
-    except:
-        kontakt2_id = None
+def build_kontakte(request):    
+    data = (
+        request.form.getlist('kontakt_id[]'),
+        request.form.getlist('kontaktcode[]'),
+        request.form.getlist('kontakt[]'),
+    )
+    req_kontakte = []
+    for idx in range(len(data[0])):
+        req_kontakt = {}
+        req_kontakt['kontakt_id'] = data[0][idx]
+        req_kontakt['kontaktcode'] = data[1][idx]
+        req_kontakt['kontakt'] = data[2][idx]
+        req_kontakte.append(req_kontakt)
+    return req_kontakte
 
-    try:
-        person_id = int(request.form['person_id'])
-    except:
-        person_id = None
-        
-    if(len(request.form['kontakt1']) > 0):
+def fill_and_validate_kontakte(req_kontakte, request):
+    kontakte = []
+
+    for req_kontakt in req_kontakte:
+        kontakt = req_kontakt['kontakt'].strip()
+        try:
+            kontakt_id = int(req_kontakt['kontakt_id'])
+        except:
+            kontakt_id = None
+
+        try:
+            kontaktcode = int(req_kontakt['kontaktcode'])
+        except:
+            print("error")
+            continue
+
+        try:
+            person_id = int(request.form['person_id'])
+        except:
+            person_id = None
+
         bad_chars = [';', ':', '-', '/', ' ', '\n']
-        kontakt1_intern = ''.join(i for i in request.form['kontakt1'] if not i in bad_chars)
-    else:
-        kontakt1_intern = ""
+        kontakt_intern = ''.join(i for i in kontakt if not i in bad_chars)
 
-    if(len(request.form['kontakt2']) > 0):
-        bad_chars = [';', ':', '-', '/', ' ', '\n']
-        kontakt2_intern = ''.join(i for i in request.form['kontakt2'] if not i in bad_chars)
-    else:
-        kontakt2_intern = ""
-
-    if(len(kontakte) == 0):
-        kontakte.append(Kontakt(person_id=person_id))
-    kontakte[0].kontaktcode=1 # fix 1 für Telefon
-    kontakte[0].kontakt=request.form['kontakt1']
-    kontakte[0].kontakt_intern=kontakt1_intern
-
-    if(len(kontakte) < 2):
-        kontakte.append(Kontakt(person_id=person_id))
-    kontakte[1].kontaktcode=1 # fix 1 für Telefon
-    kontakte[1].kontakt=request.form['kontakt2']
-    kontakte[1].kontakt_intern=kontakt2_intern
+        kontakte.append(Kontakt(id=kontakt_id, 
+                                person_id=person_id, 
+                                kontaktcode=kontaktcode, 
+                                kontakt=kontakt, 
+                                kontakt_intern=kontakt_intern))
 
     return kontakte, ""
 

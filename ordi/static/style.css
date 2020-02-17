@@ -95,6 +95,11 @@ textarea {
   text-overflow: ellipsis;
 }
 
+.liste-wrapper {
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
 .btn {
   padding: 2px;
   -moz-border-radius: 5px;

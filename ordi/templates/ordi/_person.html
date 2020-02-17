@@ -1,7 +1,7 @@
 
     <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         <p>Anrede</p>
-        <p>{{ person.anredecode | mapanrede }}</p>
+        <p>{{ person.anredecode|mapanrede }}</p>
 
         <p>Titel</p>
         <p>{{ person.titel }}</p>
@@ -31,18 +31,8 @@
         <p>Straße</p>
         <p>{{ person.adresse.strasse }}</p>
 
-        {% if person.kontakte[0] %}
-            <p>Telefonnr.</p>
-            <p>{{ person.kontakte[0].kontakt }}</p>
-        {% else %}
-            <p>Telefonnr.</p>
-            <p>&nbsp;</p>
-        {% endif %}
-        {% if person.kontakte[1] %}
-            <p>Telefonnr.</p>
-            <p>{{ person.kontakte[1].kontakt }}</p>
-        {% else %}
-            <p>Telefonnr.</p>
-            <p>&nbsp;</p>
-        {% endif %}
+        {% for kontakt in person.kontakte %}
+            <p>{{- kontakt.kontaktcode|mapkontakt -}}</p>
+            <p>{{- kontakt.kontakt -}}</p>
+        {% endfor %}
     </div>

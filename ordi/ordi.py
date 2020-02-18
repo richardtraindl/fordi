@@ -655,7 +655,7 @@ def delete_rechnungszeile(rechnungszeile_id):
 
 
 class Abfrage:
-    def __init__(self, text, bezeichnung, anz_params, bericht_bezeichnung, etiketten_bezeichnung=None):
+    def __init__(self, text, bezeichnung, anz_params, bericht_bezeichnung, etiketten_bezeichnung=""):
         self.text=text
         self.bezeichnung=bezeichnung
         self.anz_params=anz_params
@@ -671,7 +671,7 @@ abfragen.append(Abfrage("Chipnummer", "sqlChipnummer", 1, "rptChipnummer"))
 abfragen.append(Abfrage("Diagnose", "sqlDiagnose", 1, "rptDiagnose"))
 abfragen.append(Abfrage("EU-Passnummer", "sqlEU_Passnummer", 1, "rptEU_Passnummer"))
 abfragen.append(Abfrage("Familienname", "sqlFamilienname", 1, "rptFamilienname"))
-abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamtr"))
+abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
 abfragen.append(Abfrage("Impfung (1Jahr) ", "sqlImpfung", 2, "rptImpfung", "rptImpfung_Etiketten"))
 abfragen.append(Abfrage("Impfung (2Jahre) ", "sqlImpfung_Inkl_Vorjahr", 2, "rptImpfung_Inkl_Vorjahr", "rptImpfung_Inkl_Vorjahr_Etiketten"))
 abfragen.append(Abfrage("Merkmal", "sqlMerkmal", 1, "rptMerkmal"))

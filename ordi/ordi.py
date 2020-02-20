@@ -688,10 +688,19 @@ def abfragen():
     if(request.method == 'POST'):
         abfrage = request.form['abfrage']
         abfragekriterium = request.form['abfragekriterium']
+        if(abfrage == "Adresse"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Adresse, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Adresse, Adresse.person_id==Person.id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Adresse.strasse.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        else:
+            tierhaltungen = []
     else:
         abfrage = ""
         abfragekriterium = ""
-    tierhaltungen = []
+        tierhaltungen = []
     return render_template('ordi/abfragen.html', abfragen=lst_abfragen, 
                 abfrage=abfrage, abfragekriterium=abfragekriterium, 
                 tierhaltungen=tierhaltungen, page_title="Abfragen")

@@ -40,7 +40,7 @@
         </tr>
       {% for th in tierhaltungen %}
         <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ tierhaltung['id'] }}"></td>
+            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ th.Tierhaltung.id }}"></td>
             <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=th.Tierhaltung.id) }}">{{ th.Person.anredecode|mapanrede }}</a></td>
             <td style="width: 6%"><a href="{{ url_for('ordi.show_tierhaltung', id=th.Tierhaltung.id) }}">{{ th.Person.titel }}</a></td>
             <td style="width: 18%"><a href="{{ url_for('ordi.show_tierhaltung', id=th.Tierhaltung.id) }}">{{ th.Person.familienname }}</a></td>

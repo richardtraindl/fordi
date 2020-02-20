@@ -232,16 +232,21 @@ def edit_person(id, person_id):
                 db.session.commit()
 
         req_kontakte = build_kontakte(request)
-        kontakte = fill_and_validate_kontakte(req_kontakte, request)[0]
-        for kontakt in kontakte:
+        for req_kontakt in req_kontakte:
+            try:
+                kontakt_id = int(req_kontakt['kontakt_id'])
+                kontakt = db.session.query(Kontakt).get(kontakt_id)
+            except:
+                kontakt = None
+
+            kontakt = fill_and_validate_kontakt(kontakt, req_kontakt)[0]
             if(len(kontakt.kontakt) > 0):
                 if(kontakt.id == None):
-                    #kontakt.person_id=person_id
+                    kontakt.person_id = person.id
                     db.session.add(kontakt)
                 db.session.commit()
             else:
                 if(kontakt.id):
-                    kontakt = db.session.query(Kontakt).get(kontakt.id)
                     db.session.delete(kontakt)
                     db.session.commit()
 
@@ -667,20 +672,20 @@ lst_abfragen.append(Abfrage("", "", 0, ""))
 lst_abfragen.append(Abfrage("Adresse", "sqlStrasse", 1, "rptStrasse"))
 lst_abfragen.append(Abfrage("Arznei", "sqlArznei", 1, "rptArznei"))
 lst_abfragen.append(Abfrage("Arzneimittel", "sqlArzneimittel", 1, "rptArzneimittel"))
-lst_abfragen.append(Abfrage("Behandlung", "sqlBehandlung", 2, "rptBehandlung", "rptBehandlung_Etiketten"))
+#lst_abfragen.append(Abfrage("Behandlung", "sqlBehandlung", 2, "rptBehandlung", "rptBehandlung_Etiketten"))
 lst_abfragen.append(Abfrage("Chipnummer", "sqlChipnummer", 1, "rptChipnummer"))
 lst_abfragen.append(Abfrage("Diagnose", "sqlDiagnose", 1, "rptDiagnose"))
 lst_abfragen.append(Abfrage("EU-Passnummer", "sqlEU_Passnummer", 1, "rptEU_Passnummer"))
-lst_abfragen.append(Abfrage("Familienname", "sqlFamilienname", 1, "rptFamilienname"))
-lst_abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
-lst_abfragen.append(Abfrage("Impfung (1Jahr) ", "sqlImpfung", 2, "rptImpfung", "rptImpfung_Etiketten"))
-lst_abfragen.append(Abfrage("Impfung (2Jahre) ", "sqlImpfung_Inkl_Vorjahr", 2, "rptImpfung_Inkl_Vorjahr", "rptImpfung_Inkl_Vorjahr_Etiketten"))
+#lst_abfragen.append(Abfrage("Familienname", "sqlFamilienname", 1, "rptFamilienname"))
+#lst_abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
+#lst_abfragen.append(Abfrage("Impfung (1Jahr) ", "sqlImpfung", 2, "rptImpfung", "rptImpfung_Etiketten"))
+#lst_abfragen.append(Abfrage("Impfung (2Jahre) ", "sqlImpfung_Inkl_Vorjahr", 2, "rptImpfung_Inkl_Vorjahr", "rptImpfung_Inkl_Vorjahr_Etiketten"))
 lst_abfragen.append(Abfrage("Merkmal", "sqlMerkmal", 1, "rptMerkmal"))
 lst_abfragen.append(Abfrage("Postleitzahl", "sqlPostleitzahl", 1, "rptPostleitzahl"))
 lst_abfragen.append(Abfrage("Rasse", "sqlRasse", 1, "rptRasse"))
 lst_abfragen.append(Abfrage("Telefon", "sqlTelefon", 1, "rptTelefon"))
 lst_abfragen.append(Abfrage("Tierart", "sqlTierart", 1, "rptTierart"))
-lst_abfragen.append(Abfrage("Tiername", "sqlTiername", 1, "rptTiername"))
+#lst_abfragen.append(Abfrage("Tiername", "sqlTiername", 1, "rptTiername"))
 
 @bp.route('/abfragen', methods=('GET', 'POST'))
 @login_required
@@ -688,12 +693,81 @@ def abfragen():
     if(request.method == 'POST'):
         abfrage = request.form['abfrage']
         abfragekriterium = request.form['abfragekriterium']
-        if(abfrage == "Adresse"):
+        
+        if(len(abfragekriterium) == 0):
+            tierhaltungen = []
+        elif(abfrage == "Adresse"):
             tierhaltungen = db.session.query(Tierhaltung, Person, Adresse, Tier) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
                 .join(Adresse, Adresse.person_id==Person.id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .filter(Adresse.strasse.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Postleitzahl"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Adresse, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Adresse, Adresse.person_id==Person.id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Adresse.postleitzahl.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Telefon"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Kontakt, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Kontakt, Kontakt.person_id==Person.id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Kontakt.kontaktcode == KONTAKT['Telefon'], 
+                        Kontakt.kontakt_intern.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Chipnummer"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Tier.chip_nummer.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "EU-Passnummer"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Tier.eu_passnummer.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Merkmal"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Tier.merkmal.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Rasse"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Tier.rasse.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Tierart"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .filter(Tier.tierart.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Arznei"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                .filter(Behandlung.arzneien.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Arzneimittel"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                .filter(Behandlung.arzneimittel.like(abfragekriterium + "%"), 
+                        Person.kunde==True, Tier.patient==True).all()
+        elif(abfrage == "Diagnose"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                .filter(Behandlung.diagnose.like(abfragekriterium + "%"), 
                         Person.kunde==True, Tier.patient==True).all()
         else:
             tierhaltungen = []

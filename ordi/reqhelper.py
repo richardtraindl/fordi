@@ -116,37 +116,39 @@ def build_kontakte(request):
         req_kontakte.append(req_kontakt)
     return req_kontakte
 
-def fill_and_validate_kontakte(req_kontakte, request):
-    kontakte = []
+def fill_and_validate_kontakt(kontakt, req_kontakt):
+    error = ""
 
-    for req_kontakt in req_kontakte:
-        kontakt = req_kontakt['kontakt'].strip()
-        try:
-            kontakt_id = int(req_kontakt['kontakt_id'])
-        except:
-            kontakt_id = None
+    str_kontakt = req_kontakt['kontakt'].strip()
 
-        try:
-            kontaktcode = int(req_kontakt['kontaktcode'])
-        except:
-            print("error")
-            continue
+    try:
+        kontakt_id = int(req_kontakt['kontakt_id'])
+    except:
+        kontakt_id = None
 
-        try:
-            person_id = int(request.form['person_id'])
-        except:
-            person_id = None
+    try:
+        kontaktcode = int(req_kontakt['kontaktcode'])
+    except:
+        error = "Fehler bei Kontaktcode. "
 
-        bad_chars = [';', ':', '-', '/', ' ', '\n']
-        kontakt_intern = ''.join(i for i in kontakt if not i in bad_chars)
+    try:
+        person_id = int(request.form['person_id'])
+    except:
+        person_id = None
 
-        kontakte.append(Kontakt(id=kontakt_id, 
-                                person_id=person_id, 
-                                kontaktcode=kontaktcode, 
-                                kontakt=kontakt, 
-                                kontakt_intern=kontakt_intern))
+    bad_chars = [';', ':', '-', '/', ' ', '\n']
+    kontakt_intern = ''.join(i for i in str_kontakt if not i in bad_chars)
 
-    return kontakte, ""
+    if(kontakt == None):
+        kontakt = Kontakt()
+
+    kontakt.id=kontakt_id
+    kontakt.person_id=person_id
+    kontakt.kontaktcode=kontaktcode
+    kontakt.kontakt=str_kontakt
+    kontakt.kontakt_intern=kontakt_intern
+
+    return kontakt, error
 
 
 def fill_and_validate_behandlung(behandlung, req_behandlung):

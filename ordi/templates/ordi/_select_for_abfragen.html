@@ -1,59 +1,12 @@
    
-        <select name="abfragecode">
-        {% if abfragecode == 0 or abfragecode == "0" %}
-            <option value="0" selected>&nbsp;</option>
-        {% else %}
-            <option value="0">&nbsp;</option>
-        {% endif %}
-        {% if abfragecode == "Familienname" %}
-            <option value="Familienname" selected>Familienname</option>
-        {% else %}
-            <option value="Familienname">Familienname</option>
-        {% endif %}
-        {% if abfragecode == 2 or abfragecode == "2" %}
-            <option value="2" selected>Labor</option>
-        {% else %}
-            <option value="2">Labor</option>
-        {% endif %}
-        {% if abfragecode == 3 or abfragecode == "3" %}
-            <option value="3" selected>Injektion</option>
-        {% else %}
-            <option value="3">Injektion</option>
-        {% endif %}
-        {% if abfragecode == 4 or abfragecode == "4" %}
-            <option value="4" selected>Röntgen</option>
-        {% else %}
-            <option value="4">Röntgen</option>
-        {% endif %}
-        {% if abfragecode == 5 or abfragecode == "5" %}
-            <option value="5" selected>Ultraschall</option>
-        {% else %}
-            <option value="5">Ultraschall</option>
-        {% endif %}
-        {% if abfragecode == 6 or abfragecode == "6" %}
-            <option value="6" selected>Medikamente</option>
-        {% else %}
-            <option value="6">Medikamente</option>
-        {% endif %}
-        {% if abfragecode == 7 or abfragecode == "7" %}
-            <option value="7" selected>Futter und Medikamente</option>
-        {% else %}
-            <option value="7">Futter und Medikamente</option>
-        {% endif %}
-        {% if abfragecode == 8 or abfragecode == "8" %}
-            <option value="8" selected>Artikel mit 20%</option>
-        {% else %}
-            <option value="8">Artikel mit 20%</option>
-        {% endif %}
-        {% if abfragecode == 9 or abfragecode == "9" %}
-            <option value="9" selected>Artikel mit 13%</option>
-        {% else %}
-            <option value="9">Artikel mit 13%</option>
-        {% endif %}
-        {% if abfragecode == 10 or abfragecode == "10" %}
-            <option value="10" selected>Artikel mit 10%</option>
-        {% else %}
-            <option value="10">Artikel mit 10%</option>
-        {% endif %}
+   
+       <select name="abfrage">    
+          {%- for abfr in abfragen -%}
+            {%- if abfr.label == abfrage -%}
+              <option value="{{- abfr.label -}}" selected>{{- abfr.label -}}</option>
+            {%- else -%}
+              <option value="{{- abfr.label -}}">{{- abfr.label -}}</option>
+            {%- endif -%}
+          {%- endfor -%}
         </select>
 

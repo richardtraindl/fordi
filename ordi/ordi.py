@@ -655,44 +655,44 @@ def delete_rechnungszeile(rechnungszeile_id):
 
 
 class Abfrage:
-    def __init__(self, text, bezeichnung, anz_params, bericht_bezeichnung, etiketten_bezeichnung=""):
-        self.text=text
-        self.bezeichnung=bezeichnung
+    def __init__(self, label, sql_bezeichnung, anz_params, bericht_bezeichnung, etiketten_bezeichnung=""):
+        self.label=label
+        self.sql_bezeichnung=sql_bezeichnung
         self.anz_params=anz_params
         self.bericht_bezeichnung=bericht_bezeichnung
         self.etiketten_bezeichnung=etiketten_bezeichnung
 
-abfragen = []
-abfragen.append(Abfrage("Adresse", "sqlStrasse", 1, "rptStrasse"))
-abfragen.append(Abfrage("Arznei", "sqlArznei", 1, "rptArznei"))
-abfragen.append(Abfrage("Arzneimittel", "sqlArzneimittel", 1, "rptArzneimittel"))
-abfragen.append(Abfrage("Behandlung", "sqlBehandlung", 2, "rptBehandlung", "rptBehandlung_Etiketten"))
-abfragen.append(Abfrage("Chipnummer", "sqlChipnummer", 1, "rptChipnummer"))
-abfragen.append(Abfrage("Diagnose", "sqlDiagnose", 1, "rptDiagnose"))
-abfragen.append(Abfrage("EU-Passnummer", "sqlEU_Passnummer", 1, "rptEU_Passnummer"))
-abfragen.append(Abfrage("Familienname", "sqlFamilienname", 1, "rptFamilienname"))
-abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
-abfragen.append(Abfrage("Impfung (1Jahr) ", "sqlImpfung", 2, "rptImpfung", "rptImpfung_Etiketten"))
-abfragen.append(Abfrage("Impfung (2Jahre) ", "sqlImpfung_Inkl_Vorjahr", 2, "rptImpfung_Inkl_Vorjahr", "rptImpfung_Inkl_Vorjahr_Etiketten"))
-abfragen.append(Abfrage("Merkmal", "sqlMerkmal", 1, "rptMerkmal"))
-abfragen.append(Abfrage("Postleitzahl", "sqlPostleitzahl", 1, "rptPostleitzahl"))
-abfragen.append(Abfrage("Rasse", "sqlRasse", 1, "rptRasse"))
-abfragen.append(Abfrage("Telefon", "sqlTelefon", 1, "rptTelefon"))
-abfragen.append(Abfrage("Tierart", "sqlTierart", 1, "rptTierart"))
-abfragen.append(Abfrage("Tiername", "sqlTiername", 1, "rptTiername"))
+lst_abfragen = []
+lst_abfragen.append(Abfrage("", "", 0, ""))
+lst_abfragen.append(Abfrage("Adresse", "sqlStrasse", 1, "rptStrasse"))
+lst_abfragen.append(Abfrage("Arznei", "sqlArznei", 1, "rptArznei"))
+lst_abfragen.append(Abfrage("Arzneimittel", "sqlArzneimittel", 1, "rptArzneimittel"))
+lst_abfragen.append(Abfrage("Behandlung", "sqlBehandlung", 2, "rptBehandlung", "rptBehandlung_Etiketten"))
+lst_abfragen.append(Abfrage("Chipnummer", "sqlChipnummer", 1, "rptChipnummer"))
+lst_abfragen.append(Abfrage("Diagnose", "sqlDiagnose", 1, "rptDiagnose"))
+lst_abfragen.append(Abfrage("EU-Passnummer", "sqlEU_Passnummer", 1, "rptEU_Passnummer"))
+lst_abfragen.append(Abfrage("Familienname", "sqlFamilienname", 1, "rptFamilienname"))
+lst_abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
+lst_abfragen.append(Abfrage("Impfung (1Jahr) ", "sqlImpfung", 2, "rptImpfung", "rptImpfung_Etiketten"))
+lst_abfragen.append(Abfrage("Impfung (2Jahre) ", "sqlImpfung_Inkl_Vorjahr", 2, "rptImpfung_Inkl_Vorjahr", "rptImpfung_Inkl_Vorjahr_Etiketten"))
+lst_abfragen.append(Abfrage("Merkmal", "sqlMerkmal", 1, "rptMerkmal"))
+lst_abfragen.append(Abfrage("Postleitzahl", "sqlPostleitzahl", 1, "rptPostleitzahl"))
+lst_abfragen.append(Abfrage("Rasse", "sqlRasse", 1, "rptRasse"))
+lst_abfragen.append(Abfrage("Telefon", "sqlTelefon", 1, "rptTelefon"))
+lst_abfragen.append(Abfrage("Tierart", "sqlTierart", 1, "rptTierart"))
+lst_abfragen.append(Abfrage("Tiername", "sqlTiername", 1, "rptTiername"))
 
 @bp.route('/abfragen', methods=('GET', 'POST'))
 @login_required
 def abfragen():
     if(request.method == 'POST'):
-        print(request.form['abfragecode'])
-        try:
-            abfragecode = int(request.form['abfragecode'])
-        except:
-            abfragecode = 0
+        abfrage = request.form['abfrage']
         abfragekriterium = request.form['abfragekriterium']
     else:
-        abfragecode = 0
+        abfrage = ""
         abfragekriterium = ""
-    abfragen = [] # read_abfragen(abfragekriterium)
-    return render_template('ordi/abfragen.html', abfragen=abfragen, abfragekriterium=abfragekriterium, page_title="Abfragen")
+    tierhaltungen = []
+    return render_template('ordi/abfragen.html', abfragen=lst_abfragen, 
+                abfrage=abfrage, abfragekriterium=abfragekriterium, 
+                tierhaltungen=tierhaltungen, page_title="Abfragen")
+

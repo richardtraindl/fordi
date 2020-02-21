@@ -766,7 +766,7 @@ def abfragen():
                 .join(Person, Person.id==Tierhaltung.person_id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                .filter(Behandlung.behandlungsdatum >= abfragekriterium1 and Behandlung.behandlungsdatum <= abfragekriterium2), 
+                .filter(Behandlung.behandlungsdatum >= abfragekriterium1, Behandlung.behandlungsdatum <= abfragekriterium2, 
                         Person.kunde==True, Tier.patient==True).all()
         elif(abfrage == "Impfung"):
             error = ""
@@ -785,8 +785,8 @@ def abfragen():
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .join(Behandlung, Behandlung.tier_id==Tier.id) \
                 .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
-                .filter(Behandlung.behandlungsdatum >= abfragekriterium1 and Behandlung.behandlungsdatum <= abfragekriterium2), 
-                        Person.kunde==True, Tier.patient==True).all()
+                .filter(Behandlung.behandlungsdatum >= abfragekriterium1, Behandlung.behandlungsdatum <= abfragekriterium2, 
+                        func.count(Impfung.id) > 0, Person.kunde==True, Tier.patient==True).all()
         elif(abfrage == "Arznei"):
             tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
                 .join(Person, Person.id==Tierhaltung.person_id) \

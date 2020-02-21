@@ -14,8 +14,24 @@
             <div>
                 <label for="abfrage">Abfrage</label>
                 {% include 'ordi/_select_for_abfragen.html' %}
+                
                 <input type="text" size="10" name="abfragekriterium1" value="{{ abfragekriterium1 }}">
+
                 <input type="text" size="10" name="abfragekriterium2" value="{{ abfragekriterium2 }}">
+              
+                <label for="kunde">Kunde</label>
+                {% if kunde == 0 %}
+                  <input type="checkbox" name="kunde" value="0">
+                {% else %}
+                  <input type="checkbox" name="kunde" value="1" checked>
+                {% endif %}
+
+                <label for="patient">Patient</label>
+                {% if patient == 0 %}
+                  <input type="checkbox" name="patient" value="0">
+                {% else %}
+                  <input type="checkbox" name="patient" value="1" checked>
+                {% endif %}
             </div>
             <div>
                 <input type="submit" value="suchen">

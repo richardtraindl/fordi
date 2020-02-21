@@ -677,7 +677,7 @@ lst_abfragen.append(Abfrage("Chipnummer", "sqlChipnummer", 1, "rptChipnummer"))
 lst_abfragen.append(Abfrage("Diagnose", "sqlDiagnose", 1, "rptDiagnose"))
 lst_abfragen.append(Abfrage("EU-Passnummer", "sqlEU_Passnummer", 1, "rptEU_Passnummer"))
 #lst_abfragen.append(Abfrage("Familienname", "sqlFamilienname", 1, "rptFamilienname"))
-#lst_abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
+lst_abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
 lst_abfragen.append(Abfrage("Impfung (1Jahr) ", "sqlImpfung", 2, "rptImpfung", "rptImpfung_Etiketten"))
 #lst_abfragen.append(Abfrage("Impfung (2Jahre) ", "sqlImpfung_Inkl_Vorjahr", 2, "rptImpfung_Inkl_Vorjahr", "rptImpfung_Inkl_Vorjahr_Etiketten"))
 lst_abfragen.append(Abfrage("Merkmal", "sqlMerkmal", 1, "rptMerkmal"))
@@ -778,6 +778,25 @@ def abfragen():
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .join(Behandlung, Behandlung.tier_id==Tier.id) \
                 .filter(Behandlung.behandlungsdatum >= abfragekriterium1, Behandlung.behandlungsdatum <= abfragekriterium2, 
+                        Person.kunde==kunde, Tier.patient==patient).all()
+        elif(abfrage == "Finanzamt"):
+            error = ""
+            if(len(abfragekriterium1) != 10):
+                error += "Datum für Von fehlt. "
+            if(len(abfragekriterium2) != 10):
+                error += "Datum für Bis fehlt. "
+            if(len(error) > 0):
+                flash(error)
+                return render_template('ordi/abfragen.html', abfragen=lst_abfragen, abfrage=abfrage, 
+                            abfragekriterium1=abfragekriterium1, abfragekriterium2=abfragekriterium2, 
+                            tierhaltungen=tierhaltungen, page_title="Abfragen")
+
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
+                .join(Person, Person.id==Tierhaltung.person_id) \
+                .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                .filter(Behandlung.behandlungsdatum >= abfragekriterium1, Behandlung.behandlungsdatum <= abfragekriterium2, 
+                        Tier.merkmal != 'Abzeichen%', Behandlung.diagnose != 'Tel%',
                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Impfung"):
             error = ""

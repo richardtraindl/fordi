@@ -1,6 +1,6 @@
    
    
-       <select name="abfrage">    
+       <select id="abfrage" name="abfrage">    
           {%- for frage in abfragen -%}
             {%- if frage == abfrage -%}
               <option value="{{- frage -}}" selected>{{- frage -}}</option>

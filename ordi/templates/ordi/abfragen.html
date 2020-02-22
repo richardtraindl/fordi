@@ -16,10 +16,14 @@
                 {% include 'ordi/_select_for_abfragen.html' %}
             </div>
             <div>
-                <input type="text" size="10" name="abfragekriterium1" value="{{ abfragekriterium1 }}">
+                <input id="kriterium1" type="text" size="10" name="kriterium1" value="{{- kriterium1 -}}">
             </div>
             <div>
-                <input type="text" size="10" name="abfragekriterium2" value="{{ abfragekriterium2 }}">
+                {% if twokriteria == 1 %}
+                    <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}">
+                {% else %}
+                    <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}" disabled>
+                {% endif %}
             </div>
             <div>
                 <label for="kunde">Kunde</label>
@@ -93,6 +97,16 @@
                     window.location = "/" + id.toString() + "/show_tierhaltung";
                 }
                 return false; 
+            });
+            
+            $('#abfrage').change(function () {
+                var abfrage = $("select option:selected").text();
+                if(abfrage == "Behandlung" || abfrage == "Finanzamt" || abfrage == "Impfung"){
+                    $('#kriterium2').removeAttr('disabled');
+                }
+                else{
+                    $('#kriterium2').attr('disabled', 'disabled');
+                }
             });
         });
     </script>

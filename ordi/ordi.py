@@ -6,6 +6,7 @@ import re, os
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 from werkzeug.exceptions import abort
+from sqlalchemy import func, distinct
 
 from . import db
 from ordi.auth import login_required
@@ -659,33 +660,23 @@ def delete_rechnungszeile(rechnungszeile_id):
 # rechnung
 
 
-class Abfrage:
-    def __init__(self, label, sql_bezeichnung, anz_params, bericht_bezeichnung, etiketten_bezeichnung=""):
-        self.label=label
-        self.sql_bezeichnung=sql_bezeichnung
-        self.anz_params=anz_params
-        self.bericht_bezeichnung=bericht_bezeichnung
-        self.etiketten_bezeichnung=etiketten_bezeichnung
+def str_to_date(str_date):
+    datum = None
+    error = ""
+    if(len(str_date) != 10):
+        error += "Falsche Datumslänge. "
 
-lst_abfragen = []
-lst_abfragen.append(Abfrage("", "", 0, ""))
-lst_abfragen.append(Abfrage("Adresse", "sqlStrasse", 1, "rptStrasse"))
-lst_abfragen.append(Abfrage("Arznei", "sqlArznei", 1, "rptArznei"))
-lst_abfragen.append(Abfrage("Arzneimittel", "sqlArzneimittel", 1, "rptArzneimittel"))
-lst_abfragen.append(Abfrage("Behandlung", "sqlBehandlung", 2, "rptBehandlung", "rptBehandlung_Etiketten"))
-lst_abfragen.append(Abfrage("Chipnummer", "sqlChipnummer", 1, "rptChipnummer"))
-lst_abfragen.append(Abfrage("Diagnose", "sqlDiagnose", 1, "rptDiagnose"))
-lst_abfragen.append(Abfrage("EU-Passnummer", "sqlEU_Passnummer", 1, "rptEU_Passnummer"))
-#lst_abfragen.append(Abfrage("Familienname", "sqlFamilienname", 1, "rptFamilienname"))
-lst_abfragen.append(Abfrage("Finanzamt", "sqlFinanzamt", 2, "rptFinanzamt"))
-lst_abfragen.append(Abfrage("Impfung (1Jahr) ", "sqlImpfung", 2, "rptImpfung", "rptImpfung_Etiketten"))
-#lst_abfragen.append(Abfrage("Impfung (2Jahre) ", "sqlImpfung_Inkl_Vorjahr", 2, "rptImpfung_Inkl_Vorjahr", "rptImpfung_Inkl_Vorjahr_Etiketten"))
-lst_abfragen.append(Abfrage("Merkmal", "sqlMerkmal", 1, "rptMerkmal"))
-lst_abfragen.append(Abfrage("Postleitzahl", "sqlPostleitzahl", 1, "rptPostleitzahl"))
-lst_abfragen.append(Abfrage("Rasse", "sqlRasse", 1, "rptRasse"))
-lst_abfragen.append(Abfrage("Telefon", "sqlTelefon", 1, "rptTelefon"))
-lst_abfragen.append(Abfrage("Tierart", "sqlTierart", 1, "rptTierart"))
-#lst_abfragen.append(Abfrage("Tiername", "sqlTiername", 1, "rptTiername"))
+    try:
+        datum = datetime.strptime(str_date, '%Y-%m-%d').date()
+    except:
+        error += "Fehler bei Datum. "
+
+    return datum, error
+
+lst_abfragen = ["", "Adresse", "Arzneien", "Arzneimittel", "Behandlung", \
+                "Chipnummer", "Diagnose", "EU-Passnummer", "sqlEU_Passnummer", \
+                "Finanzamt", "Impfung", "Merkmal", "Postleitzahl", \
+                "Rasse", "Telefon", "Tierart"]
 
 @bp.route('/abfragen', methods=('GET', 'POST'))
 @login_required
@@ -705,6 +696,7 @@ def abfragen():
             patient = True
         else:
             patient = False
+
         tierhaltungen = []
 
         if(len(abfragekriterium1) == 0):
@@ -762,62 +754,62 @@ def abfragen():
                 .filter(Tier.tierart.like(abfragekriterium1 + "%"), 
                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Behandlung"):
-            error = ""
-            if(len(abfragekriterium1) != 10):
-                error += "Datum für Von fehlt. "
-            if(len(abfragekriterium2) != 10):
-                error += "Datum für Bis fehlt. "
+            von_datum, error = str_to_date(abfragekriterium1)
+
+            if(len(error) == 0):
+                bis_datum, error = str_to_date(abfragekriterium2)
+
             if(len(error) > 0):
                 flash(error)
                 return render_template('ordi/abfragen.html', abfragen=lst_abfragen, abfrage=abfrage, 
                             abfragekriterium1=abfragekriterium1, abfragekriterium2=abfragekriterium2, 
-                            tierhaltungen=tierhaltungen, page_title="Abfragen")
+                            kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Abfragen")
 
-            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung.tier_id) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                .filter(Behandlung.behandlungsdatum >= abfragekriterium1, Behandlung.behandlungsdatum <= abfragekriterium2, 
+                .filter(Behandlung.behandlungsdatum >= von_datum, Behandlung.behandlungsdatum <= bis_datum, 
                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Finanzamt"):
-            error = ""
-            if(len(abfragekriterium1) != 10):
-                error += "Datum für Von fehlt. "
-            if(len(abfragekriterium2) != 10):
-                error += "Datum für Bis fehlt. "
+            von_datum, error = str_to_date(abfragekriterium1)
+
+            if(len(error) == 0):
+                bis_datum, error = str_to_date(abfragekriterium2)
+
             if(len(error) > 0):
                 flash(error)
                 return render_template('ordi/abfragen.html', abfragen=lst_abfragen, abfrage=abfrage, 
                             abfragekriterium1=abfragekriterium1, abfragekriterium2=abfragekriterium2, 
-                            tierhaltungen=tierhaltungen, page_title="Abfragen")
+                            kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Abfragen")
 
-            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung.tier_id) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                .filter(Behandlung.behandlungsdatum >= abfragekriterium1, Behandlung.behandlungsdatum <= abfragekriterium2, 
-                        Tier.merkmal != 'Abzeichen%', Behandlung.diagnose != 'Tel%',
+                .filter(Behandlung.behandlungsdatum >= von_datum, Behandlung.behandlungsdatum <= bis_datum, 
+                        ~Tier.merkmal.contains('Abzeichen'), #~Behandlung.diagnose.contains('Tel'),
                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Impfung"):
-            error = ""
-            if(len(abfragekriterium1) != 10):
-                error += "Datum für Von fehlt. "
-            if(len(abfragekriterium2) != 10):
-                error += "Datum für Bis fehlt. "
+            von_datum, error = str_to_date(abfragekriterium1)
+
+            if(len(error) == 0):
+                bis_datum, error = str_to_date(abfragekriterium2)
+
             if(len(error) > 0):
                 flash(error)
                 return render_template('ordi/abfragen.html', abfragen=lst_abfragen, abfrage=abfrage, 
                             abfragekriterium1=abfragekriterium1, abfragekriterium2=abfragekriterium2, 
-                            tierhaltungen=tierhaltungen, page_title="Abfragen")
+                            kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Abfragen")
 
-            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung, Impfung) \
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung.tier_id) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .join(Behandlung, Behandlung.tier_id==Tier.id) \
                 .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
-                .filter(Behandlung.behandlungsdatum >= abfragekriterium1, Behandlung.behandlungsdatum <= abfragekriterium2, 
-                        func.count(Impfung.id) > 0, Person.kunde==kunde, Tier.patient==patient).all()
-        elif(abfrage == "Arznei"):
+                .filter(Behandlung.behandlungsdatum >= von_datum, Behandlung.behandlungsdatum <= bis_datum, 
+                        Person.kunde==kunde, Tier.patient==patient).all()
+        elif(abfrage == "Arzneien"):
             tierhaltungen = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
@@ -844,8 +836,10 @@ def abfragen():
         abfrage = ""
         abfragekriterium1 = ""
         abfragekriterium2 = ""
+        kunde = 1
+        patient = 1
         tierhaltungen = []
     return render_template('ordi/abfragen.html', abfragen=lst_abfragen, abfrage=abfrage, 
                             abfragekriterium1=abfragekriterium1, abfragekriterium2=abfragekriterium2, 
-                            tierhaltungen=tierhaltungen, page_title="Abfragen")
+                            kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, page_title="Abfragen")
 

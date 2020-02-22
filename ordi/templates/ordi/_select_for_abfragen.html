@@ -1,11 +1,11 @@
    
    
        <select name="abfrage">    
-          {%- for abfr in abfragen -%}
-            {%- if abfr.label == abfrage -%}
-              <option value="{{- abfr.label -}}" selected>{{- abfr.label -}}</option>
+          {%- for frage in abfragen -%}
+            {%- if frage == abfrage -%}
+              <option value="{{- frage -}}" selected>{{- frage -}}</option>
             {%- else -%}
-              <option value="{{- abfr.label -}}">{{- abfr.label -}}</option>
+              <option value="{{- frage -}}">{{- frage -}}</option>
             {%- endif -%}
           {%- endfor -%}
         </select>

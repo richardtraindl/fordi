@@ -13,7 +13,7 @@
 {% if termin and termin.id %}
   <form method="post" action="{{ url_for('kalender.edit', id=termin.id) }}">
 {% else %}
-  <form method="post" action="{{ url_for('kalender.create' }}">
+  <form method="post" action="{{ url_for('kalender.create') }}">
 {% endif %}
   <div class="div-table edit-termin">
     <div class="div-row">
@@ -62,11 +62,11 @@
   </div>	
 
   <p>
-    <%= submit_tag( "sichern", :id => "sichern", :onclick => 'return checkdate();', :class => 'btn' ) %>   
-    <%= link_to 'abbrechen', kalender_path( :Jahr => @termin.beginn.year, :Monat => @termin.beginn.month, :Tag => @termin.beginn.day), :class => 'btn' %>
-    <% unless @termin.new_record? %>
-      <%= link_to 'löschen', termin_path( @termin ), :confirm => "Termin: " + @termin.thema + @termin.beginn.strftime(" %H:%M-") + @termin.ende.strftime("%H:%M ") + "löschen?", :method => 'delete', :class => 'btn' %>
-    <% end %>
+    <input type="submit" id="sichern" value="sichern" onclick="return checkdate();"> # :class => 'btn'
+    <a class="btn" href="{{ url_for('kalender.index', datum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a>
+    {% if termin.id %}
+      <a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a> # :confirm => "Termin: " + @termin.thema + @termin.beginn.strftime(" %H:%M-") + @termin.ende.strftime("%H:%M ") + "löschen?", 
+    {% end %}
   </p>
 
   <script>

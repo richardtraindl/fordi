@@ -70,6 +70,6 @@ def create_app(test_config=None):
     app.jinja_env.filters['add_days'] = add_days
     app.jinja_env.filters['add_hours'] = add_hours
     app.jinja_env.filters['add_mins'] = add_mins
-    app.jinja_env.filters['ftag'] = gib_feiertag
+    app.jinja_env.filters['feiertag'] = gib_feiertag
 
     return app

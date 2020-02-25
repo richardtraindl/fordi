@@ -89,12 +89,13 @@ def index():
 @login_required
 def create(beginn):
     if(request.method == 'POST'):
-
+        beginn = datetime.now()
+        ende = beginn + timedelta(hours=1)
     else:
         str_beginn = request.form['beginn']
         beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
-	ende = 
-        beginn = datetime.now()
+        ende = beginn + timedelta(hours=1)
+
 """  def new
 		@termin				 = Termin.new
 		@termin.beginn = Time.at(Integer(params[:beginn]))

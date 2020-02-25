@@ -112,13 +112,21 @@ def create(beginn=None):
 def edit(id):
     if(request.method == 'POST'):
         termin = db.session.query(Termin).get(id)
+
         termin.autor = request.form['autor']
-        str_beginn = request.form['beginn']
-        termin.beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
-        str_ende = request.form['ende']
-        termin.ende = datetime.strptime(str_ende, "%Y-%m-%d %H:%M:00")
+
+        time_begin = request.form['time_begin']
+        date_begin = request.form['date_begin']
+        beginn = datetime.strptime(date_begin + " " + time_begin, "%Y-%m-%d %H:%M")
+
+        time_end = request.form['time_end']
+        date_end = request.form['date_end']
+        ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
+         
         termin.thema = request.form['thema']
+
         db.session.commit()
+
         return redirect(url_for('kalender.index'))
     else:
         termin = db.session.query(Termin).get(id)

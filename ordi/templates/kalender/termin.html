@@ -10,7 +10,11 @@
 
 <h1>Termin</h1>
 
-<form method="post">
+{% if termin and termin.id %}
+  <form method="post" action="{{ url_for('kalender.edit', id=termin.id) }}">
+{% else %}
+  <form method="post" action="{{ url_for('kalender.create', beginn=termin.beginn }}">
+{% endif %}
   <div class="div-table edit-termin">
     <div class="div-row">
       <div class="div-cell edit-termin">

@@ -89,129 +89,47 @@ def index():
 @login_required
 def create(beginn):
     if(request.method == 'POST'):
-        beginn = datetime.now()
-        ende = beginn + timedelta(hours=1)
+        autor = request.form['autor']
+        str_beginn = request.form['beginn']
+        beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
+        str_ende = request.form['ende']
+        ende = datetime.strptime(str_ende, "%Y-%m-%d %H:%M:00")
+        thema = request.form['thema']
+        termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema)
+        db.session.add(termin)
+        db.session.commit()
+        return redirect(url_for('kalender.index'))
     else:
         str_beginn = request.form['beginn']
         beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
         ende = beginn + timedelta(hours=1)
-
-"""  def new
-		@termin				 = Termin.new
-		@termin.beginn = Time.at(Integer(params[:beginn]))
-		@termin.ende   = @termin.beginn + 15.minutes
-  end
+        termin = Termin(autor="", beginn=beginn, ende=ende, thema="")
+    return render_template('kalender/termin.html', termin=termin, page_title="Termin")
 
 
-  def build_datetime_from_params( params, field_name )
-    DateTime.new(      
-      params["#{field_name.to_s}(1i)"].to_i,
-      params["#{field_name.to_s}(2i)"].to_i,
-      params["#{field_name.to_s}(3i)"].to_i,
-      params["#{field_name.to_s}(4i)"].to_i,
-      params["#{field_name.to_s}(5i)"].to_i
-      )      
-  end
+@bp.route('/<int:id>/edit', methods=('GET','POST'))
+@login_required
+def edit(id):
+    if(request.method == 'POST'):
+        termin = db.session.query(Termin).get(id)
+        termin.autor = request.form['autor']
+        str_beginn = request.form['beginn']
+        termin.beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
+        str_ende = request.form['ende']
+        termin.ende = datetime.strptime(str_ende, "%Y-%m-%d %H:%M:00")
+        termin.thema = request.form['thema']
+        db.session.commit()
+        return redirect(url_for('kalender.index'))
+    else:
+        termin = db.session.query(Termin).get(id)
+        return render_template('kalender/termin.html', termin=termin, page_title="Termin")
 
 
-  def create
-		@termin 			 = Termin.new
-	  @termin.autor  = params[:termin][:autor]
-	  @termin.thema  = params[:termin][:thema]
-		@termin.beginn = Time.gm(
-												(params[:termin][:date_begin].to_s[6,4]).to_i,
-												(params[:termin][:date_begin].to_s[3,2]).to_i,
-												(params[:termin][:date_begin].to_s[0,2]).to_i, 
-												(params[:termin][:time_begin].to_s[0,2]).to_i, 
-												(params[:termin][:time_begin].to_s[3,2]).to_i,
-												0, 0)
-		@termin.ende = Time.gm(
-												(params[:termin][:date_end].to_s[6,4]).to_i,
-												(params[:termin][:date_end].to_s[3,2]).to_i,
-												(params[:termin][:date_end].to_s[0,2]).to_i,
-												(params[:termin][:time_end].to_s[0,2]).to_i,
-												(params[:termin][:time_end].to_s[3,2]).to_i,
-												0, 0)
-	  
-	  # @termin.beginn = build_datetime_from_params( params[:termin], "beginn" )
-		# @termin.ende   = build_datetime_from_params( params[:termin], "ende" )
+@bp.route('/<int:id>/delete', methods=('GET',))
+@login_required
+def delete(id):
+    termin = db.session.query(Termin).get(id)
+    db.session.delete(termin)
+    db.session.commit()
+    return redirect(url_for('kalender.index'))
 
-		if( @termin.beginn > @termin.ende )
-		    flash[:error] = 'Ende liegt vor Beginn.'
-      	render :action => "new", :beginn => @termin.beginn, :ende => @termin.ende
-		elsif( @termin.thema.length == 0 )
-		    flash[:error] = 'Eingabe für Thema fehlt.'
-      	render :action => "new", :beginn => @termin.beginn, :ende => @termin.ende		
-		else
-	    if @termin.save
-	        flash[:notice] = 'Termin erfolgreich gespeichert.'
-	        redirect_to :action => "index", :Jahr => @termin.beginn.year, :Monat => @termin.beginn.month, :Tag => @termin.beginn.day
-	    else
-	        flash[:notice] = 'Fehler beim Speichern des Termins.'
-	        render :action => "new"
-	    end
-	   end
-  end
-
-
-  def edit
-  	@kaldatum = Time.gm(params[:kjahr].to_i, params[:kmonat].to_i, params[:ktag].to_i)
-		@termin	= Termin.find(params[:id])
-  end
-
-
-  def update
-    @termin = Termin.find(params[:id])
-    @termin.autor = params[:termin][:autor]
-    @termin.thema = params[:termin][:thema]
-    # @termin.beginn = build_datetime_from_params( params[:termin], "beginn" )
-		# @termin.ende   = build_datetime_from_params( params[:termin], "ende" )
-		@termin.beginn = Time.gm(
-												(params[:termin][:date_begin].to_s[6,4]).to_i,
-												(params[:termin][:date_begin].to_s[3,2]).to_i,
-												(params[:termin][:date_begin].to_s[0,2]).to_i, 
-												(params[:termin][:time_begin].to_s[0,2]).to_i, 
-												(params[:termin][:time_begin].to_s[3,2]).to_i,
-												0, 0)
-		@termin.ende = Time.gm(
-												(params[:termin][:date_end].to_s[6,4]).to_i,
-												(params[:termin][:date_end].to_s[3,2]).to_i,
-												(params[:termin][:date_end].to_s[0,2]).to_i,
-												(params[:termin][:time_end].to_s[0,2]).to_i,
-												(params[:termin][:time_end].to_s[3,2]).to_i,
-												0, 0)
-
-		if( @termin.beginn > @termin.ende )
-		    flash[:error] = 'Ende liegt Beginn.'
-      	render :action => "edit", :id => @termin.id
-		elsif( @termin.thema.length == 0 )
-		    flash[:error] = 'Eingabe für Thema fehlt.'
-      	render :action => "edit", :id => @termin.id
-		else
-		  	if @termin.update_attributes(:autor => @termin.autor, :thema => @termin.thema, :beginn => @termin.beginn, :ende => @termin.ende )
-		        flash[:notice] = 'Termin erfolgreich geändert.'
-		        redirect_to :action => "index", :Jahr => @termin.beginn.year, :Monat => @termin.beginn.month, :Tag => @termin.beginn.day
-		    else
-		      	flash[:notice] = 'Fehler beim Speichern des Termins.'
-		        render :action => "edit"
-		    end
-	  end
-  end
-
-
-  def destroy
-		@termin = Termin.find(params[:id])
-		jahr = @termin.beginn.year
-		monat = @termin.beginn.month
-		tag = @termin.beginn.day
-
-		if @termin.destroy
-			flash[:notice] = 'Termin erfolgreich gelöscht.'
-		else
-			flash[:notice] = 'Fehler beim Löschen des Termins.'
-		end
-		redirect_to :action => "index", :Jahr => jahr, :Monat => monat, :Tag => tag
-  end
-
-
-end """

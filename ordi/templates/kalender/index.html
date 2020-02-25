@@ -34,14 +34,10 @@
         </div>
 
         <div class="div-cell" style="text-align:right">
-          <a style="color:red;" href="">Tagesdatum:
-            {% if now.hour < 10 %}
-              {{- now.day -}}
-            {% else %}
-              {{- now.day -}}
-            {% endif %}
-            {{- monate[now.month - 1][0] -}} 
-            {{- now.year -}}, KW:&nbsp; {{- now|calc_kw -}}
+          <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum:
+            {{- now.strftime("%H") -}}
+            {{- monate[now.month - 1][0] -}}
+            {{- now.strftime("%Y") -}}, KW:&nbsp; {{- now|calc_kw -}}
           </a>
         </div>
       </form>
@@ -62,28 +58,18 @@
           {% for tag in range(7) %}
             {% set tagesdatum = kaldatum|add_days(tag) %}
             {% if tagesdatum == aktdatum %}
-                <td class='header2'>
+              <td class="header2">
             {% else %}
-                <td class='header1'>
+              <td class="header1">
             {% endif %}
 
             {% if (tagesdatum|ftag)|length > 0 or tag == 6 %}
-              <span class='feiertag'>
-            {% endif %}
-
-              <span style='font-size:24px'>
-                {{- tagesdatum.day -}}
-              </span>
-
-             {{- wochentage[tag] -}}
-             {% if (tagesdatum|ftag)|length > 0 %}
-               <span style='font-size:10px'>
-                 {{- tagesdatum|ftag -}}
-               </span>
-             {% endif %}
-            
-            {% if (tagesdatum|ftag)|length > 0 or tag == 6 %}
-              </span>
+              <span class="feiertag" style="font-size:24px">{{- tagesdatum.day -}}</span>
+              {{- wochentage[tag] -}}
+              <span style="font-size:10px">{{- tagesdatum|ftag -}}</span>
+            {% else %}
+              <span style="font-size:24px">{{- tagesdatum.day -}}</span>
+              {{- wochentage[tag] -}}
             {% endif %}
               </td>
           {% endfor %}
@@ -92,9 +78,9 @@
         {% for std in range(7, 24) %}
           {% set stddatum = kaldatum|add_hours(std) %}
           {% if std == 22 %}
-            <tr style='height:60px'>
+            <tr style="height:60px">
           {% else %}
-            <tr class='woche'>
+            <tr class="woche">
           {% endif %}
 
           {% for tag in range(7) %}
@@ -137,7 +123,6 @@
        {% endfor %}
     </table>
 
-
     <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
     {% for tag in range(7) %}
       {% for t in termine %}
@@ -149,8 +134,7 @@
             {% set mytag = ugrenze.weekday() %}
             {% set myviertel = 0 %}
             {% set mydauer_viertel = 1 %}
-            {% if t.beginn.date == ugrenze.date or
-               (t.beginn.date == ugrenze.date and t.ende.date == ugrenze.date) %}
+            {% if t.beginn.date == ugrenze.date %} # or (t.beginn.date == ugrenze.date and t.ende.date == ugrenze.date) %}
               {% set stunde = 21 %}
             {% else %}
               {% if t.ende.date == ugrenze.date %}
@@ -175,7 +159,7 @@
                 {% if ogrenze > beginn %}
                   {% set mydauer_viertel = 4 %}
                 {% else %}
-                  {% set mydauer_viertel = ((ogrenze - beginn) + 0) / (15 * 60) %}
+                  {% set mydauer_viertel = (ogrenze - beginn) / (15 * 60) %}
                 {% endif %}
             {% endif %}
             {% if mydauer_viertel < 1 %}
@@ -183,29 +167,27 @@
             {% endif %}
         {% endif %}
 
-        <div class="termin" data-autor='{{- t.autor -}}' data-wtag='{{- mytag -}}' 
-          {% if t.beginn.date < t.ende.date and 
-                t.beginn.date != ugrenze.date and t.autor != "TP" %}
+        {% if t.beginn.date < t.ende.date and 
+              t.beginn.date != ugrenze.date and t.autor != "TP" %}
+          <div class="termin" data-autor="{{- t.autor -}}" data-wtag="{{- mytag -}}" 
              data-stunde="7" data-viertel="" data-dauer_viertel="3">
-            <p>
-                {{- t.beginn.strftime("%d.%m %H:%M") -}}
+            <p>{{- t.beginn.strftime("%d.%m %H:%M") -}}
                 <br>
                 {{- t.ende.strftime("%d.%m %H:%M") -}}
             </p>
-          {% else %}
+        {% else %}
+          <div class="termin" data-autor="{{- t.autor -}}" data-wtag="{{- mytag -}}" 
             data-stunde="{{- stunde -}}" data-viertel="{{- myviertel -}}" data-dauer_viertel="{{- mydauer_viertel -}}">
-          {% endif %}
-    
-          {% if t.autor == "TP" %}
-            <a class="termin" href="{{- url_for('kalender.edit', id=t.id, kjahr=kaldatum.year, kmonat=kaldatum.month, ktag=kaldatum.day) -}}">
-                {{- t.beginn.strftime("%d.%m.") + "-" + t.ende.strftime("%d.%m.") + ' ' + t.thema -}}
-            </a> 
-          {% else %}
-            <a class="termin" href="{{ url_for('kalender.edit', id=t.id, kjahr=kaldatum.year, kmonat=kaldatum.month, ktag=kaldatum.day) -}}">
+        {% endif %}
+
+            <a class="termin" href="{{- url_for('kalender.edit', id=t.id, kaldatum=kaldatum.strftime("%Y:%m:%d")) -}}">
+            {% if t.autor == "TP" %}
+              {{- t.beginn.strftime("%d.%m.") + "-" + t.ende.strftime("%d.%m.") + ' ' + t.thema -}}
+            {% else %}
               {{- t.beginn.strftime("%H:%M") + "-" + t.ende.strftime("%H:%M") + ' ' + t.thema -}}
+            {% endif %}
             </a> 
-          {% endif %}
-        </div>
+          </div>
       {% endfor %}
     {% endfor %}
 

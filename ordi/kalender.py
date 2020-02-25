@@ -103,7 +103,7 @@ def create(beginn):
         str_beginn = request.form['beginn']
         beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
         ende = beginn + timedelta(hours=1)
-        termin = Termin(autor="", beginn=beginn, ende=ende, thema="")
+        termin = Termin(autor="Gerold", beginn=beginn, ende=ende, thema="")
     return render_template('kalender/termin.html', termin=termin, autoren=AUTOREN, page_title="Termin")
 
 

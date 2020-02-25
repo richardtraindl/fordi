@@ -104,7 +104,7 @@ def create(beginn):
         beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
         ende = beginn + timedelta(hours=1)
         termin = Termin(autor="", beginn=beginn, ende=ende, thema="")
-    return render_template('kalender/termin.html', termin=termin, page_title="Termin")
+    return render_template('kalender/termin.html', termin=termin, autoren=AUTOREN, page_title="Termin")
 
 
 @bp.route('/<int:id>/edit', methods=('GET','POST'))
@@ -122,7 +122,7 @@ def edit(id):
         return redirect(url_for('kalender.index'))
     else:
         termin = db.session.query(Termin).get(id)
-        return render_template('kalender/termin.html', termin=termin, page_title="Termin")
+        return render_template('kalender/termin.html', termin=termin,  autoren=AUTOREN, page_title="Termin")
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

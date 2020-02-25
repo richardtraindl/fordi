@@ -95,7 +95,7 @@
                 <div class="div-table">
                   <div class="div-row">
                     <div class="div-cell inner">
-                      <a class="{{- klasse -}}" href="url_for('kalender.create', beginn={{- stddatum.strftime('%Y-%m-%d %H:%M:00') -}})">
+                      <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=stddatum.strftime('%Y-%m-%d %H:%M:00')) }}">
                         {{- stddatum.strftime("%H:%M") -}}
                       </a>
                       {% set klasse = "stunde1" %}
@@ -107,7 +107,7 @@
                     <div class="div-row">
                       <div class="div-cell inner">
                       {% if std >= 14 and std <= 19 %}
-                        <a class="{{- klasse -}}" href="url_for('kalender.create', beginn={{- mindatum.strftime('%Y-%m-%d %H:%M:00') -}})">
+                        <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=mindatum.strftime('%Y-%m-%d %H:%M:00')) }}">
                            {{- mindatum.strftime("%H:%M") -}}
                         </a>
                       {% else %}

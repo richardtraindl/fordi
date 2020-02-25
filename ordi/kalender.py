@@ -85,9 +85,10 @@ def index():
                             page_title="Kalender")
 
 
-@bp.route('/<beginn>/create', methods=('GET','POST'))
+@bp.route('/create', methods=('POST'))
+@bp.route('/<beginn>/create', methods=('GET'))
 @login_required
-def create(beginn):
+def create(beginn=None):
     if(request.method == 'POST'):
         autor = request.form['autor']
         str_beginn = request.form['beginn']

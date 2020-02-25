@@ -89,12 +89,23 @@ def create_tierhaltung():
             db.session.commit()
 
         req_kontakte = build_kontakte(request)
-        kontakte = fill_and_validate_kontakte(req_kontakte, request)[0]
-        for kontakt in kontakte:
+        for req_kontakt in req_kontakte:
+            try:
+                kontakt_id = int(req_kontakt['kontakt_id'])
+                kontakt = db.session.query(Kontakt).get(kontakt_id)
+            except:
+                kontakt = None
+
+            kontakt = fill_and_validate_kontakt(kontakt, req_kontakt)[0]
             if(len(kontakt.kontakt) > 0):
-                kontakt.person_id=person.id
-                db.session.add(kontakt)
+                if(kontakt.id == None):
+                    kontakt.person_id = person.id
+                    db.session.add(kontakt)
                 db.session.commit()
+            else:
+                if(kontakt.id):
+                    db.session.delete(kontakt)
+                    db.session.commit()
 
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
         db.session.add(tierhaltung)

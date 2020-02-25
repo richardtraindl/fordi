@@ -9,6 +9,11 @@
         <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
         <script src="{{ url_for('static', filename='jquery-ui-1.12.1.min.js') }}"></script>
         <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
+        {% if page_title == "Kalender" %}
+          <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+          <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.min.css') }}">
+          <script src="{{ url_for('static', filename='jquery.timepicker.min.js') }}"></script>
+        {% endif %}
     </head>
     <body>
         <header>
@@ -33,6 +38,7 @@
             <p><a href="{{ url_for('ordi.rechnungen') }}">Rechnungen</a></p>
             <p><a href="{{ url_for('ordi.behandlungsverlaeufe') }}">Behandlungsverläufe</a></p>
             <p><a href="{{ url_for('ordi.abfragen') }}">Abfragen</a></p>
+            <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
         </nav>
         {% endif %}
 

@@ -56,11 +56,20 @@ def create_app(test_config=None):
     app.register_blueprint(ordi.bp)
     app.add_url_rule('/', endpoint='index')
 
-    from .util.filters import mapanrede, mapkontakt, mapgeschlecht, mapartikel, filter_supress_none
+    from . import kalender
+    app.register_blueprint(kalender.bp)
+
+    from .util.filters import mapanrede, mapkontakt, mapgeschlecht, mapartikel, \
+        filter_supress_none, calc_kw, add_days, add_hours, add_mins, gib_feiertag
     app.jinja_env.filters['mapanrede'] = mapanrede
     app.jinja_env.filters['mapkontakt'] = mapkontakt
     app.jinja_env.filters['mapgeschlecht'] = mapgeschlecht
     app.jinja_env.filters['mapartikel'] = mapartikel
     app.jinja_env.filters['sn'] = filter_supress_none
+    app.jinja_env.filters['calc_kw'] = calc_kw
+    app.jinja_env.filters['add_days'] = add_days
+    app.jinja_env.filters['add_hours'] = add_hours
+    app.jinja_env.filters['add_mins'] = add_mins
+    app.jinja_env.filters['ftag'] = gib_feiertag
 
     return app

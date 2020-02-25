@@ -1,6 +1,6 @@
 
 
-from datetime import date
+from datetime import date, timedelta
 from ..values import ANREDE, GESCHLECHT, KONTAKT, ARTIKEL
 from .helper import reverse_lookup
 
@@ -39,3 +39,37 @@ def filter_supress_none(val):
     else:
         return ''
 
+
+def calc_kw(now):
+    dt = date(now.year, now.month, now.day)
+
+    # Determine its Day of Week, D
+    # Use that to move to the nearest Thursday (-3..+3 days)
+    add = 4 - dt.weekday()
+    dt += timedelta(days=add)
+
+    # Note the year of that date, Y
+    # Obtain January 1 of that year
+    firstofyear = date(dt.year, 1, 1)
+
+    # Get the Ordinal Date of that Thursday, DDD of YYYY-DDD
+    ydays = (dt - firstofyear).days + 1
+
+    # Then W is 1 + (DDD-1) div 7
+    return int(1 + (ydays / 7))
+
+
+def add_days(dt, days):
+    return dt + timedelta(days=days)
+
+
+def add_hours(dt, hours):
+    return dt + timedelta(hours=hours)
+
+
+def add_mins(dt, mins):
+    return dt + timedelta(minutes=mins)
+
+
+def gib_feiertag(now):
+    return ""

@@ -183,3 +183,15 @@ class Rechnungszeile(db.Model):
     def __repr__(self):
         return '<rechnungszeile %r>' % (self.id)
 
+
+class Termin(db.Model):
+    __tablename__ = 'termin'
+
+    id = db.Column(db.Integer, primary_key=True)
+    autor = db.Column(db.String(30))
+    beginn = db.Column(db.DateTime(timezone=True), nullable=False)
+    ende = db.Column(db.DateTime(timezone=True), nullable=False)
+    thema = db.Column(db.String(50), nullable=False)
+
+    def __repr__(self):
+        return '<termin %r>' % (self.id)

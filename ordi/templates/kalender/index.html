@@ -17,8 +17,8 @@
           <label for="monat">Monat:</label>
           {% include 'kalender/_select_for_monate.html' %}
 
-          <input type="hidden" name="tag" value="{{- now.day -}}" disabled>
-          <input type="hidden" name="kw_adjust" value="{{- kaldatum -}}" disabled>
+          <input type="hidden" name="tag" value="{{- kaldatum.day -}}" disabled>
+          <input type="hidden" id="kwadjust" name="kwadjust" value="{{- kaldatum -}}" disabled>
         </div>
 
         <div class="div-cell" style="padding-right:40px;">
@@ -63,10 +63,10 @@
               <td class="header1">
             {% endif %}
 
-            {% if (tagesdatum|ftag)|length > 0 or tag == 6 %}
+            {% if (tagesdatum|feiertag)|length > 0 or tag == 6 %}
               <span class="feiertag" style="font-size:24px">{{- tagesdatum.day -}}</span>
               {{- wochentage[tag] -}}
-              <span style="font-size:10px">{{- tagesdatum|ftag -}}</span>
+              <span style="font-size:10px">{{- tagesdatum|feiertag -}}</span>
             {% else %}
               <span style="font-size:24px">{{- tagesdatum.day -}}</span>
               {{- wochentage[tag] -}}
@@ -131,13 +131,13 @@
         {% set ogrenze = ugrenze|add_hours(24) %}
         <!-- Für Autor "TP" Termine zwischen 21:00 und 23:00 zu setzen -->
         {% if t.autor == "TP" %}
-            {% set mytag = ugrenze.weekday() %}
+            {% set mytag = ugrenze.weekday()|int %}
             {% set myviertel = 0 %}
             {% set mydauer_viertel = 1 %}
-            {% if t.beginn.date == ugrenze.date %} # or (t.beginn.date == ugrenze.date and t.ende.date == ugrenze.date) %}
+            {% if t.beginn == ugrenze %} 
               {% set stunde = 21 %}
             {% else %}
-              {% if t.ende.date == ugrenze.date %}
+              {% if t.ende == ugrenze %}
                 {% set stunde = 23 %}
               {% else %}
                 {% set stunde = 22 %}
@@ -150,16 +150,16 @@
           {% else %}
             {% set beginn = t.beginn %}
           {% endif %}
-            {% set mytag = beginn.wday_de %}
-            {% set stunde = beginn.hour %}
-            {% set myviertel = beginn.min / 15 %}
-            {% if t.ende.date < ogrenze.date %}
-              {% set mydauer_viertel = ((t.ende - beginn) + 0) / (15 * 60) %}
+            {% set mytag = beginn.weekday()|int %}
+            {% set stunde = beginn.hour|int %}
+            {% set myviertel = beginn.min|int / 15 %}
+            {% if t.ende < ogrenze %}
+              {% set mydauer_viertel = ((t.ende - beginn) / (15 * 60))|int %}
             {% else %}
-                {% if ogrenze > beginn %}
+                {% if beginn < ogrenze %}
                   {% set mydauer_viertel = 4 %}
                 {% else %}
-                  {% set mydauer_viertel = (ogrenze - beginn) / (15 * 60) %}
+                  {% set mydauer_viertel = ((ogrenze - beginn) / (15 * 60))|int %}
                 {% endif %}
             {% endif %}
             {% if mydauer_viertel < 1 %}
@@ -167,10 +167,9 @@
             {% endif %}
         {% endif %}
 
-        {% if t.beginn.date < t.ende.date and 
-              t.beginn.date != ugrenze.date and t.autor != "TP" %}
+        {% if t.beginn < t.ende and t.beginn != ugrenze and t.autor != "TP" %}
           <div class="termin" data-autor="{{- t.autor -}}" data-wtag="{{- mytag -}}" 
-             data-stunde="7" data-viertel="" data-dauer_viertel="3">
+             data-stunde="7" data-viertel="0" data-dauer_viertel="3">
             <p>{{- t.beginn.strftime("%d.%m %H:%M") -}}
                 <br>
                 {{- t.ende.strftime("%d.%m %H:%M") -}}
@@ -180,7 +179,7 @@
             data-stunde="{{- stunde -}}" data-viertel="{{- myviertel -}}" data-dauer_viertel="{{- mydauer_viertel -}}">
         {% endif %}
 
-            <a class="termin" href="{{- url_for('kalender.edit', id=t.id, kaldatum=kaldatum.strftime("%Y:%m:%d")) -}}">
+            <a class="termin" href="{{- url_for('kalender.edit', id=t.id, kaldatum=kaldatum.strftime('%Y:%m:%d')) -}}">
             {% if t.autor == "TP" %}
               {{- t.beginn.strftime("%d.%m.") + "-" + t.ende.strftime("%d.%m.") + ' ' + t.thema -}}
             {% else %}
@@ -311,7 +310,7 @@
         }
 
         function kwadjust(adj){
-            $("#KWadjust").val(adj);
+            $("#kwadjust").val(adj);
             $("#mainform").submit();
         }
 

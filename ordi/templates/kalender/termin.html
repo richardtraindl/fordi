@@ -44,7 +44,7 @@
             </div>
             <div class="div-cell">
               <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- termin.beginn.strftime("%H:%M") -}}">
-              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- termin.beginn.strftime("%d.%m.%Y") -}}">
+              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- termin.beginn.strftime("%Y-%m-%d") -}}">
             </div>
           </div>
           <div class="div-row">
@@ -53,20 +53,20 @@
             </div>
             <div class="div-cell">
               <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- termin.ende.strftime("%H:%M") -}}">
-              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- termin.ende.strftime("%d.%m.%Y") -}}">
+              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- termin.ende.strftime("%Y-%m-%d") -}}">
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>	
+  </div>
 
   <p>
-    <input type="submit" id="sichern" value="sichern" onclick="return checkdate();"> # :class => 'btn'
+    <input type="submit" id="sichern" value="sichern" onclick="return checkdate();">
     <a class="btn" href="{{ url_for('kalender.index', datum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a>
     {% if termin.id %}
-      <a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a> # :confirm => "Termin: " + @termin.thema + @termin.beginn.strftime(" %H:%M-") + @termin.ende.strftime("%H:%M ") + "löschen?", 
-    {% end %}
+      <a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a>
+    {% endif %}
   </p>
 
   <script>

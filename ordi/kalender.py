@@ -48,12 +48,12 @@ def index():
     print(kaldatum)
 
     if(request.method == 'POST'):
-        if(len(request.form['Jahr']) > 0 and len(request.form['Monat']) > 0 and
-           len(request.form['Tag']) > 0):
+        if(len(request.form['jahr']) > 0 and len(request.form['monat']) > 0 and
+           len(request.form['tag']) > 0):
             try:
-                jahr = int(request.form['Jahr'])
-                monat = int(request.form['Monat'])
-                tag = int(request.form['Tag'])
+                jahr = int(request.form['jahr'])
+                monat = int(request.form['monat'])
+                tag = int(request.form['tag'])
                 if(monat == 2 and tag > 29):
                     tag = 29
                 kaldatum = datetime.date(jahr, monat, tag)
@@ -91,14 +91,21 @@ def index():
 def create(beginn=None):
     if(request.method == 'POST'):
         autor = request.form['autor']
-        str_beginn = request.form['beginn']
-        beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
-        str_ende = request.form['ende']
-        ende = datetime.strptime(str_ende, "%Y-%m-%d %H:%M:00")
+
+        time_begin = request.form['time_begin']
+        date_begin = request.form['date_begin']
+        beginn = datetime.strptime(date_begin + " " + time_begin, "%Y-%m-%d %H:%M")
+
+        time_end = request.form['time_end']
+        date_end = request.form['date_end']
+        ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
+
         thema = request.form['thema']
+
         termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema)
         db.session.add(termin)
         db.session.commit()
+
         return redirect(url_for('kalender.index'))
     else:
         dtbeginn = datetime.strptime(beginn, "%Y-%m-%d %H:%M:00")

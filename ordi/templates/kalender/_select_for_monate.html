@@ -1,5 +1,5 @@
 
-    <select name="Monat">    
+    <select name="monat">    
     {%- for monat in monate -%}
       {%- if monat[1] == now.month -%}
         <option value="{{- monat[0] -}}" selected>{{- monat[0] -}}</option>

@@ -84,6 +84,17 @@ def index():
                             now=now, jahre=jahre, monate=monate, wochentage=wochentage,
                             page_title="Kalender")
 
+
+@bp.route('/<beginn>/create', methods=('GET','POST'))
+@login_required
+def create(beginn):
+    if(request.method == 'POST'):
+
+    else:
+        str_beginn = request.form['beginn']
+        beginn = datetime.strptime(str_beginn, "%Y-%m-%d %H:%M:00")
+	ende = 
+        beginn = datetime.now()
 """  def new
 		@termin				 = Termin.new
 		@termin.beginn = Time.at(Integer(params[:beginn]))

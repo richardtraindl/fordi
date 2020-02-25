@@ -17,7 +17,7 @@
         <label for="autor">Autor:&nbsp</label>
       </div>
       <div class="div-cell edit-termin">
-        <%= form.select :autor, options_for_select( TermineController::AUTOREN, "Gerold" ) %>
+        {% include 'kalender/_select_for_autoren.html' %} # Default Gerold
       </div>
     </div>
     <div class="div-row">
@@ -25,7 +25,7 @@
         <label for="thema">Thema:&nbsp</label>
       </div>
       <div class="div-cell edit-termin">
-        <%= form.text_field :thema, :value => @termin.thema, :size => 50 %>
+        <input name="thema" size="50" value="{{- termin.thema -}}">
       </div>
     </div>
     <div class="div-row">
@@ -39,8 +39,8 @@
               <label for="beginn">Beginn&nbsp</label>
             </div>
             <div class="div-cell">
-              <%= form.text_field :time_begin, :id => "time_begin", :class=> "time-pick", :value => @termin.beginn.strftime("%H:%M"), :size => 5 %>
-              <%= form.text_field :date_begin, :id => "date_begin", :class=> "date-pick", :value => @termin.beginn.strftime("%d.%m.%Y"), :size => 10 %>
+              <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- termin.beginn.strftime("%H:%M") -}}">
+              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- termin.beginn.strftime("%d.%m.%Y") -}}">
             </div>
           </div>
           <div class="div-row">
@@ -48,8 +48,8 @@
               <label for="ende">Ende&nbsp</label>
             </div>
             <div class="div-cell">
-              <%= form.text_field :time_end, :id => "time_end", :class=> "time-pick", :value => (@termin.ende).strftime("%H:%M"), :size => 5 %>
-              <%= form.text_field :date_end, :id => "date_end", :class=> "date-pick", :value => (@termin.ende).strftime("%d.%m.%Y"), :size => 10 %>
+              <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- termin.ende.strftime("%H:%M") -}}">
+              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- termin.ende.strftime("%d.%m.%Y") -}}">
             </div>
           </div>
         </div>

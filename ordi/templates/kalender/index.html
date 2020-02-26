@@ -125,19 +125,19 @@
 
     <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
     {% for tag in range(7) %}
-      {% for t in termine %}
+      {% for termin in termine %}
         {% set ugrenze = kaldatum|add_days(tag) %}
         {% set mgrenze = ugrenze|add_hours(7) %}
         {% set ogrenze = ugrenze|add_hours(24) %}
         <!-- Für Autor "TP" Termine zwischen 21:00 und 23:00 zu setzen -->
-        {% if t.autor == "TP" %}
+        {% if termin.autor == "TP" %}
             {% set mytag = ugrenze.weekday()|int %}
             {% set myviertel = 0 %}
             {% set mydauer_viertel = 1 %}
-            {% if t.beginn == ugrenze %} 
+            {% if termin.beginn == ugrenze %} 
               {% set stunde = 21 %}
             {% else %}
-              {% if t.ende == ugrenze %}
+              {% if termin.ende == ugrenze %}
                 {% set stunde = 23 %}
               {% else %}
                 {% set stunde = 22 %}
@@ -145,16 +145,16 @@
             {% endif %}
         <!-- Für andere Autoren Termine setzen -->
         {% else %}
-          {% if t.beginn < mgrenze %}
+          {% if termin.beginn < mgrenze %}
             {% set beginn = mgrenze %}
           {% else %}
-            {% set beginn = t.beginn %}
+            {% set beginn = termin.beginn %}
           {% endif %}
             {% set mytag = beginn.weekday()|int %}
             {% set stunde = beginn.hour|int %}
             {% set myviertel = beginn.min|int / 15 %}
-            {% if t.ende < ogrenze %}
-              {% set mydauer_viertel = ((t.ende - beginn) / (15 * 60))|int %}
+            {% if termin.ende < ogrenze %}
+              {% set mydauer_viertel = ((termin.ende - beginn) / (15 * 60))|int %}
             {% else %}
                 {% if beginn < ogrenze %}
                   {% set mydauer_viertel = 4 %}
@@ -167,23 +167,23 @@
             {% endif %}
         {% endif %}
 
-        {% if t.beginn < t.ende and t.beginn != ugrenze and t.autor != "TP" %}
-          <div class="termin" data-autor="{{- t.autor -}}" data-wtag="{{- mytag -}}" 
+        {% if termin.beginn < termin.ende and termin.beginn != ugrenze and termin.autor != "TP" %}
+          <div class="termin" data-autor="{{- termin.autor -}}" data-wtag="{{- mytag -}}" 
              data-stunde="7" data-viertel="0" data-dauer_viertel="3">
-            <p>{{- t.beginn.strftime("%d.%m %H:%M") -}}
+            <p>{{- termin.beginn.strftime("%d.%m %H:%M") -}}
                 <br>
-                {{- t.ende.strftime("%d.%m %H:%M") -}}
+                {{- termin.ende.strftime("%d.%m %H:%M") -}}
             </p>
         {% else %}
-          <div class="termin" data-autor="{{- t.autor -}}" data-wtag="{{- mytag -}}" 
+          <div class="termin" data-autor="{{- termin.autor -}}" data-wtag="{{- mytag -}}" 
             data-stunde="{{- stunde -}}" data-viertel="{{- myviertel -}}" data-dauer_viertel="{{- mydauer_viertel -}}">
         {% endif %}
 
             <a class="termin" href="{{- url_for('kalender.edit', id=t.id, kaldatum=kaldatum.strftime('%Y:%m:%d')) -}}">
-            {% if t.autor == "TP" %}
-              {{- t.beginn.strftime("%d.%m.") + "-" + t.ende.strftime("%d.%m.") + ' ' + t.thema -}}
+            {% if termin.autor == "TP" %}
+              {{- termin.beginn.strftime("%d.%m.") + "-" + termin.ende.strftime("%d.%m.") + ' ' + termin.thema -}}
             {% else %}
-              {{- t.beginn.strftime("%H:%M") + "-" + t.ende.strftime("%H:%M") + ' ' + t.thema -}}
+              {{- termin.beginn.strftime("%H:%M") + "-" + termin.ende.strftime("%H:%M") + ' ' + termin.thema -}}
             {% endif %}
             </a> 
           </div>

@@ -126,12 +126,15 @@
     <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
     {% for tag in range(7) %}
       {% for termin in termine %}
+        {% if termin.beginn > kaldatum|add_days(7) or (termin.beginn < kaldatum and termin.ende < kaldatum %} 
+            continue
+        {% endif %}
         {% set ugrenze = kaldatum|add_days(tag) %}
         {% set mgrenze = ugrenze|add_hours(7) %}
         {% set ogrenze = ugrenze|add_hours(24) %}
         <!-- Für Autor "TP" Termine zwischen 21:00 und 23:00 zu setzen -->
         {% if termin.autor == "TP" %}
-            {% set mytag = ugrenze.weekday()|int %}
+            {% set mytag = ugrenze.day|int %}
             {% set myviertel = 0 %}
             {% set mydauer_viertel = 1 %}
 
@@ -151,7 +154,7 @@
           {% else %}
             {% set beginn = termin.beginn %}
           {% endif %}
-            {% set mytag = beginn.weekday()|int %}
+            {% set mytag = beginn.day|int %}
             {% set stunde = beginn.hour|int %}
             {% set myviertel = beginn.min|int / 15 %}
 
@@ -263,7 +266,11 @@
                     schedule[i][index] = 1;
                 }
 
-                var caltdid = '#c' + dwtag + "_" + dstunde;
+                var leading = "_";
+                if(dstunde < 10){
+                  leading += "0";
+                }
+                var caltdid = '#c' + dwtag + leading + dstunde;
 
                 console.log( "caltdid=" + caltdid );
                 var caltd = $( caltdid );

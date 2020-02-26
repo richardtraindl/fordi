@@ -134,7 +134,8 @@
             {% set mytag = ugrenze.weekday()|int %}
             {% set myviertel = 0 %}
             {% set mydauer_viertel = 1 %}
-            {% if termin.beginn == ugrenze %} 
+
+            {% if termin.beginn == ugrenze or termin.ende == ugrenze %} 
               {% set stunde = 21 %}
             {% else %}
               {% if termin.ende == ugrenze %}
@@ -153,6 +154,7 @@
             {% set mytag = beginn.weekday()|int %}
             {% set stunde = beginn.hour|int %}
             {% set myviertel = beginn.min|int / 15 %}
+
             {% if termin.ende < ogrenze %}
               {% set mydauer_viertel = ((termin.ende - beginn) / (15 * 60))|int %}
             {% else %}
@@ -179,7 +181,7 @@
             data-stunde="{{- stunde -}}" data-viertel="{{- myviertel -}}" data-dauer_viertel="{{- mydauer_viertel -}}">
         {% endif %}
 
-            <a class="termin" href="{{- url_for('kalender.edit', id=t.id, kaldatum=kaldatum.strftime('%Y:%m:%d')) -}}">
+            <a class="termin" href="{{- url_for('kalender.edit', id=termin.id, kaldatum=kaldatum.strftime('%Y:%m:%d')) -}}">
             {% if termin.autor == "TP" %}
               {{- termin.beginn.strftime("%d.%m.") + "-" + termin.ende.strftime("%d.%m.") + ' ' + termin.thema -}}
             {% else %}

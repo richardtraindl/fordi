@@ -154,7 +154,7 @@
           {% endif %}
             {% set mytag = beginn.day|int %}
             {% set stunde = beginn.hour|int %}
-            {% set myviertel = beginn.min|int / 15 %}
+            {% set myviertel = (beginn.minute|int / 15)|int %}
 
             {% if termin.ende < ogrenze %}
               {% set mydauer_viertel = ((termin.ende - beginn) / (15 * 60))|int %}

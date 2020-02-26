@@ -126,10 +126,10 @@
     <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
   {% for tag in range(7) %}
     {% for termin in termine %}
+      {% set ugrenze = kaldatum|add_days(tag) %}
+      {% set mgrenze = ugrenze|add_hours(7) %}
+      {% set ogrenze = ugrenze|add_hours(24) %}
       {% if termin.beginn >= ugrenze and termin.beginn < ogrenze %} 
-        {% set ugrenze = kaldatum|add_days(tag) %}
-        {% set mgrenze = ugrenze|add_hours(7) %}
-        {% set ogrenze = ugrenze|add_hours(24) %}
         <!-- Für Autor "TP" Termine zwischen 21:00 und 23:00 zu setzen -->
         {% if termin.autor == "TP" %}
             {% set mytag = ugrenze.day|int %}
@@ -170,7 +170,7 @@
             {% endif %}
         {% endif %}
 
-        {% if termin.beginn < termin.ende and termin.beginn != ugrenze and termin.autor != "TP" %}
+        {% if termin.beginn.date() < termin.ende.date() and termin.beginn.date() != ugrenze.date() and termin.autor != "TP" %}
           <div class="termin" data-autor="{{- termin.autor -}}" data-wtag="{{- mytag -}}" 
              data-stunde="7" data-viertel="0" data-dauer_viertel="3">
             <p>{{- termin.beginn.strftime("%d.%m %H:%M") -}}

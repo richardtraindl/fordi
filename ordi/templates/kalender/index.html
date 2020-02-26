@@ -124,11 +124,9 @@
     </table>
 
     <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
-    {% for tag in range(7) %}
-      {% for termin in termine %}
-        {% if termin.beginn > kaldatum|add_days(7) or (termin.beginn < kaldatum and termin.ende < kaldatum %} 
-            continue
-        {% endif %}
+  {% for tag in range(7) %}
+    {% for termin in termine %}
+      {% if termin.beginn >= ugrenze and termin.beginn < ogrenze %} 
         {% set ugrenze = kaldatum|add_days(tag) %}
         {% set mgrenze = ugrenze|add_hours(7) %}
         {% set ogrenze = ugrenze|add_hours(24) %}
@@ -192,8 +190,9 @@
             {% endif %}
             </a> 
           </div>
-      {% endfor %}
+      {% endif %}
     {% endfor %}
+  {% endfor %}
 
     <script>
         var zindexmax = 9;

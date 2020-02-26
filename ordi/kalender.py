@@ -124,11 +124,11 @@ def edit(id):
 
         time_begin = request.form['time_begin']
         date_begin = request.form['date_begin']
-        beginn = datetime.strptime(date_begin + " " + time_begin, "%Y-%m-%d %H:%M")
+        termin.beginn = datetime.strptime(date_begin + " " + time_begin, "%Y-%m-%d %H:%M")
 
         time_end = request.form['time_end']
         date_end = request.form['date_end']
-        ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
+        termin.ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
          
         termin.thema = request.form['thema']
 

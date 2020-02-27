@@ -12,12 +12,6 @@ from ordi.models import Termin
 bp = Blueprint('kalender', __name__, url_prefix='/kalender')
 
 
-"""class Time:
-   def wday_de:
-     self.wday == 0 ? 6  : self.wday - 1
-    end
-end"""
-
 AUTOREN = ["Ordi", "Elfi", "TP"]
 SEK_PRO_TAG = (60 * 60 * 24)
 SEK_PRO_STUNDE = (60 * 60)
@@ -25,64 +19,53 @@ SEK_PRO_STUNDE = (60 * 60)
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
-    now = datetime.now()
-    aktdatum = date(now.year, now.month, now.day)
-    aktzeit = time(now.hour, now.minute)
-    maxkaldatum = date(2030, 12, 31)
-    minkaldatum = date(2009, 1, 1)
-    sek_pro_tag = SEK_PRO_TAG
-    sek_pro_stunde = SEK_PRO_STUNDE
-
     jahre = ["2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]
     monate = [["Jänner", 1], ["Februar", 2], ["März", 3], ["April", 4], ["Mai", 5], ["Juni", 6], ["Juli", 7], ["August", 8], ["September", 9], ["Oktober", 10], ["November", 11], ["Dezember", 12]]
     wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
-    
-    jahr = now.year
-    monat = now.month
-    tag = now.day
-    if(monat == 2 and tag > 29):
-        tag = 29
-    kaldatum = datetime(jahr, monat, tag)
-    add = kaldatum.weekday() * -1
-    kaldatum += timedelta(days=add)
+
+    aktdatum = datetime.now()
+    print(aktdatum)
+    add = aktdatum.weekday() * -1
+    kaldatum = aktdatum + timedelta(days=add)
     print(kaldatum)
 
-    if(request.method == 'POST'):
-        if(len(request.form['jahr']) > 0 and len(request.form['monat']) > 0 and
-           len(request.form['tag']) > 0):
-            try:
-                jahr = int(request.form['jahr'])
-                monat = int(request.form['monat'])
-                tag = int(request.form['tag'])
-                if(monat == 2 and tag > 29):
-                    tag = 29
-                kaldatum = datetime.date(jahr, monat, tag)
-            except:
-                flash("error")
-                return render_template('kalender/index.html', kaldatum=kaldatum, 
-                    now=now, jahre=jahre, monate=monate, page_title="Kalender")
-            
-            add = kaldatum.weekday() * -1
-            kaldatum += datetime.timedelta(days=add)
+    kjahr = kaldatum.year
+    kmonat = kaldatum.month
+    ktag = kaldatum.day
 
-        if(len(request.form['KWadjust']) > 0):
+    if(request.method == 'POST'):
+        if(len(request.form['kjahr']) > 0 and len(request.form['kmonat']) > 0 and
+           len(request.form['ktag']) > 0):
             try:
-                adjust = int(request.form['KWadjust'])
+                kjahr = int(request.form['kjahr'])
+                kmonat = int(request.form['kmonat'])
+                ktag = int(request.form['ktag'])
+                datum = datetime.date(kjahr, kmonat, ktag)
+                add = datum.weekday() * -1
+                kaldatum = datum + timedelta(days=add)
+                print(kaldatum)
             except:
                 flash("error")
-                return render_template('kalender/index.html', now=now,  
-                    kaldatum=kaldatum, jahre=jahre, monate=monate,
-                    page_title="Kalender")
+                return render_template('kalender/index.html', aktdatum=aktdatum, kaldatum=kaldatum, 
+                    kjahre=kjahre, kmonate=kmonate, ktag=ktag, page_title="Kalender")
+
+        if(len(request.form['kwadjust']) > 0):
+            try:
+                adjust = int(request.form['kwadjust'])
+            except:
+                flash("error")
+                return render_template('kalender/index.html', aktdatum=aktdatum, kaldatum=kaldatum, 
+                    kjahre=kjahre, kmonate=kmonate, ktag=ktag, page_title="Kalender")
 
             kaldatum += timedelta(days=adjust)
 
-    kaldatum_ende = kaldatum + timedelta(days=6)
+    kaldatum_ende = kaldatum + timedelta(days=7)
     termine = db.session.query(Termin) \
-                .filter(Termin.beginn >= kaldatum, Termin.ende <= kaldatum_ende).all()
+                .filter(or_( (Termin.beginn < kaldatum, Termin.ende > kaldatum), \
+                             (Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende) ).all()
 
-    return render_template('kalender/index.html', termine=termine, kaldatum=kaldatum, 
-                            now=now, jahre=jahre, monate=monate, wochentage=wochentage,
-                            page_title="Kalender")
+    return render_template('kalender/index.html', termine=termine, aktdatum=aktdatum, 
+                            kaldatum=kaldatum, kjahre=kjahre, kmonate=kmonate, ktag=ktag, page_title="Kalender")
 
 
 @bp.route('/create', methods=('POST',))

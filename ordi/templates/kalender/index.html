@@ -11,14 +11,14 @@
     <div class="div-row">
       <form id="mainform" method="post" action="{{ url_for('kalender.index') }}">
         <div class="div-cell" style="padding-right:40px;">
-          <label for="jahr">Jahr:</label>
+          <label for="kjahr">Jahr:</label>
           {% include 'kalender/_select_for_jahre.html' %}
 
-          <label for="monat">Monat:</label>
+          <label for="kmonat">Monat:</label>
           {% include 'kalender/_select_for_monate.html' %}
 
-          <input type="hidden" name="tag" value="{{- kaldatum.day -}}" disabled>
-          <input type="hidden" id="kwadjust" name="kwadjust" value="{{- kaldatum -}}" disabled>
+          <input type="hidden" name="ktag" value="{{- ktag -}}" disabled>
+          <input type="hidden" id="kwadjust" name="kwadjust" value="0" disabled>
         </div>
 
         <div class="div-cell" style="padding-right:40px;">

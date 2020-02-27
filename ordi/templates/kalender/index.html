@@ -35,9 +35,9 @@
 
         <div class="div-cell" style="text-align:right">
           <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum:
-            {{- now.strftime("%H") -}}
-            {{- monate[now.month - 1][0] -}}
-            {{- now.strftime("%Y") -}}, KW:&nbsp; {{- now|calc_kw -}}
+            {{- aktdatum.strftime("%H") -}}
+            {{- monate[aktdatum.month - 1][0] -}}
+            {{- aktdatum.strftime("%Y") -}}, KW:&nbsp; {{- aktdatum|calc_kw -}}
           </a>
         </div>
       </form>

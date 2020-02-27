@@ -6,6 +6,7 @@ from flask import Blueprint, flash, g, redirect, render_template, request, url_f
 from werkzeug.exceptions import abort
 
 from . import db
+from sqlalchemy import or_, and_
 from ordi.auth import login_required
 from ordi.models import Termin
 
@@ -13,21 +14,17 @@ bp = Blueprint('kalender', __name__, url_prefix='/kalender')
 
 
 AUTOREN = ["Ordi", "Elfi", "TP"]
-SEK_PRO_TAG = (60 * 60 * 24)
-SEK_PRO_STUNDE = (60 * 60)
+jahre = ["2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]
+monate = [["Jänner", 1], ["Februar", 2], ["März", 3], ["April", 4], ["Mai", 5], ["Juni", 6], ["Juli", 7], ["August", 8], ["September", 9], ["Oktober", 10], ["November", 11], ["Dezember", 12]]
+wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
-    jahre = ["2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]
-    monate = [["Jänner", 1], ["Februar", 2], ["März", 3], ["April", 4], ["Mai", 5], ["Juni", 6], ["Juli", 7], ["August", 8], ["September", 9], ["Oktober", 10], ["November", 11], ["Dezember", 12]]
-    wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
-
     aktdatum = datetime.now()
-    print(aktdatum)
+
     add = aktdatum.weekday() * -1
     kaldatum = aktdatum + timedelta(days=add)
-    print(kaldatum)
 
     kjahr = kaldatum.year
     kmonat = kaldatum.month
@@ -43,11 +40,11 @@ def index():
                 datum = datetime.date(kjahr, kmonat, ktag)
                 add = datum.weekday() * -1
                 kaldatum = datum + timedelta(days=add)
-                print(kaldatum)
             except:
                 flash("error")
                 return render_template('kalender/index.html', aktdatum=aktdatum, kaldatum=kaldatum, 
-                    kjahre=kjahre, kmonate=kmonate, ktag=ktag, page_title="Kalender")
+                                        jahre=jahre, monate=monate, wochentage=wochentage,
+                                        kjahr=kjahr, kmonat=kmonat, ktag=ktag, page_title="Kalender")
 
         if(len(request.form['kwadjust']) > 0):
             try:
@@ -55,17 +52,18 @@ def index():
             except:
                 flash("error")
                 return render_template('kalender/index.html', aktdatum=aktdatum, kaldatum=kaldatum, 
-                    kjahre=kjahre, kmonate=kmonate, ktag=ktag, page_title="Kalender")
+                                        jahre=jahre, monate=monate, wochentage=wochentage,
+                                        kjahr=kjahr, kmonat=kmonat, ktag=ktag, page_title="Kalender")
 
             kaldatum += timedelta(days=adjust)
 
     kaldatum_ende = kaldatum + timedelta(days=7)
     termine = db.session.query(Termin) \
-                .filter(or_( (Termin.beginn < kaldatum, Termin.ende > kaldatum), \
-                             (Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende) ).all()
-
+                .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
+		                    and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
     return render_template('kalender/index.html', termine=termine, aktdatum=aktdatum, 
-                            kaldatum=kaldatum, kjahre=kjahre, kmonate=kmonate, ktag=ktag, page_title="Kalender")
+                            kaldatum=kaldatum, jahre=jahre, monate=monate, wochentage=wochentage,
+                            kjahr=kjahr, kmonat=kmonat, ktag=ktag, page_title="Kalender")
 
 
 @bp.route('/create', methods=('POST',))

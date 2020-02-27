@@ -1,13 +1,10 @@
 
-    <select name="jahr">    
+    <select name="kjahr">    
     {%- for jahr in jahre -%}
-      {%- if jahr == now.year|string -%}
+      {%- if jahr == kjahr -%}
         <option value="{{- jahr -}}" selected>{{- jahr -}}</option>
       {%- else -%}
         <option value="{{- jahr -}}">{{- jahr -}}</option>
       {%- endif -%}
     {%- endfor -%}
     </select>
-    
-  
-    

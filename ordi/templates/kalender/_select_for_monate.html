@@ -1,13 +1,11 @@
 
-    <select name="monat">    
+    <select name="kmonat">    
     {%- for monat in monate -%}
-      {%- if monat[1] == now.month -%}
+      {%- if monat[1] == kmonat -%}
         <option value="{{- monat[0] -}}" selected>{{- monat[0] -}}</option>
       {%- else -%}
         <option value="{{- monat[0] -}}">{{- monat[0] -}}</option>
       {%- endif -%}
     {%- endfor -%}
     </select>
-    
-  
     

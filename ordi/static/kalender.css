@@ -76,33 +76,26 @@ div.edit-termin {
 	border-color:#CCCCCC; 
 }
 
-div.nav { 
-	width:100%;
+.nav { 
+    width:100%;
 }
 
-div.nav div { 
-	vertical-align:middle; 
-	padding-bottom:10px; 
+.nav div { 
+    vertical-align:middle; 
+    padding-bottom:10px; 
 }
 
-div.nav * {
-	font-size:18px;
+.nav * {
+    font-size:18px;
 }
 
 .btn {
-  display: inline-block;
+  /* display: inline-block; */
   padding: 2px 5px 2px;
   text-align: center;
   color: #333333;
   background-color: #e6e6e6;
-  background-image: -webkit-linear-gradient(top, white 0%, #e6e6e6 100%);
-  background-image: -moz-linear-gradient(top, white 0%, #e6e6e6 100%);
-  background-image: -ms-linear-gradient(top, white 0%, #e6e6e6 100%);
-  background-image: -o-linear-gradient(top, white 0%, #e6e6e6 100%);
   background-image: linear-gradient(top, white 0%, #e6e6e6 100%);
-  -webkit-border-radius: 2px;
-  -ms-border-radius: 2px;
-  -o-border-radius: 2px;
   border-radius: 2px;
   cursor: pointer;
   border: 1px solid darkgray;

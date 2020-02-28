@@ -7,42 +7,36 @@
 
 
 {% block content %}
-  <div class="div-table nav">
-    <div class="div-row">
       <form id="mainform" method="post" action="{{ url_for('kalender.index') }}">
-        <div class="div-cell" style="padding-right:40px;">
-          <label for="kjahr">Jahr:</label>
-          {% include 'kalender/_select_for_jahre.html' %}
+        <div class="nav" style="width: 100%; display: grid; grid-template-columns: auto auto auto;">
+          <div>
+            <label for="kjahr">Jahr:</label>
+            {% include 'kalender/_select_for_jahre.html' %}
 
-          <label for="kmonat">Monat:</label>
-          {% include 'kalender/_select_for_monate.html' %}
+            <label for="kmonat">Monat:</label>
+            {% include 'kalender/_select_for_monate.html' %}
 
-          <input type="hidden" name="ktag" value="{{- kaldatum.day -}}">
-          <input type="hidden" id="kwadjust" name="kwadjust" value="0">
-        </div>
+            <input type="hidden" name="ktag" value="{{- kaldatum.day -}}">
+            <input type="hidden" id="kwadjust" name="kwadjust" value="0">
+          </div>
 
-        <div class="div-cell" style="padding-right:40px;">
-          <label>KW:&nbsp; {{- kaldatum|calc_kw -}}</label>
-        </div>
+          <div>
+            <label>KW:&nbsp; {{- kaldatum|calc_kw -}}</label>
 
-        <div class="div-cell" style="padding-right: 10px">
-          <input id="kwadd" class="btn" name="kwadd" value="+">
-        </div>
+            <input id="kwadd" class="btn" size="5" name="kwadd" value="+">
 
-        <div class="div-cell">
-          <input id="kwsub" class="btn" name="kwsub" value="-">
-        </div>
+            <input id="kwsub" class="btn" size="5" name="kwsub" value="-">
+          </div>
 
-        <div class="div-cell" style="text-align:right">
-          <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum: &nbsp;
-            {{- aktdatum.strftime("%d.") -}}
-            {{- monate[aktdatum.month - 1][0] -}} &nbsp;
-            {{- aktdatum.strftime("%Y") -}}, KW:&nbsp; {{- aktdatum|calc_kw -}}
-          </a>
+          <div style="text-align:right">
+            <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum: &nbsp;
+              {{- aktdatum.strftime("%d.") -}}
+              {{- monate[aktdatum.month - 1][0] -}} &nbsp;
+              {{- aktdatum.strftime("%Y") -}}, KW:&nbsp; {{- aktdatum|calc_kw -}}
+            </a>
+          </div>
         </div>
       </form>
-    </div>
-  </div>
 
     <table id="cal">
         <colgroup>
@@ -125,7 +119,6 @@
 
     <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
   {% for tag in range(7) %}
-    <% @termine[tag].each do |t| %>
     {% for termin in termine %}
       {% set ugrenze = kaldatum|add_days(tag) %}
       {% set mgrenze = ugrenze|add_hours(7) %}

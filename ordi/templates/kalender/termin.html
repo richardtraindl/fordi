@@ -21,6 +21,11 @@
         <label for="autor">Autor:&nbsp</label>
       </div>
       <div class="div-cell edit-termin">
+        {% if termin %}
+          {% set autor = termin.autor %}
+        {% else %}
+          {% set autor = request.form['autor'] %}
+        {% endif %}
         {% include 'kalender/_select_for_autoren.html' %}
       </div>
     </div>
@@ -29,7 +34,7 @@
         <label for="thema">Thema:&nbsp</label>
       </div>
       <div class="div-cell edit-termin">
-        <input name="thema" size="50" value="{{- termin.thema -}}">
+        <input name="thema" size="50" value="{{- request.form['thema'] or termin.thema -}}">
       </div>
     </div>
     <div class="div-row">
@@ -43,8 +48,8 @@
               <label for="beginn">Beginn&nbsp</label>
             </div>
             <div class="div-cell">
-              <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- termin.beginn.strftime('%H:%M') -}}">
-              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- termin.beginn.strftime('%Y-%m-%d') -}}">
+              <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- request.form['time_begin'] or termin.beginn.strftime('%H:%M') -}}">
+              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- request.form['date_begin'] or termin.beginn.strftime('%Y-%m-%d') -}}">
             </div>
           </div>
           <div class="div-row">
@@ -52,8 +57,8 @@
               <label for="ende">Ende&nbsp</label>
             </div>
             <div class="div-cell">
-              <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- termin.ende.strftime('%H:%M') -}}">
-              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- termin.ende.strftime('%Y-%m-%d') -}}">
+              <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- request.form['time_end'] or termin.ende.strftime('%H:%M') -}}">
+              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- request.form['date_end'] or termin.ende.strftime('%Y-%m-%d') -}}">
             </div>
           </div>
         </div>
@@ -62,8 +67,10 @@
   </div>
 
   <p>
-    <input type="submit" id="sichern" value="sichern" onclick="return checkdate();">
-    <a class="btn" href="{{ url_for('kalender.index', datum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a>
+    <input type="submit" id="sichern" class="btn" value="sichern" onclick="return checkdate();">
+    
+    <a class="btn" href="{{ url_for('kalender.index') }}">abbrechen</a>
+
     {% if termin.id %}
       <a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a>
     {% endif %}

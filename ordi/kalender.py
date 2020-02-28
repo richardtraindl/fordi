@@ -48,7 +48,6 @@ def index():
                                         wochentage=wochentage, page_title="Kalender")
 
         if(len(request.form['kwadjust']) > 0):
-            print(request.form['kwadjust'])
             try:
                 adjust = int(request.form['kwadjust'])
             except:
@@ -84,6 +83,11 @@ def create(beginn=None):
         date_end = request.form['date_end']
         ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
 
+        if(beginn >= ende):
+            flash("Beginn liegt nach Ende!")
+            return render_template('kalender/termin.html', termin=None, 
+                                    autoren=AUTOREN, page_title="Termin")
+
         thema = request.form['thema']
 
         termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema)
@@ -113,7 +117,12 @@ def edit(id):
         time_end = request.form['time_end']
         date_end = request.form['date_end']
         termin.ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
-         
+
+        if(termin.beginn >= termin.ende):
+            flash("Beginn liegt nach Ende!")
+            return render_template('kalender/termin.html', termin=termin, 
+                                    autoren=AUTOREN, page_title="Termin")
+
         termin.thema = request.form['thema']
 
         db.session.commit()

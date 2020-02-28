@@ -17,8 +17,8 @@
           <label for="kmonat">Monat:</label>
           {% include 'kalender/_select_for_monate.html' %}
 
-          <input type="hidden" name="ktag" value="{{- ktag -}}" disabled>
-          <input type="hidden" id="kwadjust" name="kwadjust" value="0" disabled>
+          <input type="hidden" name="ktag" value="{{- kaldatum.day -}}">
+          <input type="hidden" id="kwadjust" name="kwadjust" value="0">
         </div>
 
         <div class="div-cell" style="padding-right:40px;">
@@ -26,17 +26,17 @@
         </div>
 
         <div class="div-cell" style="padding-right: 10px">
-          <input class="btn" name="kwadd" value="+" onclick="kwadjust(1)">
+          <input id="kwadd" class="btn" name="kwadd" value="+">
         </div>
 
         <div class="div-cell">
-          <input class="btn" name="kwsub" value="-" onclick="kwadjust(-1)">
+          <input id="kwsub" class="btn" name="kwsub" value="-">
         </div>
 
         <div class="div-cell" style="text-align:right">
-          <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum:
-            {{- aktdatum.strftime("%H") -}}
-            {{- monate[aktdatum.month - 1][0] -}}
+          <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum: &nbsp;
+            {{- aktdatum.strftime("%d.") -}}
+            {{- monate[aktdatum.month - 1][0] -}} &nbsp;
             {{- aktdatum.strftime("%Y") -}}, KW:&nbsp; {{- aktdatum|calc_kw -}}
           </a>
         </div>
@@ -318,10 +318,23 @@
             });
         }
 
-        function kwadjust(adj){
-            $("#kwadjust").val(adj);
-            $("#mainform").submit();
-        }
+        $("#kjahr").change(function() {
+           $("#mainform").submit();
+        });
+
+        $("#kmonat").change(function() {
+           $("#mainform").submit();
+        });
+
+        $("#kwadd").click(function() {
+          $("#kwadjust").val(1);
+           $("#mainform").submit();
+        });
+
+        $("#kwsub").click(function() {
+          $("#kwadjust").val(-1);
+           $("#mainform").submit();
+        });
 
         $(document).ready(function() {
             platziere_termine();

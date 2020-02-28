@@ -1,7 +1,7 @@
 
-    <select name="kjahr">    
+    <select id="kjahr" name="kjahr">    
     {%- for jahr in jahre -%}
-      {%- if jahr == kjahr -%}
+      {%- if jahr == kaldatum.year -%}
         <option value="{{- jahr -}}" selected>{{- jahr -}}</option>
       {%- else -%}
         <option value="{{- jahr -}}">{{- jahr -}}</option>

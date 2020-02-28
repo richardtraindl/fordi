@@ -43,8 +43,8 @@
               <label for="beginn">Beginn&nbsp</label>
             </div>
             <div class="div-cell">
-              <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- termin.beginn.strftime("%H:%M") -}}">
-              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- termin.beginn.strftime("%Y-%m-%d") -}}">
+              <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- termin.beginn.strftime('%H:%M') -}}">
+              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- termin.beginn.strftime('%Y-%m-%d') -}}">
             </div>
           </div>
           <div class="div-row">
@@ -52,8 +52,8 @@
               <label for="ende">Ende&nbsp</label>
             </div>
             <div class="div-cell">
-              <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- termin.ende.strftime("%H:%M") -}}">
-              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- termin.ende.strftime("%Y-%m-%d") -}}">
+              <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- termin.ende.strftime('%H:%M') -}}">
+              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- termin.ende.strftime('%Y-%m-%d') -}}">
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@
 
   <script>
     var timep = new RegExp("\\b[012][0-9]:[0-5][0-9]\\b");
-    var datep = new RegExp("\\b[0123][0-9]\\.[01][0-9]\\.[0-9]{4}\\b");
+    var datep = new RegExp("\\b[0-9]{4}\\-[01][0-9]\\-[0123][0-9]\\b");
  
     function checkdate(){
       if(timep.test($("#time_begin").val()) && datep.test($("#date_begin").val()) &&
@@ -94,9 +94,13 @@
         'showDuration': false
       });
 
-        $(function() {
-          $( ".date-pick" ).datepicker( $.datepicker.regional['de'] ); 
-        });
+      $.datepicker.setDefaults($.datepicker.regional["de"]);
+      $(".date-pick").datepicker({ 
+        dateFormat: "yy-mm-dd",
+        changeMonth: true,
+        changeYear: true 
+      });
+    })
   </script>
 {% endblock %}
 

@@ -11,8 +11,11 @@
         <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
         {% if page_title == "Kalender" %}
           <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
-          <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.min.css') }}">
-          <script src="{{ url_for('static', filename='jquery.timepicker.min.js') }}"></script>
+        {% endif %}
+        {% if page_title == "Termin" %}
+          <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+          <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">
+          <script src="{{ url_for('static', filename='jquery.timePicker.js') }}"></script>
         {% endif %}
     </head>
     <body>

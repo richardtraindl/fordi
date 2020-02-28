@@ -1,9 +1,9 @@
   <select name="autor">
-    {%- for aut in autoren -%}
-      {%- if aut == autor -%}
-        <option value="{{- aut -}}" selected>{{- aut -}}</option>
+    {%- for autor in autoren -%}
+      {%- if autor == termin.autor -%}
+        <option value="{{- autor -}}" selected>{{- autor -}}</option>
       {%- else -%}
-        <option value="{{- aut -}}">{{- aut -}}</option>
+        <option value="{{- autor -}}">{{- autor -}}</option>
       {%- endif -%}
     {%- endfor -%}
   </select>

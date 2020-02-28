@@ -21,7 +21,8 @@ wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samsta
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
-    aktdatum = datetime.now()
+    datum = datetime.now()
+    aktdatum = datetime(year=datum.year, month=datum.month, day=datum.day)
 
     add = aktdatum.weekday() * -1
     kaldatum = aktdatum + timedelta(days=add)
@@ -60,7 +61,8 @@ def index():
     kaldatum_ende = kaldatum + timedelta(days=7)
     termine = db.session.query(Termin) \
                 .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
-		                    and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
+                            and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
+
     return render_template('kalender/index.html', termine=termine, aktdatum=aktdatum, 
                             kaldatum=kaldatum, jahre=jahre, monate=monate, wochentage=wochentage,
                             kjahr=kjahr, kmonat=kmonat, ktag=ktag, page_title="Kalender")

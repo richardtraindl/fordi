@@ -125,21 +125,22 @@
 
     <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
   {% for tag in range(7) %}
+    <% @termine[tag].each do |t| %>
     {% for termin in termine %}
       {% set ugrenze = kaldatum|add_days(tag) %}
       {% set mgrenze = ugrenze|add_hours(7) %}
       {% set ogrenze = ugrenze|add_hours(24) %}
-      {% if termin.beginn >= ugrenze and termin.beginn < ogrenze %} 
+      {% if termin.beginn.date() <= ugrenze.date() and termin.ende >= ugrenze %}
         <!-- Für Autor "TP" Termine zwischen 21:00 und 23:00 zu setzen -->
         {% if termin.autor == "TP" %}
             {% set mytag = ugrenze.day|int %}
             {% set myviertel = 0 %}
             {% set mydauer_viertel = 1 %}
 
-            {% if termin.beginn == ugrenze or termin.ende == ugrenze %} 
+            {% if termin.beginn.date() == ugrenze.date() %} 
               {% set stunde = 21 %}
             {% else %}
-              {% if termin.ende == ugrenze %}
+              {% if termin.ende.date() == ugrenze.date() %}
                 {% set stunde = 23 %}
               {% else %}
                 {% set stunde = 22 %}

@@ -23,6 +23,7 @@ class Tierhaltung(db.Model):
     anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='immediate')
     tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='immediate')
+    termine = db.relationship("Termin", cascade="all,delete", back_populates="tierhaltung", lazy='noload')
 
     def __repr__(self):
         return '<Tierhaltung %r>' % (self.id)
@@ -188,10 +189,12 @@ class Termin(db.Model):
     __tablename__ = 'termin'
 
     id = db.Column(db.Integer, primary_key=True)
+    tierhaltung_id = db.Column(db.Integer, db.ForeignKey('tierhaltung.id'))
     autor = db.Column(db.String(30))
     beginn = db.Column(db.DateTime(timezone=True), nullable=False)
     ende = db.Column(db.DateTime(timezone=True), nullable=False)
     thema = db.Column(db.String(50), nullable=False)
+    tierhaltung = db.relationship("Tierhaltung", back_populates="termine")
 
     def __repr__(self):
         return '<termin %r>' % (self.id)

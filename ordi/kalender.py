@@ -8,7 +8,7 @@ from werkzeug.exceptions import abort
 from . import db
 from sqlalchemy import or_, and_
 from ordi.auth import login_required
-from ordi.models import Termin
+from ordi.models import Termin, Tierhaltung, Person, Tier
 
 bp = Blueprint('kalender', __name__, url_prefix='/kalender')
 
@@ -116,10 +116,53 @@ def create(beginn=None):
                                autoren=AUTOREN, page_title="Termin")
 
 
+@bp.route('/<int:tierhaltung_id>/create_for_ordi', methods=('GET', 'POST'))
+@login_required
+def create_for_ordi(tierhaltung_id):
+    tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == tierhaltung_id).first()
+
+    if(request.method == 'POST'):
+        autor = request.form['autor']
+
+        time_begin = request.form['time_begin']
+        date_begin = request.form['date_begin']
+        beginn = datetime.strptime(date_begin + " " + time_begin, "%Y-%m-%d %H:%M")
+
+        time_end = request.form['time_end']
+        date_end = request.form['date_end']
+        ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
+
+        if(beginn >= ende):
+            flash("Beginn liegt nach Ende!")
+            return render_template('kalender/termin.html', termin=None, 
+                                   tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
+
+        thema = request.form['thema']
+
+        termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema, tierhaltung_id=tierhaltung_id)
+        db.session.add(termin)
+        db.session.commit()
+
+        return redirect(url_for('kalender.index', 
+                                kaldatum=termin.beginn))
+    else:
+        datum = datetime.now()
+        hour = (datum.hour // 15)  * 15
+        dtbeginn = datetime(year=datum.year, month=datum.month, day=datum.day, hour=hour)
+        ende = dtbeginn + timedelta(hours=1)
+        termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="", tierhaltung=tierhaltung)
+        return render_template('kalender/termin.html', termin=termin, tierhaltung=tierhaltung,
+                               autoren=AUTOREN, page_title="Termin")
+
+
 @bp.route('/<int:id>/edit', methods=('GET','POST'))
 @login_required
 def edit(id):
     termin = db.session.query(Termin).get(id)
+    if(termin.tierhaltung_id):
+        tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == termin.tierhaltung_id).first()
+    else:
+        tierhaltung = None
 
     if(request.method == 'POST'):
         termin.autor = request.form['autor']
@@ -135,7 +178,7 @@ def edit(id):
         if(termin.beginn >= termin.ende):
             flash("Beginn liegt nach Ende!")
             return render_template('kalender/termin.html', termin=termin, 
-                                    autoren=AUTOREN, page_title="Termin")
+                                    tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
 
         termin.thema = request.form['thema']
 
@@ -143,8 +186,8 @@ def edit(id):
 
         return redirect(url_for('kalender.index', kaldatum=termin.beginn))
     else:
-        return render_template('kalender/termin.html', termin=termin,  
-                               autoren=AUTOREN, page_title="Termin")
+        return render_template('kalender/termin.html', termin=termin, 
+                               tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

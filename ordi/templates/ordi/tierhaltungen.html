@@ -84,6 +84,7 @@
     <div class="flex-container">
         <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
         <p><a class="btn" href="{{ url_for('ordi.create_tierhaltung') }}">neue Karteikarte</a></p>
+        <p><a class="btn" id="neuer_termin" href="#">neuer Termin</a></p>
         <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
         <p><a class="btn" id="neue_rechnung" href="#">neue Rechnung</a></p>
         <p><a class="btn" id="neuer_behandlungsverlauf" href="#">neuer Behandlungsverlauf</a></p>
@@ -99,6 +100,16 @@
                 }
                 else{
                     window.location = "/" + id.toString() + "/show_tierhaltung";
+                }
+                return false; 
+            });
+            $('#neuer_termin').click(function(){ 
+                var id = $("input:radio[name=option]:checked").val(); 
+                if(id == null){
+                    alert("Bitte eine Karteikarte auswählen!");
+                }
+                else{
+                    window.location = "/kalender/" + id.toString() + "/create_for_ordi";
                 }
                 return false; 
             });

@@ -13,7 +13,11 @@
 {% if termin and termin.id %}
   <form method="post" action="{{ url_for('kalender.edit', id=termin.id) }}">
 {% else %}
-  <form method="post" action="{{ url_for('kalender.create', ) }}">
+  {% if tierhaltung %}
+    <form method="post" action="{{ url_for('kalender.create_for_ordi', tierhaltung_id=tierhaltung.id) }}">
+  {% else %}
+    <form method="post" action="{{ url_for('kalender.create') }}">
+  {% endif %}
 {% endif %}
   <div class="div-table edit-termin">
     <div class="div-row">
@@ -37,6 +41,18 @@
         <input name="thema" size="50" value="{{- request.form['thema'] or termin.thema -}}">
       </div>
     </div>
+
+    {% if termin and termin.id and tierhaltung %}
+    <div class="div-row">
+      <div class="div-cell edit-termin">
+        Link zur Karteikarte
+      </div>
+      <div class="div-cell edit-termin">
+        <a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} {{- tierhaltung.tier.tiername -}}</a>
+      </div>
+    </div>
+    {% endif %}
+
     <div class="div-row">
       <div class="div-cell edit-termin">
         <label for="zeit">Zeit:&nbsp</label>

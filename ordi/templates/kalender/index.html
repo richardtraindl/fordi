@@ -85,7 +85,7 @@
               {% set klasse = "stunde1" %}
             {% endif %}
 
-              <td id={{- stddatum.strftime("c%d_%H") -}}>
+              <td id={{- stddatum.strftime("c%-d_%H") -}}>
                 <div class="div-table">
                   <div class="div-row">
                     <div class="div-cell inner">
@@ -176,7 +176,7 @@
             data-stunde="{{- stunde -}}" data-viertel="{{- myviertel -}}" data-dauer_viertel="{{- mydauer_viertel -}}">
         {% endif %}
 
-            <a class="termin" href="{{- url_for('kalender.edit', id=termin.id, kaldatum=kaldatum.strftime('%Y:%m:%d')) -}}">
+            <a class="termin" href="{{- url_for('kalender.edit', id=termin.id) -}}">
             {% if termin.autor == "TP" %}
               {{- termin.beginn.strftime("%d.%m.") + "-" + termin.ende.strftime("%d.%m.") + ' ' + termin.thema -}}
             {% else %}
@@ -264,7 +264,6 @@
                   leading += "0";
                 }
                 var caltdid = '#c' + dwtag + leading + dstunde;
-
                 console.log( "caltdid=" + caltdid );
                 var caltd = $( caltdid );
                 var px_pro_viertelstunde = 16 // caltd.height() / 4 + 0; // + 2

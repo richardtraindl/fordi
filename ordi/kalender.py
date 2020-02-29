@@ -18,18 +18,25 @@ jahre = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
 monate = [["Jänner", 1], ["Februar", 2], ["März", 3], ["April", 4], ["Mai", 5], ["Juni", 6], ["Juli", 7], ["August", 8], ["September", 9], ["Oktober", 10], ["November", 11], ["Dezember", 12]]
 wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
-@bp.route('/', methods=('GET', 'POST'))
-@login_required
-def index():
-    datum = datetime.now()
+def calc_kaldatum(datum):
     aktdatum = datetime(year=datum.year, month=datum.month, day=datum.day)
-
     add = aktdatum.weekday() * -1
-    kaldatum = aktdatum + timedelta(days=add)
+    return aktdatum + timedelta(days=add)
 
-    kjahr = kaldatum.year
-    kmonat = kaldatum.month
-    ktag = kaldatum.day
+@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/index', methods=('GET', 'POST'))
+@bp.route('/<kaldatum>/index', methods=('GET', 'POST'))
+@login_required
+def index(kaldatum=None):
+    now = datetime.now()
+    hour = (now.hour // 15)  * 15
+    aktdatum = datetime(year=now.year, month=now.month, day=now.day, hour=hour)
+
+    if(kaldatum):
+        datum = datetime.strptime(kaldatum, "%Y-%m-%d %H:%M:00")
+        kaldatum = calc_kaldatum(datum)
+    else:
+        kaldatum = calc_kaldatum(aktdatum)
 
     if(request.method == 'POST'):
         if(len(request.form['kjahr']) > 0 and len(request.form['kmonat']) > 0 and
@@ -39,8 +46,7 @@ def index():
                 kmonat = int(request.form['kmonat'])
                 ktag = int(request.form['ktag'])
                 datum = datetime(year=kjahr, month=kmonat, day=ktag)
-                add = datum.weekday() * -1
-                kaldatum = datum + timedelta(days=add)
+                kaldatum = calc_kaldatum(datum)
             except:
                 flash("error")
                 return render_template('kalender/index.html', aktdatum=aktdatum, 
@@ -59,6 +65,7 @@ def index():
             kaldatum += timedelta(weeks=adjust)
 
     kaldatum_ende = kaldatum + timedelta(days=7)
+
     termine = db.session.query(Termin) \
                 .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
                             and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
@@ -68,8 +75,8 @@ def index():
                             wochentage=wochentage, page_title="Kalender")
 
 
-@bp.route('/create', methods=('POST',))
-@bp.route('/<beginn>/create', methods=('GET',))
+@bp.route('/create', methods=('GET', 'POST'))
+@bp.route('/<beginn>/create', methods=('GET', 'POST'))
 @login_required
 def create(beginn=None):
     if(request.method == 'POST'):
@@ -86,7 +93,7 @@ def create(beginn=None):
         if(beginn >= ende):
             flash("Beginn liegt nach Ende!")
             return render_template('kalender/termin.html', termin=None, 
-                                    autoren=AUTOREN, page_title="Termin")
+                                   autoren=AUTOREN, page_title="Termin")
 
         thema = request.form['thema']
 
@@ -94,20 +101,27 @@ def create(beginn=None):
         db.session.add(termin)
         db.session.commit()
 
-        return redirect(url_for('kalender.index'))
+        return redirect(url_for('kalender.index', 
+                                kaldatum=termin.beginn))
     else:
-        dtbeginn = datetime.strptime(beginn, "%Y-%m-%d %H:%M:00")
+        if(beginn):
+            dtbeginn = datetime.strptime(beginn, "%Y-%m-%d %H:%M:00")
+        else:
+            datum = datetime.now()
+            hour = (datum.hour // 15)  * 15
+            dtbeginn = datetime(year=datum.year, month=datum.month, day=datum.day, hour=hour)
         ende = dtbeginn + timedelta(hours=1)
         termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="")
-    return render_template('kalender/termin.html', termin=termin, autoren=AUTOREN, page_title="Termin")
+        return render_template('kalender/termin.html', termin=termin, 
+                               autoren=AUTOREN, page_title="Termin")
 
 
 @bp.route('/<int:id>/edit', methods=('GET','POST'))
 @login_required
 def edit(id):
-    if(request.method == 'POST'):
-        termin = db.session.query(Termin).get(id)
+    termin = db.session.query(Termin).get(id)
 
+    if(request.method == 'POST'):
         termin.autor = request.form['autor']
 
         time_begin = request.form['time_begin']
@@ -127,10 +141,10 @@ def edit(id):
 
         db.session.commit()
 
-        return redirect(url_for('kalender.index'))
+        return redirect(url_for('kalender.index', kaldatum=termin.beginn))
     else:
-        termin = db.session.query(Termin).get(id)
-        return render_template('kalender/termin.html', termin=termin,  autoren=AUTOREN, page_title="Termin")
+        return render_template('kalender/termin.html', termin=termin,  
+                               autoren=AUTOREN, page_title="Termin")
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

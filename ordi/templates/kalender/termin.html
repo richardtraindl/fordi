@@ -8,125 +8,126 @@
 
 {% block content %}
 
-<h1>Termin</h1>
-
-{% if termin and termin.id %}
-  <form method="post" action="{{ url_for('kalender.edit', id=termin.id) }}">
-{% else %}
-  {% if tierhaltung %}
-    <form method="post" action="{{ url_for('kalender.create_for_ordi', tierhaltung_id=tierhaltung.id) }}">
-  {% else %}
-    <form method="post" action="{{ url_for('kalender.create') }}">
-  {% endif %}
-{% endif %}
-  <div class="div-table edit-termin">
-    <div class="div-row">
-      <div class="div-cell edit-termin">
-        <label for="autor">Autor:&nbsp</label>
-      </div>
-      <div class="div-cell edit-termin">
-        {% if termin %}
-          {% set autor = termin.autor %}
-        {% else %}
-          {% set autor = request.form['autor'] %}
-        {% endif %}
-        {% include 'kalender/_select_for_autoren.html' %}
-      </div>
-    </div>
-    <div class="div-row">
-      <div class="div-cell edit-termin">
-        <label for="thema">Thema:&nbsp</label>
-      </div>
-      <div class="div-cell edit-termin">
-        <input name="thema" size="50" value="{{- request.form['thema'] or termin.thema -}}">
-      </div>
-    </div>
-
-    {% if termin and termin.id and tierhaltung %}
-    <div class="div-row">
-      <div class="div-cell edit-termin">
-        Link zur Karteikarte
-      </div>
-      <div class="div-cell edit-termin">
-        <a href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} {{- tierhaltung.tier.tiername -}}</a>
-      </div>
-    </div>
+    {% if termin and termin.id %}
+      <form method="post" action="{{ url_for('kalender.edit', id=termin.id) }}">
+    {% else %}
+      {% if tierhaltung %}
+        <form method="post" action="{{ url_for('kalender.create', tierhaltung_id=tierhaltung.id) }}">
+      {% else %}
+        <form method="post" action="{{ url_for('kalender.create') }}">
+      {% endif %}
     {% endif %}
-
-    <div class="div-row">
-      <div class="div-cell edit-termin">
-        <label for="zeit">Zeit:&nbsp</label>
-      </div>
-      <div class="div-cell edit-termin">
-        <div class="div-table">
-          <div class="div-row">
-            <div class="div-cell">
-              <label for="beginn">Beginn&nbsp</label>
-            </div>
-            <div class="div-cell">
-              <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- request.form['time_begin'] or termin.beginn.strftime('%H:%M') -}}">
-              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- request.form['date_begin'] or termin.beginn.strftime('%Y-%m-%d') -}}">
-            </div>
+      <div class="div-table edit-termin">
+        <div class="div-row">
+          <div class="div-cell edit-termin">
+            <label for="autor">Autor: &nbsp;</label>
           </div>
-          <div class="div-row">
-            <div class="div-cell">
-              <label for="ende">Ende&nbsp</label>
-            </div>
-            <div class="div-cell">
-              <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- request.form['time_end'] or termin.ende.strftime('%H:%M') -}}">
-              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- request.form['date_end'] or termin.ende.strftime('%Y-%m-%d') -}}">
+          <div class="div-cell edit-termin">
+            {% if termin %}
+              {% set autor = termin.autor %}
+            {% else %}
+              {% set autor = request.form['autor'] %}
+            {% endif %}
+            {% include 'kalender/_select_for_autoren.html' %}
+          </div>
+        </div>
+        <div class="div-row">
+          <div class="div-cell edit-termin">
+            Patient: &nbsp;
+          </div>
+          <div class="div-cell edit-termin">
+          {% if tierhaltung %}
+            {% if termin and termin.id %}
+              <a target="_blank" href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</a>
+            {% else %}
+              {{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}
+            {% endif %}
+          {% endif %}
+          </div>
+        </div>
+        <div class="div-row">
+          <div class="div-cell edit-termin">
+            <label for="thema">Thema: &nbsp;</label>
+          </div>
+          <div class="div-cell edit-termin">
+            <input name="thema" size="50" value="{{- request.form['thema'] or termin.thema -}}">
+          </div>
+        </div>
+        <div class="div-row">
+          <div class="div-cell edit-termin">
+            <label for="zeit">Zeit: &nbsp;</label>
+          </div>
+          <div class="div-cell edit-termin">
+            <div class="div-table">
+              <div class="div-row">
+                <div class="div-cell">
+                  <label for="beginn">Beginn &nbsp;</label>
+                </div>
+                <div class="div-cell">
+                  <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- request.form['time_begin'] or termin.beginn.strftime('%H:%M') -}}">
+                  <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- request.form['date_begin'] or termin.beginn.strftime('%Y-%m-%d') -}}">
+                </div>
+              </div>
+              <div class="div-row">
+                <div class="div-cell">
+                  <label for="ende">Ende &nbsp;</label>
+                </div>
+                <div class="div-cell">
+                  <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- request.form['time_end'] or termin.ende.strftime('%H:%M') -}}">
+                  <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- request.form['date_end'] or termin.ende.strftime('%Y-%m-%d') -}}">
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <p>
-    <input type="submit" id="sichern" class="btn" value="sichern" onclick="return checkdate();">
-    {% if termin %}
-      <a class="btn" href="{{ url_for('kalender.index', kaldatum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a>
-    {% else %}
-      <a class="btn" href="{{ url_for('kalender.index', kaldatum=request.form['date_begin'] + ' ' + request.form['time_begin']) }}">abbrechen</a>
-    {% endif %}
+      <p>
+        <input type="submit" id="sichern" class="btn" value="sichern" onclick="return checkdate();">
 
-    {% if termin.id %}
-      <a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a>
-    {% endif %}
-  </p>
+        {% if termin %}
+          <a class="btn" href="{{ url_for('kalender.index', kaldatum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a>
+        {% else %}
+          <a class="btn" href="{{ url_for('kalender.index', kaldatum=request.form['date_begin'] + ' ' + request.form['time_begin']) }}">abbrechen</a>
+        {% endif %}
 
-  <script>
-    var timep = new RegExp("\\b[012][0-9]:[0-5][0-9]\\b");
-    var datep = new RegExp("\\b[0-9]{4}\\-[01][0-9]\\-[0123][0-9]\\b");
- 
-    function checkdate(){
-      if(timep.test($("#time_begin").val()) && datep.test($("#date_begin").val()) &&
-         timep.test($("#time_end").val()) && datep.test($("#date_end").val()) ){
-        return true;
-      }
-      else{
-        $( '#error' ).empty();
-        $( '#error' ).html( "Falsches Datumsformat: erwartet <i>hh:mm</i> <br> TT:MM:JJJJ z.B. 10:35 01.09.2011" );
-        return false;
-      }
-    };
+        {% if termin.id %}
+          <a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a>
+        {% endif %}
+      </p>
 
-    $(document).ready(function() {
-      $('.time-pick').timepicker({
-        'timeFormat': 'H:i',
-        'minTime': '00:00',
-        'maxTime': '23:45',
-        'step': 15,
-        'showDuration': false
-      });
+      <script>
+        var timep = new RegExp("\\b[012][0-9]:[0-5][0-9]\\b");
+        var datep = new RegExp("\\b[0-9]{4}\\-[01][0-9]\\-[0123][0-9]\\b");
+     
+        function checkdate(){
+          if(timep.test($("#time_begin").val()) && datep.test($("#date_begin").val()) &&
+             timep.test($("#time_end").val()) && datep.test($("#date_end").val()) ){
+            return true;
+          }
+          else{
+            $( '#error' ).empty();
+            $( '#error' ).html( "Falsches Datumsformat: erwartet <i>hh:mm</i> <br> TT:MM:JJJJ z.B. 10:35 01.09.2011" );
+            return false;
+          }
+        };
 
-      $.datepicker.setDefaults($.datepicker.regional["de"]);
-      $(".date-pick").datepicker({ 
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true 
-      });
-    })
-  </script>
+        $(document).ready(function() {
+          $('.time-pick').timepicker({
+            'timeFormat': 'H:i',
+            'minTime': '00:00',
+            'maxTime': '23:45',
+            'step': 15,
+            'showDuration': false
+          });
+
+          $.datepicker.setDefaults($.datepicker.regional["de"]);
+          $(".date-pick").datepicker({ 
+            dateFormat: "yy-mm-dd",
+            changeMonth: true,
+            changeYear: true 
+          });
+        })
+      </script>
 {% endblock %}
 

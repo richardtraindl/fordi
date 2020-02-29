@@ -24,6 +24,25 @@
 
     <div class="gap"></div>
 
+    {% if termine|length == 0 %}
+        <p>Keine Termine geplant.</p>
+    {% else %}
+        <p>Geplante Termine:</p>
+    {% endif %}
+
+    {% for termin in termine %}
+        <p>
+            {{- termin.autor -}} &nbsp; 
+            {{- termin.thema -}} &nbsp; 
+            {{- termin.beginn -}} &nbsp; 
+            {{- termin.ende -}}
+        </p>
+    {% endfor %}
+    
+    <p><a class="btn" href="{{ url_for('kalender.create', tierhaltung='', tierhaltung_id=tierhaltung.id) }}">neuer Termin</a>
+
+    <div class="gap"></div>
+
     <table class="liste">
         <thead>
             <tr>
@@ -75,7 +94,7 @@
             <tr class="edit-focus">
               <td style="width: 8%">
                   <input type="hidden" name="behandlung_id[]" value="">
-                  <input type="text" name="behandlungsdatum[]" class="date" value="{{- datum -}}">
+                  <input type="text" name="behandlungsdatum[]" class="date" value="{{- datum.strftime('%Y-%m-%d') -}}">
               </td>
               <td style="width: 30%"><textarea name="diagnose[]" id="diagnose"></textarea></td>
               <td style="width: 11%"><textarea name="laborwerte1[]" class="labor"></textarea></td>

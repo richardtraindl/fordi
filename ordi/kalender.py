@@ -77,8 +77,14 @@ def index(kaldatum=None):
 
 @bp.route('/create', methods=('GET', 'POST'))
 @bp.route('/<beginn>/create', methods=('GET', 'POST'))
+@bp.route('/tierhaltung/<int:tierhaltung_id>/create', methods=('GET', 'POST'))
 @login_required
-def create(beginn=None):
+def create(beginn=None, tierhaltung_id=None):
+    if(tierhaltung_id):
+        tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == tierhaltung_id).first()
+    else:
+        tierhaltung = None
+
     if(request.method == 'POST'):
         autor = request.form['autor']
 
@@ -93,11 +99,15 @@ def create(beginn=None):
         if(beginn >= ende):
             flash("Beginn liegt nach Ende!")
             return render_template('kalender/termin.html', termin=None, 
-                                   autoren=AUTOREN, page_title="Termin")
+                                   tierhaltung=tierhaltung, autoren=AUTOREN, 
+                                   page_title="Termin")
 
         thema = request.form['thema']
 
-        termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema)
+        if(tierhaltung):
+            termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema, tierhaltung_id=tierhaltung.id)
+        else:
+            termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema)
         db.session.add(termin)
         db.session.commit()
 
@@ -113,7 +123,8 @@ def create(beginn=None):
         ende = dtbeginn + timedelta(hours=1)
         termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="")
         return render_template('kalender/termin.html', termin=termin, 
-                               autoren=AUTOREN, page_title="Termin")
+                               tierhaltung=tierhaltung, autoren=AUTOREN, 
+                               page_title="Termin")
 
 
 @bp.route('/<int:tierhaltung_id>/create_for_ordi', methods=('GET', 'POST'))
@@ -151,8 +162,9 @@ def create_for_ordi(tierhaltung_id):
         dtbeginn = datetime(year=datum.year, month=datum.month, day=datum.day, hour=hour)
         ende = dtbeginn + timedelta(hours=1)
         termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="", tierhaltung=tierhaltung)
-        return render_template('kalender/termin.html', termin=termin, tierhaltung=tierhaltung,
-                               autoren=AUTOREN, page_title="Termin")
+        return render_template('kalender/termin.html', termin=termin, 
+                               tierhaltung=tierhaltung, autoren=AUTOREN, 
+                               page_title="Termin")
 
 
 @bp.route('/<int:id>/edit', methods=('GET','POST'))

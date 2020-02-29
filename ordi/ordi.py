@@ -144,12 +144,15 @@ def show_tierhaltung(id):
 
     tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
     behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).order_by(Behandlung.behandlungsdatum.asc()).all()
-    datum = datetime.today().strftime("%Y-%m-%d")
+    datum = datetime.today()
+    
+    termine = db.session.query(Termin) \
+                .filter(Termin.tierhaltung_id == tierhaltung.id, Termin.beginn >= datum).all()
 
     return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
-        behandlungen=behandlungen, datum=datum, anredewerte=anredewerte, 
-        geschlechtswerte=geschlechtswerte, laborreferenzen=laborreferenzen, 
-        impfungswerte=impfungswerte, page_title="Karteikarte")
+        termine=termine, behandlungen=behandlungen, datum=datum, 
+        anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
+        laborreferenzen=laborreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
 
 
 @bp.route('/<int:id>/delete_tierhaltung', methods=('GET',))

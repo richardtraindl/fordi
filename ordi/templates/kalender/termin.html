@@ -17,73 +17,92 @@
         <form method="post" action="{{ url_for('kalender.create') }}">
       {% endif %}
     {% endif %}
-      <div class="div-table edit-termin">
+      <div class="div-table">
+
         <div class="div-row">
-          <div class="div-cell edit-termin">
-            <label for="autor">Autor: &nbsp;</label>
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <label for="autor">Autor: &nbsp;</label>
+            </div>
           </div>
-          <div class="div-cell edit-termin">
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
             {% if termin %}
               {% set autor = termin.autor %}
             {% else %}
               {% set autor = request.form['autor'] %}
             {% endif %}
             {% include 'kalender/_select_for_autoren.html' %}
-          </div>
-        </div>
-        <div class="div-row">
-          <div class="div-cell edit-termin">
-            Patient: &nbsp;
-          </div>
-          <div class="div-cell edit-termin">
-          {% if tierhaltung %}
-            {% if termin and termin.id %}
-              <a target="_blank" href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</a>
-            {% else %}
-              {{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}
-            {% endif %}
-          {% endif %}
-          </div>
-        </div>
-        <div class="div-row">
-          <div class="div-cell edit-termin">
-            <label for="thema">Thema: &nbsp;</label>
-          </div>
-          <div class="div-cell edit-termin">
-            <input name="thema" size="50" value="{{- request.form['thema'] or termin.thema -}}">
-          </div>
-        </div>
-        <div class="div-row">
-          <div class="div-cell edit-termin">
-            <label for="zeit">Zeit: &nbsp;</label>
-          </div>
-          <div class="div-cell edit-termin">
-            <div class="div-table">
-              <div class="div-row">
-                <div class="div-cell">
-                  <label for="beginn">Beginn &nbsp;</label>
-                </div>
-                <div class="div-cell">
-                  <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- request.form['time_begin'] or termin.beginn.strftime('%H:%M') -}}">
-                  <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- request.form['date_begin'] or termin.beginn.strftime('%Y-%m-%d') -}}">
-                </div>
-              </div>
-              <div class="div-row">
-                <div class="div-cell">
-                  <label for="ende">Ende &nbsp;</label>
-                </div>
-                <div class="div-cell">
-                  <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- request.form['time_end'] or termin.ende.strftime('%H:%M') -}}">
-                  <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- request.form['date_end'] or termin.ende.strftime('%Y-%m-%d') -}}">
-                </div>
-              </div>
             </div>
           </div>
         </div>
+
+        <div class="div-row">
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <p>Patient: &nbsp;</p>
+            </div>
+          </div>
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+            {% if tierhaltung %}
+              {% if termin and termin.id %}
+                <p><a target="_blank" href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</a></p>
+              {% else %}
+                <p>{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</p>
+              {% endif %}
+            {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="div-row">
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <label for="thema">Thema: &nbsp;</label>
+            </div>
+          </div>
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <input name="thema" size="50" value="{{- request.form['thema'] or termin.thema -}}">
+            </div>
+          </div>
+        </div>
+
+        <div class="div-row">
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <label for="beginn">Beginn: &nbsp;</label>
+            </div>
+          </div>
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <input name="time_begin" size="5" id="time_begin" class="time-pick" value="{{- request.form['time_begin'] or termin.beginn.strftime('%H:%M') -}}">
+              <input name="date_begin" size="10" id="date_begin" class="date-pick" value="{{- request.form['date_begin'] or termin.beginn.strftime('%Y-%m-%d') -}}">
+            </div>
+          </div>
+        </div>
+
+        <div class="div-row">
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <label for="ende">Ende: &nbsp;</label>
+            </div>
+          </div>
+          <div class="div-cell" style="border: 1px solid #111111; border-spacing: 0px;">
+            <div class="edit-termin">
+              <input name="time_end" size="5" id="time_end" class="time-pick" value="{{- request.form['time_end'] or termin.ende.strftime('%H:%M') -}}">
+              <input name="date_end" size="10" id="date_end" class="date-pick" value="{{- request.form['date_end'] or termin.ende.strftime('%Y-%m-%d') -}}">
+            </div>
+          </div>
+        </div>
+
       </div>
 
+      <div class="gap"></div>
+
       <p>
-        <input type="submit" id="sichern" class="btn" value="sichern" onclick="return checkdate();">
+        <input type="submit" id="sichern" class="btn" style="font-size: 16px; line-height: 18px;" value="sichern" onclick="return checkdate();">
 
         {% if termin %}
           <a class="btn" href="{{ url_for('kalender.index', kaldatum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a>

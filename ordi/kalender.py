@@ -23,14 +23,16 @@ def calc_kaldatum(datum):
     add = aktdatum.weekday() * -1
     return aktdatum + timedelta(days=add)
 
+def adjust_datum(datum):
+    minute = (datum.minute // 15)  * 15
+    return datetime(year=datum.year, month=datum.month, day=datum.day, hour=datum.hour, minute=minute, second=0, microsecond=0)
+
 @bp.route('/', methods=('GET', 'POST'))
 @bp.route('/index', methods=('GET', 'POST'))
 @bp.route('/<kaldatum>/index', methods=('GET', 'POST'))
 @login_required
 def index(kaldatum=None):
-    now = datetime.now()
-    hour = (now.hour // 15)  * 15
-    aktdatum = datetime(year=now.year, month=now.month, day=now.day, hour=hour)
+    aktdatum = adjust_datum(datetime.now())
 
     if(kaldatum):
         datum = datetime.strptime(kaldatum, "%Y-%m-%d %H:%M:00")
@@ -97,7 +99,7 @@ def create(beginn=None, tierhaltung_id=None):
         ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
 
         if(beginn >= ende):
-            flash("Beginn liegt nach Ende!")
+            flash("Ende liegt vor Beginn.")
             return render_template('kalender/termin.html', termin=None, 
                                    tierhaltung=tierhaltung, autoren=AUTOREN, 
                                    page_title="Termin")
@@ -117,9 +119,8 @@ def create(beginn=None, tierhaltung_id=None):
         if(beginn):
             dtbeginn = datetime.strptime(beginn, "%Y-%m-%d %H:%M:00")
         else:
-            datum = datetime.now()
-            hour = (datum.hour // 15)  * 15
-            dtbeginn = datetime(year=datum.year, month=datum.month, day=datum.day, hour=hour)
+            dtbeginn = adjust_datum(datetime.now())
+                
         ende = dtbeginn + timedelta(hours=1)
         termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="")
         return render_template('kalender/termin.html', termin=termin, 
@@ -144,7 +145,7 @@ def create_for_ordi(tierhaltung_id):
         ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
 
         if(beginn >= ende):
-            flash("Beginn liegt nach Ende!")
+            flash("Ende liegt vor Beginn.")
             return render_template('kalender/termin.html', termin=None, 
                                    tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
 
@@ -157,9 +158,7 @@ def create_for_ordi(tierhaltung_id):
         return redirect(url_for('kalender.index', 
                                 kaldatum=termin.beginn))
     else:
-        datum = datetime.now()
-        hour = (datum.hour // 15)  * 15
-        dtbeginn = datetime(year=datum.year, month=datum.month, day=datum.day, hour=hour)
+        dtbeginn = adjust_datum(datetime.now())
         ende = dtbeginn + timedelta(hours=1)
         termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="", tierhaltung=tierhaltung)
         return render_template('kalender/termin.html', termin=termin, 
@@ -188,7 +187,7 @@ def edit(id):
         termin.ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
 
         if(termin.beginn >= termin.ende):
-            flash("Beginn liegt nach Ende!")
+            flash("Ende liegt vor Beginn.")
             return render_template('kalender/termin.html', termin=termin, 
                                     tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
 

@@ -1,5 +1,8 @@
 
 * { 
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
     font-size: 14px; 
     line-height: 14px
 }
@@ -42,9 +45,13 @@ span.feiertag {
 }
 
 div.edit-termin { 
-    border: 1px solid #111111; 
-    border-spacing: 0px;
+    display: flex; 
+    align-items: center; 
+    border: 0px; 
+    /* border: 1px solid #111111; 
+    border-spacing: 0px; */
 }
+.edit-termin * { margin: 2px; padding: 2px; }
 
 .div-table {
     display: table; 

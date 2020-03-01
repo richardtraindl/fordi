@@ -81,6 +81,7 @@ div.edit-termin {
     font-size: 18px;
 }
 
+/*
 .btn {
   padding: 2px 5px 2px;
   text-align: center;
@@ -101,6 +102,7 @@ a.btn, a.btn:visited, a.btn:hover; {
 a.btn:hover {
   background-color: #e6e6e6; 
 }
+*/
 
 .notice {
     color: Green;

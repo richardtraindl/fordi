@@ -107,6 +107,7 @@ textarea {
 }
 
 .btn {
+  cursor: pointer;
   padding: 2px;
   -webkit-border-radius: 5px;
   border-radius: 5px;

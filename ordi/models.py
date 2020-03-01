@@ -18,8 +18,8 @@ class Tierhaltung(db.Model):
     __tablename__ = 'tierhaltung'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
     anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='immediate')
     tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='immediate')
@@ -51,7 +51,7 @@ class Adresse(db.Model):
     __tablename__ = 'adresse'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
     strasse = db.Column(db.String(40))
     postleitzahl = db.Column(db.String(40))
     ort = db.Column(db.String(40))
@@ -65,7 +65,7 @@ class Kontakt(db.Model):
     __tablename__ = 'kontakt'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
     kontaktcode = db.Column(db.Integer(), nullable=False)
     kontakt = db.Column(db.String(50))
     kontakt_intern = db.Column(db.String(50))
@@ -101,7 +101,7 @@ class Behandlung(db.Model):
     __tablename__ = 'behandlung'
 
     id = db.Column(db.Integer, primary_key=True)
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'))
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False)
     behandlungsdatum = db.Column(db.Date(), nullable=False)
     gewicht = db.Column(db.String(50))
     diagnose = db.Column(db.String(1000))
@@ -121,7 +121,7 @@ class Impfung(db.Model):
     __tablename__ = 'impfung'
 
     id = db.Column(db.Integer, primary_key=True)
-    behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id', ondelete='CASCADE'))
+    behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id', ondelete='CASCADE'), nullable=False)
     impfungscode = db.Column(db.Integer(), nullable=False)
     behandlung = db.relationship("Behandlung", back_populates="impfungen")
 
@@ -133,8 +133,8 @@ class Behandlungsverlauf(db.Model):
     __tablename__ = 'behandlungsverlauf'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False)
     datum = db.Column(db.Date(), nullable=False)
     diagnose = db.Column(db.String(256))
     behandlung = db.Column(db.String(1000))
@@ -149,8 +149,8 @@ class Rechnung(db.Model):
     __tablename__ = 'rechnung'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'))
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False)
     rechnungsjahr = db.Column(db.Integer(), nullable=False)
     rechnungslfnr = db.Column(db.Integer(), nullable=False)
     ausstellungsdatum = db.Column(db.Date(), nullable=False)
@@ -174,7 +174,7 @@ class Rechnungszeile(db.Model):
     __tablename__ = 'rechnungszeile'
 
     id = db.Column(db.Integer, primary_key=True)
-    rechnung_id = db.Column(db.Integer, db.ForeignKey('rechnung.id', ondelete='CASCADE'))
+    rechnung_id = db.Column(db.Integer, db.ForeignKey('rechnung.id', ondelete='CASCADE'), nullable=False)
     datum = db.Column(db.Date(), nullable=False)
     artikelcode = db.Column(db.Integer(), nullable=False)
     artikel = db.Column(db.String(256))

@@ -109,3 +109,15 @@ a.btn:hover {
 .error {
     color: Red;
 }
+
+div#pop-up {
+  display: none;
+  position: absolute;
+  width: 140px;
+  padding: 10px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+  font-size: 90%;
+  z-index: 10;
+}

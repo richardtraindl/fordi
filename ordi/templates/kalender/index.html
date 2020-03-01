@@ -182,11 +182,16 @@
             {% else %}
               {{- termin.beginn.strftime("%H:%M") + "-" + termin.ende.strftime("%H:%M") + ' ' + termin.thema -}}
             {% endif %}
-            </a> 
+            </a>
+            <span></span>
           </div>
       {% endif %}
     {% endfor %}
   {% endfor %}
+
+    <div id="pop-up">
+       <p>This div only appears when the trigger link is hovered over. Otherwise it is hidden from view.</p>
+    </div>
 
     <script>
         var zindexmax = 9;
@@ -195,7 +200,7 @@
             var dwtagvor = -1;
             var schedule = [(24*4)]; // [(24*2)]
 
-            $( 'div.termin' ).each( function(){
+            $('div.termin').each( function(){
                 var dautor = $(this).attr( "data-autor");
                 var dwtag = $(this).attr( "data-wtag");
                 var dstunde = $(this).attr( "data-stunde");
@@ -310,28 +315,52 @@
             });
         }
 
-        $("#kjahr").change(function() {
-           $("#mainform").submit();
-        });
+        function handle_mouseover(){
+           var moveLeft = 20;
+           var moveDown = 10;
 
-        $("#kmonat").change(function() {
-           $("#mainform").submit();
-        });
+           $('div.termin').hover(function(e){
+             var txt = $(this).find("a").text();
+             $('div#pop-up').find("p").text(txt);
+             $('div#pop-up').show();
 
-        $("#kwadd").click(function() {
-          $("#kwadjust").val(1);
-           $("#mainform").submit();
-        });
+           }, function(){
+             $('div#pop-up').hide();
+           });
 
-        $("#kwsub").click(function() {
-          $("#kwadjust").val(-1);
-           $("#mainform").submit();
-        });
+           $('div.termin').mousemove(function(e) {
+             $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+           });
+         }
 
         $(document).ready(function() {
             platziere_termine();
 
             $(window).resize( platziere_termine );
+
+            $("#kjahr").change(function() {
+               $("#mainform").submit();
+            });
+
+            $("#kmonat").change(function() {
+               $("#mainform").submit();
+            });
+
+            $("#kwadd").click(function() {
+              $("#kwadjust").val(1);
+               $("#mainform").submit();
+            });
+
+            $("#kwsub").click(function() {
+              $("#kwadjust").val(-1);
+               $("#mainform").submit();
+            });
+
+            handle_mouseover();
+            
+            //$("div.termin").mouseover(function(){
+            //  $(this).find("span").text("mouse over x");
+            //});
         });
     </script>
 {% endblock %}

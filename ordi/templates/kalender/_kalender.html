@@ -1,0 +1,354 @@
+
+  <form id="mainform" method="post" action="{{ url_for('kalender.index') }}">
+    <div class="nav" style="width: 100%; display: grid; grid-template-columns: auto auto auto;">
+      <div>
+        <label for="kjahr">Jahr:</label>
+        {% include 'kalender/_select_for_jahre.html' %}
+
+        <label for="kmonat">Monat:</label>
+        {% include 'kalender/_select_for_monate.html' %}
+
+        <input type="hidden" name="ktag" value="{{- kaldatum.day -}}">
+        <input type="hidden" id="kwadjust" name="kwadjust" value="0">
+      </div>
+
+      <div>
+        <label>KW:&nbsp; {{- kaldatum|calc_kw -}}</label>
+
+        <input id="kwadd" class="btn" size="5" name="kwadd" value="+">
+
+        <input id="kwsub" class="btn" size="5" name="kwsub" value="-">
+      </div>
+
+      <div style="text-align:right">
+      {% if preview == 0 %}
+        <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum: &nbsp;
+      {% else %}
+        <a style="color:red;" href="{{ url_for('kalender.index2') }}">Tagesdatum: &nbsp;
+      {% endif %}
+          {{- aktdatum.strftime("%d.") -}}
+          {{- monate[aktdatum.month - 1][0] -}} &nbsp;
+          {{- aktdatum.strftime("%Y") -}}, KW:&nbsp; {{- aktdatum|calc_kw -}}
+        </a>
+      </div>
+    </div>
+  </form>
+
+  <table id="cal">
+    <colgroup>
+        <col width="14%">
+        <col width="14%">
+        <col width="14%">
+        <col width="14%">
+        <col width="14%">
+        <col width="14%">
+        <col width="14%">
+    </colgroup>
+    <tr>
+      {% for tag in range(7) %}
+        {% set tagesdatum = kaldatum|add_days(tag) %}
+        {% if tagesdatum == aktdatum %}
+          <td class="header2">
+        {% else %}
+          <td class="header1">
+        {% endif %}
+
+        {% if (tagesdatum|feiertag)|length > 0 or tag == 6 %}
+          <span class="feiertag" style="font-size:24px">{{- tagesdatum.day -}}</span>
+          {{- wochentage[tag] -}}
+          <span style="font-size:10px">{{- tagesdatum|feiertag -}}</span>
+        {% else %}
+          <span style="font-size:24px">{{- tagesdatum.day -}}</span>
+          {{- wochentage[tag] -}}
+        {% endif %}
+          </td>
+      {% endfor %}
+    </tr>
+
+  {% for std in range(7, 24) %}
+    {% set stddatum = kaldatum|add_hours(std) %}
+    {% if std == 22 %}
+      <tr style="height:60px">
+    {% else %}
+      <tr class="woche">
+    {% endif %}
+
+    {% for tag in range(7) %}
+      {% set stddatum = stddatum|add_days(tag) %}
+      {% if (tag == 1 or tag == 2 or tag == 3) and std == 18 %}
+        {% set klasse = "stunde2" %}
+      {% else %}
+        {% set klasse = "stunde1" %}
+      {% endif %}
+
+      <td id={{- stddatum.strftime("c%d_%H") -}}>
+        <div class="div-table">
+          <div class="div-row">
+            <div class="div-cell inner">
+              {% if preview == 0 %}  
+                <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=stddatum.strftime('%Y-%m-%d %H:%M:00')) }}">
+              {% else %}
+                <a class="{{- klasse -}}" href="#">
+              {% endif %}
+                {{- stddatum.strftime("%H:%M") -}}
+                </a>
+              {% set klasse = "stunde1" %}
+            </div>
+          </div>
+
+        {% for min in range(15, 60, 15) %}
+          {% set mindatum = stddatum|add_mins(min) %}
+          <div class="div-row">
+            <div class="div-cell inner">
+            {% if std >= 14 and std <= 19 %}
+              {% if preview == 0 %} 
+                <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=mindatum.strftime('%Y-%m-%d %H:%M:00')) }}">
+              {% else %}
+                <a class="{{- klasse -}}" href="#">
+              {% endif %}
+                {{- mindatum.strftime("%H:%M") -}}
+                </a>
+            {% else %}
+              <span style="font-size:12px;">&nbsp;</span>
+            {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+      </td>
+    {% endfor %}
+    </tr>
+  {% endfor %}
+  </table>
+
+  <!-- Für jeden Termin und Wochentag einen DIV Block schreiben -->
+  {% for tag in range(7) %}
+    {% for termin in termine %}
+      {% set ugrenze = kaldatum|add_days(tag) %}
+      {% set mgrenze = ugrenze|add_hours(7) %}
+      {% set ogrenze = ugrenze|add_hours(24) %}
+
+      {% if termin.beginn.date() <= ugrenze.date() and termin.ende >= ugrenze %}
+        <!-- Für Autor "TP" Termine zwischen 21:00 und 23:00 zu setzen -->
+        {% if termin.autor == "TP" %}
+          {% set mytag = ugrenze.day|int %}
+          {% set myviertel = 0 %}
+          {% set mydauer_viertel = 1 %}
+
+          {% if termin.beginn.date() == ugrenze.date() %} 
+            {% set stunde = 21 %}
+          {% else %}
+            {% if termin.ende.date() == ugrenze.date() %}
+              {% set stunde = 23 %}
+            {% else %}
+              {% set stunde = 22 %}
+            {% endif %}
+          {% endif %}
+        <!-- Für andere Autoren Termine setzen -->
+        {% else %}
+          {% if termin.beginn < mgrenze %}
+            {% set beginn = mgrenze %}
+          {% else %}
+            {% set beginn = termin.beginn %}
+          {% endif %}
+
+          {% set mytag = beginn.day|int %}
+          {% set stunde = beginn.hour|int %}
+          {% set myviertel = (beginn.minute|int / 15)|int %}
+
+          {% if termin.ende < ogrenze %}
+            {% set mydauer_viertel = ((termin.ende - beginn).seconds / (15 * 60))|int %}
+          {% else %}
+            {% if beginn < ogrenze %}
+              {% set mydauer_viertel = 4 %}
+            {% else %}
+              {% set mydauer_viertel = ((ogrenze - beginn).seconds / (15 * 60))|int %}
+            {% endif %}
+          {% endif %}
+
+          {% if mydauer_viertel < 1 %}
+            {% set mydauer_viertel = 1 %}
+          {% endif %}
+        {% endif %}
+
+        {% if termin.beginn.date() < termin.ende.date() and termin.beginn.date() != ugrenze.date() and termin.autor != "TP" %}
+          <div class="termin" data-autor="{{- termin.autor -}}" data-wtag="{{- mytag -}}" 
+            data-stunde="7" data-viertel="0" data-dauer_viertel="3">
+            <p>{{- termin.beginn.strftime("%d.%m %H:%M") -}}
+               <br>
+               {{- termin.ende.strftime("%d.%m %H:%M") -}}
+            </p>
+        {% else %}
+          <div class="termin" data-autor="{{- termin.autor -}}" data-wtag="{{- mytag -}}" 
+            data-stunde="{{- stunde -}}" data-viertel="{{- myviertel -}}" data-dauer_viertel="{{- mydauer_viertel -}}">
+        {% endif %}
+          {% if preview == 0 %} 
+            <a class="termin" href="{{- url_for('kalender.edit', id=termin.id) -}}">
+          {% else %}
+            <a class="termin" href="#">
+          {% endif %}
+            {% if termin.autor == "TP" %}
+              {{- termin.beginn.strftime("%d.%m.") + "-" + termin.ende.strftime("%d.%m.") + ' ' + termin.thema -}}
+            {% else %}
+              {{- termin.beginn.strftime("%H:%M") + "-" + termin.ende.strftime("%H:%M") + ' ' + termin.thema -}}
+            {% endif %}
+            </a>
+          </div>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  <div id="pop-up">
+     <p>This div only appears when the trigger link is hovered over. Otherwise it is hidden from view.</p>
+  </div>
+
+  <script>
+    var zindexmax = 9;
+
+    function platziere_termine(){
+        var dwtagvor = -1;
+        var schedule = [(24*4)]; // [(24*2)]
+
+        $('div.termin').each( function(){
+            var dautor = $(this).attr( "data-autor");
+            var dwtag = $(this).attr( "data-wtag");
+            var dstunde = $(this).attr( "data-stunde");
+            var dviertel = $(this).attr( "data-viertel");
+            var ddauer_viertel = $(this).attr( "data-dauer_viertel");
+
+            var vwidth = 100;
+            var vheight = 10;
+            var vtop = -1;
+            var border = 0;
+            var borderheight = 0;
+            var vstageleft = 1;
+
+            // farbe für autoren setzen
+            if( dautor == "Elfi"){
+                var bg = "#BBE4F3";
+            }
+
+            if( dautor == "Ordi" || dautor == "Gerold" ){
+                var bg = "#FBFBB1";
+            }
+
+            if( dautor == "TP"){
+                var bg = "#EDA9D5";
+                vwidth = 50; // 30
+            }
+
+            // 1) clear schedule wenn neuer tag: alle viertel stunden auf null setzen
+            if( dwtag != dwtagvor){
+                for( var i = (7 * 4); i < (24 * 4); i++ ){
+                    schedule[i] = [15];
+                    schedule[i][0] = 0;
+                    schedule[i][1] = 0;
+                    schedule[i][2] = 0;
+                    schedule[i][3] = 0;
+                    schedule[i][4] = 0;
+                    schedule[i][5] = 0;
+                    schedule[i][6] = 0;
+                    schedule[i][7] = 0;
+                    schedule[i][8] = 0;
+                    schedule[i][9] = 0;
+                    schedule[i][10] = 0;
+                    schedule[i][11] = 0;
+                    schedule[i][12] = 0;
+                    schedule[i][13] = 0;
+                    schedule[i][14] = 0;
+                }
+            }
+
+            // 2) strutur befuellen (pro viertel stunden)
+            var startzeit = Number(dstunde) * 4 + Number(dviertel);
+            var endzeit = startzeit + Number(ddauer_viertel);
+            var index = 0;
+            for( var j = 0; j < 15; j++ ){
+                if(schedule[startzeit][j] == 0){
+                    index = j;
+                    break;
+                }
+            }
+            for( var i = startzeit; i < endzeit; i++ ){
+                schedule[i][index] = 1;
+            }
+
+            if(dwtag < 10){
+              leadingtag = "0";
+            }
+            else{
+              leadingtag = "";
+            }
+            if(dstunde < 10){
+              leadingstd = "0";
+            }
+            else{
+              leadingstd = "";
+            }
+            var caltdid = '#c' + leadingtag + dwtag + "_" + leadingstd + dstunde;
+            console.log( "caltdid=" + caltdid );
+            var caltd = $( caltdid );
+            var px_pro_viertelstunde = 16 // caltd.height() / 4 + 0; // + 2
+            dwtagvor = dwtag;
+            dstundevor = dstunde;
+            ddauervor = ddauer_viertel;
+            // position (top und left) setzen
+            if(index < 5){
+                vstageleft = index;
+            }
+            if(index > 4 && index < 10){
+                vtop = 19;
+                vstageleft = (index - 5);
+            }
+            if(index > 9 && index < 15){
+                vtop = 39;
+                vstageleft = (index - 10);
+            }
+            // height setzen
+            if( dautor == "TP"){
+                vheight = 40; // 20
+            }
+            else{
+                vheight = (px_pro_viertelstunde * Number(ddauer_viertel));
+            }
+
+            border = Number(dviertel) / 4;
+
+            borderheight = Number(dviertel) / 4;
+
+            var cssprops = {
+                'background' : bg,
+                'border' : '1px solid black',
+                'position' : 'absolute',
+                'width' : vwidth + 'px',
+                'height' : vheight + 'px', // + borderheight
+                'top' : (caltd.offset().top + 68 / 4 * Number(dviertel) + vtop) + 'px', // + border
+                'left' : (caltd.offset().left + 36 + 20 * vstageleft) + 'px',
+                'overflow' : 'hidden'
+            }
+
+            $(this).css( cssprops );
+
+        });
+    }
+
+    function handle_mouseover(){
+       var moveLeft = 20;
+       var moveDown = 10;
+
+       $('div.termin').hover(function(e){
+         var txt = $(this).find("a").text();
+         $('div#pop-up').find("p").text(txt);
+         $('div#pop-up').show();
+
+       }, function(){
+         $('div#pop-up').hide();
+       });
+
+       $('div.termin').mousemove(function(e) {
+         $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+       });
+     }
+
+
+  </script>

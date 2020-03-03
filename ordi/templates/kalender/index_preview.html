@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" initial-scale="1.0">
+        <title></title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui-1.12.1.min.css') }}">
+        <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='jquery-ui-1.12.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+    </head>
+    <body>
+      {% set preview = 1 %}
+      {% include 'kalender/_kalender.html' %}
+
+      <script>
+        function build_url(kwadjust){
+           var kjahr = $("#kjahr").find("option:selected").val(); 
+           var kmonat = $("#kmonat").find("option:selected").val(); 
+           var ktag = $("input:hidden[name=ktag]").val(); 
+           url = "/kalender/index2?" + "kjahr=" + kjahr.toString() + "&kmonat=" + kmonat.toString() + "&ktag=" + ktag.toString() + "&kwadjust=" + kwadjust.toString();
+           return url; 
+        }
+
+        $(document).ready(function(){
+          platziere_termine();
+
+          $(window).resize( platziere_termine );
+
+          $("#kjahr").change(function(){
+            window.location = build_url(0)
+            return false; 
+          });
+
+          $("#kmonat").change(function(){
+            window.location = build_url(0);
+            return false; 
+          });
+
+          $("#kwadd").click(function(){
+            window.location = build_url(1);
+            return false; 
+          });
+
+          $("#kwsub").click(function(){
+            window.location = build_url(-1);
+            return false; 
+          });
+
+          handle_mouseover();
+        });
+      </script>      
+    </body>
+</html>

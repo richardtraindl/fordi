@@ -27,6 +27,52 @@ def adjust_datum(datum):
     minute = (datum.minute // 15)  * 15
     return datetime(year=datum.year, month=datum.month, day=datum.day, hour=datum.hour, minute=minute, second=0, microsecond=0)
 
+@bp.route('/index2', methods=('GET',))
+@login_required
+def index2():
+    aktdatum = adjust_datum(datetime.now())
+    kaldatum = calc_kaldatum(aktdatum)
+
+    #preview = request.args.get('preview')
+    #kaldatum = request.args.get('kaldatum')
+    kjahr = request.args.get('kjahr')
+    kmonat = request.args.get('kmonat')
+    ktag = request.args.get('ktag')
+    kwadjust = request.args.get('kwadjust')
+
+    if(kjahr and kmonat and ktag):
+        try:
+            kjahr = int(kjahr)
+            kmonat = int(kmonat)
+            ktag = int(ktag)
+            datum = datetime(year=kjahr, month=kmonat, day=ktag)
+            kaldatum = calc_kaldatum(datum)
+        except:
+            flash("error")
+            return render_template('kalender/index_preview.html', aktdatum=aktdatum, 
+                                    kaldatum=kaldatum, jahre=jahre, monate=monate, 
+                                    wochentage=wochentage, page_title="Kalender")
+    if(kwadjust):
+        try:
+            kwadjust = int(kwadjust)
+            kaldatum += timedelta(weeks=kwadjust)
+        except:
+            flash("error")
+            return render_template('kalender/index_preview.html', aktdatum=aktdatum, 
+                                    kaldatum=kaldatum, jahre=jahre, monate=monate, 
+                                    wochentage=wochentage, page_title="Kalender")
+
+    kaldatum_ende = kaldatum + timedelta(days=7)
+
+    termine = db.session.query(Termin) \
+                .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
+                            and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
+
+    return render_template('kalender/index_preview.html', termine=termine, aktdatum=aktdatum, 
+                            kaldatum=kaldatum, jahre=jahre, monate=monate, 
+                            wochentage=wochentage, page_title="Kalender")
+
+
 @bp.route('/', methods=('GET', 'POST'))
 @bp.route('/index', methods=('GET', 'POST'))
 @bp.route('/<kaldatum>/index', methods=('GET', 'POST'))

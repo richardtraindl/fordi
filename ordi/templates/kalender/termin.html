@@ -151,6 +151,23 @@
             changeMonth: true,
             changeYear: true 
           });
+          
+          $(".stunde1").click(function(){ 
+            var beginn = $(this).attr("beginn");
+            date_begin = beginn.substring(0, 11);
+            time_begin = beginn.substring(11, 16);
+            $("#date_begin").val(date_begin);
+            $("#time_begin").val(time_begin);
+          });
+
+          $(".stunde2").click(function(){ 
+            var beginn = $(this).attr("beginn");
+            date_begin = beginn.substring(0, 11);
+            time_begin = beginn.substring(11, 16);
+            $("#date_begin").val(date_begin);
+            $("#time_begin").val(time_begin);
+          });
+
         })
       </script>
 {% endblock %}

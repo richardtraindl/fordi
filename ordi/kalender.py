@@ -27,50 +27,46 @@ def adjust_datum(datum):
     minute = (datum.minute // 15)  * 15
     return datetime(year=datum.year, month=datum.month, day=datum.day, hour=datum.hour, minute=minute, second=0, microsecond=0)
 
-@bp.route('/index2', methods=('GET',))
-@login_required
-def index2():
-    aktdatum = adjust_datum(datetime.now())
-    kaldatum = calc_kaldatum(aktdatum)
-
-    #preview = request.args.get('preview')
-    #kaldatum = request.args.get('kaldatum')
-    kjahr = request.args.get('kjahr')
-    kmonat = request.args.get('kmonat')
-    ktag = request.args.get('ktag')
-    kwadjust = request.args.get('kwadjust')
-
-    if(kjahr and kmonat and ktag):
-        try:
-            kjahr = int(kjahr)
-            kmonat = int(kmonat)
-            ktag = int(ktag)
-            datum = datetime(year=kjahr, month=kmonat, day=ktag)
-            kaldatum = calc_kaldatum(datum)
-        except:
-            flash("error")
-            return render_template('kalender/index_preview.html', aktdatum=aktdatum, 
-                                    kaldatum=kaldatum, jahre=jahre, monate=monate, 
-                                    wochentage=wochentage, page_title="Kalender")
-    if(kwadjust):
-        try:
-            kwadjust = int(kwadjust)
-            kaldatum += timedelta(weeks=kwadjust)
-        except:
-            flash("error")
-            return render_template('kalender/index_preview.html', aktdatum=aktdatum, 
-                                    kaldatum=kaldatum, jahre=jahre, monate=monate, 
-                                    wochentage=wochentage, page_title="Kalender")
-
+def read_termine(kaldatum):
     kaldatum_ende = kaldatum + timedelta(days=7)
 
-    termine = db.session.query(Termin) \
-                .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
-                            and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
+    return db.session.query(Termin) \
+            .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
+                        and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
 
-    return render_template('kalender/index_preview.html', termine=termine, aktdatum=aktdatum, 
+
+@bp.route('/preview', methods=('GET', 'POST'))
+@login_required
+def preview():
+    aktdatum = adjust_datum(datetime.now())
+
+    try:
+        str_aktdatum = request.form['aktdatum']
+        kaldatum = calc_kaldatum(aktdatum)
+    except:
+        try:
+            str_kjahr = request.form['kjahr']
+            kjahr = int(str_kjahr)
+            str_kmonat = request.form['kmonat']
+            kmonat = int(str_kmonat)
+            str_ktag = request.form['ktag']
+            ktag = int(str_ktag)
+            str_kwadjust = request.form['kwadjust']
+            kwadjust = int(str_kwadjust)
+
+            datum = datetime(year=kjahr, month=kmonat, day=ktag)
+            kaldatum = calc_kaldatum(datum)
+            kaldatum += timedelta(weeks=kwadjust)
+        except:
+            ret = "error"
+            return ret
+
+    termine = read_termine(kaldatum)
+
+    ret = render_template('kalender/_kalender.html', termine=termine, aktdatum=aktdatum, 
                             kaldatum=kaldatum, jahre=jahre, monate=monate, 
-                            wochentage=wochentage, page_title="Kalender")
+                            wochentage=wochentage, preview=1)
+    return ret
 
 
 @bp.route('/', methods=('GET', 'POST'))
@@ -112,11 +108,7 @@ def index(kaldatum=None):
 
             kaldatum += timedelta(weeks=adjust)
 
-    kaldatum_ende = kaldatum + timedelta(days=7)
-
-    termine = db.session.query(Termin) \
-                .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
-                            and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
+    termine = read_termine(kaldatum)
 
     return render_template('kalender/index.html', termine=termine, aktdatum=aktdatum, 
                             kaldatum=kaldatum, jahre=jahre, monate=monate, 
@@ -128,6 +120,8 @@ def index(kaldatum=None):
 @bp.route('/tierhaltung/<int:tierhaltung_id>/create', methods=('GET', 'POST'))
 @login_required
 def create(beginn=None, tierhaltung_id=None):
+    aktdatum = adjust_datum(datetime.now())
+
     if(tierhaltung_id):
         tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == tierhaltung_id).first()
     else:
@@ -146,8 +140,12 @@ def create(beginn=None, tierhaltung_id=None):
 
         if(beginn >= ende):
             flash("Ende liegt vor Beginn.")
+            kaldatum = calc_kaldatum(beginn)
+            termine = read_termine(kaldatum)
             return render_template('kalender/termin.html', termin=None, 
                                    tierhaltung=tierhaltung, autoren=AUTOREN, 
+                                   termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
+                                   jahre=jahre, monate=monate, wochentage=wochentage,                                   
                                    page_title="Termin")
 
         thema = request.form['thema']
@@ -169,53 +167,24 @@ def create(beginn=None, tierhaltung_id=None):
                 
         ende = dtbeginn + timedelta(hours=1)
         termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="")
+
+        kaldatum = calc_kaldatum(dtbeginn)
+        termine = read_termine(kaldatum)
+
         return render_template('kalender/termin.html', termin=termin, 
                                tierhaltung=tierhaltung, autoren=AUTOREN, 
-                               page_title="Termin")
-
-
-@bp.route('/<int:tierhaltung_id>/create_for_ordi', methods=('GET', 'POST'))
-@login_required
-def create_for_ordi(tierhaltung_id):
-    tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == tierhaltung_id).first()
-
-    if(request.method == 'POST'):
-        autor = request.form['autor']
-
-        time_begin = request.form['time_begin']
-        date_begin = request.form['date_begin']
-        beginn = datetime.strptime(date_begin + " " + time_begin, "%Y-%m-%d %H:%M")
-
-        time_end = request.form['time_end']
-        date_end = request.form['date_end']
-        ende = datetime.strptime(date_end + " " + time_end, "%Y-%m-%d %H:%M")
-
-        if(beginn >= ende):
-            flash("Ende liegt vor Beginn.")
-            return render_template('kalender/termin.html', termin=None, 
-                                   tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
-
-        thema = request.form['thema']
-
-        termin = Termin(autor=autor, beginn=beginn, ende=ende, thema=thema, tierhaltung_id=tierhaltung_id)
-        db.session.add(termin)
-        db.session.commit()
-
-        return redirect(url_for('kalender.index', 
-                                kaldatum=termin.beginn))
-    else:
-        dtbeginn = adjust_datum(datetime.now())
-        ende = dtbeginn + timedelta(hours=1)
-        termin = Termin(autor="Gerold", beginn=dtbeginn, ende=ende, thema="", tierhaltung=tierhaltung)
-        return render_template('kalender/termin.html', termin=termin, 
-                               tierhaltung=tierhaltung, autoren=AUTOREN, 
+                               termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
+                               jahre=jahre, monate=monate, wochentage=wochentage,
                                page_title="Termin")
 
 
 @bp.route('/<int:id>/edit', methods=('GET','POST'))
 @login_required
 def edit(id):
+    aktdatum = adjust_datum(datetime.now())
+
     termin = db.session.query(Termin).get(id)
+
     if(termin.tierhaltung_id):
         tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == termin.tierhaltung_id).first()
     else:
@@ -234,8 +203,13 @@ def edit(id):
 
         if(termin.beginn >= termin.ende):
             flash("Ende liegt vor Beginn.")
+            kaldatum = calc_kaldatum(termin.beginn)
+            termine = read_termine(kaldatum)
             return render_template('kalender/termin.html', termin=termin, 
-                                    tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
+                               tierhaltung=tierhaltung, autoren=AUTOREN, 
+                               termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
+                               jahre=jahre, monate=monate, wochentage=wochentage,
+                               page_title="Termin")
 
         termin.thema = request.form['thema']
 
@@ -243,8 +217,13 @@ def edit(id):
 
         return redirect(url_for('kalender.index', kaldatum=termin.beginn))
     else:
+        kaldatum = calc_kaldatum(termin.beginn)
+        termine = read_termine(kaldatum)
         return render_template('kalender/termin.html', termin=termin, 
-                               tierhaltung=tierhaltung, autoren=AUTOREN, page_title="Termin")
+                               tierhaltung=tierhaltung, autoren=AUTOREN, 
+                               termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
+                               jahre=jahre, monate=monate, wochentage=wochentage,
+                               page_title="Termin")
 
 
 @bp.route('/<int:id>/delete', methods=('GET',))

@@ -115,10 +115,9 @@
       {% endif %}
     </div>
 
-    <div style="height: 60vh; overflow-y: scroll;">
-      <iframe src="/kalender/index2" style="width: 90%; height: 100%">
-        <p>Your browser does not support iframes.</p>
-      </iframe>
+    <div id="kalender-wrapper">
+      {% set preview = 1 %}
+      {% include 'kalender/_kalender.html' %}
     </div>
 
       <script>

@@ -9,32 +9,4 @@
 {% block content %}
   {% set preview = 0 %}
   {% include 'kalender/_kalender.html' %}
-  
-  <script>
-      $(document).ready(function() {
-        platziere_termine();
-
-        $(window).resize( platziere_termine );
-
-        $("#kjahr").change(function() {
-           $("#mainform").submit();
-        });
-
-        $("#kmonat").change(function() {
-           $("#mainform").submit();
-        });
-
-        $("#kwadd").click(function() {
-          $("#kwadjust").val(1);
-           $("#mainform").submit();
-        });
-
-        $("#kwsub").click(function() {
-          $("#kwadjust").val(-1);
-           $("#mainform").submit();
-        });
-
-        handle_mouseover();
-    });
-  </script>
 {% endblock %}

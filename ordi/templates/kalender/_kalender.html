@@ -1,5 +1,9 @@
 
+{% if preview == 0 %} 
   <form id="mainform" method="post" action="{{ url_for('kalender.index') }}">
+{% else %}
+  <form id="mainform" method="post" action="{{ url_for('kalender.preview') }}">
+{% endif %}
     <div class="nav" style="width: 100%; display: grid; grid-template-columns: auto auto auto;">
       <div>
         <label for="kjahr">Jahr:</label>
@@ -21,11 +25,13 @@
       </div>
 
       <div style="text-align:right">
-      {% if preview == 0 %}
-        <a style="color:red;" href="{{ url_for('kalender.index') }}">Tagesdatum: &nbsp;
+      {% if preview == 0 %} 
+        <a id="aktdatum" style="color:red;" href="{{ url_for('kalender.index') }}">
       {% else %}
-        <a style="color:red;" href="{{ url_for('kalender.index2') }}">Tagesdatum: &nbsp;
+         {% set now = aktdatum.strftime('%Y-%m-%d %H:%M:00') %}
+        <a id="aktdatum" style="color:red;" href="#" onclick="post_aktdatum(' {{- now -}} ');">
       {% endif %}
+          Tagesdatum: &nbsp;
           {{- aktdatum.strftime("%d.") -}}
           {{- monate[aktdatum.month - 1][0] -}} &nbsp;
           {{- aktdatum.strftime("%Y") -}}, KW:&nbsp; {{- aktdatum|calc_kw -}}
@@ -33,6 +39,8 @@
       </div>
     </div>
   </form>
+
+  <div id="result"></div>
 
   <table id="cal">
     <colgroup>
@@ -85,11 +93,11 @@
         <div class="div-table">
           <div class="div-row">
             <div class="div-cell inner">
-              {% if preview == 0 %}  
+              {% if preview == 0 %} 
                 <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=stddatum.strftime('%Y-%m-%d %H:%M:00')) }}">
-              {% else %}
-                <a class="{{- klasse -}}" href="#">
-              {% endif %}
+              {% else %} 
+                <a class="{{- klasse -}}" href="#" beginn="{{- stddatum.strftime('%Y-%m-%d %H:%M:00') -}}">
+              {% endif %} 
                 {{- stddatum.strftime("%H:%M") -}}
                 </a>
               {% set klasse = "stunde1" %}
@@ -103,11 +111,11 @@
             {% if std >= 14 and std <= 19 %}
               {% if preview == 0 %} 
                 <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=mindatum.strftime('%Y-%m-%d %H:%M:00')) }}">
-              {% else %}
-                <a class="{{- klasse -}}" href="#">
-              {% endif %}
+              {% else %} 
+                <a class="{{- klasse -}}" href="#" beginn="{{- mindatum.strftime('%Y-%m-%d %H:%M:00') -}}">
+              {% endif %} 
                 {{- mindatum.strftime("%H:%M") -}}
-                </a>
+              </a>
             {% else %}
               <span style="font-size:12px;">&nbsp;</span>
             {% endif %}
@@ -333,22 +341,90 @@
     }
 
     function handle_mouseover(){
-       var moveLeft = 20;
-       var moveDown = 10;
+      var moveLeft = 20;
+      var moveDown = 10;
 
-       $('div.termin').hover(function(e){
-         var txt = $(this).find("a").text();
-         $('div#pop-up').find("p").text(txt);
-         $('div#pop-up').show();
+      $('div.termin').hover(function(e){
+        var txt = $(this).find("a").text();
+        $('div#pop-up').find("p").text(txt);
+        $('div#pop-up').show();
+      }, function(){
+        $('div#pop-up').hide();
+      });
 
-       }, function(){
-         $('div#pop-up').hide();
-       });
+      $('div.termin').mousemove(function(e) {
+        $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+    }
 
-       $('div.termin').mousemove(function(e) {
-         $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
-       });
-     }
+    function post_aktdatum(aktdatum){
+      var url = "/kalender/preview";
+      var posting = $.post( url, { aktdatum: aktdatum } );
 
+      posting.done(function(data){
+        if(data != "error"){
+          $("#kalender-wrapper").empty().html(data);
+        }
+      });
+    }
+     
+    function post_data(){
+      var kjahr = $("#kjahr").find("option:selected").val();
+      var kmonat = $("#kmonat").find("option:selected").val();
+      var ktag = $("input:hidden[name=ktag]").val();
+      var kwadjust = $("#kwadjust").val();
+      var url = "/kalender/preview";
+      var posting = $.post( url, { kjahr: kjahr, kmonat: kmonat, ktag: ktag, kwadjust: kwadjust } );
 
+      posting.done(function(data){
+        if(data != "error"){
+          $("#kalender-wrapper").empty().html(data);
+        }
+      });
+    }
+
+    $(document).ready(function() {
+      platziere_termine();
+
+      handle_mouseover();
+
+      $(window).resize(platziere_termine);
+
+      $("#kjahr").change(function() {
+        {% if preview == 1 %}
+          post_data();
+        {% else %}
+          $("#mainform").submit();
+        {% endif %}
+      });
+
+      $("#kmonat").change(function() {
+        {% if preview == 1 %}
+          post_data();
+        {% else %}
+          $("#mainform").submit();
+        {% endif %}
+      });
+
+      $("#kwadd").click(function() {
+        $("#kwadjust").val(1);
+
+        {% if preview == 1 %}
+          post_data();
+        {% else %}
+          $("#mainform").submit();
+        {% endif %}
+      });
+
+      $("#kwsub").click(function() {
+        $("#kwadjust").val(-1);
+
+        {% if preview == 1 %}
+          post_data();
+        {% else %}
+          $("#mainform").submit();
+        {% endif %}
+      });
+
+    });
   </script>

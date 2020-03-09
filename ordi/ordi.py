@@ -1,12 +1,12 @@
 
 
-from datetime import date
+from datetime import date, timedelta
 from operator import attrgetter
 import re, os
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 from werkzeug.exceptions import abort
-from sqlalchemy import func, distinct
+from sqlalchemy import func, distinct, or_, and_
 
 from . import db
 from ordi.auth import login_required

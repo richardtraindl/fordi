@@ -9,10 +9,18 @@
 {% block content %}
 
     {% if termin and termin.id %}
-      <form method="post" action="{{ url_for('kalender.edit', id=termin.id) }}">
+      {% if th %}
+        <form method="post" action="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
+      {% else %}
+        <form method="post" action="{{ url_for('kalender.edit', id=termin.id) }}">
+      {% endif %}
     {% else %}
       {% if tierhaltung %}
-        <form method="post" action="{{ url_for('kalender.create', tierhaltung_id=tierhaltung.id) }}">
+        {% if th %}
+          <form method="post" action="{{ url_for('kalender.create', tierhaltung_id=tierhaltung.id, th='th') }}">
+        {% else %}
+          <form method="post" action="{{ url_for('kalender.create', tierhaltung_id=tierhaltung.id) }}">
+        {% endif %}
       {% else %}
         <form method="post" action="{{ url_for('kalender.create') }}">
       {% endif %}

@@ -145,9 +145,11 @@ def show_tierhaltung(id):
     tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
     behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).order_by(Behandlung.behandlungsdatum.asc()).all()
     datum = datetime.today()
-    
+    datum_ende = datum + timedelta(days=7)
+
     termine = db.session.query(Termin) \
-                .filter(Termin.tierhaltung_id == tierhaltung.id, Termin.beginn >= datum).all()
+                .filter(or_(and_(Termin.beginn < datum, Termin.ende > datum), 
+                            and_(Termin.beginn >= datum, Termin.beginn < datum_ende))).all()
 
     return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
         termine=termine, behandlungen=behandlungen, datum=datum, 

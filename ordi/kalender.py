@@ -222,7 +222,10 @@ def edit(id):
 
         db.session.commit()
 
-        return redirect(url_for('kalender.index', kaldatum=termin.beginn))
+        if(th):
+            return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
+        else:
+            return redirect(url_for('kalender.index', kaldatum=termin.beginn))
     else:
         kaldatum = calc_kaldatum(termin.beginn)
         termine = read_termine(kaldatum)

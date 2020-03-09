@@ -31,15 +31,16 @@
     {% endif %}
 
     {% for termin in termine %}
-        <p>
+        <p><a href="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
             {{- termin.autor -}} &nbsp; 
             {{- termin.thema -}} &nbsp; 
             {{- termin.beginn -}} &nbsp; 
             {{- termin.ende -}}
+            </a>
         </p>
     {% endfor %}
     
-    <p><a class="btn" href="{{ url_for('kalender.create', tierhaltung='tierhaltung', tierhaltung_id=tierhaltung.id) }}">neuer Termin</a>
+    <p><a class="btn" href="{{ url_for('kalender.create', th='th', tierhaltung_id=tierhaltung.id) }}">neuer Termin</a>
 
     <div class="gap"></div>
 

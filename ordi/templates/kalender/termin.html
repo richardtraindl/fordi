@@ -104,16 +104,22 @@
     <div class="flex-container">
       <p><input type="submit" id="sichern" class="btn" style="font-size: 16px; line-height: 18px;" value="sichern" onclick="return checkdate();"></p>
 
-      {% if termin %}
-        <p><a class="btn" href="{{ url_for('kalender.index', kaldatum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a></p>
+      {% if th %}
+        <p><a class="btn" href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">abbrechen</a></p>
       {% else %}
-        <p><a class="btn" href="{{ url_for('kalender.index', kaldatum=request.form['date_begin'] + ' ' + request.form['time_begin']) }}">abbrechen</a></p>
+        {% if termin %}
+          <p><a class="btn" href="{{ url_for('kalender.index', kaldatum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a></p>
+        {% else %}
+          <p><a class="btn" href="{{ url_for('kalender.index', kaldatum=request.form['date_begin'] + ' ' + request.form['time_begin']) }}">abbrechen</a></p>
+        {% endif %}
       {% endif %}
 
       {% if termin.id %}
         <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a></p>
       {% endif %}
     </div>
+
+    <div class="gap"></div>
 
     <div id="kalender-wrapper">
       {% set preview = 1 %}
@@ -158,6 +164,8 @@
             time_begin = beginn.substring(11, 16);
             $("#date_begin").val(date_begin);
             $("#time_begin").val(time_begin);
+            $("#date_end").val(date_begin);
+            $("#time_end").val(time_begin);
           });
 
           $(".stunde2").click(function(){ 
@@ -166,6 +174,8 @@
             time_begin = beginn.substring(11, 16);
             $("#date_begin").val(date_begin);
             $("#time_begin").val(time_begin);
+            $("#date_end").val(date_begin);
+            $("#time_end").val(time_begin);
           });
 
         })

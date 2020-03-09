@@ -190,7 +190,6 @@ def edit(id):
     termin = db.session.query(Termin).get(id)
 
     th = request.args.get('th')
-    print(th)
 
     if(termin.tierhaltung_id):
         tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == termin.tierhaltung_id).first()

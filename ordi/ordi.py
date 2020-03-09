@@ -148,8 +148,9 @@ def show_tierhaltung(id):
     datum_ende = datum + timedelta(days=7)
 
     termine = db.session.query(Termin) \
-                .filter(or_(and_(Termin.beginn < datum, Termin.ende > datum), 
-                            and_(Termin.beginn >= datum, Termin.beginn < datum_ende))).all()
+                .filter(and_(Termin.tierhaltung_id==id, 
+                             or_(and_(Termin.beginn < datum, Termin.ende > datum), 
+                                 and_(Termin.beginn >= datum, Termin.beginn < datum_ende)))).all()
 
     return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
         termine=termine, behandlungen=behandlungen, datum=datum, 

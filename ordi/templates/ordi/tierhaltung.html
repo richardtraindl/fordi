@@ -25,17 +25,17 @@
     <div class="gap"></div>
 
     {% if termine|length == 0 %}
-        <p>Keine Termine geplant.</p>
+        <p class="small-gap">Keine Termine geplant.</p>
     {% else %}
-        <p>Geplante Termine:</p>
+        <p class="small-gap">Geplante Termine:</p>
     {% endif %}
 
     {% for termin in termine %}
         <p class="small-gap"><a href="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
             {{- termin.autor -}} &nbsp; 
             {{- termin.thema -}} &nbsp; 
-            {{- termin.beginn -}} &nbsp; 
-            {{- termin.ende -}}
+            {{- termin.beginn.strftime('%Y-%m-%d %H:%M') -}} &nbsp; - &nbsp; 
+            {{- termin.ende.strftime('%Y-%m-%d %H:%M') -}}
             </a>
         </p>
     {% endfor %}

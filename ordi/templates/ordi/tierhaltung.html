@@ -24,25 +24,23 @@
 
     <div class="gap"></div>
 
-    {% if termine|length == 0 %}
-        <p class="small-gap">Keine Termine geplant.</p>
-    {% else %}
-        <p class="small-gap">Geplante Termine:</p>
-    {% endif %}
-
-    {% for termin in termine %}
-        <p class="small-gap"><a href="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
-            {{- termin.autor -}} &nbsp; 
+    <div class="flex-container ">
+      {% if termin %}
+        <p>Nächster Termin: &nbsp; 
+          <a href="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
             {{- termin.thema -}} &nbsp; 
             {{- termin.beginn.strftime('%Y-%m-%d %H:%M') -}} &nbsp; - &nbsp; 
-            {{- termin.ende.strftime('%Y-%m-%d %H:%M') -}}
-            </a>
+            {{- termin.ende.strftime('%Y-%m-%d %H:%M') -}}  &nbsp; 
+            {{- termin.autor -}}
+          </a>
         </p>
-    {% endfor %}
+      {% else %}
+        <p>Kein Termin geplant.</p>        
+        <p><a class="btn" href="{{ url_for('kalender.create', th='th', tierhaltung_id=tierhaltung.id) }}">neuer Termin</a>
+      {% endif %}
+    </div>
     
-    <p><a class="btn" href="{{ url_for('kalender.create', th='th', tierhaltung_id=tierhaltung.id) }}">neuer Termin</a>
-
-    <div class="small-gap"></div>
+    <div class="gap"></div>
 
     <table class="liste">
         <thead>

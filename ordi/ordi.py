@@ -147,13 +147,13 @@ def show_tierhaltung(id):
     datum = datetime.today()
     datum_ende = datum + timedelta(days=7)
 
-    termine = db.session.query(Termin) \
-                .filter(and_(Termin.tierhaltung_id==id, 
-                             or_(and_(Termin.beginn < datum, Termin.ende > datum), 
-                                 and_(Termin.beginn >= datum, Termin.beginn < datum_ende)))).all()
+    termin = db.session.query(Termin) \
+               .filter(and_(Termin.tierhaltung_id==id, 
+                            or_(and_(Termin.beginn < datum, Termin.ende > datum), 
+                                and_(Termin.beginn >= datum, Termin.beginn < datum_ende)))).order_by(Termin.beginn.desc()).first()
 
     return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
-        termine=termine, behandlungen=behandlungen, datum=datum, 
+        termin=termin, behandlungen=behandlungen, datum=datum, 
         anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
         laborreferenzen=laborreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
 

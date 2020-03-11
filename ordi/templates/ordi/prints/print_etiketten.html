@@ -1,0 +1,28 @@
+<html>
+    <body>
+      <div style="display: table;">
+      {% for idx, tierhaltung in enumerate(tierhaltungen) %}
+        {% if loop.index % 3 == 0 %}
+          <div style="display: table-row;">
+        {% endif %}
+            <div style="display: table-cell; width: 123mm;">
+              <p>
+                {{- tierhaltung.person.anredecode | mapanrede -}} &nbsp; 
+                {{- tierhaltung.person.titel -}}
+              </p>
+              <p>
+                 {{- tierhaltung.person.familienname -}} &nbsp; 
+                 {{- tierhaltung.person.vorname -}}
+              </p>
+              <p>{{- tierhaltung.person.adresse.strasse -}}</p>
+              <p>
+                {{- tierhaltung.person.adresse.postleitzahl -}} &nbsp; 
+                {{- tierhaltung.person.adresse.ort -}}
+              </p>
+            </div>
+        {% if loop.index % 3 == 2 %}
+          </div>
+        {% endif %}
+        </div>
+    </body>
+</html>

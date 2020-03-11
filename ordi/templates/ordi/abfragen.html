@@ -83,12 +83,18 @@
     <div class="gap"></div>
 
     <div class="flex-container">
-        <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
+        <p><a class="btn" id="zur-karteikarte" href="#">zur Karteikarte</a></p>
+
+        <p><a class="btn" id="bericht-drucken" href="#">Bericht drucken</a></p>
+
+        <p><a class="btn" id="etiketten-drucken" href="#" disabled>Etiketten drucken</a></p>
+
+        <p><a class="btn" id="csv-exportieren" href="#" disabled>FA</a></p>
     </div>
 
 <script>
         $(document).ready(function() {
-            $('#zur_karteikarte').click(function(){ 
+            $('#zur-karteikarte').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
                     alert("Bitte eine Karteikarte auswählen!");
@@ -98,14 +104,39 @@
                 }
                 return false; 
             });
-            
+
+            $('#bericht-drucken').click(function(){ 
+                var id = $("input:radio[name=option]:checked").val(); 
+                if(id == null){
+                    alert("Bitte eine Karteikarte auswählen!");
+                }
+                else{
+                    window.location = "/" + id.toString() + "/print_bericht";
+                }
+                return false; 
+            });
+
+            $('#etiketten-drucken').click(function(){ 
+              window.location = "/print_etiketten";
+              return false;
+            });
+
+            $('#csv-exportieren').click(function(){ 
+              window.location = "/export_csv";
+              return false;
+            });
+
             $('#abfrage').change(function () {
                 var abfrage = $("select option:selected").text();
                 if(abfrage == "Behandlung" || abfrage == "Finanzamt" || abfrage == "Impfung"){
-                    $('#kriterium2').removeAttr('disabled');
+                  $('#kriterium2').removeAttr('disabled');
+                  $('#etiketten-drucken').removeAttr('disabled');
+                  $('#csv-exportieren').removeAttr('disabled');
                 }
                 else{
-                    $('#kriterium2').attr('disabled', 'disabled');
+                  $('#kriterium2').attr('disabled', 'disabled');
+                  $('#etiketten-drucken').attr('disabled', 'disabled');
+                  $('#csv-exportieren').attr('disabled', 'disabled');
                 }
             });
         });

@@ -188,3 +188,17 @@ def html2pdf(html, path_and_filename):
     parser.feed(html)
     fpdf.output(path_and_filename)
 
+
+def html2pdf_etiketten(html, path_and_filename):
+    fpdf = HTML2PDF()
+    fpdf.t_margin = 20
+    fpdf.r_margin = 16
+    fpdf.b_margin = 26
+    fpdf.l_margin = 10
+    fpdf.orientation = 'P'
+    fpdf.format = 'A4'
+    fpdf.add_page()
+    parser = MyHTMLParser(fpdf)
+    parser.feed(html)
+    fpdf.output(path_and_filename)
+

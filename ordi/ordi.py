@@ -677,6 +677,16 @@ def delete_rechnungszeile(rechnungszeile_id):
 # rechnung
 
 
+def dl_etiketten(tierhaltungen):
+    html = render_template('ordi/prints/print_etiketten.html', tierhaltungen=tierhaltungen)
+
+    filename = "etiketten.pdf"
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+
+    html2pdf_etiketten(html, path_and_filename)
+
+    return path_and_filename
+
 def str_to_date(str_date):
     datum = None
     error = ""

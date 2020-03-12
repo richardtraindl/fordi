@@ -197,6 +197,7 @@ def html2pdf_etiketten(html, path_and_filename):
     fpdf.l_margin = 10
     fpdf.orientation = 'P'
     fpdf.format = 'A4'
+    fpdf.set_font('Arial', '', 11)
     fpdf.add_page()
     parser = MyHTMLParser(fpdf)
     parser.feed(html)

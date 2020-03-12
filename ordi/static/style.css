@@ -126,6 +126,7 @@ textarea {
   color: Lightgray;
 }
 
+.grayed { color: Gray; }
 
 .small-gap {
   padding-bottom: 10px;

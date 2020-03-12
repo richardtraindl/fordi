@@ -677,13 +677,25 @@ def delete_rechnungszeile(rechnungszeile_id):
 # rechnung
 
 
-def dl_etiketten(tierhaltungen):
+def dl_etiketten(abfrage, tierhaltungen):
     html = render_template('ordi/prints/print_etiketten.html', tierhaltungen=tierhaltungen)
 
-    filename = "etiketten.pdf"
+    filename = abfrage + "_etiketten.pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
 
     html2pdf_etiketten(html, path_and_filename)
+
+    return path_and_filename
+
+def dl_csv(abfrage, tierhaltungen):
+    filename = abfrage + ".csv"
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+
+    f = open(path_and_filename, "x")
+
+    f.write("content!")
+
+    f.close()
 
     return path_and_filename
 
@@ -707,6 +719,8 @@ lst_abfragen = ["", "Adresse", "Arzneien", "Arzneimittel", "Behandlung", \
 @bp.route('/abfragen', methods=('GET', 'POST'))
 @login_required
 def abfragen():
+    output = ""
+
     if(request.method == 'POST'):
         abfrage = request.form['abfrage']
 
@@ -727,6 +741,11 @@ def abfragen():
             patient = True
         else:
             patient = False
+
+        try:
+            output = request.form['output']
+        except:
+            pass
 
         tierhaltungen = []
 
@@ -877,8 +896,24 @@ def abfragen():
         kunde = 1
         patient = 1
         tierhaltungen = []
+
+    if(output == "etiketten"):
+        path_and_filename = dl_etiketten(abfrage, tierhaltungen)
+        return send_file(path_and_filename, as_attachment=True)
+
+    if(output == "csv"):
+        path_and_filename = dl_csv(abfrage, tierhaltungen)
+        return send_file(path_and_filename, as_attachment=True)
+
     return render_template('ordi/abfragen.html', abfragen=lst_abfragen, 
                             abfrage=abfrage, kriterium1=kriterium1, 
                             kriterium2=kriterium2, twokriteria=twokriteria, kunde=kunde, 
                             patient=patient, tierhaltungen=tierhaltungen, page_title="Abfragen")
+
+
+@bp.route('/<int:id>/print_bericht', methods=('GET',))
+@login_required
+def print_bericht(id):
+    print("todo...")
+    return redirect(url_for('ordi.abfragen'))
 

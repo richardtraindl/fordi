@@ -42,6 +42,7 @@
                 {% endif %}
             </div>
             <div>
+                <input id="output" type="hidden" name="output" value="">
                 <input type="submit" value="suchen">
             </div>
         </div>
@@ -87,9 +88,9 @@
 
         <p><a class="btn" id="bericht-drucken" href="#">Bericht drucken</a></p>
 
-        <p><a class="btn" id="etiketten-drucken" href="#" disabled>Etiketten drucken</a></p>
+        <p><a class="btn grayed" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
 
-        <p><a class="btn" id="csv-exportieren" href="#" disabled>FA</a></p>
+        <p><a class="btn grayed" id="csv-exportieren" href="#">FA</a></p>
     </div>
 
 <script>
@@ -117,12 +118,18 @@
             });
 
             $('#etiketten-drucken').click(function(){ 
-              window.location = "/print_etiketten";
+              if($(this).hasClass('grayed') == false){
+                $("#output").val("etiketten");
+                $("form").submit();
+              }
               return false;
             });
 
             $('#csv-exportieren').click(function(){ 
-              window.location = "/export_csv";
+              if($(this).hasClass('grayed') == false){
+                $("#output").val("csv");
+                $("form").submit();
+              }
               return false;
             });
 
@@ -130,13 +137,13 @@
                 var abfrage = $("select option:selected").text();
                 if(abfrage == "Behandlung" || abfrage == "Finanzamt" || abfrage == "Impfung"){
                   $('#kriterium2').removeAttr('disabled');
-                  $('#etiketten-drucken').removeAttr('disabled');
-                  $('#csv-exportieren').removeAttr('disabled');
+                  $('#etiketten-drucken').removeClass('grayed');
+                  $('#csv-exportieren').removeClass('grayed');
                 }
                 else{
                   $('#kriterium2').attr('disabled', 'disabled');
-                  $('#etiketten-drucken').attr('disabled', 'disabled');
-                  $('#csv-exportieren').attr('disabled', 'disabled');
+                  $('#etiketten-drucken').addClass('grayed');
+                  $('#csv-exportieren').addClass('grayed');
                 }
             });
         });

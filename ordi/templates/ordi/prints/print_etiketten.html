@@ -1,28 +1,29 @@
 <html>
     <body>
       <div style="display: table;">
-      {% for idx, tierhaltung in enumerate(tierhaltungen) %}
+      {% for tierhaltung in tierhaltungen %}
         {% if loop.index % 3 == 0 %}
           <div style="display: table-row;">
         {% endif %}
             <div style="display: table-cell; width: 57mm;">
               <p>
-                {{- tierhaltung.person.anredecode | mapanrede -}} &nbsp; 
-                {{- tierhaltung.person.titel -}}
+                {{- tierhaltung.Person.anredecode | mapanrede -}} &nbsp; 
+                {{- tierhaltung.Person.titel -}}
               </p>
               <p>
-                 {{- tierhaltung.person.familienname -}} &nbsp; 
-                 {{- tierhaltung.person.vorname -}}
+                 {{- tierhaltung.Person.familienname -}} &nbsp; 
+                 {{- tierhaltung.Person.vorname -}}
               </p>
-              <p>{{- tierhaltung.person.adresse.strasse -}}</p>
+              <p>{{- tierhaltung.Person.adresse.strasse -}}</p>
               <p>
-                {{- tierhaltung.person.adresse.postleitzahl -}} &nbsp; 
-                {{- tierhaltung.person.adresse.ort -}}
+                {{- tierhaltung.Person.adresse.postleitzahl -}} &nbsp; 
+                {{- tierhaltung.Person.adresse.ort -}}
               </p>
             </div>
         {% if loop.index % 3 == 2 %}
           </div>
         {% endif %}
-        </div>
+      {% endfor %}
+      </div>
     </body>
 </html>

@@ -81,7 +81,6 @@ class cTag:
                         parent.grid_items_cnt = 0
 
     def prnt(self, fpdf, data):
-        print(self.tag, "width: ", str(self.width), "x: ", str(self.x))
         if(self.width != 0):
             fpdf.x = self.x
             fpdf.y = self.y

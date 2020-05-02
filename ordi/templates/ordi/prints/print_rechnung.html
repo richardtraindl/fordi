@@ -17,111 +17,103 @@
             </p>
         </div>
         
-        <div style="display: table; padding-bottom: 5mm;">
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 123mm;">
-                    Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}
-                </div>
-                <div style="display: table-cell; width: 40mm; text-align: right;">
-                    {{- rechnung.ausstellungsdatum -}}
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 123mm 40mm; padding-bottom: 5mm;">
+          <div>
+            Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}
+          </div>
+          <div style="text-align: right;">
+            {{- rechnung.ausstellungsdatum -}}
+          </div>
         </div>
 
         <div>
-            <p>
-                Patient: &nbsp; 
-                {{- rechnung.tier.tiername -}} &nbsp; 
-                {{- rechnung.tier.tierart -}} &nbsp; 
-                {%- if rechnung.tier.geburtsdatum -%}
-                    geb. &nbsp; {{- rechnung.tier.geburtsdatum -}}
-                {%- endif -%}
-            </p>
+          <p>
+            Patient: &nbsp; 
+            {{- rechnung.tier.tiername -}} &nbsp; 
+            {{- rechnung.tier.tierart -}} &nbsp; 
+            {%- if rechnung.tier.geburtsdatum -%}
+                geb. &nbsp; {{- rechnung.tier.geburtsdatum -}}
+            {%- endif -%}
+          </p>
         </div>
 
         <div>
-            <p>Chip: &nbsp; {{- rechnung.tier.chip_nummer -}}</p>
+          <p>Chip: &nbsp; {{- rechnung.tier.chip_nummer -}}</p>
         </div>
 
         <div>
-            <p>Diagnose: &nbsp; {{- rechnung.diagnose -}}</p>
+          <p>Diagnose: &nbsp; {{- rechnung.diagnose -}}</p>
         </div>
 
         <div style="padding-top: 5mm;">
-            <p>Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen.</p>
+          <p>Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen.</p>
         </div>
 
-        <div style="display: table;">
+        <div style="display: grid; grid-template-columns: 32mm 99mm 32mm;">
           {% for rechnungszeile in rechnungszeilen %}
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 32mm;">
-                    {{- rechnungszeile.datum -}}
-                </div>
-                <div style="display: table-cell; width: 99mm;">
-                    {{- rechnungszeile.artikel -}}
-                </div>
-                <div style="display: table-cell; width: 32mm; text-align: right;">
-                    {{- '{0:0.2f}'.format(rechnungszeile.betrag | float) -}}
-                </div>
+            <div>
+                {{- rechnungszeile.datum -}}
+            </div>
+            <div>
+                {{- rechnungszeile.artikel -}}
+            </div>
+            <div style="text-align: right;">
+                {{- '{0:0.2f}'.format(rechnungszeile.betrag | float) -}}
             </div>
           {% endfor %}
         </div>
 
         <hr>
 
-        <div style="display: table;">
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 131mm;">
-                    Summe netto EUR
-                </div>
-                <div style="display: table-cell; width: 32mm; text-align: right;">
-                    {{- '{0:0.2f}'.format(rechnung.netto_summe | float) -}}
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 131mm 32mm;">
+          <div>
+            Summe netto EUR
+          </div>
+          <div style="text-align: right;">
+            {{- '{0:0.2f}'.format(rechnung.netto_summe | float) -}}
+          </div>
+        </div>
 
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 131mm;">
-                    10% Umsatzsteuer
-                </div>
-                <div style="display: table-cell; width: 32mm; text-align: right;">
-                    {{- '{0:0.2f}'.format(rechnung.steuerbetrag_zehn  | float) -}}
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 131mm 32mm;">
+          <div>
+            10% Umsatzsteuer
+          </div>
+          <div style="text-align: right;">
+            {{- '{0:0.2f}'.format(rechnung.steuerbetrag_zehn  | float) -}}
+          </div>
+        </div>
 
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 131mm;">
-                    13% Umsatzsteuer
-                </div>
-                <div style="display: table-cell; width: 32mm; text-align: right;">
-                    {{- '{0:0.2f}'.format(rechnung.steuerbetrag_dreizehn | float) -}}
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 131mm 32mm;">
+          <div>
+            13% Umsatzsteuer
+          </div>
+          <div style="text-align: right;">
+            {{- '{0:0.2f}'.format(rechnung.steuerbetrag_dreizehn | float) -}}
+          </div>
+        </div>
 
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 131mm;">
-                    20% Umsatzsteuer
-                </div>
-                <div style="display: table-cell; width: 32mm; text-align: right;">
-                    {{- '{0:0.2f}'.format(rechnung.steuerbetrag_zwanzig  | float) -}}
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 131mm 32mm;">
+          <div>
+            20% Umsatzsteuer
+          </div>
+          <div style="text-align: right;">
+            {{- '{0:0.2f}'.format(rechnung.steuerbetrag_zwanzig  | float) -}}
+          </div>
         </div>
 
         <hr>
 
-        <div style="display: table; padding-bottom: 5mm;">
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 131mm;">
-                    Endsumme Brutto EUR
-                </div>
-                <div style="display: table-cell; width: 32mm; text-align: right;">
-                    {{- '{0:0.2f}'.format(rechnung.brutto_summe | float) -}}
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 131mm 32mm; padding-bottom: 5mm;">
+          <div>
+            Endsumme Brutto EUR
+          </div>
+          <div style="text-align: right;">
+            {{- '{0:0.2f}'.format(rechnung.brutto_summe | float) -}}
+          </div>
         </div>
 
         <div>
-            <p>Zahlung: &nbsp; {{- rechnung.bezahlung -}}</p>
+          <p>Zahlung: &nbsp; {{- rechnung.bezahlung -}}</p>
         </div>
     </body>
 </html>

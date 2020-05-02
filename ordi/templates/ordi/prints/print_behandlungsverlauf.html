@@ -17,19 +17,17 @@
             </p>
         </div>
 
-        <div style="display: table; padding-bottom: 5mm;">
-            <div style="display: table-row;">
-                <div style="display: table-cell; width: 123mm;">
-                  Patient &nbsp; 
-                  {{- behandlungsverlauf.tier.tiername -}} &nbsp; 
-                  {{- behandlungsverlauf.tier.tierart -}} &nbsp; 
-                  {%- if behandlungsverlauf.tier.geburtsdatum -%}
-                    geb. &nbsp; {{- behandlungsverlauf.tier.geburtsdatum -}}
-                  {%- endif -%}
-                </div>
-                <div style="display: table-cell; width: 40mm; text-align: right;">
-                    {{- behandlungsverlauf.datum -}}
-                </div>
+        <div style="display: grid; grid-template-columns: 123mm 40mm; padding-bottom: 5mm;">
+            <div>
+              Patient &nbsp; 
+              {{- behandlungsverlauf.tier.tiername -}} &nbsp; 
+              {{- behandlungsverlauf.tier.tierart -}} &nbsp; 
+              {%- if behandlungsverlauf.tier.geburtsdatum -%}
+                geb. &nbsp; {{- behandlungsverlauf.tier.geburtsdatum -}}
+              {%- endif -%}
+            </div>
+            <div style="text-align: right;">
+                {{- behandlungsverlauf.datum -}}
             </div>
         </div>
 

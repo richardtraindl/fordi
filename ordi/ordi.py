@@ -679,7 +679,7 @@ def delete_rechnungszeile(rechnungszeile_id):
 
 def dl_etiketten(abfrage, tierhaltungen):
     html = render_template('ordi/prints/print_etiketten.html', tierhaltungen=tierhaltungen)
-
+    print(html)
     filename = abfrage + "_etiketten.pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
 

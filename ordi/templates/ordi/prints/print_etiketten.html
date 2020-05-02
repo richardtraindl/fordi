@@ -1,29 +1,31 @@
 <html>
     <body>
-      <div style="display: table;">
       {% for tierhaltung in tierhaltungen %}
-        {% if loop.index % 3 == 0 %}
-          <div style="display: table-row;">
+        {% if loop.index % 3 == 1 %}
+          <div style="display: grid; grid-template-columns: 61mm 61mm 61mm;">
         {% endif %}
-            <div style="display: table-cell; width: 57mm;">
+            <div>
               <p>
-                {{- tierhaltung.Person.anredecode | mapanrede -}} &nbsp; 
-                {{- tierhaltung.Person.titel -}}
+              {{- tierhaltung.Person.anredecode | mapanrede -}} &nbsp; 
+              {{- tierhaltung.Person.titel -}}
               </p>
               <p>
-                 {{- tierhaltung.Person.familienname -}} &nbsp; 
-                 {{- tierhaltung.Person.vorname -}}
+              {{- tierhaltung.Person.familienname -}} &nbsp; 
+              {{- tierhaltung.Person.vorname -}}
               </p>
-              <p>{{- tierhaltung.Person.adresse.strasse -}}</p>
               <p>
-                {{- tierhaltung.Person.adresse.postleitzahl -}} &nbsp; 
-                {{- tierhaltung.Person.adresse.ort -}}
+              {{- tierhaltung.Person.adresse.strasse -}}
+              </p>
+              <p>
+              {{- tierhaltung.Person.adresse.postleitzahl -}} &nbsp; 
+              {{- tierhaltung.Person.adresse.ort -}}
               </p>
             </div>
-        {% if loop.index % 3 == 2 %}
+        {% if loop.index % 3 == 0 %}
           </div>
         {% endif %}
       {% endfor %}
-      </div>
+      {% if tierhaltungen|length % 3 != 0 %}
+      {% endif %}
     </body>
 </html>

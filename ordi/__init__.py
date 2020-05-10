@@ -56,6 +56,15 @@ def create_app(test_config=None):
     app.register_blueprint(ordi.bp)
     app.add_url_rule('/', endpoint='index')
 
+    from . import rechnungen
+    app.register_blueprint(rechnungen.bp)
+
+    from . import behandlungsverlaeufe
+    app.register_blueprint(behandlungsverlaeufe.bp)
+
+    from . import abfragen
+    app.register_blueprint(abfragen.bp)
+
     from . import kalender
     app.register_blueprint(kalender.bp)
 

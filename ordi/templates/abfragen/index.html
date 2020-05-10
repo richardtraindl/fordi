@@ -9,11 +9,11 @@
 
 {% block content %}
     <div class="gap"></div>
-      <form method="post" action="{{ url_for('ordi.abfragen') }}">
+      <form method="post" action="{{ url_for('abfrage.index') }}">
         <div class="flex-container">
             <div>
                 <label for="abfrage">Abfrage</label>
-                {% include 'ordi/_select_for_abfragen.html' %}
+                {% include 'abfragen/_select_for_abfragen.html' %}
             </div>
             <div>
                 <input id="kriterium1" type="text" size="10" name="kriterium1" value="{{- kriterium1 -}}">
@@ -88,9 +88,17 @@
 
         <p><a class="btn" id="bericht-drucken" href="#">Bericht drucken</a></p>
 
-        <p><a class="btn grayed" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
+        {% if abfrage == "Impfung" and tierhaltungen %}
+          <p><a class="btn" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
+        {% else %}
+          <p><a class="btn grayed" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
+        {% endif %}
 
-        <p><a class="btn grayed" id="csv-exportieren" href="#">FA</a></p>
+        {%- if abfrage == "Finanzamt" and tierhaltungen -%}
+          <p><a class="btn" id="csv-exportieren" href="#">FA</a></p>
+        {% else %}
+          <p><a class="btn grayed" id="csv-exportieren" href="#">FA</a></p>
+        {% endif %}        
     </div>
 
 <script>
@@ -107,13 +115,14 @@
             });
 
             $('#bericht-drucken').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.location = "/" + id.toString() + "/print_bericht";
-                }
+                //var id = $("input:radio[name=option]:checked").val(); 
+                //if(id == null){
+                //    alert("Bitte eine Karteikarte auswählen!");
+                //}
+                //else{
+                //    window.location = "/" + id.toString() + "/print_bericht";
+                //}
+                alert("under construction!");
                 return false; 
             });
 
@@ -122,6 +131,7 @@
                 $("#output").val("etiketten");
                 $("form").submit();
               }
+              $("#output").val("");
               return false;
             });
 
@@ -130,6 +140,7 @@
                 $("#output").val("csv");
                 $("form").submit();
               }
+              $("#output").val("");
               return false;
             });
 

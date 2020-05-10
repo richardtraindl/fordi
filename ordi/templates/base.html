@@ -38,9 +38,9 @@
         {% if page_title != "Anmelden" and page_title != "Registrieren" %}
         <nav class="flex-container">
             <p><a href="{{ url_for('ordi.index') }}">Patientenkarteien</a></p>
-            <p><a href="{{ url_for('ordi.rechnungen') }}">Rechnungen</a></p>
-            <p><a href="{{ url_for('ordi.behandlungsverlaeufe') }}">Behandlungsverläufe</a></p>
-            <p><a href="{{ url_for('ordi.abfragen') }}">Abfragen</a></p>
+            <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
+            <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
+            <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
             <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
         </nav>
         {% endif %}

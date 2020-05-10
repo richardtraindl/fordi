@@ -28,9 +28,9 @@
     <div class="gap"></div>
 
   {% if rechnung and rechnung.id %}
-    <form method="post" action="{{ url_for('ordi.edit_rechnung', rechnung_id=rechnung.id) }}">
+    <form method="post" action="{{ url_for('rechnung.edit_rechnung', rechnung_id=rechnung.id) }}">
   {% else %}
-    <form method="post" action="{{ url_for('ordi.create_rechnung', id=id) }}">
+    <form method="post" action="{{ url_for('rechnung.create_rechnung', id=id) }}">
   {% endif %}
         <input type="hidden" name="rechnung_id" value="{{- '' or rechnung.id -}}">
       <div>
@@ -83,7 +83,7 @@
                     <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile['datum'] or rechnungszeile.datum -}}">
                   </td>
                   {% set artikelcode = rechnungszeile.artikelcode %}
-                  <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
+                  <td style="width: 20%">{% include 'rechnungen/_select_for_artikel.html' %}</td>
                   <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rechnungszeile['artikel'] or rechnungszeile.artikel -}}</textarea></td>
                   <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rechnungszeile['betrag'] or rechnungszeile.betrag|sn -}}</textarea></td>
                   <td style="width: 6%">
@@ -98,7 +98,7 @@
                       <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- datum -}}">
                   </td>
                   {% set artikelcode = 0 %}
-                  <td style="width: 20%">{% include 'ordi/_select_for_artikel.html' %}</td>
+                  <td style="width: 20%">{% include 'rechnungen/_select_for_artikel.html' %}</td>
                   <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
                   <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
                   <td style="width: 6%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
@@ -191,7 +191,7 @@
                 var rechnungszeile_id = $(this).attr("rechnungszeile_id");
                 if(rechnungszeile_id != null){
                     if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/" + rechnungszeile_id.toString() + "/delete_rechnungszeile";
+                        window.location = "/rechnung/" + rechnungszeile_id.toString() + "/delete_rechnungszeile";
                         return true;
                     }
                     else{

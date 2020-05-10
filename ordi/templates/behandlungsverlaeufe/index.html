@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="gap"></div>
-      <form method="post" action="{{ url_for('ordi.behandlungsverlaeufe') }}">
+      <form method="post" action="{{ url_for('behandlungsverlauf.index') }}">
         <div class="flex-container">
             <div>
                 <label for="behandlungsjahr">Behandlungsjahr</label>
@@ -40,15 +40,15 @@
       {% for b in behandlungsverlaeufe %}
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- b.Behandlungsverlauf.id -}}"></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode|mapanrede -}}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.familienname -}}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.vorname -}}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tiername -}}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
-            <td style="width: 10%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('ordi.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode|mapanrede -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.familienname -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.vorname -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tiername -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
+            <td style="width: 10%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum -}}</a></td>
         </tr>
       {% endfor %}
       </table>
@@ -69,7 +69,7 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/" + id.toString() + "/edit_behandlungsverlauf";
+                    window.location = "/behandlungsverlauf/" + id.toString() + "/edit_behandlungsverlauf";
                 }
                 return false; 
             });
@@ -80,7 +80,7 @@
                 }
                 else{
                     if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/" + id.toString() + "/delete_behandlungsverlauf";
+                        window.location = "/behandlungsverlauf/" + id.toString() + "/delete_behandlungsverlauf";
                         return true;
                     }
                     else{

@@ -85,9 +85,9 @@ def dl_rechnung(rechnung_id):
 
     return path_and_filename
 
-@bp.route('/<int:id>/create_rechnung', methods=('GET', 'POST'))
+@bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required
-def create_rechnung(id):
+def create(id):
     artikelwerte = []
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
@@ -132,7 +132,7 @@ def create_rechnung(id):
             rechnungszeile.rechnung_id = rechnung.id
             db.session.add(rechnungszeile)
         db.session.commit()
-        return redirect(url_for('rechnung.edit_rechnung', rechnung_id=rechnung.id))
+        return redirect(url_for('rechnung.edit', rechnung_id=rechnung.id))
     else:
         datum = datetime.now().strftime("%Y-%m-%d")
         ort = "Wien"
@@ -141,9 +141,9 @@ def create_rechnung(id):
             datum=datum, ort=ort, artikelwerte=artikelwerte, page_title="Rechnung")
 
 
-@bp.route('/<int:rechnung_id>/edit_rechnung', methods=('GET', 'POST'))
+@bp.route('/<int:rechnung_id>/edit', methods=('GET', 'POST'))
 @login_required
-def edit_rechnung(rechnung_id):
+def edit(rechnung_id):
     artikelwerte = []
     for key, value in ARTIKEL.items():
         artikelwerte.append([key, value])
@@ -210,9 +210,9 @@ def edit_rechnung(rechnung_id):
             page_title="Rechnung")
 
 
-@bp.route('/<int:rechnung_id>/delete_rechnung', methods=('GET',))
+@bp.route('/<int:rechnung_id>/delete', methods=('GET',))
 @login_required
-def delete_rechnung(rechnung_id):
+def delete(rechnung_id):
     rechnung = db.session.query(Rechnung).get(rechnung_id)
     db.session.delete(rechnung)
     db.session.commit()
@@ -225,5 +225,5 @@ def delete_rechnungszeile(rechnungszeile_id):
     rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
     db.session.delete(rechnungszeile)
     db.session.commit()
-    return redirect(url_for('rechnung.edit_rechnung', rechnung_id=rechnungszeile.rechnung_id))
+    return redirect(url_for('rechnung.edit', rechnung_id=rechnungszeile.rechnung_id))
 

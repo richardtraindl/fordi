@@ -61,9 +61,9 @@ def dl_behandlungsverlauf(behandlungsverlauf_id):
 
     return path_and_filename
 
-@bp.route('/<int:id>/create_behandlungsverlauf', methods=('GET', 'POST'))
+@bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required
-def create_behandlungsverlauf(id):
+def create(id):
     tierhaltung = db.session.query(Tierhaltung).get(id)
 
     if(request.method == 'POST'):
@@ -78,7 +78,7 @@ def create_behandlungsverlauf(id):
         behandlungsverlauf.tier_id = tierhaltung.tier.id
         db.session.add(behandlungsverlauf)
         db.session.commit()
-        return redirect(url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf.id))
+        return redirect(url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behandlungsverlauf.id))
     else:
         datum = date.today().strftime("%Y-%m-%d")
         return render_template('behandlungsverlaeufe/behandlungsverlauf.html', id=id, 
@@ -86,9 +86,9 @@ def create_behandlungsverlauf(id):
             behandlungsverlauf=None, datum=datum, page_title="Behandlungsverlauf")
 
 
-@bp.route('/<int:behandlungsverlauf_id>/edit_behandlungsverlauf', methods=('GET', 'POST'))
+@bp.route('/<int:behandlungsverlauf_id>/edit', methods=('GET', 'POST'))
 @login_required
-def edit_behandlungsverlauf(behandlungsverlauf_id):
+def edit(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
 
     if(request.method == 'POST'):
@@ -106,9 +106,9 @@ def edit_behandlungsverlauf(behandlungsverlauf_id):
             page_title="Behandlungsverlauf")
 
 
-@bp.route('/<int:behandlungsverlauf_id>/delete_behandlungsverlauf', methods=('GET',))
+@bp.route('/<int:behandlungsverlauf_id>/delete', methods=('GET',))
 @login_required
-def delete_behandlungsverlauf(behandlungsverlauf_id):
+def delete(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
     db.session.delete(behandlungsverlauf)
     db.session.commit()

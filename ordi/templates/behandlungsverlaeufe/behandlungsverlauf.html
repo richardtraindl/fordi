@@ -28,9 +28,9 @@
     <div class="small-gap"></div>
 
     {% if behandlungsverlauf and behandlungsverlauf.id %}
-      <form method="post" action="{{ url_for('behandlungsverlauf.edit_behandlungsverlauf', behandlungsverlauf_id=behandlungsverlauf.id) }}">
+      <form method="post" action="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behandlungsverlauf.id) }}">
     {% else %}
-      <form method="post" action="{{ url_for('behandlungsverlauf.create_behandlungsverlauf', id=id) }}">
+      <form method="post" action="{{ url_for('behandlungsverlauf.create', id=id) }}">
     {% endif %}
         <input type="hidden" name="behandlungsverlauf_id" id="behandlungsverlauf_id" value="{{- request.form['behandlungsverlauf_id'] or behandlungsverlauf.id -}}">
 

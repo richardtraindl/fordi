@@ -42,17 +42,17 @@
       {% for r in rechnungen %}
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- r.Rechnung.id -}}"></td>
-            <td style="width: 4%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungsjahr -}}</a></td>
-            <td style="width: 2%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungslfnr -}}</a></td>
-            <td style="width: 4%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- '{0:0.2f}'.format(r.Rechnung.brutto_summe | float) -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.anredecode|mapanrede -}}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.familienname -}}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Person.vorname -}}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tiername -}}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tierart -}}</a></td>
-            <td style="width: 10%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.rasse -}}</a></td>
-            <td style="width: 4%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('rechnung.edit_rechnung', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum -}}</a></td>
+            <td style="width: 4%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungsjahr -}}</a></td>
+            <td style="width: 2%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungslfnr -}}</a></td>
+            <td style="width: 4%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- '{0:0.2f}'.format(r.Rechnung.brutto_summe | float) -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.anredecode|mapanrede -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.familienname -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.vorname -}}</a></td>
+            <td style="width: 18%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tiername -}}</a></td>
+            <td style="width: 12%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tierart -}}</a></td>
+            <td style="width: 10%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.rasse -}}</a></td>
+            <td style="width: 4%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
+            <td style="width: 6%"><a href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum -}}</a></td>
         </tr>
       {% endfor %}
     </table>
@@ -73,7 +73,7 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/rechnung/" + id.toString() + "/edit_rechnung";
+                    window.location = "/rechnung/" + id.toString() + "/edit";
                 }
                 return false; 
             });
@@ -84,7 +84,7 @@
                 }
                 else{
                     if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/rechnung/" + id.toString() + "/delete_rechnung";
+                        window.location = "/rechnung/" + id.toString() + "/delete";
                         return true;
                     }
                     else{

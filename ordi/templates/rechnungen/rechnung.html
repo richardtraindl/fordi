@@ -28,9 +28,9 @@
     <div class="gap"></div>
 
   {% if rechnung and rechnung.id %}
-    <form method="post" action="{{ url_for('rechnung.edit_rechnung', rechnung_id=rechnung.id) }}">
+    <form method="post" action="{{ url_for('rechnung.edit', rechnung_id=rechnung.id) }}">
   {% else %}
-    <form method="post" action="{{ url_for('rechnung.create_rechnung', id=id) }}">
+    <form method="post" action="{{ url_for('rechnung.create', id=id) }}">
   {% endif %}
         <input type="hidden" name="rechnung_id" value="{{- '' or rechnung.id -}}">
       <div>

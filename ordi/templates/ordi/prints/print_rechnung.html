@@ -49,19 +49,19 @@
           <p>Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen.</p>
         </div>
 
-        <div style="display: grid; grid-template-columns: 32mm 99mm 32mm;">
-          {% for rechnungszeile in rechnungszeilen %}
+        {% for rechnungszeile in rechnungszeilen %}
+          <div style="display: grid; grid-template-columns: 32mm 99mm 32mm;">
             <div>
-                {{- rechnungszeile.datum -}}
+              {{- rechnungszeile.datum -}}
             </div>
             <div>
-                {{- rechnungszeile.artikel -}}
+              {{- rechnungszeile.artikel -}}
             </div>
             <div style="text-align: right;">
-                {{- '{0:0.2f}'.format(rechnungszeile.betrag | float) -}}
+              {{- '{0:0.2f}'.format(rechnungszeile.betrag | float) -}}
             </div>
-          {% endfor %}
-        </div>
+          </div>
+        {% endfor %}
 
         <hr>
 

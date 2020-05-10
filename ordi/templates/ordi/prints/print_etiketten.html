@@ -2,7 +2,7 @@
     <body>
       {% for tierhaltung in tierhaltungen %}
         {% if loop.index % 3 == 1 %}
-          <div style="display: grid; grid-template-columns: 61mm 61mm 61mm;">
+          <div style="display: grid; grid-template-columns: 61mm 61mm 61mm; padding-bottom: 5mm;">
         {% endif %}
             <div>
               <p>
@@ -26,6 +26,7 @@
         {% endif %}
       {% endfor %}
       {% if tierhaltungen|length % 3 != 0 %}
+        </div>
       {% endif %}
     </body>
 </html>

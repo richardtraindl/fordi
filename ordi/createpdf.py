@@ -78,7 +78,17 @@ class cTag:
                         parent.page = fpdf.page_no()
                         parent.maxy = fpdf.y
                         parent.maxpage = fpdf.page_no()
-                        parent.grid_items_cnt = 0
+                        parent.grid_items_cnt = 1
+                        """self.y = fpdf.y
+                        self.page = fpdf.page_no()
+                        parent.y = max(fpdf.y, parent.maxy)
+                        parent.page = max(fpdf.page_no(), parent.maxpage)
+                        parent.maxy = max(fpdf.y, parent.maxy)
+                        parent.maxpage = max(fpdf.page_no(), parent.maxpage)"""
+                fpdf.x = self.x
+                fpdf.y = self.y
+                fpdf.page = self.page                    
+
 
     def prnt(self, fpdf, data):
         if(self.width != 0):

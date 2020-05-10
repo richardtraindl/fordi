@@ -68,10 +68,9 @@ def create_app(test_config=None):
     from . import kalender
     app.register_blueprint(kalender.bp)
 
-    from .util.filters import mapanrede, mapkontakt, mapgeschlecht, mapartikel, \
+    from .util.filters import mapanrede, mapgeschlecht, mapartikel, \
         filter_supress_none, calc_kw, add_days, add_hours, add_mins, gib_feiertag
     app.jinja_env.filters['mapanrede'] = mapanrede
-    app.jinja_env.filters['mapkontakt'] = mapkontakt
     app.jinja_env.filters['mapgeschlecht'] = mapgeschlecht
     app.jinja_env.filters['mapartikel'] = mapartikel
     app.jinja_env.filters['sn'] = filter_supress_none

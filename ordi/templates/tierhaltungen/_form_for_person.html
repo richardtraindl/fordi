@@ -72,11 +72,6 @@
         <label for="strasse">Straße</label>
         <input size="20" name="strasse" value="{{- request.form['strasse'] or person.adresse.strasse -}}">
 
-        {% for kontakt in person.kontakte %}
-            <input type="hidden" name="kontakt_id[]" value="{{- kontakt.id -}}">
-            <input type="hidden" name="kontaktcode[]" value="{{- kontakt.kontaktcode -}}">
-
-            <label for="kontakt">{{- kontakt.kontaktcode|mapkontakt -}}</label>
-            <input size="20" name="kontakt[]" value="{{- kontakt.kontakt|sn -}}">
-        {% endfor %}
+        <label for="kontakte">Telefon, Fax, E-Mail</label>
+        <textarea name="kontakte">{{- request.form['kontakte'] or person.kontakte | sn -}}</textarea>
     </div>

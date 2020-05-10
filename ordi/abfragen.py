@@ -56,7 +56,7 @@ def str_to_date(str_date):
 
 lst_abfragen = ["", "Adresse", "Arzneien", "Arzneimittel", "Behandlung", \
                 "Chipnummer", "Diagnose", "EU-Passnummer", "Finanzamt", \
-                "Impfung", "Merkmal", "Postleitzahl", "Rasse", "Telefon", "Tierart"]
+                "Impfung", "Kontakte", "Merkmal", "Postleitzahl", "Rasse", "Tierart"]
 
 @bp.route('/index', methods=('GET', 'POST'))
 @login_required
@@ -107,13 +107,11 @@ def index():
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
                 .filter(Adresse.postleitzahl.like(kriterium1 + "%"), 
                         Person.kunde==kunde, Tier.patient==patient).all()
-        elif(abfrage == "Telefon"):
-            tierhaltungen = db.session.query(Tierhaltung, Person, Kontakt, Tier) \
+        elif(abfrage == "Kontakte"):
+            tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
-                .join(Kontakt, Kontakt.person_id==Person.id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                .filter(Kontakt.kontaktcode == KONTAKT['Telefon'], 
-                        Kontakt.kontakt_intern.like(kriterium1 + "%"), 
+                .filter(Person.kontakte.like("%" + kriterium1 + "%"), 
                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Chipnummer"):
             tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \

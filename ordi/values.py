@@ -18,14 +18,6 @@ GESCHLECHT = {
 }
 
 
-KONTAKT = {
-    ''        : 0,
-    'Telefon' : 1,
-    'Fax'     : 2,
-    'E-Mail'  : 3
-}
-
-
 LABOR_REFERENZ = [
     "** KATZE **",
     "Gluc (71-148)",

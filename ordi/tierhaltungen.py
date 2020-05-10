@@ -88,35 +88,12 @@ def create():
             db.session.add(adresse)
             db.session.commit()
 
-        req_kontakte = build_kontakte(request)
-        for req_kontakt in req_kontakte:
-            try:
-                kontakt_id = int(req_kontakt['kontakt_id'])
-                kontakt = db.session.query(Kontakt).get(kontakt_id)
-            except:
-                kontakt = None
-
-            kontakt = fill_and_validate_kontakt(kontakt, req_kontakt)[0]
-            if(len(kontakt.kontakt) > 0):
-                if(kontakt.id == None):
-                    kontakt.person_id = person.id
-                    db.session.add(kontakt)
-                db.session.commit()
-            else:
-                if(kontakt.id):
-                    db.session.delete(kontakt)
-                    db.session.commit()
-
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
         db.session.add(tierhaltung)
         db.session.commit()
         return redirect(url_for('tierhaltung.show', id=tierhaltung.id))
     else:
         person = Person()
-        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['Telefon']))
-        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['Telefon']))
-        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['E-Mail']))
-        person.kontakte.append(Kontakt(kontaktcode=KONTAKT['E-Mail']))
         tier = Tier()
         return render_template('tierhaltungen/create.html', person=person, 
             tier=tier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
@@ -148,9 +125,7 @@ def show(id):
     datum_ende = datum + timedelta(days=7)
 
     termin = db.session.query(Termin) \
-               .filter(and_(Termin.tierhaltung_id==id, 
-                            or_(and_(Termin.beginn < datum, Termin.ende > datum), 
-                                and_(Termin.beginn >= datum, Termin.beginn < datum_ende)))).order_by(Termin.beginn.desc()).first()
+               .filter(and_(Termin.tierhaltung_id==id, Termin.ende >= datum)).first()
 
     return render_template('tierhaltungen/tierhaltung.html', tierhaltung=tierhaltung, 
         termin=termin, behandlungen=behandlungen, datum=datum, 
@@ -249,42 +224,9 @@ def edit_person(id, person_id):
                 db.session.delete(adresse)
                 db.session.commit()
 
-        req_kontakte = build_kontakte(request)
-        for req_kontakt in req_kontakte:
-            try:
-                kontakt_id = int(req_kontakt['kontakt_id'])
-                kontakt = db.session.query(Kontakt).get(kontakt_id)
-            except:
-                kontakt = None
-
-            kontakt = fill_and_validate_kontakt(kontakt, req_kontakt)[0]
-            if(len(kontakt.kontakt) > 0):
-                if(kontakt.id == None):
-                    kontakt.person_id = person.id
-                    db.session.add(kontakt)
-                db.session.commit()
-            else:
-                if(kontakt.id):
-                    db.session.delete(kontakt)
-                    db.session.commit()
-
         return redirect(url_for('tierhaltung.show', id=id))
 
     person = db.session.query(Person).get(person_id)
-    telcnt = 0
-    mailcnt = 0
-    for kontakt in person.kontakte:
-        if(kontakt.kontaktcode == 1):
-            telcnt += 1
-        elif(kontakt.kontaktcode == 3):
-            mailcnt += 1
-    if(telcnt < 2):
-        for i in range(2 - telcnt):
-            person.kontakte.append(Kontakt(kontaktcode=1))
-    if(mailcnt < 2):
-        for i in range(2 - mailcnt):
-            person.kontakte.append(Kontakt(kontaktcode=3))
-    person.kontakte.sort(key=attrgetter('kontaktcode'))
 
     return render_template('tierhaltungen/edit_person.html', id=id, person=person, 
         anredewerte=anredewerte, page_title="Person ändern")

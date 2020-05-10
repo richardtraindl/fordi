@@ -39,9 +39,10 @@ class Person(db.Model):
     vorname = db.Column(db.String(40))
     notiz = db.Column(db.String(200))
     kunde = db.Column(db.Boolean(), nullable=False, default=True)
+    kontakte = db.Column(db.String(1000))
     tierhaltung = db.relationship("Tierhaltung", back_populates="person")
     adresse = db.relationship("Adresse", uselist=False, cascade="all,delete", back_populates="person", lazy='joined')
-    kontakte = db.relationship("Kontakt", cascade="all,delete", back_populates="person", lazy='joined')
+    #kontakte = db.relationship("Kontakt", cascade="all,delete", back_populates="person", lazy='joined')
 
     def __repr__(self):
         return '<Person %r>' % (self.familienname)
@@ -61,7 +62,7 @@ class Adresse(db.Model):
         return '<Adresse %r>' % (self.strasse)
 
 
-class Kontakt(db.Model):
+"""class Kontakt(db.Model):
     __tablename__ = 'kontakt'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -72,7 +73,7 @@ class Kontakt(db.Model):
     person = db.relationship("Person", back_populates="kontakte")
 
     def __repr__(self):
-        return '<Kontakt %r>' % (self.kontakt)
+        return '<Kontakt %r>' % (self.kontakt)"""
 
 
 class Tier(db.Model):

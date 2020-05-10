@@ -66,6 +66,8 @@ def fill_and_validate_person(person, request):
     else:
         kunde = False
 
+    kontakte = request.form['kontakte']
+
     if(person == None):
         person = Person()
     person.anredecode=anredecode
@@ -74,6 +76,7 @@ def fill_and_validate_person(person, request):
     person.vorname=request.form['vorname']
     person.notiz=request.form['notiz']
     person.kunde=kunde
+    person.kontakte=kontakte
 
     error = ""
     if(len(person.familienname) == 0):
@@ -99,56 +102,6 @@ def fill_and_validate_adresse(adresse, request):
     adresse.ort=request.form['ort']
 
     return adresse, ""
-
-
-def build_kontakte(request):    
-    data = (
-        request.form.getlist('kontakt_id[]'),
-        request.form.getlist('kontaktcode[]'),
-        request.form.getlist('kontakt[]'),
-    )
-    req_kontakte = []
-    for idx in range(len(data[0])):
-        req_kontakt = {}
-        req_kontakt['kontakt_id'] = data[0][idx]
-        req_kontakt['kontaktcode'] = data[1][idx]
-        req_kontakt['kontakt'] = data[2][idx]
-        req_kontakte.append(req_kontakt)
-    return req_kontakte
-
-def fill_and_validate_kontakt(kontakt, req_kontakt):
-    error = ""
-
-    str_kontakt = req_kontakt['kontakt'].strip()
-
-    try:
-        kontakt_id = int(req_kontakt['kontakt_id'])
-    except:
-        kontakt_id = None
-
-    try:
-        kontaktcode = int(req_kontakt['kontaktcode'])
-    except:
-        error = "Fehler bei Kontaktcode. "
-
-    try:
-        person_id = int(request.form['person_id'])
-    except:
-        person_id = None
-
-    bad_chars = [';', ':', '-', '/', ' ', '\n']
-    kontakt_intern = ''.join(i for i in str_kontakt if not i in bad_chars)
-
-    if(kontakt == None):
-        kontakt = Kontakt()
-
-    kontakt.id=kontakt_id
-    kontakt.person_id=person_id
-    kontakt.kontaktcode=kontaktcode
-    kontakt.kontakt=str_kontakt
-    kontakt.kontakt_intern=kontakt_intern
-
-    return kontakt, error
 
 
 def fill_and_validate_behandlung(behandlung, req_behandlung):

@@ -31,8 +31,6 @@
         <p>Straße</p>
         <p>{{ person.adresse.strasse }}</p>
 
-        {% for kontakt in person.kontakte %}
-            <p>{{- kontakt.kontaktcode|mapkontakt -}}</p>
-            <p>{{- kontakt.kontakt -}}</p>
-        {% endfor %}
+        <p>Telefon, Fax, E-Mail</p>
+        <p style="width: 200px;">{{ person.kontakte }}</p>
     </div>

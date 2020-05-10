@@ -1,7 +1,7 @@
 
 
 from datetime import date, timedelta
-from ..values import ANREDE, GESCHLECHT, KONTAKT, ARTIKEL
+from ..values import ANREDE, GESCHLECHT, ARTIKEL
 from .helper import reverse_lookup
 
 
@@ -17,13 +17,6 @@ def mapgeschlecht(geschlechtscode):
     if(geschlecht == None):
         geschlecht = ""
     return geschlecht
-
-
-def mapkontakt(kontaktcode):
-    kontakt = reverse_lookup(KONTAKT, kontaktcode)
-    if(kontakt == None):
-        kontakt = ""
-    return kontakt
 
 
 def mapartikel(artikelcode):

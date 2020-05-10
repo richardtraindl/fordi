@@ -55,7 +55,7 @@
             <div class="edit-termin">
             {% if tierhaltung %}
               {% if termin and termin.id %}
-                <p><a target="_blank" href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</a></p>
+                <p><a target="_blank" href="{{ url_for('tierhaltung.show', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</a></p>
               {% else %}
                 <p>{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</p>
               {% endif %}
@@ -113,7 +113,7 @@
       <p><input type="submit" id="sichern" class="btn" style="font-size: 16px; line-height: 18px;" value="sichern" onclick="return checkdate();"></p>
 
       {% if th %}
-        <p><a class="btn" href="{{ url_for('ordi.show_tierhaltung', id=tierhaltung.id) }}">abbrechen</a></p>
+        <p><a class="btn" href="{{ url_for('tierhaltung.show', id=tierhaltung.id) }}">abbrechen</a></p>
       {% else %}
         {% if termin %}
           <p><a class="btn" href="{{ url_for('kalender.index', kaldatum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a></p>
@@ -123,7 +123,11 @@
       {% endif %}
 
       {% if termin.id %}
-        <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a></p>
+        {% if th %}
+          <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id, th='th') }}">löschen</a></p>
+        {% else %}
+          <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a></p>
+        {% endif %}
       {% endif %}
     </div>
 

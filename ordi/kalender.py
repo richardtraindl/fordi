@@ -160,7 +160,7 @@ def create(beginn=None, tierhaltung_id=None):
         db.session.commit()
 
         if(th):
-            return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung_id))
+            return redirect(url_for('tierhaltung.show', id=tierhaltung_id))
         else:
             return redirect(url_for('kalender.index', kaldatum=termin.beginn))
     else:
@@ -222,7 +222,7 @@ def edit(id):
         db.session.commit()
 
         if(th):
-            return redirect(url_for('ordi.show_tierhaltung', id=tierhaltung.id))
+            return redirect(url_for('tierhaltung.show', id=tierhaltung.id))
         else:
             return redirect(url_for('kalender.index', kaldatum=termin.beginn))
     else:
@@ -239,7 +239,16 @@ def edit(id):
 @login_required
 def delete(id):
     termin = db.session.query(Termin).get(id)
+
+    th = request.args.get('th')
+    if(th):
+        tierhaltung = termin.tierhaltung
+
     db.session.delete(termin)
     db.session.commit()
-    return redirect(url_for('kalender.index'))
+
+    if(th):
+        return redirect(url_for('tierhaltung.show', id=tierhaltung.id))
+    else:
+        return redirect(url_for('kalender.index'))
 

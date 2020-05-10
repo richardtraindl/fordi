@@ -9,16 +9,16 @@
 
 {% block content %}
     <div class="row-grid" style="grid-template-columns: auto auto;">
-      <p><a href="{{ url_for('ordi.edit_person', id=tierhaltung.id, person_id=tierhaltung.person_id) }}">Person ändern</a></p>
+      <p><a href="{{ url_for('tierhaltung.edit_person', id=tierhaltung.id, person_id=tierhaltung.person_id) }}">Person ändern</a></p>
 
-      <p><a href="{{ url_for('ordi.edit_tier', id=tierhaltung.id, tier_id=tierhaltung.tier_id) }}">Tier ändern</a></p>
+      <p><a href="{{ url_for('tierhaltung.edit_tier', id=tierhaltung.id, tier_id=tierhaltung.tier_id) }}">Tier ändern</a></p>
 
       {% with person=tierhaltung.person %}
-        {% include 'ordi/_person.html' %}
+        {% include 'tierhaltungen/_person.html' %}
       {% endwith %}
 
       {% with tier=tierhaltung.tier %}
-        {% include 'ordi/_tier.html' %}
+        {% include 'tierhaltungen/_tier.html' %}
       {% endwith %}
     </div>
 
@@ -29,9 +29,7 @@
         <p>Nächster Termin: &nbsp; 
           <a href="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
             {{- termin.thema -}} &nbsp; 
-            {{- termin.beginn.strftime('%Y-%m-%d %H:%M') -}} &nbsp; - &nbsp; 
-            {{- termin.ende.strftime('%Y-%m-%d %H:%M') -}}  &nbsp; 
-            {{- termin.autor -}}
+            {{- termin.beginn.strftime('%Y-%m-%d %H:%M') -}} &nbsp;
           </a>
         </p>
       {% else %}
@@ -58,7 +56,7 @@
         </thead>
     </table>
 
-    <form method="post" action="{{ url_for('ordi.save_behandlungen', id=tierhaltung.id) }}">
+    <form method="post" action="{{ url_for('tierhaltung.save_behandlungen', id=tierhaltung.id) }}">
       <div id="scroller" style="max-height: 40vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
           <tbody>

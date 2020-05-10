@@ -15,7 +15,7 @@ from ordi.reqhelper import *
 from ordi.values import *
 from ordi.createpdf import *
 
-bp = Blueprint('ordi', __name__)
+bp = Blueprint('tierhaltung', __name__)
 
 
 #tierhaltung
@@ -46,7 +46,7 @@ def index():
                 Tier.tiername.like(tiername + "%"), 
                 Person.kunde==kunde, Tier.patient==patient).all()
 
-    return render_template('ordi/tierhaltungen.html', tierhaltungen=tierhaltungen, 
+    return render_template('tierhaltungen/index.html', tierhaltungen=tierhaltungen, 
         familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 
         page_title="Karteikarten")
 
@@ -67,14 +67,14 @@ def create():
         if(len(error) > 0):
             flash(error)
             tier = Tier()
-            return render_template('ordi/create_tierhaltung.html', 
+            return render_template('tierhaltungen/create.html', 
                 person=person, tier=tier, anredewerte=anredewerte, 
                 geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
 
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tierhaltung.html', 
+            return render_template('tierhaltungen/create.html', 
                 person=person, tier=tier, anredewerte=anredewerte, 
                 geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
 
@@ -110,7 +110,7 @@ def create():
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
         db.session.add(tierhaltung)
         db.session.commit()
-        return redirect(url_for('ordi.show', id=tierhaltung.id))
+        return redirect(url_for('tierhaltung.show', id=tierhaltung.id))
     else:
         person = Person()
         person.kontakte.append(Kontakt(kontaktcode=KONTAKT['Telefon']))
@@ -118,7 +118,7 @@ def create():
         person.kontakte.append(Kontakt(kontaktcode=KONTAKT['E-Mail']))
         person.kontakte.append(Kontakt(kontaktcode=KONTAKT['E-Mail']))
         tier = Tier()
-        return render_template('ordi/create_tierhaltung.html', person=person, 
+        return render_template('tierhaltungen/create.html', person=person, 
             tier=tier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
             page_title="Neue Karteikarte")
 
@@ -152,7 +152,7 @@ def show(id):
                             or_(and_(Termin.beginn < datum, Termin.ende > datum), 
                                 and_(Termin.beginn >= datum, Termin.beginn < datum_ende)))).order_by(Termin.beginn.desc()).first()
 
-    return render_template('ordi/tierhaltung.html', tierhaltung=tierhaltung, 
+    return render_template('tierhaltungen/tierhaltung.html', tierhaltung=tierhaltung, 
         termin=termin, behandlungen=behandlungen, datum=datum, 
         anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
         laborreferenzen=laborreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
@@ -164,7 +164,7 @@ def delete(id):
     tierhaltung = db.session.query(Tierhaltung).get(id)
     db.session.delete(tierhaltung)
     db.session.commit()
-    return redirect(url_for('ordi.index'))
+    return redirect(url_for('tierhaltung.index'))
 # tierhaltung
 
 
@@ -180,7 +180,7 @@ def create_tier(id):
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/create_tier.html', id=id)
+            return render_template('tierhaltungen/create_tier.html', id=id)
 
         db.session.add(tier)
         db.session.commit()
@@ -189,10 +189,10 @@ def create_tier(id):
         new_tierhaltung = Tierhaltung(person_id=tierhaltung.person_id, tier_id = tier.id)
         db.session.add(new_tierhaltung)
         db.session.commit()
-        return redirect(url_for('ordi.show', id=new_tierhaltung.id))
+        return redirect(url_for('tierhaltung.show', id=new_tierhaltung.id))
     else:
         tier = Tier()
-        return render_template('ordi/create_tier.html', tier=tier, geschlechtswerte=geschlechtswerte, 
+        return render_template('tierhaltungen/create_tier.html', tier=tier, geschlechtswerte=geschlechtswerte, 
             page_title="Neues Tier")
 
 
@@ -208,14 +208,14 @@ def edit_tier(id, tier_id):
         tier, error = fill_and_validate_tier(tier, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/edit_tier.html', id=id, tier=tier, 
+            return render_template('tierhaltungen/edit_tier.html', id=id, tier=tier, 
                 geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
         else:
             db.session.commit()
-            return redirect(url_for('ordi.show', id=id))
+            return redirect(url_for('tierhaltung.show', id=id))
     else:
         tier = db.session.query(Tier).get(tier_id)
-        return render_template('ordi/edit_tier.html', id=id, tier=tier, 
+        return render_template('tierhaltungen/edit_tier.html', id=id, tier=tier, 
             geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
 # tier
 
@@ -233,7 +233,7 @@ def edit_person(id, person_id):
         person, error = fill_and_validate_person(person, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('ordi/edit_person.html', id=id, person=person, 
+            return render_template('tierhaltungen/edit_person.html', id=id, person=person, 
                 anredewerte=anredewerte, page_title="Person ändern")
 
         db.session.commit()
@@ -268,7 +268,7 @@ def edit_person(id, person_id):
                     db.session.delete(kontakt)
                     db.session.commit()
 
-        return redirect(url_for('ordi.show', id=id))
+        return redirect(url_for('tierhaltung.show', id=id))
 
     person = db.session.query(Person).get(person_id)
     telcnt = 0
@@ -286,7 +286,7 @@ def edit_person(id, person_id):
             person.kontakte.append(Kontakt(kontaktcode=3))
     person.kontakte.sort(key=attrgetter('kontaktcode'))
 
-    return render_template('ordi/edit_person.html', id=id, person=person, 
+    return render_template('tierhaltungen/edit_person.html', id=id, person=person, 
         anredewerte=anredewerte, page_title="Person ändern")
 # person
 
@@ -351,7 +351,7 @@ def save_behandlungen(id):
             else:
                 impfungstexte = []
             save_or_delete_impfungen(behandlung.id, impfungstexte)
-    return redirect(url_for('ordi.show', id=id))
+    return redirect(url_for('tierhaltung.show', id=id))
 
 
 @bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))
@@ -360,6 +360,6 @@ def delete_behandlung(id, behandlung_id):
     behandlung = db.session.query(Behandlung).get(behandlung_id)
     db.session.delete(behandlung)
     db.session.commit()
-    return redirect(url_for('ordi.show', id=id))
+    return redirect(url_for('tierhaltung.show', id=id))
 # behandlung
 

@@ -52,8 +52,8 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
-    from . import ordi
-    app.register_blueprint(ordi.bp)
+    from . import tierhaltungen
+    app.register_blueprint(tierhaltungen.bp)
     app.add_url_rule('/', endpoint='index')
 
     from . import rechnungen

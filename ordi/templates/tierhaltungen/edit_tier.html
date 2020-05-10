@@ -3,19 +3,20 @@
 
 
 {% block title %}
-  Neues Tier
+  Tier ändern
 {% endblock %}
 
 
 {% block content %}
     <form method="post">
-        {% include 'ordi/_form_for_tier.html' %}
+
+        {% include 'tierhaltungen/_form_for_tier.html' %}
 
         <div class="small-gap"></div>
-        
+
         <div class="flex-container">
-            <div><input type="submit" value="speichern"></div>
-            <p class="btn"><a href="{{ url_for('ordi.index') }}">Abbrechen</a></p>
+            <input class="btn" type="submit" value="Speichern" style="margin-right: 20px;">
+            <p class="btn"><a href="{{ url_for('tierhaltung.show', id=id) }}">Abbrechen</a></p>
         </div>
     </form>
 

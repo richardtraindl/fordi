@@ -45,12 +45,12 @@
           <p>Diagnose: &nbsp; {{- rechnung.diagnose -}}</p>
         </div>
 
-        <div style="padding-top: 5mm;">
+        <div style="padding-top: 5mm; padding-bottom: 5mm;">
           <p>Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen.</p>
         </div>
 
         {% for rechnungszeile in rechnungszeilen %}
-          <div style="display: grid; grid-template-columns: 32mm 99mm 32mm;">
+          <div style="display: grid; grid-template-columns: 32mm 99mm 32mm; padding-bottom: 5mm;">
             <div>
               {{- rechnungszeile.datum -}}
             </div>

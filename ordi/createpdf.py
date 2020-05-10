@@ -79,12 +79,7 @@ class cTag:
                         parent.maxy = fpdf.y
                         parent.maxpage = fpdf.page_no()
                         parent.grid_items_cnt = 1
-                        """self.y = fpdf.y
-                        self.page = fpdf.page_no()
-                        parent.y = max(fpdf.y, parent.maxy)
-                        parent.page = max(fpdf.page_no(), parent.maxpage)
-                        parent.maxy = max(fpdf.y, parent.maxy)
-                        parent.maxpage = max(fpdf.page_no(), parent.maxpage)"""
+
                 fpdf.x = self.x
                 fpdf.y = self.y
                 fpdf.page = self.page                    
@@ -105,7 +100,7 @@ class cTag:
                 align = 'R'
 
         if(isblock(self.tag)):
-            fpdf.multi_cell(w=self.width, h=4, border=1, txt=data, align=align)
+            fpdf.multi_cell(w=self.width, h=4, border=0, txt=data, align=align)
             return
 
         if(self.tag == "br"):
@@ -121,7 +116,7 @@ class cTag:
             fpdf.multi_cell(w=0, h=4, border=0, txt=data, align=align)
             return
 
-        fpdf.multi_cell(w=self.width, h=4, border=1, txt=data, align=align)
+        fpdf.multi_cell(w=self.width, h=4, border=0, txt=data, align=align)
 
 
 class MyHTMLParser(HTMLParser):

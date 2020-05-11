@@ -63,8 +63,13 @@
           {% for behandlung in behandlungen %}
             <tr>
                 <td style="width: 8%">
-                    <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] or behandlung.id -}}" disabled>
-                    <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung['behandlungsdatum'] or behandlung.behandlungsdatum -}}" disabled>
+                  {% if behandlung.id %}
+                    <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}" disabled>
+                    <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung.behandlungsdatum|dt -}}" disabled>
+                  {% else %}
+                    <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] -}}" disabled>
+                    <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung['behandlungsdatum'] -}}" disabled>
+                  {% endif %}
                 </td>
                 <td style="width: 30%"><textarea name="diagnose[]" disabled>{{- behandlung['diagnose'] or behandlung.diagnose -}}</textarea></td>
                 <td style="width: 11%"><textarea name="laborwerte1[]" class="labor" disabled>{{- behandlung['laborwerte1'] or behandlung.laborwerte1 -}}</textarea></td>
@@ -84,14 +89,14 @@
                         {%- endfor -%}
                     </textarea>
                 </td>
-                <td style="width: 4%"><textarea name="gewicht[]" disabled>{{- behandlung['gewicht'] or behandlung.gewicht | sn -}}</textarea></td>
+                <td style="width: 4%"><textarea name="gewicht[]" disabled>{{- behandlung['gewicht'] or behandlung.gewicht|sn -}}</textarea></td>
                 <td style="width: 6%"><a href="#" onclick="enablerow($(this));">bearb.</a></td>
             </tr>
           {% endfor %}
             <tr class="edit-focus">
               <td style="width: 8%">
                   <input type="hidden" name="behandlung_id[]" value="">
-                  <input type="text" name="behandlungsdatum[]" class="date" value="{{- datum.strftime('%Y-%m-%d') -}}">
+                  <input type="text" name="behandlungsdatum[]" class="date" value="{{- datum -}}">
               </td>
               <td style="width: 30%"><textarea name="diagnose[]" id="diagnose"></textarea></td>
               <td style="width: 11%"><textarea name="laborwerte1[]" class="labor"></textarea></td>
@@ -155,7 +160,7 @@
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
-                dateFormat: "yy-mm-dd",
+                dateFormat: "dd.mm.yy",
                 changeMonth: true,
                 changeYear: true 
             });

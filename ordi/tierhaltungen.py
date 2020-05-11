@@ -128,7 +128,7 @@ def show(id):
                .filter(and_(Termin.tierhaltung_id==id, Termin.ende >= datum)).first()
 
     return render_template('tierhaltungen/tierhaltung.html', tierhaltung=tierhaltung, 
-        termin=termin, behandlungen=behandlungen, datum=datum, 
+        termin=termin, behandlungen=behandlungen, datum=datum.strftime("%d.%m.%Y"), 
         anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
         laborreferenzen=laborreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
 

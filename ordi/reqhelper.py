@@ -19,7 +19,7 @@ def fill_and_validate_tier(tier, request):
     else:
         str_geburtsdatum = request.form['geburtsdatum']
     try:
-        geburtsdatum = datetime.strptime(str_geburtsdatum, "%Y-%m-%d").date()
+        geburtsdatum = datetime.strptime(str_geburtsdatum, "%d.%m.%Y").date()
     except:
         geburtsdatum = None
         error = "Falsches Geburtsdatum. "
@@ -111,7 +111,7 @@ def fill_and_validate_behandlung(behandlung, req_behandlung):
     else:
         str_behandlungsdatum = req_behandlung['behandlungsdatum']
     try:
-        behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%Y-%m-%d")
+        behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%d.%m.%Y")
     except:
         behandlungsdatum = None
         error += "Falsches Behandlungsdatum. "
@@ -189,7 +189,7 @@ def fill_and_validate_rechnung(rechnung, request):
     else:
         str_ausstellungsdatum = request.form['ausstellungsdatum']
     try:
-        ausstellungsdatum = datetime.strptime(str_ausstellungsdatum, "%Y-%m-%d")
+        ausstellungsdatum = datetime.strptime(str_ausstellungsdatum, "%d.%m.%Y")
     except:
         ausstellungsdatum = None
         error += "Falsches Ausstellungsdatum. "
@@ -247,7 +247,7 @@ def fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile):
     else:
         str_datum = req_rechnungszeile['datum']
     try:
-        datum = datetime.strptime(str_datum, "%Y-%m-%d")
+        datum = datetime.strptime(str_datum, "%d.%m.%Y")
     except:
         datum = None
         error += "Falsches Datum. "
@@ -283,12 +283,14 @@ def fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile):
 
 
 def fill_and_validate_behandlungsverlauf(behandlungsverlauf, request):
+    error = ""
+
     if(len(request.form['datum']) > 10):
         str_datum = request.form['datum'].split()[0]
     else:
         str_datum = request.form['datum']
     try:
-        datum = datetime.strptime(str_datum, "%Y-%m-%d")
+        datum = datetime.strptime(str_datum, "%d.%m.%Y")
     except:
         datum = None
         error = "Falsches Datum. "
@@ -300,5 +302,5 @@ def fill_and_validate_behandlungsverlauf(behandlungsverlauf, request):
     behandlungsverlauf.diagnose=request.form['diagnose']
     behandlungsverlauf.behandlung=request.form['behandlung']
 
-    return behandlungsverlauf, ""
+    return behandlungsverlauf, error
 

@@ -48,7 +48,7 @@
             <td style="width: 12%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
             <td style="width: 10%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
             <td style="width: 6%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum -}}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum|dt -}}</a></td>
         </tr>
       {% endfor %}
       </table>

@@ -1,6 +1,6 @@
 
 
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 from ..values import ANREDE, GESCHLECHT, ARTIKEL
 from .helper import reverse_lookup
 
@@ -29,6 +29,20 @@ def mapartikel(artikelcode):
 def filter_supress_none(val):
     if not val is None:
         return val
+    else:
+        return ''
+
+
+def filter_format_date(val):
+    if not val is None:
+        return val.strftime("%d.%m.%Y")
+    else:
+        return ''
+
+
+def filter_format_datetime(val):
+    if not val is None:
+        return val.strftime("%d.%m.%Y, %H:%M:%S")
     else:
         return ''
 

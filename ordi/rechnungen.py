@@ -134,10 +134,11 @@ def create(id):
         db.session.commit()
         return redirect(url_for('rechnung.edit', rechnung_id=rechnung.id))
     else:
-        datum = datetime.now().strftime("%Y-%m-%d")
+        rechnung = Rechnung()
+        datum = datetime.now().strftime("%d.%m.%Y")
         ort = "Wien"
-        return render_template('rechnungen/rechnung.html', id=id, rechnung=None, 
-            rechnungszeilen=None, person = tierhaltung.person, tier = tierhaltung.tier, 
+        return render_template('rechnungen/rechnung.html', id=id, rechnung=rechnung, 
+            rechnungszeilen=[], person=tierhaltung.person, tier=tierhaltung.tier, 
             datum=datum, ort=ort, artikelwerte=artikelwerte, page_title="Rechnung")
 
 
@@ -158,8 +159,9 @@ def edit(rechnung_id):
             error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnungen/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('rechnungen/rechnung.html', rechnung=rechnung, 
+                rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
+                page_title="Rechnung")
 
         new_rechnungszeilen = []
         for req_rechnungszeile in req_rechnungszeilen:
@@ -206,7 +208,8 @@ def edit(rechnung_id):
         path_and_filename = dl_rechnung(rechnung.id)
         return send_file(path_and_filename, as_attachment=True)
     else:
-        return render_template('rechnungen/rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, 
+        return render_template('rechnungen/rechnung.html', rechnung=rechnung, 
+            rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, 
             page_title="Rechnung")
 
 

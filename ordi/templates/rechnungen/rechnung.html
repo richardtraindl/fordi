@@ -32,29 +32,29 @@
   {% else %}
     <form method="post" action="{{ url_for('rechnung.create', id=id) }}">
   {% endif %}
-        <input type="hidden" name="rechnung_id" value="{{- '' or rechnung.id -}}">
+        <input type="hidden" name="rechnung_id" value="{{- rechnung.id or '' -}}">
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
             <label for="rechnungsjahr">Rechnungsjahr</label>
             <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{- request.form['rechnungsjahr'] or rechnung.rechnungsjahr|sn -}}" required>
-            
+
             <label for="rechnungslfnr">Rechnungslfnr</label>
             <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{- request.form['rechnungslfnr'] or rechnung.rechnungslfnr|sn -}}" required>
-            
+
             <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or rechnung.ausstellungsdatum|sn or datum -}}" required>
-            
+            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or rechnung.ausstellungsdatum|dt or datum -}}" required>
+
             <label for="ausstellungsort">Ausstellungsort</label>
-            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{- request.form['ausstellungsort'] or ort or rechnung.ausstellungsort -}}" required>
+            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{- request.form['ausstellungsort'] or rechnung.ausstellungsort or ort -}}" required>
         </div>
       </div>
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto;">
             <label for="diagnose">Diagnose</label>
-            <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{- request.form['diagnose'] or rechnung.diagnose -}}</textarea>
-            
+            <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{- request.form['diagnose'] or rechnung.diagnose|sn -}}</textarea>
+
             <label for="bezahlung">Bezahlung</label>
-            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{- request.form['bezahlung'] or rechnung.bezahlung -}}">
+            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{- request.form['bezahlung'] or rechnung.bezahlung|sn -}}">
         </div>
       <div>
 
@@ -75,23 +75,36 @@
       <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
             <tbody>
-            {% if rechnung %}
-              {% for rechnungszeile in rechnungszeilen %}
+              {% for rz in rechnungszeilen %}
                 <tr>
                   <td style="width: 10%">
-                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rechnungszeile[''] or rechnungszeile.id -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rechnungszeile['datum'] or rechnungszeile.datum -}}">
+                  {% if rz.id %}
+                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rz.id -}}">
+                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rz.datum|dt -}}">
+                  {% else %}
+                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rz[''] -}}">
+                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rz['datum'] -}}">
+                  {% endif %}
                   </td>
-                  {% set artikelcode = rechnungszeile.artikelcode %}
+
+                  {% set artikelcode = rz.artikelcode %}
                   <td style="width: 20%">{% include 'rechnungen/_select_for_artikel.html' %}</td>
-                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rechnungszeile['artikel'] or rechnungszeile.artikel -}}</textarea></td>
-                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rechnungszeile['betrag'] or rechnungszeile.betrag|sn -}}</textarea></td>
-                  <td style="width: 6%">
-                    <a class="zeile_loeschen" rechnungszeile_id="{{- rechnungszeile['rechnungszeile_id'] or rechnungszeile.id -}}" href="#">Zeile löschen</a>
-                  </td>
+
+                  {% if rz.id %}
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rz.artikel -}}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rz.betrag|sn -}}</textarea></td>
+                    <td style="width: 6%">
+                      <a class="zeile_loeschen" rechnungszeile_id="{{- rz.id -}}" href="#">Zeile löschen</a>
+                    </td>
+                  {% else %}
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rz['artikel'] -}}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rz['betrag'] -}}</textarea></td>
+                    <td style="width: 6%">
+                      <a class="zeile_loeschen" rechnungszeile_id="{{- rz['rechnungszeile_id'] -}}" href="#">Zeile löschen</a>
+                    </td>
+                  {% endif %}
                 </tr>
               {% endfor %}
-            {% endif %}
                 <tr id="neue_zeile">
                   <td style="width: 10%">
                       <input type="hidden" name="rechnungszeile_id[]" value="">
@@ -140,7 +153,7 @@
               '<tr id="neue_zeile">' +
                 '<input type="hidden" name="rechnungszeile_id[]" value="">' +
                 '<td style="width: 10%">' + 
-                    '<input type="text" style="width: 100%" name="datum[]" class="date" value="' + year + "-" + month + "-" + day + '">' + 
+                    '<input type="text" style="width: 100%" name="datum[]" class="date" value="' + day + "." + month + "." + year + '">' + 
                 '</td>' + 
                 '<td style="width: 20%">' + 
                     '<select name="artikelcode[]">' +
@@ -177,7 +190,7 @@
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
             $(".date").datepicker({ 
-                dateFormat: "yy-mm-dd",
+                dateFormat: "dd.mm.yy",
                 changeMonth: true,
                 changeYear: true 
             });

@@ -66,11 +66,14 @@ def dl_behandlungsverlauf(behandlungsverlauf_id):
 def create(id):
     tierhaltung = db.session.query(Tierhaltung).get(id)
 
+    datum = date.today().strftime("%d.%m.%Y")
+
     if(request.method == 'POST'):
         behandlungsverlauf, error = fill_and_validate_behandlungsverlauf(None, request)
         if(len(error) > 0):
             flash(error)
             return render_template('behandlungsverlaeufe/behandlungsverlauf.html', id=id, 
+                person=tierhaltung.person, tier=tierhaltung.tier, 
                 behandlungsverlauf=behandlungsverlauf, 
                 datum=datum, page_title="Behandlungsverlauf")
 
@@ -80,10 +83,10 @@ def create(id):
         db.session.commit()
         return redirect(url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behandlungsverlauf.id))
     else:
-        datum = date.today().strftime("%Y-%m-%d")
+        behandlungsverlauf = Behandlungsverlauf()
         return render_template('behandlungsverlaeufe/behandlungsverlauf.html', id=id, 
-            person = tierhaltung.person, tier = tierhaltung.tier, 
-            behandlungsverlauf=None, datum=datum, page_title="Behandlungsverlauf")
+            person=tierhaltung.person, tier=tierhaltung.tier, 
+            behandlungsverlauf=behandlungsverlauf, datum=datum, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/edit', methods=('GET', 'POST'))

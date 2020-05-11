@@ -99,24 +99,35 @@ class cTag:
             elif(text_align_value == "right"):
                 align = 'R'
 
+        text_font_value = find(self.attrs, "font-weight")
+        if(text_font_value):
+            if(text_font_value == "bold"):
+                fpdf.set_font('Arial', 'B', 11)
+
+
         if(isblock(self.tag)):
-            fpdf.multi_cell(w=self.width, h=4, border=0, txt=data, align=align)
+            fpdf.multi_cell(w=self.width, h=5, border=0, txt=data, align=align)
+            fpdf.set_font('Arial', '', 11)
             return
 
         if(self.tag == "br"):
-            fpdf.cell(w=0, h=4, border=0, txt="", ln=1, align=align)
+            fpdf.cell(w=0, h=5, border=0, txt="", ln=1, align=align)
+            fpdf.set_font('Arial', '', 11)
             return
 
         if(self.tag == "hr"):
             max_width = 210 - (fpdf.l_margin + fpdf.r_margin)
             fpdf.line(fpdf.x, fpdf.y, (fpdf.l_margin + max_width), fpdf.y)
+            fpdf.set_font('Arial', '', 11)
             return
 
         if(self.tag == "span"):
-            fpdf.multi_cell(w=0, h=4, border=0, txt=data, align=align)
+            fpdf.multi_cell(w=0, h=5, border=0, txt=data, align=align)
+            fpdf.set_font('Arial', '', 11)
             return
 
-        fpdf.multi_cell(w=self.width, h=4, border=0, txt=data, align=align)
+        fpdf.multi_cell(w=self.width, h=5, border=0, txt=data, align=align)
+        fpdf.set_font('Arial', '', 11)
 
 
 class MyHTMLParser(HTMLParser):
@@ -147,6 +158,10 @@ class MyHTMLParser(HTMLParser):
                         self.fpdf.cell(w=0, h=value, border=0, txt="", ln=1, align="L")
                     except:
                         print("error")
+        else:
+            if(tag == "hr" or tag == "br"):
+                ctag = cTag(tag, attrs, parent, self.fpdf)
+                ctag.prnt(self.fpdf, "")
 
 
     def handle_endtag(self, tag):
@@ -186,6 +201,7 @@ class MyHTMLParser(HTMLParser):
         if(len(data) > 0 and self.tags):
             ctag = self.tags[-1]
             ctag.prnt(self.fpdf, data)
+            return
 
 
 class HTML2PDF(FPDF, HTMLMixin):

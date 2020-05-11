@@ -19,15 +19,15 @@
 
         <div style="display: grid; grid-template-columns: 123mm 40mm; padding-bottom: 5mm;">
             <div>
-              Patient &nbsp; 
+              Patient: &nbsp; 
               {{- behandlungsverlauf.tier.tiername -}} &nbsp; 
               {{- behandlungsverlauf.tier.tierart -}} &nbsp; 
               {%- if behandlungsverlauf.tier.geburtsdatum -%}
-                geb. &nbsp; {{- behandlungsverlauf.tier.geburtsdatum -}}
+                geb. &nbsp; {{- behandlungsverlauf.tier.geburtsdatum|dt -}}
               {%- endif -%}
             </div>
             <div style="text-align: right;">
-                {{- behandlungsverlauf.datum -}}
+                {{- behandlungsverlauf.datum|dt -}}
             </div>
         </div>
 
@@ -35,7 +35,7 @@
             <p>Diagnose: &nbsp; {{- behandlungsverlauf.diagnose -}}</p>
         </div>
 
-        <div style="padding-top: 5mm;">
+        <div style="padding-top: 10mm;">
             <p>{{- behandlungsverlauf.behandlung -}}</p>
         </div>
     </body>

@@ -17,24 +17,22 @@
             </p>
         </div>
         
-        <div style="display: grid; grid-template-columns: 123mm 40mm; padding-bottom: 5mm;">
-          <div>
+        <div style="padding-bottom: 5mm; font-weight: bold;">
             Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}
-          </div>
-          <div style="text-align: right;">
-            {{- rechnung.ausstellungsdatum -}}
-          </div>
         </div>
 
-        <div>
-          <p>
+        <div style="display: grid; grid-template-columns: 123mm 40mm;">
+          <div>
             Patient: &nbsp; 
             {{- rechnung.tier.tiername -}} &nbsp; 
             {{- rechnung.tier.tierart -}} &nbsp; 
             {%- if rechnung.tier.geburtsdatum -%}
-                geb. &nbsp; {{- rechnung.tier.geburtsdatum -}}
+                geb. &nbsp; {{- rechnung.tier.geburtsdatum|dt -}}
             {%- endif -%}
-          </p>
+          </div>
+          <div style="text-align: right;">
+            {{- rechnung.ausstellungsdatum|dt -}}
+          </div>
         </div>
 
         <div>
@@ -50,9 +48,9 @@
         </div>
 
         {% for rechnungszeile in rechnungszeilen %}
-          <div style="display: grid; grid-template-columns: 32mm 99mm 32mm; padding-bottom: 5mm;">
+          <div style="display: grid; grid-template-columns: 32mm 99mm 32mm;">
             <div>
-              {{- rechnungszeile.datum -}}
+              {{- rechnungszeile.datum|dt -}}
             </div>
             <div>
               {{- rechnungszeile.artikel -}}
@@ -66,10 +64,10 @@
         <hr>
 
         <div style="display: grid; grid-template-columns: 131mm 32mm;">
-          <div>
+          <div style="font-weight: bold;">
             Summe netto EUR
           </div>
-          <div style="text-align: right;">
+          <div style="text-align: right; font-weight: bold;">
             {{- '{0:0.2f}'.format(rechnung.netto_summe | float) -}}
           </div>
         </div>
@@ -104,10 +102,10 @@
         <hr>
 
         <div style="display: grid; grid-template-columns: 131mm 32mm; padding-bottom: 5mm;">
-          <div>
+          <div style="font-weight: bold;">
             Endsumme Brutto EUR
           </div>
-          <div style="text-align: right;">
+          <div style="text-align: right; font-weight: bold;">
             {{- '{0:0.2f}'.format(rechnung.brutto_summe | float) -}}
           </div>
         </div>

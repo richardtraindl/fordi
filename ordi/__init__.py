@@ -52,15 +52,15 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
-    from . import tierhaltungen
-    app.register_blueprint(tierhaltungen.bp)
+    from . import tierhaltung
+    app.register_blueprint(tierhaltung.bp)
     app.add_url_rule('/', endpoint='index')
 
-    from . import rechnungen
-    app.register_blueprint(rechnungen.bp)
+    from . import rechnung
+    app.register_blueprint(rechnung.bp)
 
-    from . import behandlungsverlaeufe
-    app.register_blueprint(behandlungsverlaeufe.bp)
+    from . import behandlungsverlauf
+    app.register_blueprint(behandlungsverlauf.bp)
 
     from . import abfragen
     app.register_blueprint(abfragen.bp)

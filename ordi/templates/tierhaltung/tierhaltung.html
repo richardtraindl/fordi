@@ -14,11 +14,11 @@
       <p><a href="{{ url_for('tierhaltung.edit_tier', id=tierhaltung.id, tier_id=tierhaltung.tier_id) }}">Tier ändern</a></p>
 
       {% with person=tierhaltung.person %}
-        {% include 'tierhaltungen/_person.html' %}
+        {% include 'tierhaltung/_person.html' %}
       {% endwith %}
 
       {% with tier=tierhaltung.tier %}
-        {% include 'tierhaltungen/_tier.html' %}
+        {% include 'tierhaltung/_tier.html' %}
       {% endwith %}
     </div>
 

@@ -3,14 +3,14 @@
 
 
 {% block title %}
-  Tier ändern
+  Person ändern
 {% endblock %}
 
 
 {% block content %}
     <form method="post">
 
-        {% include 'tierhaltungen/_form_for_tier.html' %}
+        {% include 'tierhaltung/_form_for_person.html' %}
 
         <div class="small-gap"></div>
 
@@ -19,15 +19,4 @@
             <p class="btn"><a href="{{ url_for('tierhaltung.show', id=id) }}">Abbrechen</a></p>
         </div>
     </form>
-
-    <script>
-        $(document).ready(function(){
-            $.datepicker.setDefaults($.datepicker.regional["de"]);
-            $(".date").datepicker({ 
-                dateFormat: "dd.mm.yy",
-                changeMonth: true,
-                changeYear: true
-            });
-        });
-    </script>
 {% endblock %}

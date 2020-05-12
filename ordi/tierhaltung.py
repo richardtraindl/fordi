@@ -46,7 +46,7 @@ def index():
                 Tier.tiername.like(tiername + "%"), 
                 Person.kunde==kunde, Tier.patient==patient).all()
 
-    return render_template('tierhaltungen/index.html', tierhaltungen=tierhaltungen, 
+    return render_template('tierhaltung/index.html', tierhaltungen=tierhaltungen, 
         familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 
         page_title="Karteikarten")
 
@@ -67,14 +67,14 @@ def create():
         if(len(error) > 0):
             flash(error)
             tier = Tier()
-            return render_template('tierhaltungen/create.html', 
+            return render_template('tierhaltung/create.html', 
                 person=person, tier=tier, anredewerte=anredewerte, 
                 geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
 
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('tierhaltungen/create.html', 
+            return render_template('tierhaltung/create.html', 
                 person=person, tier=tier, anredewerte=anredewerte, 
                 geschlechtswerte=geschlechtswerte, page_title="Neue Karteikarte")
 
@@ -95,7 +95,7 @@ def create():
     else:
         person = Person()
         tier = Tier()
-        return render_template('tierhaltungen/create.html', person=person, 
+        return render_template('tierhaltung/create.html', person=person, 
             tier=tier, anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
             page_title="Neue Karteikarte")
 
@@ -127,7 +127,7 @@ def show(id):
     termin = db.session.query(Termin) \
                .filter(and_(Termin.tierhaltung_id==id, Termin.ende >= datum)).first()
 
-    return render_template('tierhaltungen/tierhaltung.html', tierhaltung=tierhaltung, 
+    return render_template('tierhaltung/tierhaltung.html', tierhaltung=tierhaltung, 
         termin=termin, behandlungen=behandlungen, datum=datum.strftime("%d.%m.%Y"), 
         anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
         laborreferenzen=laborreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")
@@ -155,7 +155,7 @@ def create_tier(id):
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('tierhaltungen/create_tier.html', id=id)
+            return render_template('tierhaltung/create_tier.html', id=id)
 
         db.session.add(tier)
         db.session.commit()
@@ -167,7 +167,7 @@ def create_tier(id):
         return redirect(url_for('tierhaltung.show', id=new_tierhaltung.id))
     else:
         tier = Tier()
-        return render_template('tierhaltungen/create_tier.html', tier=tier, geschlechtswerte=geschlechtswerte, 
+        return render_template('tierhaltung/create_tier.html', tier=tier, geschlechtswerte=geschlechtswerte, 
             page_title="Neues Tier")
 
 
@@ -183,14 +183,14 @@ def edit_tier(id, tier_id):
         tier, error = fill_and_validate_tier(tier, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('tierhaltungen/edit_tier.html', id=id, tier=tier, 
+            return render_template('tierhaltung/edit_tier.html', id=id, tier=tier, 
                 geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
         else:
             db.session.commit()
             return redirect(url_for('tierhaltung.show', id=id))
     else:
         tier = db.session.query(Tier).get(tier_id)
-        return render_template('tierhaltungen/edit_tier.html', id=id, tier=tier, 
+        return render_template('tierhaltung/edit_tier.html', id=id, tier=tier, 
             geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
 # tier
 
@@ -208,7 +208,7 @@ def edit_person(id, person_id):
         person, error = fill_and_validate_person(person, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('tierhaltungen/edit_person.html', id=id, person=person, 
+            return render_template('tierhaltung/edit_person.html', id=id, person=person, 
                 anredewerte=anredewerte, page_title="Person ändern")
 
         db.session.commit()
@@ -228,7 +228,7 @@ def edit_person(id, person_id):
 
     person = db.session.query(Person).get(person_id)
 
-    return render_template('tierhaltungen/edit_person.html', id=id, person=person, 
+    return render_template('tierhaltung/edit_person.html', id=id, person=person, 
         anredewerte=anredewerte, page_title="Person ändern")
 # person
 

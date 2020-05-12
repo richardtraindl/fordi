@@ -12,15 +12,15 @@
     <div class="row-grid" style="grid-template-columns: auto auto;">
       {% if rechnung and rechnung.id %}
         {% with person=rechnung.person %}
-          {% include 'tierhaltungen/_person.html' %}
+          {% include 'tierhaltung/_person.html' %}
         {% endwith %}
 
         {% with tier=rechnung.tier %}
-          {% include 'tierhaltungen/_tier.html' %}
+          {% include 'tierhaltung/_tier.html' %}
         {% endwith %}
       {% else %}
-          {% include 'tierhaltungen/_person.html' %}
-          {% include 'tierhaltungen/_tier.html' %}
+          {% include 'tierhaltung/_person.html' %}
+          {% include 'tierhaltung/_tier.html' %}
       {% endif %}      
     </div>
   </div>
@@ -88,7 +88,7 @@
                   </td>
 
                   {% set artikelcode = rz.artikelcode %}
-                  <td style="width: 20%">{% include 'rechnungen/_select_for_artikel.html' %}</td>
+                  <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
 
                   {% if rz.id %}
                     <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rz.artikel -}}</textarea></td>
@@ -111,7 +111,7 @@
                       <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- datum -}}">
                   </td>
                   {% set artikelcode = 0 %}
-                  <td style="width: 20%">{% include 'rechnungen/_select_for_artikel.html' %}</td>
+                  <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
                   <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
                   <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
                   <td style="width: 6%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>

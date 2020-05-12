@@ -1,0 +1,36 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Neue Karteikarte
+{% endblock %}
+
+
+{% block content %}
+    <form method="post">
+        <!--div class="twocols" !-->
+        <div class="row-grid" style="grid-template-columns: auto auto;">
+            {% include 'tierhaltung/_form_for_person.html' %}
+            {% include 'tierhaltung/_form_for_tier.html' %}
+        </div>
+
+        <div class="small-gap"></div>
+
+        <div class="flex-container">
+            <div><input type="submit" value="Speichern"></div>
+            <p class="btn"><a href="{{ url_for('tierhaltung.index') }}">Abbrechen</a></p>
+        </div>
+    </form>
+
+    <script>
+        $(document).ready(function(){
+            $.datepicker.setDefaults($.datepicker.regional["de"]);
+            $(".date").datepicker({ 
+                dateFormat: "yy-mm-dd",
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+    </script>
+{% endblock %}

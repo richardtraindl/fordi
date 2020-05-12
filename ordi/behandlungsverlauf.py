@@ -44,14 +44,14 @@ def index():
     else:
         str_behandlungsjahr = ""
 
-    return render_template('behandlungsverlaeufe/index.html', behandlungsverlaeufe=behandlungsverlaeufe, 
+    return render_template('behandlungsverlauf/index.html', behandlungsverlaeufe=behandlungsverlaeufe, 
         behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
 
 
 def dl_behandlungsverlauf(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
 
-    html = render_template('behandlungsverlaeufe/print_behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf)
+    html = render_template('behandlungsverlauf/print.html', behandlungsverlauf=behandlungsverlauf)
 
     filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + behandlungsverlauf.person.familienname + \
         "_" + behandlungsverlauf.person.vorname + ".pdf"
@@ -72,7 +72,7 @@ def create(id):
         behandlungsverlauf, error = fill_and_validate_behandlungsverlauf(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('behandlungsverlaeufe/behandlungsverlauf.html', id=id, 
+            return render_template('behandlungsverlauf/behandlungsverlauf.html', id=id, 
                 person=tierhaltung.person, tier=tierhaltung.tier, 
                 behandlungsverlauf=behandlungsverlauf, 
                 datum=datum, page_title="Behandlungsverlauf")
@@ -84,7 +84,7 @@ def create(id):
         return redirect(url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behandlungsverlauf.id))
     else:
         behandlungsverlauf = Behandlungsverlauf()
-        return render_template('behandlungsverlaeufe/behandlungsverlauf.html', id=id, 
+        return render_template('behandlungsverlauf/behandlungsverlauf.html', id=id, 
             person=tierhaltung.person, tier=tierhaltung.tier, 
             behandlungsverlauf=behandlungsverlauf, datum=datum, page_title="Behandlungsverlauf")
 
@@ -98,14 +98,14 @@ def edit(behandlungsverlauf_id):
         behandlungsverlauf, error = fill_and_validate_behandlungsverlauf(behandlungsverlauf, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('behandlungsverlaeufe/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
+            return render_template('behandlungsverlauf/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
                 page_title="Behandlungsverlauf")
 
         db.session.commit()
         path_and_filename = dl_behandlungsverlauf(behandlungsverlauf_id)
         return send_file(path_and_filename, as_attachment=True)
     else:
-        return render_template('behandlungsverlaeufe/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
+        return render_template('behandlungsverlauf/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
             page_title="Behandlungsverlauf")
 
 

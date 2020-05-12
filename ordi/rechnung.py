@@ -41,7 +41,7 @@ def index():
         str_rechnungsjahr = str(rechnungsjahr)
     else:
         str_rechnungsjahr = ""
-    return render_template('rechnungen/index.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
+    return render_template('rechnung/index.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
 
 
 def calc_and_fill_rechnung(rechnung, rechnungszeilen):
@@ -76,7 +76,7 @@ def dl_rechnung(rechnung_id):
     rechnung = db.session.query(Rechnung).get(rechnung_id)
     rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung_id).all()
 
-    html = render_template('rechnungen/print_rechnung.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen)
+    html = render_template('rechnung/print.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen)
 
     filename = str(rechnung.id) + "_rechnung_fuer_" + rechnung.person.familienname + "_" + rechnung.person.vorname + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
@@ -101,7 +101,7 @@ def create(id):
             error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnungen/rechnung.html', id=id, rechnung=rechnung, 
+            return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
                 rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
                 tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
 
@@ -110,7 +110,7 @@ def create(id):
             rechnungszeile, error = fill_and_validate_rechnungszeile(None, req_rechnungszeile)
             if(len(error) > 0):
                 flash(error)
-                return render_template('rechnungen/rechnung.html', id=id, rechnung=rechnung, 
+                return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
                     rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
                     tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
             else:
@@ -119,7 +119,7 @@ def create(id):
         error = calc_and_fill_rechnung(rechnung, rechnungszeilen)
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnungen/rechnung.html', id=id, rechnung=rechnung, 
+            return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
                 rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
                 tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
 
@@ -137,7 +137,7 @@ def create(id):
         rechnung = Rechnung()
         datum = datetime.now().strftime("%d.%m.%Y")
         ort = "Wien"
-        return render_template('rechnungen/rechnung.html', id=id, rechnung=rechnung, 
+        return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
             rechnungszeilen=[], person=tierhaltung.person, tier=tierhaltung.tier, 
             datum=datum, ort=ort, artikelwerte=artikelwerte, page_title="Rechnung")
 
@@ -159,7 +159,7 @@ def edit(rechnung_id):
             error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnungen/rechnung.html', rechnung=rechnung, 
+            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
                 rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
                 page_title="Rechnung")
 
@@ -176,7 +176,7 @@ def edit(rechnung_id):
             new_rechnungszeile, error = fill_and_validate_rechnungszeile(new_rechnungszeile, req_rechnungszeile)
             if(len(error) > 0):
                 flash(error)
-                return render_template('rechnungen/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                return render_template('rechnung/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
                     artikelwerte=artikelwerte, page_title="Rechnung")
             else:
                 new_rechnungszeilen.append(new_rechnungszeile)
@@ -184,7 +184,7 @@ def edit(rechnung_id):
         error = calc_and_fill_rechnung(rechnung, new_rechnungszeilen)
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnungen/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+            return render_template('rechnung/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
                 artikelwerte=artikelwerte, page_title="Rechnung")
 
         db.session.commit() # commit rechnung
@@ -208,7 +208,7 @@ def edit(rechnung_id):
         path_and_filename = dl_rechnung(rechnung.id)
         return send_file(path_and_filename, as_attachment=True)
     else:
-        return render_template('rechnungen/rechnung.html', rechnung=rechnung, 
+        return render_template('rechnung/rechnung.html', rechnung=rechnung, 
             rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, 
             page_title="Rechnung")
 

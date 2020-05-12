@@ -40,15 +40,15 @@
       {% for b in behandlungsverlaeufe %}
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- b.Behandlungsverlauf.id -}}"></td>
-            <td style="width: 6%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode|mapanrede -}}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.familienname -}}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.vorname -}}</a></td>
-            <td style="width: 18%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tiername -}}</a></td>
-            <td style="width: 12%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
-            <td style="width: 10%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
-            <td style="width: 6%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum|dt -}}</a></td>
+            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum -}}</a></td>
+            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode|mapanrede -}}</a></td>
+            <td style="width: 18%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.familienname -}}</a></td>
+            <td style="width: 12%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.vorname -}}</a></td>
+            <td style="width: 18%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tiername -}}</a></td>
+            <td style="width: 12%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
+            <td style="width: 10%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
+            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
+            <td style="width: 8%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum|dt -}}</a></td>
         </tr>
       {% endfor %}
       </table>
@@ -69,7 +69,8 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/behandlungsverlauf/" + id.toString() + "/edit";
+                    window.open("/behandlungsverlauf/" + id.toString() + "/edit", "_blank");
+                    //window.location = "/behandlungsverlauf/" + id.toString() + "/edit";
                 }
                 return false; 
             });

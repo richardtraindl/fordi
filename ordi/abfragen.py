@@ -27,15 +27,18 @@ def dl_etiketten(abfrage, tierhaltungen):
     return path_and_filename
 
 
-def dl_csv(abfrage, tierhaltungen):
-    filename = abfrage + ".csv"
+def dl_excel(abfrage, tierhaltungen):
+    filename = abfrage + ".xlsx"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
 
-    f = open(path_and_filename, "x")
-
-    f.write("content!")
-
-    f.close()
+    from openpyxl import Workbook
+    wb = Workbook()
+    ws = wb.active
+    ws['A1'] = 42
+    ws.append([1, 2, 3])
+    ws['A2'] = datetime.now()
+    ws['A3'] = 44
+    wb.save(path_and_filename)
 
     return path_and_filename
 
@@ -241,8 +244,8 @@ def index():
         path_and_filename = dl_etiketten(abfrage, tierhaltungen)
         return send_file(path_and_filename, as_attachment=True)
 
-    if(output == "csv"):
-        path_and_filename = dl_csv(abfrage, tierhaltungen)
+    if(output == "excel"):
+        path_and_filename = dl_excel(abfrage, tierhaltungen)
         return send_file(path_and_filename, as_attachment=True)
 
     return render_template('abfragen/index.html', abfragen=lst_abfragen, 

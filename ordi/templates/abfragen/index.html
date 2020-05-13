@@ -95,7 +95,7 @@
         {% endif %}
 
         {%- if abfrage == "Finanzamt" and tierhaltungen -%}
-          <p><a class="btn" id="csv-exportieren" href="#">FA</a></p>
+          <p><a class="btn" id="excel-exportieren" href="#">FA</a></p>
         {% else %}
           <p><a class="btn grayed" id="csv-exportieren" href="#">FA</a></p>
         {% endif %}        
@@ -135,9 +135,9 @@
               return false;
             });
 
-            $('#csv-exportieren').click(function(){ 
+            $('#excel-exportieren').click(function(){ 
               if($(this).hasClass('grayed') == false){
-                $("#output").val("csv");
+                $("#output").val("excel");
                 $("form").submit();
               }
               $("#output").val("");

@@ -155,7 +155,7 @@ def create_tier(id):
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('tierhaltung/create_tier.html', id=id)
+            return render_template('patient/create_tier.html', id=id)
 
         db.session.add(tier)
         db.session.commit()

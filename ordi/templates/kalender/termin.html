@@ -55,7 +55,7 @@
             <div class="edit-termin">
             {% if tierhaltung %}
               {% if termin and termin.id %}
-                <p><a target="_blank" href="{{ url_for('tierhaltung.show', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</a></p>
+                <p><a target="_blank" href="{{ url_for('patient.show', id=tierhaltung.id) }}">{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</a></p>
               {% else %}
                 <p>{{- tierhaltung.person.familienname -}} &nbsp; {{- tierhaltung.tier.tiername -}}</p>
               {% endif %}

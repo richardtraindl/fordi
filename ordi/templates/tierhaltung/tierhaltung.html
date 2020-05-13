@@ -29,7 +29,7 @@
         <p>Nächster Termin: &nbsp; 
           <a href="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
             {{- termin.thema -}} &nbsp; 
-            {{- termin.beginn.strftime('%Y-%m-%d %H:%M') -}} &nbsp;
+            {{- termin.beginn|dttm -}} &nbsp;
           </a>
         </p>
       {% else %}

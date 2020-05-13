@@ -1,0 +1,10 @@
+    
+    <select name="geschlechtscode">    
+    {%- for geschlechtswert in geschlechtswerte -%}
+      {%- if geschlechtswert[1] == geschlechtscode or geschlechtswert[1] == geschlechtscode|int -%}
+        <option value="{{- geschlechtswert[1] -}}" selected>{{- geschlechtswert[0] -}}</option>
+      {%- else -%}
+        <option value="{{- geschlechtswert[1] -}}">{{- geschlechtswert[0] -}}</option>
+      {%- endif -%}
+    {%- endfor -%}
+    </select>

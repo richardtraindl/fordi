@@ -137,8 +137,33 @@ def show(id):
 @login_required
 def delete(id):
     tierhaltung = db.session.query(Tierhaltung).get(id)
-    db.session.delete(tierhaltung)
-    db.session.commit()
+    if(tierhaltung):
+        if(db.session.query(Tierhaltung).filter(Tierhaltung.person_id == tierhaltung.person_id).count() == 1):
+            person = db.session.query(Person).get(tierhaltung.person_id)
+        else:
+            person = None
+
+        if(db.session.query(Tierhaltung).filter(Tierhaltung.tier_id == tierhaltung.tier_id).count() == 1):
+            tier = db.session.query(Tier).get(tierhaltung.tier_id)
+        else:
+            tier = None
+
+        termine = db.session.query(Termin).filter(Termin.tierhaltung_id == tierhaltung.id).all()
+        for termin in termine:
+            db.session.delete(termin)
+        db.session.commit()
+
+        db.session.delete(tierhaltung)
+        db.session.commit()
+
+        if(person):
+            db.session.delete(person)
+            db.session.commit()
+
+        if(tier):
+            db.session.delete(tier)
+            db.session.commit()
+
     return redirect(url_for('patient.index'))
 # tierhaltung
 
@@ -155,7 +180,8 @@ def create_tier(id):
         tier, error = fill_and_validate_tier(None, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('patient/create_tier.html', id=id)
+            return render_template('patient/create_tier.html', tier=None, 
+                geschlechtswerte=geschlechtswerte, page_title="Neues Tier")
 
         db.session.add(tier)
         db.session.commit()
@@ -167,8 +193,8 @@ def create_tier(id):
         return redirect(url_for('patient.show', id=new_tierhaltung.id))
     else:
         tier = Tier()
-        return render_template('patient/create_tier.html', tier=tier, geschlechtswerte=geschlechtswerte, 
-            page_title="Neues Tier")
+        return render_template('patient/create_tier.html', tier=tier, 
+            geschlechtswerte=geschlechtswerte, page_title="Neues Tier")
 
 
 @bp.route('/<int:id>/<int:tier_id>/edit_tier', methods=('GET', 'POST'))

@@ -113,7 +113,7 @@
       <p><input type="submit" id="sichern" class="btn" style="font-size: 16px; line-height: 18px;" value="sichern" onclick="return checkdate();"></p>
 
       {% if th %}
-        <p><a class="btn" href="{{ url_for('tierhaltung.show', id=tierhaltung.id) }}">abbrechen</a></p>
+        <p><a class="btn" href="{{ url_for('patient.show', id=tierhaltung.id) }}">abbrechen</a></p>
       {% else %}
         {% if termin %}
           <p><a class="btn" href="{{ url_for('kalender.index', kaldatum=termin.beginn.strftime('%Y-%m-%d %H:%M:00')) }}">abbrechen</a></p>

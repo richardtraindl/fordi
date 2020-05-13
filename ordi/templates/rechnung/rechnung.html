@@ -12,15 +12,15 @@
     <div class="row-grid" style="grid-template-columns: auto auto;">
       {% if rechnung and rechnung.id %}
         {% with person=rechnung.person %}
-          {% include 'tierhaltung/_person.html' %}
+          {% include 'patient/_person.html' %}
         {% endwith %}
 
         {% with tier=rechnung.tier %}
-          {% include 'tierhaltung/_tier.html' %}
+          {% include 'patient/_tier.html' %}
         {% endwith %}
       {% else %}
-          {% include 'tierhaltung/_person.html' %}
-          {% include 'tierhaltung/_tier.html' %}
+          {% include 'patient/_person.html' %}
+          {% include 'patient/_tier.html' %}
       {% endif %}      
     </div>
   </div>

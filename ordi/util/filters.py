@@ -42,7 +42,7 @@ def filter_format_date(val):
 
 def filter_format_datetime(val):
     if not val is None:
-        return val.strftime("%d.%m.%Y, %H:%M:%S")
+        return val.strftime("%d.%m.%Y, %H:%M")
     else:
         return ''
 

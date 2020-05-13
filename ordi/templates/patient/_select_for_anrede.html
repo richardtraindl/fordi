@@ -1,0 +1,10 @@
+    
+    <select name="anredecode">  
+    {%- for anredewert in anredewerte -%}
+      {%- if anredewert[1] == anredecode or anredewert[1] == anredecode|int -%}
+        <option value="{{- anredewert[1] -}}" selected>{{- anredewert[0] -}}</option>
+      {%- else -%}
+        <option value="{{- anredewert[1] -}}">{{- anredewert[0] -}}</option>
+      {%- endif -%}
+    {%- endfor -%}
+    </select>

@@ -31,15 +31,7 @@
                 {% set geschlechtscode = 0 %}
             {% endif %}
         {% endif %}
-        <select name="geschlechtscode">
-        {%- for geschlechtswert in geschlechtswerte -%}
-          {%- if geschlechtswert[1] == geschlechtscode -%}
-            <option value="{{- geschlechtswert[1] -}}" selected>{{- geschlechtswert[0] -}}</option>
-          {%- else -%}
-            <option value="{{- geschlechtswert[1] -}}">{{- geschlechtswert[0] -}}</option>
-          {%- endif -%}
-        {%- endfor -%}
-        </select>
+        {% include 'patient/_select_for_geschlecht.html' %}
 
         <label for="chip_nummer">Chip Nummer</label>
         <input size="20" name="chip_nummer" value="{{- request.form['chip_nummer'] or tier.chip_nummer|sn -}}">

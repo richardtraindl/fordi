@@ -7,7 +7,6 @@
         {% endif %}
 
         <label for="anredecode">Anrede</label>
-        <select name="anredecode">
         {% if person %}
             {% set anredecode = person.anredecode %}
         {% else %}
@@ -17,14 +16,7 @@
                 {% set anredecode = 0 %}
             {% endif %}
         {% endif %}
-        {%- for anredewert in anredewerte -%}
-          {%- if anredewert[1] == anredecode -%}
-            <option value="{{- anredewert[1] -}}" selected>{{- anredewert[0] -}}</option>
-          {%- else -%}
-            <option value="{{- anredewert[1] -}}">{{- anredewert[0] -}}</option>
-          {%- endif -%}
-        {%- endfor -%}
-        </select>
+        {% include 'patient/_select_for_anrede.html' %}
         
         <label for="titel">Titel</label>
         <input size="5" name="titel" value="{{- request.form['titel'] or person.titel|sn -}}">

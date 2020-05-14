@@ -95,9 +95,9 @@
         {% endif %}
 
         {%- if abfrage == "Finanzamt" and tierhaltungen -%}
-          <p><a class="btn" id="excel-exportieren" href="#">FA</a></p>
+          <p><a class="btn" id="excel-exportieren" href="#">Finanzamt</a></p>
         {% else %}
-          <p><a class="btn grayed" id="csv-exportieren" href="#">FA</a></p>
+          <p><a class="btn grayed" id="excel-exportieren" href="#">Finanzamt</a></p>
         {% endif %}        
     </div>
 
@@ -115,15 +115,16 @@
             });
 
             $('#bericht-drucken').click(function(){ 
-                //var id = $("input:radio[name=option]:checked").val(); 
-                //if(id == null){
-                //    alert("Bitte eine Karteikarte auswählen!");
-                //}
-                //else{
-                //    window.location = "/" + id.toString() + "/print_bericht";
-                //}
-                alert("under construction!");
-                return false; 
+              var abfrage = $("select option:selected").text();
+              if(abfrage.length > 0){
+                $("#output").val("bericht-drucken");
+                $("form").submit();
+                $("#output").val("");
+              }
+              else{
+                alert("Bitte eine Abfrage auswählen!");
+              }
+              return false; 
             });
 
             $('#etiketten-drucken').click(function(){ 
@@ -145,16 +146,17 @@
             });
 
             $('#abfrage').change(function () {
+                $("#output").val("");
                 var abfrage = $("select option:selected").text();
                 if(abfrage == "Behandlung" || abfrage == "Finanzamt" || abfrage == "Impfung"){
                   $('#kriterium2').removeAttr('disabled');
                   $('#etiketten-drucken').removeClass('grayed');
-                  $('#csv-exportieren').removeClass('grayed');
+                  $('#excel-exportieren').removeClass('grayed');
                 }
                 else{
                   $('#kriterium2').attr('disabled', 'disabled');
                   $('#etiketten-drucken').addClass('grayed');
-                  $('#csv-exportieren').addClass('grayed');
+                  $('#excel-exportieren').addClass('grayed');
                 }
             });
         });

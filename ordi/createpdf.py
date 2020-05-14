@@ -99,10 +99,19 @@ class cTag:
             elif(text_align_value == "right"):
                 align = 'R'
 
+        font_size = 11
+        text_font_size = find(self.attrs, "font-size")
+        if(text_font_size):
+            try:
+                font_size = int(text_font_size)
+                fpdf.set_font('Arial', '', font_size)
+            except:
+                pass
+
         text_font_value = find(self.attrs, "font-weight")
         if(text_font_value):
             if(text_font_value == "bold"):
-                fpdf.set_font('Arial', 'B', 11)
+                fpdf.set_font('Arial', 'B', font_size)
 
 
         if(isblock(self.tag)):
@@ -264,13 +273,12 @@ def html2pdf(html, path_and_filename):
     fpdf.orientation = 'P'
     fpdf.format = 'A4'
     fpdf.add_page()
-    #fpdf.write_html(html)
     parser = MyHTMLParser(fpdf)
     parser.feed(html)
     fpdf.output(path_and_filename)
 
 
-def html2pdf_etiketten(html, path_and_filename):
+def html2pdf_blank(html, path_and_filename):
     fpdf = HTML2PDF()
     fpdf.t_margin = 20
     fpdf.r_margin = 16

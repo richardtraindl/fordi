@@ -237,14 +237,14 @@ def edit_person(id, person_id):
             return render_template('patient/edit_person.html', id=id, person=person, 
                 anredewerte=anredewerte, page_title="Person ändern")
 
-        db.session.commit()
+        #db.session.commit()
 
         adresse = fill_and_validate_adresse(person.adresse, request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
             if(adresse.id == None):
                 adresse.person_id=person_id
                 db.session.add(adresse)
-                db.session.commit()
+            db.session.commit()
         else:
             if(adresse.id):
                 db.session.delete(adresse)

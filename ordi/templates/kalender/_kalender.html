@@ -61,7 +61,7 @@
 
         {% if (tagesdatum|feiertag)|length > 0 or tag == 6 %}
           <span class="feiertag" style="font-size:24px">{{- tagesdatum.day -}}</span>
-          {{- wochentage[tag] -}}
+          {{- wochentage[tag] -}} &nbsp;
           <span style="font-size:10px">{{- tagesdatum|feiertag -}}</span>
         {% else %}
           <span style="font-size:24px">{{- tagesdatum.day -}}</span>

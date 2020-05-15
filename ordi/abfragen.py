@@ -220,10 +220,3 @@ def index():
                             kriterium2=kriterium2, twokriteria=twokriteria, kunde=kunde, 
                             patient=patient, tierhaltungen=tierhaltungen, page_title="Abfragen")
 
-
-@bp.route('/<int:id>/print_bericht', methods=('GET',))
-@login_required
-def print_bericht(id):
-    print("todo...")
-    return redirect(url_for('abfrage.index'))
-

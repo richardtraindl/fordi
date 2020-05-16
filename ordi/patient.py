@@ -44,7 +44,7 @@ def index():
         .join(Tier, Tier.id==Tierhaltung.tier_id) \
         .filter(Person.familienname.like(familienname + "%"), 
                 Tier.tiername.like(tiername + "%"), 
-                Person.kunde==kunde, Tier.patient==patient).all()
+                Person.kunde==kunde, Tier.patient==patient).limit(500).all()
 
     return render_template('patient/index.html', tierhaltungen=tierhaltungen, 
         familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 

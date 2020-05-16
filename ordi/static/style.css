@@ -31,7 +31,7 @@ header {
     grid-template-columns: auto auto auto;
 }
 
-header p, header a { font-size: 16px; line-height: 18px; }
+header p, header p a { font-size: 16px; line-height: 18px; }
 
 nav { background: Lightgray; margin-top: 1px; padding: 8px 0px 6px 0px; }
 nav a, 

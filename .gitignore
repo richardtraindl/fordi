@@ -8,8 +8,7 @@ __pycache__/
 instance/
 migrations/
 downloads/
-
-data_extern/
+uploads/
 
 .pytest_cache/
 .coverage

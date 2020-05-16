@@ -66,8 +66,6 @@ def fill_and_validate_person(person, request):
     else:
         kunde = False
 
-    kontakte = request.form['kontakte']
-
     if(person == None):
         person = Person()
     person.anredecode=anredecode
@@ -76,7 +74,10 @@ def fill_and_validate_person(person, request):
     person.vorname=request.form['vorname']
     person.notiz=request.form['notiz']
     person.kunde=kunde
-    person.kontakte=kontakte
+    person.adr_strasse=request.form['adr_strasse']
+    person.adr_plz=request.form['adr_plz']
+    person.adr_ort=request.form['adr_ort']
+    person.kontakte=request.form['kontakte']
 
     error = ""
     if(len(person.familienname) == 0):
@@ -84,7 +85,7 @@ def fill_and_validate_person(person, request):
     return person, error
 
 
-def fill_and_validate_adresse(adresse, request):
+"""def fill_and_validate_adresse(adresse, request):
     try:
         adresse_id = int(request.form['adresse_id'])
     except:
@@ -101,7 +102,7 @@ def fill_and_validate_adresse(adresse, request):
     adresse.postleitzahl=request.form['postleitzahl']
     adresse.ort=request.form['ort']
 
-    return adresse, ""
+    return adresse, "" """
 
 
 def fill_and_validate_behandlung(behandlung, req_behandlung):

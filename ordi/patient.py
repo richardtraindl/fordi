@@ -82,11 +82,11 @@ def create():
         db.session.add(tier)
         db.session.commit()
 
-        adresse = fill_and_validate_adresse(None, request)[0]
+        """adresse = fill_and_validate_adresse(None, request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
             adresse.person_id=person.id
             db.session.add(adresse)
-            db.session.commit()
+            db.session.commit()"""
 
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
         db.session.add(tierhaltung)
@@ -237,9 +237,9 @@ def edit_person(id, person_id):
             return render_template('patient/edit_person.html', id=id, person=person, 
                 anredewerte=anredewerte, page_title="Person ändern")
 
-        #db.session.commit()
+        db.session.commit()
 
-        adresse = fill_and_validate_adresse(person.adresse, request)[0]
+        """adresse = fill_and_validate_adresse(person.adresse, request)[0]
         if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
             if(adresse.id == None):
                 adresse.person_id=person_id
@@ -248,7 +248,7 @@ def edit_person(id, person_id):
         else:
             if(adresse.id):
                 db.session.delete(adresse)
-                db.session.commit()
+                db.session.commit()"""
 
         return redirect(url_for('patient.show', id=id))
 

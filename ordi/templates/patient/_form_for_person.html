@@ -49,21 +49,15 @@
             {% endif %}
         {% endif %}
 
-        {% if person.adresse %}
-            <input type="hidden" name="adresse_id" value="{{- person.adresse.id -}}">
-        {% else %}
-            <input type="hidden" name="adresse_id]" value="">
-        {% endif %}
-
-        <label for="postleitzahl">Postleitzahl</label>
-        <input size="5" name="postleitzahl" value="{{- request.form['postleitzahl'] or person.adresse.postleitzahl -}}">
+        <label for="adr_plz">Postleitzahl</label>
+        <input size="5" name="adr_plz" value="{{- request.form['adr_plz'] or person.adr_plz|sn -}}">
         
-        <label for="ort">Ort</label>
-        <input size="20" name="ort" value="{{- request.form['ort'] or person.adresse.ort -}}">
+        <label for="adr_ort">Ort</label>
+        <input size="20" name="adr_ort" value="{{- request.form['adr_ort'] or person.adr_ort|sn -}}">
 
-        <label for="strasse">Straße</label>
-        <input size="20" name="strasse" value="{{- request.form['strasse'] or person.adresse.strasse -}}">
+        <label for="adr_strasse">Straße</label>
+        <input size="20" name="adr_strasse" value="{{- request.form['adr_strasse'] or person.adr_strasse|sn -}}">
 
         <label for="kontakte">Telefon, Fax, E-Mail</label>
-        <textarea name="kontakte">{{- request.form['kontakte'] or person.kontakte | sn -}}</textarea>
+        <textarea name="kontakte">{{- request.form['kontakte'] or person.kontakte|sn -}}</textarea>
     </div>

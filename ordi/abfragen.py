@@ -151,12 +151,6 @@ def index():
                 .join(Behandlung, Behandlung.tier_id==Tier.id) \
                 .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
                 .filter(Person.kunde==kunde, Tier.patient==patient)
-        elif(abfrage == "Postleitzahl" or abfrage == "Straße"):
-            query = db.session.query(Tierhaltung, Person, Adresse, Tier) \
-                .join(Person, Person.id==Tierhaltung.person_id) \
-                .join(Adresse, Adresse.person_id==Person.id) \
-                .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                .filter(Person.kunde==kunde, Tier.patient==patient)
         else:
             query = db.session.query(Tierhaltung, Person, Tier) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
@@ -185,11 +179,11 @@ def index():
         elif(abfrage == "Merkmal"):
             tierhaltungen = query.filter(Tier.merkmal.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Postleitzahl"):
-            tierhaltungen = query.filter(Adresse.postleitzahl.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Person.adr_plz.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Rasse"):
             tierhaltungen = query.filter(Tier.rasse.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Straße"):
-            tierhaltungen = query.filter(Adresse.strasse.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Person.adr_strasse.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Tierart"):
             tierhaltungen = query.filter(Tier.tierart.like("%" + kriterium1 + "%")).all()
         else:

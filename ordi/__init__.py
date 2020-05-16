@@ -67,6 +67,9 @@ def create_app(test_config=None):
 
     from . import kalender
     app.register_blueprint(kalender.bp)
+    
+    from . import admin
+    app.register_blueprint(admin.bp)
 
     from .util.filters import mapanrede, mapgeschlecht, mapartikel, filter_supress_none, \
                               filter_format_date, filter_format_datetime, calc_kw, \

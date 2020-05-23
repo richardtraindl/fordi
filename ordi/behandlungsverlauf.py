@@ -22,15 +22,15 @@ bp = Blueprint('behandlungsverlauf', __name__, url_prefix='/behandlungsverlauf')
 def index():
     if(request.method == 'POST'):
         try:
-            behandlungsjahr = int(request.form['behandlungsjahr'])
+            jahr = int(request.form['jahr'])
         except:
-            behandlungsjahr = None
+            jahr = None
     else:
-        behandlungsjahr = None
+        jahr = datetime.today().year
 
-    if(behandlungsjahr):
-        begin = str(behandlungsjahr - 1) + "-12-31"
-        end = str(behandlungsjahr + 1) + "-01-01"
+    if(jahr):
+        begin = str(jahr - 1) + "-12-31"
+        end = str(jahr + 1) + "-01-01"
         behandlungsverlaeufe = db.session.query(Behandlungsverlauf, Person, Tier) \
             .join(Person, Behandlungsverlauf.person_id == Person.id) \
             .join(Tier, Behandlungsverlauf.tier_id == Tier.id).filter(Behandlungsverlauf.datum > begin, Behandlungsverlauf.datum < end).all()
@@ -39,13 +39,13 @@ def index():
             .join(Person, Behandlungsverlauf.person_id == Person.id) \
             .join(Tier, Behandlungsverlauf.tier_id == Tier.id).all()
 
-    if(behandlungsjahr):
-        str_behandlungsjahr = str(behandlungsjahr)
+    if(jahr):
+        str_jahr = str(jahr)
     else:
-        str_behandlungsjahr = ""
+        str_jahr = ""
 
     return render_template('behandlungsverlauf/index.html', behandlungsverlaeufe=behandlungsverlaeufe, 
-        behandlungsjahr=str_behandlungsjahr, page_title="Behandlungsverläufe")
+        jahr=str_jahr, page_title="Behandlungsverläufe")
 
 
 def dl_behandlungsverlauf(behandlungsverlauf_id):

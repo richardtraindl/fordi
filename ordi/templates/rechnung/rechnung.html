@@ -35,17 +35,17 @@
         <input type="hidden" name="rechnung_id" value="{{- rechnung.id or '' -}}">
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
-            <label for="rechnungsjahr">Rechnungsjahr</label>
-            <input type="text" size=3 name="rechnungsjahr" id="rechnungsjahr" value="{{- request.form['rechnungsjahr'] or rechnung.rechnungsjahr|sn -}}" required>
+            <label for="jahr">Rechnungsjahr</label>
+            <input type="text" size=3 name="jahr" id="jahr" value="{{- request.form['jahr'] or rechnung.jahr|sn -}}" required>
 
-            <label for="rechnungslfnr">Rechnungslfnr</label>
-            <input type="text" size=3 name="rechnungslfnr" id="rechnungslfnr" value="{{- request.form['rechnungslfnr'] or rechnung.rechnungslfnr|sn -}}" required>
+            <label for="lfnr">Rechnungslfnr</label>
+            <input type="text" size=3 name="lfnr" id="lfnr" value="{{- request.form['lfnr'] or rechnung.lfnr|sn -}}" required>
 
-            <label for="ausstellungsdatum">Ausstellungsdatum</label>
-            <input type="text" size=8 name="ausstellungsdatum" id="ausstellungsdatum" class="date" value="{{- request.form['ausstellungsdatum'] or rechnung.ausstellungsdatum|dt or datum -}}" required>
+            <label for="datum">Ausstellungsdatum</label>
+            <input type="text" size=8 name="datum" id="datum" class="date" value="{{- request.form['datum'] or rechnung.datum|dt or datum -}}" required>
 
-            <label for="ausstellungsort">Ausstellungsort</label>
-            <input type="text" size=10 name="ausstellungsort" id="ausstellungsort" value="{{- request.form['ausstellungsort'] or rechnung.ausstellungsort or ort -}}" required>
+            <label for="ort">Ausstellungsort</label>
+            <input type="text" size=10 name="ort" id="ort" value="{{- request.form['ort'] or rechnung.ort or ort -}}" required>
         </div>
       </div>
       <div>

@@ -22,26 +22,26 @@ bp = Blueprint('rechnung', __name__, url_prefix='/rechnung')
 def index():
     if(request.method == 'POST'):
         try:
-            rechnungsjahr = int(request.form['rechnungsjahr'])
+            jahr = int(request.form['jahr'])
         except:
-            rechnungsjahr = None
+            jahr = None
     else:
-        rechnungsjahr = None
+        jahr = datetime.today().year
 
-    if(rechnungsjahr):
+    if(jahr):
         rechnungen = db.session.query(Rechnung, Person, Tier) \
             .join(Person, Rechnung.person_id == Person.id) \
-            .join(Tier, Rechnung.tier_id == Tier.id).filter(Rechnung.rechnungsjahr==rechnungsjahr).all()
+            .join(Tier, Rechnung.tier_id == Tier.id).filter(Rechnung.jahr==jahr).all()
     else:
         rechnungen = db.session.query(Rechnung, Person, Tier) \
             .join(Person, Rechnung.person_id == Person.id) \
             .join(Tier, Rechnung.tier_id == Tier.id).all()
         
-    if(rechnungsjahr):
-        str_rechnungsjahr = str(rechnungsjahr)
+    if(jahr):
+        str_jahr = str(jahr)
     else:
-        str_rechnungsjahr = ""
-    return render_template('rechnung/index.html', rechnungen=rechnungen, rechnungsjahr=str_rechnungsjahr, page_title="Rechnungen")
+        str_jahr = ""
+    return render_template('rechnung/index.html', rechnungen=rechnungen, jahr=str_jahr, page_title="Rechnungen")
 
 
 def calc_and_fill_rechnung(rechnung, rechnungszeilen):

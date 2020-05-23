@@ -25,7 +25,39 @@ def index():
 def database():
     return render_template('admin/database.html', page_title="Database")
 
+
 def clean_file(path_and_filename, rowcnt):
+    path_and_filename2 = path_and_filename + "2"
+    with open(path_and_filename, "r") as fo:
+        with open(path_and_filename2, "w") as fo2:
+            cnt = 0
+            quotecnt = 0
+            for char in fo.read():
+                if(char == '"'):
+                    quotecnt += 1
+                    fo2.write(char)
+                    continue
+                elif(char == ';'):
+                    if(quotecnt % 2 == 1):
+                        fo2.write(',')
+                        print("+", end="")
+                    else:
+                        fo2.write(char)
+                        cnt += 1
+                    continue
+                elif(char == '\n'):
+                    if(cnt % rowcnt != 0):
+                        fo2.write('§')
+                        print("!", end="")
+                    else:
+                        fo2.write(char)                  
+                    continue
+                else:
+                    fo2.write(char)
+    return path_and_filename2
+
+
+def clean_file_ori(path_and_filename, rowcnt):
     path_and_filename2 = path_and_filename + "2"
     with open(path_and_filename, "r") as fo:
         with open(path_and_filename2, "w") as fo2:
@@ -69,21 +101,25 @@ def clean(line):
             newline += char
     return newline
 
+
 def import_tier():
     filename = "tblTier.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
-    with open(path_and_filename) as openfileobject:
-        ok = True
-        for line in openfileobject:
-            cleanline = clean(line)
-            arrline = cleanline.split(";")
+
+    path_and_filename2 = clean_file(path_and_filename, 11)
+
+    ok = True
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
+            arrline = line.split(";")
 
             if(len(arrline) != 12):
                 print(arrline[0], end="", flush=True)
                 continue
 
             tier = Tier()
-
             try:            
                 tier.id = int(arrline[0])
 
@@ -126,28 +162,34 @@ def import_tier():
                 print(arrline, flush=True)
                 break
 
-        if(ok):
-            db.session.commit()
-            return True
-        else:
-            db.session.rollback()
-            return False
+    os.remove(path_and_filename2)
+
+    if(ok):
+        db.session.commit()
+        return True
+    else:
+        db.session.rollback()
+        return False
+
 
 def import_person():
     filename = "tblPerson.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
-    with open(path_and_filename) as openfileobject:
-        ok = True
-        for line in openfileobject:
-            cleanline = clean(line)
-            arrline = cleanline.split(";")
+
+    path_and_filename2 = clean_file(path_and_filename, 6)
+
+    ok = True
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
+            arrline = line.split(";")
 
             if(len(arrline) != 7):
                 print(arrline[0], end="", flush=True)
                 continue
 
             person = Person()
-
             try:            
                 person.id = int(arrline[0])
 
@@ -177,28 +219,35 @@ def import_person():
                 print(arrline, flush=True)
                 break
 
-        if(ok):
-            db.session.commit()
-            return True
-        else:
-            db.session.rollback()
-            return False
+    os.remove(path_and_filename2)
+
+    if(ok):
+        db.session.commit()
+        return True
+    else:
+        db.session.rollback()
+        return False
+
 
 def import_adresse():
     filename = "tblAdresse.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
-    with open(path_and_filename) as openfileobject:
-        ok = True
-        for line in openfileobject:
-            cleanline = clean(line)
-            arrline = cleanline.split(";")
-            
+
+    path_and_filename2 = clean_file(path_and_filename, 4)
+
+    ok = True
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
+            arrline = line.split(";")
+    
             if(len(arrline) != 5):
                 print(arrline[0], end="", flush=True)
                 continue
 
             try:
-                person_id = int(arrline[1])
+                person_id = int(arrline[0])
                 person = db.session.query(Person).get(person_id)
 
                 person.adr_strasse = arrline[2].strip('"')
@@ -214,21 +263,28 @@ def import_adresse():
                 print(arrline, flush=True)
                 break
 
-        if(ok):
-            db.session.commit()
-            return True
-        else:
-            db.session.rollback()
-            return False
+    os.remove(path_and_filename2)
+
+    if(ok):
+        db.session.commit()
+        return True
+    else:
+        db.session.rollback()
+        return False
+
 
 def import_kontakt():
     filename = "tblKontakt.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+
+    path_and_filename2 = clean_file(path_and_filename, 4)
+
     ok = True
-    with open(path_and_filename) as openfileobject:
-        for line in openfileobject:
-            cleanline = clean(line)
-            arrline = cleanline.split(";")
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
+            arrline = line.split(";")
 
             if(len(arrline) != 5):
                 print(arrline[0], end="", flush=True)
@@ -238,20 +294,22 @@ def import_kontakt():
                 continue
 
             try:
-                person_id = int(arrline[1])
+                person_id = int(arrline[0])
                 person = db.session.query(Person).get(person_id)
 
                 if(person.kontakte and len(person.kontakte) > 0):
                     person.kontakte += " " + arrline[3].strip('"')
                 else:
-                    person.kontakte = arrline[3].strip('"')                    
+                    person.kontakte = arrline[3].strip('"')
 
                 print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
-                print(str(person.id), flush=True)
+                print(arrline, flush=True)
                 break
+
+    os.remove(path_and_filename2)
 
     if(ok):
         db.session.commit()
@@ -260,29 +318,31 @@ def import_kontakt():
         db.session.rollback()
         return False
 
+
 def import_tierhaltung():
     filename = "tblTierhaltung.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
-    with open(path_and_filename) as openfileobject:
-        ok = True
-        for line in openfileobject:
-            cleanline = clean(line)
-            arrline = cleanline.split(";")
 
-            if(len(arrline) != 4):
+    path_and_filename2 = clean_file(path_and_filename, 2)
+
+    ok = True
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
+            arrline = line.split(";")
+
+            if(len(arrline) != 3):
                 print(arrline[0], end="", flush=True)
                 continue
 
             tierhaltung = Tierhaltung()
-
             try:            
-                tierhaltung.id = int(arrline[0])
-                
-                tierhaltung.person_id = int(arrline[1])
-                
-                tierhaltung.tier_id = int(arrline[2])
-                
-                tierhaltung.anlagezeit = datetime.strptime((arrline[3])[:10], "%Y-%m-%d")
+                tierhaltung.person_id = int(arrline[0])
+
+                tierhaltung.tier_id = int(arrline[1])
+
+                tierhaltung.anlagezeit = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
 
                 db.session.add(tierhaltung)
                 print(".", end="", flush=True)
@@ -292,12 +352,15 @@ def import_tierhaltung():
                 print(arrline, flush=True)
                 break
 
-        if(ok):
-            db.session.commit()
-            return True
-        else:
-            db.session.rollback()
-            return False
+    os.remove(path_and_filename2)
+
+    if(ok):
+        db.session.commit()
+        return True
+    else:
+        db.session.rollback()
+        return False
+
 
 def import_behandlung():
     filename = "tblBehandlung.txt"
@@ -306,49 +369,47 @@ def import_behandlung():
     path_and_filename2 = clean_file(path_and_filename, 9)
 
     ok = True
-    with open(path_and_filename2) as openfileobject:
-        for line in openfileobject:
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
             arrline = line.split(";")
 
             if(len(arrline) != 10):
                 print(arrline[0], end="", flush=True)
                 continue
 
+            behandlung = Behandlung()
             try:
-                tier_id = int(arrline[0])
-                tier = db.session.query(Tier).get(tier_id)
-                if(tier):
-                    behandlung = Behandlung()
+                behandlung.id = int(arrline[1])
 
-                    behandlung.id = int(arrline[1])
+                behandlung.tier_id = int(arrline[0])
 
-                    behandlung.tier_id = tier_id
+                if(len(arrline[7]) > 0):
+                    behandlung.datum = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
+                else:
+                    behandlung.datum = date(year=1900, month=1, day=1)
 
-                    if(len(arrline[7]) > 0):
-                        behandlung.behandlungsdatum = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
-                    else:
-                        behandlung.behandlungsdatum = date(year=1900, month=1, day=1)
-                    
-                    behandlung.gewicht = arrline[3].strip('"')
+                behandlung.gewicht = arrline[3].strip('"')
 
-                    behandlung.diagnose = arrline[4].strip('"')
+                behandlung.diagnose = arrline[4].strip('"')
 
-                    behandlung.laborwerte1 = arrline[5].strip('"')
+                behandlung.laborwerte1 = arrline[5].strip('"')
 
-                    behandlung.laborwerte2 = arrline[6].strip('"')
+                behandlung.laborwerte2 = arrline[6].strip('"')
 
-                    behandlung.arzneien = arrline[7].strip('"')
+                behandlung.arzneien = arrline[7].strip('"')
 
-                    behandlung.arzneimittel = arrline[8].strip('"')
+                behandlung.arzneimittel = arrline[8].strip('"')
 
-                    behandlung.impfungen_extern = arrline[9].strip('"')
+                behandlung.impfungen_extern = arrline[9].strip('"')
 
-                    db.session.add(behandlung)
-                    print(".", end="", flush=True)
+                db.session.add(behandlung)
+                print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
-                print(str(behandlung.id), flush=True)
+                print(arrline, flush=True)
                 break
     
     os.remove(path_and_filename2)
@@ -360,29 +421,39 @@ def import_behandlung():
         db.session.rollback()
         return False
 
+
 def import_impfung():
     filename = "tblImpfung.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+
+    path_and_filename2 = clean_file(path_and_filename, 1)
+
     ok = True
 
-    with open(path_and_filename) as openfileobject:
-        for line in openfileobject:
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
             arrline = line.split(";")
 
             if(len(arrline) != 2):
                 print(arrline[0], end="", flush=True)
                 continue
 
+            impfung = Impfung()
             try:
-                impfung = Impfung()
                 impfung.behandlung_id = int(arrline[0])
+
                 impfung.impfungscode = int(arrline[1])
+
                 db.session.add(impfung)
                 print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
+                print(arrline, flush=True)
                 break
+
+    os.remove(path_and_filename2)
 
     if(ok):
         db.session.commit()
@@ -391,6 +462,7 @@ def import_impfung():
         db.session.rollback()
         return False
 
+
 def import_behandlungsverlauf():
     filename = "tblBehandlungsverlauf.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
@@ -398,17 +470,18 @@ def import_behandlungsverlauf():
     path_and_filename2 = clean_file(path_and_filename, 5)
 
     ok = True
-    with open(path_and_filename2) as openfileobject:
-        for line in openfileobject:
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
             arrline = line.split(";")
 
             if(len(arrline) != 6):
                 print(arrline[0], end="", flush=True)
                 continue
 
+            behandlungsverlauf = Behandlungsverlauf()
             try:
-                behandlungsverlauf = Behandlungsverlauf()
-
                 behandlungsverlauf.id = int(arrline[0])
 
                 behandlungsverlauf.person_id = int(arrline[1])
@@ -429,7 +502,7 @@ def import_behandlungsverlauf():
             except:
                 ok = False
                 print("error", end=" ", flush=True)
-                print(str(behandlungsverlauf.id), flush=True)
+                print(arrline, flush=True)
                 break
     
     os.remove(path_and_filename2)
@@ -441,6 +514,7 @@ def import_behandlungsverlauf():
         db.session.rollback()
         return False
 
+
 def import_rechnung():
     filename = "tblRechnung.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
@@ -448,17 +522,18 @@ def import_rechnung():
     path_and_filename2 = clean_file(path_and_filename, 13)
 
     ok = True
-    with open(path_and_filename2) as openfileobject:
-        for line in openfileobject:
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
             arrline = line.split(";")
 
             if(len(arrline) != 14):
                 print(arrline[0], end="", flush=True)
                 continue
 
+            rechnung = Rechnung()
             try:
-                rechnung = Rechnung()
-
                 rechnung.id = int(arrline[0])
 
                 rechnung.person_id = int(arrline[1])
@@ -466,25 +541,25 @@ def import_rechnung():
                 rechnung.tier_id = int(arrline[2])
 
                 if(len(arrline[3]) > 0):
-                    rechnung.rechnungsjahr = int(arrline[3])
+                    rechnung.jahr = int(arrline[3])
                 else:
-                    rechnung.rechnungsjahr = 1900
+                    rechnung.jahr = 1900
 
                 if(len(arrline[4]) > 0):
-                    rechnung.rechnungslfnr = int(arrline[4])
+                    rechnung.lfnr = int(arrline[4])
                 else:
-                    rechnung.rechnungslfnr = 0
+                    rechnung.lfnr = 0
 
                 if(len(arrline[5]) > 0):
-                    rechnung.ausstellungsdatum = datetime.strptime((arrline[5])[:10], "%Y-%m-%d")
+                    rechnung.datum = datetime.strptime((arrline[5])[:10], "%Y-%m-%d")
                 else:
-                    rechnung.ausstellungsdatum = date(year=1900, month=1, day=1)
+                    rechnung.datum = date(year=1900, month=1, day=1)
 
-                rechnung.ausstellungsort = arrline[6]
+                rechnung.ort = arrline[6].strip('"')
 
-                rechnung.diagnose = arrline[7]
+                rechnung.diagnose = arrline[7].strip('"')
 
-                rechnung.bezahlung = arrline[8]
+                rechnung.bezahlung = arrline[8].strip('"')
 
                 rechnung.brutto_summe = float(arrline[9].replace(',','.'))
 
@@ -501,7 +576,7 @@ def import_rechnung():
             except:
                 ok = False
                 print("error", end=" ", flush=True)
-                print(str(rechnung.id), flush=True)
+                print(arrline, flush=True)
                 break
     
     os.remove(path_and_filename2)
@@ -513,6 +588,7 @@ def import_rechnung():
         db.session.rollback()
         return False
 
+
 def import_rechnungszeile():
     filename = "tblRechnungszeile.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
@@ -520,17 +596,18 @@ def import_rechnungszeile():
     path_and_filename2 = clean_file(path_and_filename, 5)
 
     ok = True
-    with open(path_and_filename2) as openfileobject:
-        for line in openfileobject:
+
+    with open(path_and_filename2) as fo:
+        for line in fo:
+            line = line.replace('§', '\n')
             arrline = line.split(";")
 
             if(len(arrline) != 6):
                 print(arrline[0], end="", flush=True)
                 continue
 
+            rechnungszeile = Rechnungszeile()
             try:
-                rechnungszeile = Rechnungszeile()
-
                 rechnungszeile.id = int(arrline[0])
 
                 rechnungszeile.rechnung_id = int(arrline[1])
@@ -542,7 +619,7 @@ def import_rechnungszeile():
                 else:
                     rechnungszeile.datum = date(year=1900, month=1, day=1)
 
-                rechnungszeile.artikel = arrline[4]
+                rechnungszeile.artikel = arrline[4].strip('"')
 
                 rechnungszeile.betrag = float(arrline[5].replace(',', '.'))
 
@@ -551,7 +628,7 @@ def import_rechnungszeile():
             except:
                 ok = False
                 print("error", end=" ", flush=True)
-                print(str(rechnungszeile.id), flush=True)
+                print(arrline, flush=True)
                 break
     
     os.remove(path_and_filename2)
@@ -567,7 +644,7 @@ def import_rechnungszeile():
 @bp.route('/write', methods=('GET', 'POST'))
 @login_required
 def write():
-    """if(import_tier() == False):
+    if(import_tier() == False):
         return render_template('admin/database.html', ok=False, page_title="Database")
 
     if(import_person() == False):
@@ -592,7 +669,7 @@ def write():
         return render_template('admin/database.html', ok=False, page_title="Database")
 
     if(import_rechnung() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")"""
+        return render_template('admin/database.html', ok=False, page_title="Database")
 
     if(import_rechnungszeile() == False):
         return render_template('admin/database.html', ok=False, page_title="Database")

@@ -22,7 +22,7 @@ bp = Blueprint('patient', __name__)
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
-    familienname = ""
+    familienname = "A"
     tiername = ""
     kunde = True
     patient = True
@@ -44,7 +44,7 @@ def index():
         .join(Tier, Tier.id==Tierhaltung.tier_id) \
         .filter(Person.familienname.like(familienname + "%"), 
                 Tier.tiername.like(tiername + "%"), 
-                Person.kunde==kunde, Tier.patient==patient).limit(500).all()
+                Person.kunde==kunde, Tier.patient==patient).all() # .limit(500)
 
     return render_template('patient/index.html', tierhaltungen=tierhaltungen, 
         familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 
@@ -120,7 +120,7 @@ def show(id):
         impfungswerte.append([key, value])
 
     tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
-    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).order_by(Behandlung.behandlungsdatum.asc()).all()
+    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).order_by(Behandlung.datum.asc()).all()
     datum = datetime.today()
     datum_ende = datum + timedelta(days=7)
 

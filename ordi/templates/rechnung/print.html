@@ -18,7 +18,7 @@
         </div>
         
         <div style="padding-bottom: 5mm; font-weight: bold;">
-            Rechnung: &nbsp; {{- rechnung.rechnungsjahr -}} / {{- rechnung.rechnungslfnr -}}
+            Rechnung: &nbsp; {{- rechnung.jahr -}} / {{- rechnung.lfnr -}}
         </div>
 
         <div style="display: grid; grid-template-columns: 123mm 40mm;">
@@ -31,7 +31,7 @@
             {%- endif -%}
           </div>
           <div style="text-align: right;">
-            {{- rechnung.ausstellungsdatum|dt -}}
+            {{- rechnung.datum|dt -}}
           </div>
         </div>
 

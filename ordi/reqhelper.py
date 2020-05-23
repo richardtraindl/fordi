@@ -107,20 +107,20 @@ def fill_and_validate_person(person, request):
 
 def fill_and_validate_behandlung(behandlung, req_behandlung):
     error = ""
-    if(len(req_behandlung['behandlungsdatum']) > 10):
-        str_behandlungsdatum = req_behandlung['behandlungsdatum'].split()[0]
+    if(len(req_behandlung['datum']) > 10):
+        str_datum = req_behandlung['datum'].split()[0]
     else:
-        str_behandlungsdatum = req_behandlung['behandlungsdatum']
+        str_datum = req_behandlung['datum']
     try:
-        behandlungsdatum = datetime.strptime(str_behandlungsdatum, "%d.%m.%Y")
+        datum = datetime.strptime(str_datum, "%d.%m.%Y")
     except:
-        behandlungsdatum = None
+        datum = None
         error += "Falsches Behandlungsdatum. "
 
     if(behandlung == None):
         behandlung = Behandlung()
 
-    behandlung.behandlungsdatum=behandlungsdatum 
+    behandlung.datum=datum 
     behandlung.gewicht=req_behandlung['gewicht'] 
     behandlung.diagnose=req_behandlung['diagnose']
     behandlung.laborwerte1=req_behandlung['laborwerte1'] 
@@ -135,7 +135,7 @@ def fill_and_validate_behandlung(behandlung, req_behandlung):
 def build_behandlungen(request):    
     data = (
         request.form.getlist('behandlung_id[]'),
-        request.form.getlist('behandlungsdatum[]'),
+        request.form.getlist('datum[]'),
         request.form.getlist('gewicht[]'),
         request.form.getlist('diagnose[]'),
         request.form.getlist('laborwerte1[]'),
@@ -149,7 +149,7 @@ def build_behandlungen(request):
         req_behandlung = {}
         req_behandlung['behandlung_id'] = data[0][idx]
         req_behandlung['tier_id'] = ""
-        req_behandlung['behandlungsdatum'] = data[1][idx]
+        req_behandlung['datum'] = data[1][idx]
         req_behandlung['gewicht'] = data[2][idx]
         req_behandlung['diagnose'] = data[3][idx]
         req_behandlung['laborwerte1'] = data[4][idx]
@@ -176,32 +176,32 @@ def fill_and_validate_rechnung(rechnung, request):
     error = ""
 
     try:
-        rechnungsjahr = int(request.form['rechnungsjahr'])
+        jahr = int(request.form['jahr'])
     except:
-        rechnungsjahr = None
+        jahr = None
 
     try:
-        rechnungslfnr = int(request.form['rechnungslfnr'])
+        lfnr = int(request.form['lfnr'])
     except:
-        rechnungslfnr = None
+        lfnr = None
 
-    if(len(request.form['ausstellungsdatum']) > 10):
-        str_ausstellungsdatum = request.form['ausstellungsdatum'].split()[0]
+    if(len(request.form['datum']) > 10):
+        str_datum = request.form['datum'].split()[0]
     else:
-        str_ausstellungsdatum = request.form['ausstellungsdatum']
+        str_datum = request.form['datum']
     try:
-        ausstellungsdatum = datetime.strptime(str_ausstellungsdatum, "%d.%m.%Y")
+        datum = datetime.strptime(str_datum, "%d.%m.%Y")
     except:
-        ausstellungsdatum = None
+        datum = None
         error += "Falsches Ausstellungsdatum. "
 
     if(rechnung == None):
         rechnung = Rechnung()
 
-    rechnung.rechnungsjahr=rechnungsjahr
-    rechnung.rechnungslfnr=rechnungslfnr
-    rechnung.ausstellungsdatum=ausstellungsdatum
-    rechnung.ausstellungsort=request.form['ausstellungsort']
+    rechnung.jahr=jahr
+    rechnung.lfnr=lfnr
+    rechnung.datum=datum
+    rechnung.ort=request.form['ort']
     rechnung.diagnose=request.form['diagnose']
     rechnung.bezahlung=request.form['bezahlung']
     rechnung.brutto_summe=0

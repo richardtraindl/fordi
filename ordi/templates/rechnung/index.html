@@ -12,8 +12,8 @@
       <form method="post" action="{{ url_for('rechnung.index') }}">
         <div class="flex-container">
             <div>
-                <label for="rechnungsjahr">Rechnungsjahr</label>
-                <input type="text" size="10" name="rechnungsjahr" value="{{- rechnungsjahr -}}">
+                <label for="jahr">Jahr</label>
+                <input type="text" size="10" name="jahr" value="{{- jahr -}}">
             </div>
             <div>
                 <input type="submit" value="suchen">
@@ -42,8 +42,8 @@
       {% for r in rechnungen %}
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- r.Rechnung.id -}}"></td>
-            <td style="width: 4%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungsjahr -}}</a></td>
-            <td style="width: 2%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.rechnungslfnr -}}</a></td>
+            <td style="width: 4%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.jahr -}}</a></td>
+            <td style="width: 2%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.lfnr -}}</a></td>
             <td style="width: 4%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- '{0:0.2f}'.format(r.Rechnung.brutto_summe | float) -}}</a></td>
             <td style="width: 6%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.anredecode|mapanrede -}}</a></td>
             <td style="width: 18%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.familienname -}}</a></td>

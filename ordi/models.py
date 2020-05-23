@@ -18,8 +18,8 @@ class Tierhaltung(db.Model):
     __tablename__ = 'tierhaltung'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False, index=True)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False, index=True)
     anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='immediate')
     tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='immediate')
@@ -105,8 +105,9 @@ class Behandlung(db.Model):
     __tablename__ = 'behandlung'
 
     id = db.Column(db.Integer, primary_key=True)
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False)
-    behandlungsdatum = db.Column(db.Date(), nullable=False)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
+    #behandlungsdatum = db.Column(db.Date(), nullable=False)
+    datum = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     gewicht = db.Column(db.String(50))
     diagnose = db.Column(db.String(1000))
     laborwerte1 = db.Column(db.String(1000))
@@ -125,7 +126,7 @@ class Impfung(db.Model):
     __tablename__ = 'impfung'
 
     id = db.Column(db.Integer, primary_key=True)
-    behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id', ondelete='CASCADE'), nullable=False)
+    behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id', ondelete='CASCADE'), nullable=False, index=True)
     impfungscode = db.Column(db.Integer(), nullable=False)
     behandlung = db.relationship("Behandlung", back_populates="impfungen")
 
@@ -137,8 +138,8 @@ class Behandlungsverlauf(db.Model):
     __tablename__ = 'behandlungsverlauf'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False, index=True)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
     datum = db.Column(db.Date(), nullable=False)
     diagnose = db.Column(db.String(256))
     behandlung = db.Column(db.String(1000))
@@ -153,12 +154,12 @@ class Rechnung(db.Model):
     __tablename__ = 'rechnung'
 
     id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
-    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False)
-    rechnungsjahr = db.Column(db.Integer(), nullable=False)
-    rechnungslfnr = db.Column(db.Integer(), nullable=False)
-    ausstellungsdatum = db.Column(db.Date(), nullable=False)
-    ausstellungsort = db.Column(db.String(256))
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False, index=True)
+    tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
+    jahr = db.Column(db.Integer(), nullable=False)
+    lfnr = db.Column(db.Integer(), nullable=False)
+    datum = db.Column(db.Date(), nullable=False)
+    ort = db.Column(db.String(256))
     diagnose = db.Column(db.String(256))
     bezahlung = db.Column(db.String(256))
     brutto_summe = db.Column(db.Numeric(8, 2))
@@ -178,7 +179,7 @@ class Rechnungszeile(db.Model):
     __tablename__ = 'rechnungszeile'
 
     id = db.Column(db.Integer, primary_key=True)
-    rechnung_id = db.Column(db.Integer, db.ForeignKey('rechnung.id', ondelete='CASCADE'), nullable=False)
+    rechnung_id = db.Column(db.Integer, db.ForeignKey('rechnung.id', ondelete='CASCADE'), nullable=False, index=True)
     datum = db.Column(db.Date(), nullable=False)
     artikelcode = db.Column(db.Integer(), nullable=False)
     artikel = db.Column(db.String(256))
@@ -193,7 +194,7 @@ class Termin(db.Model):
     __tablename__ = 'termin'
 
     id = db.Column(db.Integer, primary_key=True)
-    tierhaltung_id = db.Column(db.Integer, db.ForeignKey('tierhaltung.id'))
+    tierhaltung_id = db.Column(db.Integer, db.ForeignKey('tierhaltung.id'), index=True)
     autor = db.Column(db.String(30))
     beginn = db.Column(db.DateTime(timezone=True), nullable=False)
     ende = db.Column(db.DateTime(timezone=True), nullable=False)

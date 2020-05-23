@@ -28,8 +28,8 @@ def dl_bericht(abfrage, tierhaltungen, kriterium1, kriterium2):
     return path_and_filename
 
 
-def dl_etiketten(abfrage, tierhaltungen):
-    html = render_template('abfragen/print_etiketten.html', tierhaltungen=tierhaltungen)
+def dl_etiketten(abfrage, personen):
+    html = render_template('abfragen/print_etiketten.html', personen=personen)
     filename = abfrage + "_etiketten.pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
 
@@ -49,7 +49,7 @@ def dl_excel(abfrage, tierhaltungen):
     ws['B1'] = "Familienname"
     for tierhaltung in tierhaltungen:
         print(tierhaltung)
-        ws.append([tierhaltung.Behandlung.behandlungsdatum.strftime("%d.%m.%Y"), tierhaltung.Person.familienname])
+        ws.append([tierhaltung.Behandlung.datum.strftime("%d.%m.%Y"), tierhaltung.Person.familienname])
     wb.save(path_and_filename)
 
     return path_and_filename
@@ -139,30 +139,57 @@ def index():
 
         if(abfrage == "Arzneien" or abfrage == "Arzneimittel" or abfrage == "Behandlung" or 
            abfrage == "Diagnose" or abfrage == "Finanzamt"):
-            query = db.session.query(Tierhaltung, Person, Tier, Behandlung) \
-                .join(Person, Person.id==Tierhaltung.person_id) \
-                .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                .filter(Person.kunde==kunde, Tier.patient==patient)
+            if(abfrage == "Finanzamt" and output == "excel"):
+                tierhaltungen = db.session.query(Tierhaltung, Person, Behandlung) \
+                    .join(Person, Person.id==Tierhaltung.person_id) \
+                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                    .filter(Person.kunde==kunde, Tier.patient==patient, \
+                            Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
+                            ~Tier.merkmal.contains('Abzeichen')) \
+                    .order_by(Behandlung.datum.asc()).all()
+                path_and_filename = dl_excel(abfrage, tierhaltungen)
+                return send_file(path_and_filename, as_attachment=True)
+            else:
+                query = db.session.query(Tierhaltung, Person, Tier) \
+                    .join(Person, Person.id==Tierhaltung.person_id) \
+                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                    .filter(Person.kunde==kunde, Tier.patient==patient) \
+                    .order_by(Person.familienname.asc())
         elif(abfrage == "Impfung"):
-            query = db.session.query(Tierhaltung, Person, Tier, Behandlung, Impfung) \
-                .join(Person, Person.id==Tierhaltung.person_id) \
-                .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
-                .filter(Person.kunde==kunde, Tier.patient==patient)
+            if(output == "etiketten"):
+                personen = db.session.query(Person) \
+                    .join(Tierhaltung, Tierhaltung.person_id==Person.id) \
+                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                    .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
+                    .filter(Person.kunde==kunde, Tier.patient==patient, \
+                            Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum) \
+                    .order_by(Person.familienname.asc()).all()
+                path_and_filename = dl_etiketten(abfrage, personen)
+                return send_file(path_and_filename, as_attachment=True)
+            else:
+                query = db.session.query(Tierhaltung, Person, Tier) \
+                    .join(Person, Person.id==Tierhaltung.person_id) \
+                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
+                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
+                    .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
+                    .filter(Person.kunde==kunde, Tier.patient==patient) \
+                    .order_by(Person.familienname.asc())
         else:
             query = db.session.query(Tierhaltung, Person, Tier) \
                 .join(Person, Person.id==Tierhaltung.person_id) \
                 .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                .filter(Person.kunde==kunde, Tier.patient==patient)
+                .filter(Person.kunde==kunde, Tier.patient==patient) \
+                .order_by(Person.familienname.asc())
 
         if(abfrage == "Arzneien"):
             tierhaltungen = query.filter(Behandlung.arzneien.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Arzneimittel"):
             tierhaltungen = query.filter(Behandlung.arzneimittel.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Behandlung"):
-            tierhaltungen = query.filter(Behandlung.behandlungsdatum >= von_datum, Behandlung.behandlungsdatum <= bis_datum).all()
+            tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum).all()
         elif(abfrage == "Chipnummer"):
             tierhaltungen = query.filter(Tier.chip_nummer.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Diagnose"):
@@ -170,10 +197,10 @@ def index():
         elif(abfrage == "EU-Passnummer"):
             tierhaltungen = query.filter(Tier.eu_passnummer.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Finanzamt"):
-            tierhaltungen = query.filter(Behandlung.behandlungsdatum >= von_datum, Behandlung.behandlungsdatum <= bis_datum, 
+            tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, 
                                 ~Tier.merkmal.contains('Abzeichen')).all()
         elif(abfrage == "Impfung"):
-            tierhaltungen = query.filter(Behandlung.behandlungsdatum >= von_datum, Behandlung.behandlungsdatum <= bis_datum).all()
+            tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum).all()
         elif(abfrage == "Kontakte"):
             tierhaltungen = query.filter(Person.kontakte.like("%" + kriterium1 + "%")).all()
         elif(abfrage == "Merkmal"):
@@ -199,14 +226,6 @@ def index():
 
     if(output == "bericht-drucken"):
         path_and_filename = dl_bericht(abfrage, tierhaltungen, kriterium1, kriterium2)
-        return send_file(path_and_filename, as_attachment=True)
-
-    if(output == "etiketten"):
-        path_and_filename = dl_etiketten(abfrage, tierhaltungen)
-        return send_file(path_and_filename, as_attachment=True)
-
-    if(output == "excel"):
-        path_and_filename = dl_excel(abfrage, tierhaltungen)
         return send_file(path_and_filename, as_attachment=True)
 
     return render_template('abfragen/index.html', abfragen=lst_abfragen, 

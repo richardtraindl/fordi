@@ -75,7 +75,7 @@
             <td style="width: 14%"><a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tierart }}</a></td>
             <td style="width: 10%"><a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.rasse }}</a></td>
             <td style="width: 6%"><a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geschlechtscode|mapgeschlecht }}</a></td>
-            <td style="width: 8%"><a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geburtsdatum }}</a></td>
+            <td style="width: 8%"><a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geburtsdatum|dt }}</a></td>
         </tr>
       {% endfor %}
     </table>

@@ -65,10 +65,10 @@
                 <td style="width: 8%">
                   {% if behandlung.id %}
                     <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}" disabled>
-                    <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung.behandlungsdatum|dt -}}" disabled>
+                    <input type="text" name="datum[]" class="date" value="{{- behandlung.datum|dt -}}" disabled>
                   {% else %}
                     <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] -}}" disabled>
-                    <input type="text" name="behandlungsdatum[]" class="date" value="{{- behandlung['behandlungsdatum'] -}}" disabled>
+                    <input type="text" name="datum[]" class="date" value="{{- behandlung['datum'] -}}" disabled>
                   {% endif %}
                 </td>
                 <td style="width: 30%"><textarea name="diagnose[]" disabled>{{- behandlung['diagnose'] or behandlung.diagnose -}}</textarea></td>
@@ -96,7 +96,7 @@
             <tr class="edit-focus">
               <td style="width: 8%">
                   <input type="hidden" name="behandlung_id[]" value="">
-                  <input type="text" name="behandlungsdatum[]" class="date" value="{{- datum -}}">
+                  <input type="text" name="datum[]" class="date" value="{{- datum -}}">
               </td>
               <td style="width: 30%"><textarea name="diagnose[]" id="diagnose"></textarea></td>
               <td style="width: 11%"><textarea name="laborwerte1[]" class="labor"></textarea></td>

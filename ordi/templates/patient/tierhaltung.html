@@ -50,8 +50,8 @@
                 <th style="width: 13.8%">Arzneien</th>
                 <th style="width: 6.9%">AM</th>
                 <th style="width: 8.9%">Impfungen</th>
-                <th style="width: 3.9%">Kg</th>
-                <th style="width: 7.1%">&nbsp;</th>
+                <th style="width: 4.9%">Kg</th>
+                <th style="width: 6.1%">&nbsp;</th>
             </tr>
         </thead>
     </table>
@@ -89,8 +89,8 @@
                         {%- endfor -%}
                     </textarea>
                 </td>
-                <td style="width: 4%"><textarea name="gewicht[]" disabled>{{- behandlung['gewicht'] or behandlung.gewicht|sn -}}</textarea></td>
-                <td style="width: 6%"><a href="#" onclick="enablerow($(this));">bearb.</a></td>
+                <td style="width: 5%"><textarea name="gewicht[]" disabled>{{- behandlung['gewicht'] or behandlung.gewicht|sn -}}</textarea></td>
+                <td style="width: 5%"><a href="#" onclick="enablerow($(this));">bearb.</a></td>
             </tr>
           {% endfor %}
             <tr class="edit-focus">
@@ -104,8 +104,8 @@
               <td style="width: 14%"><textarea name="arzneien[]"></textarea></td>
               <td style="width: 7%"><textarea name="arzneimittel[]"></textarea></td>
               <td style="width: 9%"><textarea name="impfungen_extern[]" class="impfungen" readonly></textarea></td>
-              <td style="width: 4%"><textarea name="gewicht[]"></textarea></td>
-              <td style="width: 6%">&nbsp;</td>
+              <td style="width: 5%"><textarea name="gewicht[]"></textarea></td>
+              <td style="width: 5%">&nbsp;</td>
             </tr>
           </tbody>
         </table>

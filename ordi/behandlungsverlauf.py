@@ -13,6 +13,7 @@ from ordi.models import *
 from ordi.reqhelper import *
 from ordi.values import *
 from ordi.createpdf import *
+from ordi.util.helper import *
 
 bp = Blueprint('behandlungsverlauf', __name__, url_prefix='/behandlungsverlauf')
 
@@ -53,13 +54,15 @@ def dl_behandlungsverlauf(behandlungsverlauf_id):
 
     html = render_template('behandlungsverlauf/print.html', behandlungsverlauf=behandlungsverlauf)
 
-    filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + behandlungsverlauf.person.familienname + \
-        "_" + behandlungsverlauf.person.vorname + ".pdf"
+    name = filter_bad_chars(behandlungsverlauf.person.familienname + \
+                "_" + behandlungsverlauf.person.vorname)
+    filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + name + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
 
     html2pdf(html, path_and_filename)
 
     return path_and_filename
+
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required

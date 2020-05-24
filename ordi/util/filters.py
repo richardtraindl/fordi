@@ -30,21 +30,27 @@ def filter_supress_none(val):
     if not val is None:
         return val
     else:
-        return ''
+        return ""
 
 
 def filter_format_date(val):
     if not val is None:
-        return val.strftime("%d.%m.%Y")
+        if(val.year==1900 and val.month==1 and val.day==1):
+            return ""
+        else:
+            try:
+                return val.strftime("%d.%m.%Y")
+            except:
+                return ""
     else:
-        return ''
+        return ""
 
 
 def filter_format_datetime(val):
     if not val is None:
         return val.strftime("%d.%m.%Y, %H:%M")
     else:
-        return ''
+        return ""
 
 
 def calc_kw(now):

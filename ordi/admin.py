@@ -40,7 +40,6 @@ def clean_file(path_and_filename, rowcnt):
                 elif(char == ';'):
                     if(quotecnt % 2 == 1):
                         fo2.write(',')
-                        print("+", end="")
                     else:
                         fo2.write(char)
                         cnt += 1
@@ -48,58 +47,12 @@ def clean_file(path_and_filename, rowcnt):
                 elif(char == '\n'):
                     if(cnt % rowcnt != 0):
                         fo2.write('§')
-                        print("!", end="")
                     else:
                         fo2.write(char)                  
                     continue
                 else:
                     fo2.write(char)
     return path_and_filename2
-
-
-def clean_file_ori(path_and_filename, rowcnt):
-    path_and_filename2 = path_and_filename + "2"
-    with open(path_and_filename, "r") as fo:
-        with open(path_and_filename2, "w") as fo2:
-            cnt = 0
-            quotecnt = 0
-            for char in fo.read():
-                if(char == '"'):
-                    quotecnt += 1
-                    fo2.write(char)
-                    continue
-                elif(char == ';'):
-                    if(quotecnt % 2 == 1):
-                        fo2.write(',')
-                        print("+", end="")
-                    else:
-                        fo2.write(char)
-                        cnt += 1
-                    continue
-                elif(char == '\n'):
-                    if(cnt % rowcnt != 0):
-                        fo2.write(' ')
-                        print("!", end="")
-                    else:
-                        fo2.write(char)
-                    continue
-                else:
-                    fo2.write(char)
-    return path_and_filename2
-
-def clean(line):
-    newline = ""
-    cnt = 0
-    for char in line:
-        if(char == '"'):
-            cnt += 1
-            newline += char
-        elif(char == ';' and cnt % 2 == 1):
-            newline += ","
-            continue
-        else:
-            newline += char
-    return newline
 
 
 def import_tier():

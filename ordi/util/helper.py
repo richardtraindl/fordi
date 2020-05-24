@@ -10,6 +10,24 @@ def reverse_lookup(dic, value):
     return None
 
 
+def filter_bad_chars(value):
+    new = ""
+    for char in value:
+        if((ord(char) >= ord('A') and ord(char) <= ord('Z')) or
+           (ord(char) >= ord('a') and ord(char) <= ord('z')) or
+           (ord(char) >= ord('0') and ord(char) <= ord('9'))):
+            new += char
+        else:
+            new += "_"
+    return new
+
+
+    for key in dic:
+        if(dic[key] == value):
+            return key
+    return None
+
+
 def berechneOstern(jahr):
     # Die Methode
     # Teile das Jahr, dessen Osterdatum berechnet werden soll, durch 19. 

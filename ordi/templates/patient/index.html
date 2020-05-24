@@ -83,7 +83,7 @@
 
     <div class="flex-container">
         <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
-        <p><a class="btn" href="{{ url_for('patient.create') }}">neue Karteikarte</a></p>
+        <p><a target="_blank" class="btn" href="{{ url_for('patient.create') }}">neue Karteikarte</a></p>
         <p><a class="btn" id="neuer_termin" href="#">neuer Termin</a></p>
         <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
         <p><a class="btn" id="neue_rechnung" href="#">neue Rechnung</a></p>
@@ -110,7 +110,8 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/kalender/tierhaltung/" + id.toString() + "/create";
+                    window.open("/kalender/tierhaltung/" + id.toString() + "/create", "_blank");
+                    //window.location = "/kalender/tierhaltung/" + id.toString() + "/create";
                 }
                 return false; 
             });
@@ -120,7 +121,8 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/" + id.toString() + "/create_tier";
+                    window.open("/" + id.toString() + "/create_tier", "_blank");
+                    //window.location = "/" + id.toString() + "/create_tier";
                 }
                 return false; 
             });
@@ -146,7 +148,8 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/behandlungsverlauf/" + id.toString() + "/create";
+                    window.open("/behandlungsverlauf/" + id.toString() + "/create", "_blank");
+                    //window.location = "/behandlungsverlauf/" + id.toString() + "/create";
                 }
                 return false; 
             });
@@ -156,7 +159,8 @@
                     alert("Bitte eine Karteikarte auswählen!");
                 }
                 else{
-                    window.location = "/rechnung/" + id.toString() + "/create";
+                    window.open("/rechnung/" + id.toString() + "/create", "_blank");
+                    //window.location = "/rechnung/" + id.toString() + "/create";
                 }
                 return false; 
             });

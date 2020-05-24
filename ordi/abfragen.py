@@ -58,8 +58,7 @@ def dl_excel(abfrage, tierhaltungen):
 def str_to_date(str_date):
     datum = None
     error = ""
-    """if(len(str_date) != 10):
-        error += "Falsche Datumslänge."""
+
     try:
         datum = datetime.strptime(str_date, '%d.%m.%Y').date()
     except:
@@ -108,9 +107,9 @@ def index():
         if(len(abfrage) == 0 or len(kriterium1) == 0):
             error = ""
             if(len(abfrage) == 0):
-                error += "Abfrage fehlt."
+                error += "Abfrage fehlt. "
             if(len(kriterium1) == 0):
-                error += "Eingabe Textfeld1 fehlt."
+                error += "Eingabe Textfeld1 fehlt. "
             flash(error)
             return render_template('abfragen/index.html', abfragen=lst_abfragen, 
                 abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
@@ -122,7 +121,7 @@ def index():
             twokriteria = 1
 
             if(len(kriterium2) == 0):
-                error += "Eingabe Textfeld2 fehlt."
+                error += "Eingabe Textfeld2 fehlt. "
 
             if(len(error) == 0):
                 von_datum, error = str_to_date(kriterium1)
@@ -148,6 +147,7 @@ def index():
                             Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
                             ~Tier.merkmal.contains('Abzeichen')) \
                     .order_by(Behandlung.datum.asc()).all()
+
                 path_and_filename = dl_excel(abfrage, tierhaltungen)
                 return send_file(path_and_filename, as_attachment=True)
             else:
@@ -167,6 +167,7 @@ def index():
                     .filter(Person.kunde==kunde, Tier.patient==patient, \
                             Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum) \
                     .order_by(Person.familienname.asc()).all()
+
                 path_and_filename = dl_etiketten(abfrage, personen)
                 return send_file(path_and_filename, as_attachment=True)
             else:
@@ -227,9 +228,9 @@ def index():
     if(output == "bericht-drucken"):
         path_and_filename = dl_bericht(abfrage, tierhaltungen, kriterium1, kriterium2)
         return send_file(path_and_filename, as_attachment=True)
-
-    return render_template('abfragen/index.html', abfragen=lst_abfragen, 
-                            abfrage=abfrage, kriterium1=kriterium1, 
-                            kriterium2=kriterium2, twokriteria=twokriteria, kunde=kunde, 
-                            patient=patient, tierhaltungen=tierhaltungen, page_title="Abfragen")
+    else:
+        return render_template('abfragen/index.html', abfragen=lst_abfragen, 
+            abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
+            twokriteria=twokriteria, kunde=kunde, patient=patient, 
+            tierhaltungen=tierhaltungen, page_title="Abfragen")
 

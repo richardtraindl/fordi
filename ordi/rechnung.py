@@ -106,27 +106,30 @@ def create(id):
             error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
-                rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
-                tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('rechnung/rechnung.html', id=id, 
+                rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                person=tierhaltung.person, tier=tierhaltung.tier, 
+                artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
 
         rechnungszeilen = []
         for req_rechnungszeile in req_rechnungszeilen:
             rechnungszeile, error = fill_and_validate_rechnungszeile(None, req_rechnungszeile)
             if(len(error) > 0):
                 flash(error)
-                return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
-                    rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
-                    tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
+                return render_template('rechnung/rechnung.html', id=id, 
+                    rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                    person=tierhaltung.person, tier=tierhaltung.tier, 
+                    artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
             else:
                 rechnungszeilen.append(rechnungszeile)
 
         error = calc_and_fill_rechnung(rechnung, rechnungszeilen)
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
-                rechnungszeilen=req_rechnungszeilen, person = tierhaltung.person, 
-                tier = tierhaltung.tier, artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('rechnung/rechnung.html', id=id, 
+                rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                person=tierhaltung.person, tier=tierhaltung.tier, 
+                artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
 
         rechnung.person_id = tierhaltung.person.id
         rechnung.tier_id = tierhaltung.tier.id
@@ -137,6 +140,7 @@ def create(id):
             rechnungszeile.rechnung_id = rechnung.id
             db.session.add(rechnungszeile)
         db.session.commit()
+
         return redirect(url_for('rechnung.edit', rechnung_id=rechnung.id))
     else:
         rechnung = Rechnung()
@@ -144,7 +148,8 @@ def create(id):
         ort = "Wien"
         return render_template('rechnung/rechnung.html', id=id, rechnung=rechnung, 
             rechnungszeilen=[], person=tierhaltung.person, tier=tierhaltung.tier, 
-            datum=datum, ort=ort, artikelwerte=artikelwerte, page_title="Rechnung")
+            datum=datum, ort=ort, artikelwerte=artikelwerte, changed=False, 
+            page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/edit', methods=('GET', 'POST'))
@@ -166,7 +171,7 @@ def edit(rechnung_id):
             flash(error)
             return render_template('rechnung/rechnung.html', rechnung=rechnung, 
                 rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                page_title="Rechnung")
+                changed=True, page_title="Rechnung")
 
         new_rechnungszeilen = []
         for req_rechnungszeile in req_rechnungszeilen:
@@ -181,16 +186,18 @@ def edit(rechnung_id):
             new_rechnungszeile, error = fill_and_validate_rechnungszeile(new_rechnungszeile, req_rechnungszeile)
             if(len(error) > 0):
                 flash(error)
-                return render_template('rechnung/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                    artikelwerte=artikelwerte, page_title="Rechnung")
+                return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+                    rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
+                    changed=True, page_title="Rechnung")
             else:
                 new_rechnungszeilen.append(new_rechnungszeile)
 
         error = calc_and_fill_rechnung(rechnung, new_rechnungszeilen)
         if(len(error) > 0):
             flash(error)
-            return render_template('rechnung/rechnung.html', rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
-                artikelwerte=artikelwerte, page_title="Rechnung")
+            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+                rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
+                changed=True, page_title="Rechnung")
 
         db.session.commit() # commit rechnung
 
@@ -210,12 +217,17 @@ def edit(rechnung_id):
                 db.session.delete(rechnungszeile)
         db.session.commit()
 
-        path_and_filename = dl_rechnung(rechnung.id)
-        return send_file(path_and_filename, as_attachment=True)
-    else:
-        return render_template('rechnung/rechnung.html', rechnung=rechnung, 
-            rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, 
-            page_title="Rechnung")
+    return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+        rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, 
+        changed=False, page_title="Rechnung")
+
+
+@bp.route('/<int:rechnung_id>/download', methods=('GET', 'POST'))
+@login_required
+def download(rechnung_id):
+    path_and_filename = dl_rechnung(rechnung_id)
+
+    return send_file(path_and_filename, as_attachment=True)
 
 
 @bp.route('/<int:rechnung_id>/delete', methods=('GET',))

@@ -277,7 +277,7 @@ def fill_and_validate_behandlungsverlauf(behandlungsverlauf, request):
         datum = datetime.strptime(str_datum, "%d.%m.%Y")
     except:
         datum = None
-        error = "Falsches Datum. "
+        error += "Falsches Datum. "
 
     if(behandlungsverlauf == None):
         behandlungsverlauf = Behandlungsverlauf()

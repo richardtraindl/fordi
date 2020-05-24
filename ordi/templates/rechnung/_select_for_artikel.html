@@ -1,5 +1,5 @@
     
-    <select name="artikelcode[]">    
+    <select name="artikelcode[]" class="change">    
     {%- for artikelwert in artikelwerte -%}
       {%- if artikelwert[1] == artikelcode or artikelwert[1] == artikelcode|int -%}
         <option value="{{- artikelwert[1] -}}" selected>{{- artikelwert[0] -}}</option>

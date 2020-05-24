@@ -32,29 +32,29 @@
   {% else %}
     <form method="post" action="{{ url_for('rechnung.create', id=id) }}">
   {% endif %}
-        <input type="hidden" name="rechnung_id" value="{{- rechnung.id or '' -}}">
+        <input type="hidden" name="rechnung_id" id="rechnung_id" value="{{- rechnung.id or '' -}}">
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto auto auto;">
             <label for="jahr">Rechnungsjahr</label>
-            <input type="text" size=3 name="jahr" id="jahr" value="{{- request.form['jahr'] or rechnung.jahr|sn -}}" required>
+            <input type="text" size=3 name="jahr" id="jahr" class="change" value="{{- request.form['jahr'] or rechnung.jahr|sn -}}" required>
 
             <label for="lfnr">Rechnungslfnr</label>
-            <input type="text" size=3 name="lfnr" id="lfnr" value="{{- request.form['lfnr'] or rechnung.lfnr|sn -}}" required>
+            <input type="text" size=3 name="lfnr" id="lfnr" class="change" value="{{- request.form['lfnr'] or rechnung.lfnr|sn -}}" required>
 
             <label for="datum">Ausstellungsdatum</label>
-            <input type="text" size=8 name="datum" id="datum" class="date" value="{{- request.form['datum'] or rechnung.datum|dt or datum -}}" required>
+            <input type="text" size=8 name="datum" id="datum" class="date change" value="{{- request.form['datum'] or rechnung.datum|dt or datum -}}" required>
 
             <label for="ort">Ausstellungsort</label>
-            <input type="text" size=10 name="ort" id="ort" value="{{- request.form['ort'] or rechnung.ort or ort -}}" required>
+            <input type="text" size=10 name="ort" id="ort" class="change" value="{{- request.form['ort'] or rechnung.ort or ort -}}" required>
         </div>
       </div>
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto;">
             <label for="diagnose">Diagnose</label>
-            <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose">{{- request.form['diagnose'] or rechnung.diagnose|sn -}}</textarea>
+            <textarea style="width: 480px; height: 42px" name="diagnose" id="diagnose" class="change">{{- request.form['diagnose'] or rechnung.diagnose|sn -}}</textarea>
 
             <label for="bezahlung">Bezahlung</label>
-            <input type="text" size=30 name="bezahlung" id="bezahlung" value="{{- request.form['bezahlung'] or rechnung.bezahlung|sn -}}">
+            <input type="text" size=30 name="bezahlung" id="bezahlung" class="change" value="{{- request.form['bezahlung'] or rechnung.bezahlung|sn -}}">
         </div>
       <div>
 
@@ -80,10 +80,10 @@
                   <td style="width: 10%">
                   {% if rz.id %}
                     <input type="hidden" name="rechnungszeile_id[]" value="{{- rz.id -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rz.datum|dt -}}">
+                    <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz.datum|dt -}}">
                   {% else %}
                     <input type="hidden" name="rechnungszeile_id[]" value="{{- rz[''] -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- rz['datum'] -}}">
+                    <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz['datum'] -}}">
                   {% endif %}
                   </td>
 
@@ -91,14 +91,14 @@
                   <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
 
                   {% if rz.id %}
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rz.artikel -}}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rz.betrag|sn -}}</textarea></td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change">{{- rz.artikel -}}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz.betrag|sn -}}</textarea></td>
                     <td style="width: 6%">
                       <a class="zeile_loeschen" rechnungszeile_id="{{- rz.id -}}" href="#">Zeile löschen</a>
                     </td>
                   {% else %}
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]">{{- rz['artikel'] -}}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]">{{- rz['betrag'] -}}</textarea></td>
+                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change">{{- rz['artikel'] -}}</textarea></td>
+                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
                     <td style="width: 6%">
                       <a class="zeile_loeschen" rechnungszeile_id="{{- rz['rechnungszeile_id'] -}}" href="#">Zeile löschen</a>
                     </td>
@@ -112,8 +112,8 @@
                   </td>
                   {% set artikelcode = 0 %}
                   <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
-                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea></td>
-                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea></td>
+                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea></td>
+                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea></td>
                   <td style="width: 6%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
                 </tr>
             </tbody>
@@ -123,12 +123,12 @@
       <div class="small-gap"></div>
 
       <div class="flex-container">
-      {% if rechnung and rechnung.id %}
-        <p><span class="btn" style="color: Gray">Rechnung speichern</span></p>
-        <p><input class="btn" type="submit" value="Rechnung speichern und drucken"></p>
-      {% else %}
         <p><input class="btn" type="submit" value="Rechnung speichern"></p>
-        <p><span class="btn" style="color: Gray">Rechnung speichern und drucken</span></p>
+
+      {% if changed == False %}
+        <p><a id="print" class="btn" href="#">Rechnung drucken</a></p>
+      {% else %}
+        <p><a id="print" class="btn grayed" href="#">Rechnung drucken</a></p>
       {% endif %}
       </div>
     </form>
@@ -171,10 +171,10 @@
                     '</select>' +
                 '</td>' +
                 '<td style="width: 54%">' + 
-                    '<textarea style="width: 100%; height: 42px;" name="artikel[]"></textarea>' + 
+                    '<textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea>' + 
                 '</td>' + 
                 '<td style="width: 10%">' +
-                    '<textarea style="width: 100%; height: 42px;" name="betrag[]"></textarea>' + 
+                    '<textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea>' + 
                 '</td>' + 
                 '<td style="width: 6%">' + 
                     '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
@@ -189,13 +189,13 @@
         
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
-            $(".date").datepicker({ 
+            $('.date').datepicker({ 
                 dateFormat: "dd.mm.yy",
                 changeMonth: true,
                 changeYear: true 
             });
             
-            $("#new-artikelcode").focus();
+            $('#new-artikelcode').focus();
 
             var element = document.getElementById("scroller");
             element.scrollTop = element.scrollHeight;
@@ -212,6 +212,18 @@
                     }
                 }
                 return false; 
+            });
+
+            $('.change').on('input', function(){
+              $('#print').addClass('grayed');
+            });
+
+            $('#print').click(function(){ 
+              if($(this).hasClass('grayed') == false){
+                var rechnung_id = $('#rechnung_id').val();
+                window.location = "/rechnung/" + rechnung_id.toString() + "/download";
+              }
+              return false; 
             });
 
          });

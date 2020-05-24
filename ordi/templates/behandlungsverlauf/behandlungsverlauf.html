@@ -36,24 +36,24 @@
 
       <div class="row-grid" style="grid-template-columns: auto auto;">
         <label for="datum">Datum</label>
-        <input size="10" type="text" name="datum" id="datum" class="date" value="{{- request.form['datum'] or behandlungsverlauf.datum|dt or datum -}}" required>
+        <input size="10" type="text" name="datum" id="datum" class="date change" value="{{- request.form['datum'] or behandlungsverlauf.datum|dt or datum -}}" required>
 
         <label for="diagnose">Diagnose</label>
-        <input size="40" type="text" name="diagnose" id="diagnose" value="{{- request.form['diagnose'] or behandlungsverlauf.diagnose|sn -}}" required>
+        <input size="40" type="text" name="diagnose" id="diagnose" class="change" value="{{- request.form['diagnose'] or behandlungsverlauf.diagnose|sn -}}" required>
 
         <label style="align-items: top;" for="behandlung">Behandlung</label>
-        <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" required>{{- request.form['behandlung'] or behandlungsverlauf.behandlung|sn -}}</textarea>
+        <textarea style="width: 640px; height: 180px" name="behandlung" id="behandlung" class="change" required>{{- request.form['behandlung'] or behandlungsverlauf.behandlung|sn -}}</textarea>
       </div>
 
       <div class="small-gap"></div>
 
       <div class="flex-container">
-      {% if behandlungsverlauf and behandlungsverlauf.id %}
-        <p><span class="btn" style="color: Gray">Behandlungsverlauf speichern</span></p>
-        <p><input class="btn" type="submit" value="Behandlungsverlauf speichern und drucken"></p>
-      {% else %}
         <p><input class="btn" type="submit" value="Behandlungsverlauf speichern"></p>
-        <p><span class="btn" style="color: Gray">Behandlungsverlauf speichern und drucken</span></p>
+
+      {% if changed == False %}
+        <p><a id="print" class="btn" href="#">Behandlungsverlauf drucken</a></p>
+      {% else %}
+        <p><a id="print" class="btn grayed" href="#">Behandlungsverlauf drucken</a></p>
       {% endif %}
       </div>
     </form>
@@ -61,13 +61,25 @@
     <script>
         $(document).ready(function(){
             $.datepicker.setDefaults($.datepicker.regional["de"]);
-            $(".date").datepicker({ 
+            $('.date').datepicker({ 
                 dateFormat: "dd.mm.yy",
                 changeMonth: true,
                 changeYear: true 
             });
 
-            $("#diagnose").focus();
+            $('#diagnose').focus();
+
+            $('.change').on('input', function(){
+              $('#print').addClass('grayed');
+            });
+
+            $('#print').click(function(){ 
+              if($(this).hasClass('grayed') == false){
+                var behandlungsverlauf_id = $('#behandlungsverlauf_id').val();
+                window.location = "/behandlungsverlauf/" + behandlungsverlauf_id.toString() + "/download";
+              }
+              return false; 
+            });
         });
     </script>
 {% endblock %}

@@ -77,7 +77,7 @@ def create(id):
             flash(error)
             return render_template('behandlungsverlauf/behandlungsverlauf.html', id=id, 
                 person=tierhaltung.person, tier=tierhaltung.tier, 
-                behandlungsverlauf=behandlungsverlauf, 
+                behandlungsverlauf=behandlungsverlauf, changed=True, 
                 datum=datum, page_title="Behandlungsverlauf")
 
         behandlungsverlauf.person_id = tierhaltung.person.id
@@ -89,7 +89,8 @@ def create(id):
         behandlungsverlauf = Behandlungsverlauf()
         return render_template('behandlungsverlauf/behandlungsverlauf.html', id=id, 
             person=tierhaltung.person, tier=tierhaltung.tier, 
-            behandlungsverlauf=behandlungsverlauf, datum=datum, page_title="Behandlungsverlauf")
+            behandlungsverlauf=behandlungsverlauf, datum=datum, changed=False, 
+            page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/edit', methods=('GET', 'POST'))
@@ -101,22 +102,33 @@ def edit(behandlungsverlauf_id):
         behandlungsverlauf, error = fill_and_validate_behandlungsverlauf(behandlungsverlauf, request)
         if(len(error) > 0):
             flash(error)
-            return render_template('behandlungsverlauf/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
+            return render_template('behandlungsverlauf/behandlungsverlauf.html', 
+                behandlungsverlauf=behandlungsverlauf, changed=True, 
                 page_title="Behandlungsverlauf")
 
         db.session.commit()
-        path_and_filename = dl_behandlungsverlauf(behandlungsverlauf_id)
-        return send_file(path_and_filename, as_attachment=True)
-    else:
-        return render_template('behandlungsverlauf/behandlungsverlauf.html', behandlungsverlauf=behandlungsverlauf, 
-            page_title="Behandlungsverlauf")
+
+    return render_template('behandlungsverlauf/behandlungsverlauf.html', 
+        behandlungsverlauf=behandlungsverlauf, changed=False, 
+        page_title="Behandlungsverlauf")
+
+
+@bp.route('/<int:behandlungsverlauf_id>/download', methods=('GET', 'POST'))
+@login_required
+def download(behandlungsverlauf_id):
+    path_and_filename = dl_behandlungsverlauf(behandlungsverlauf_id)
+
+    return send_file(path_and_filename, as_attachment=True)
 
 
 @bp.route('/<int:behandlungsverlauf_id>/delete', methods=('GET',))
 @login_required
 def delete(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
+
     db.session.delete(behandlungsverlauf)
+
     db.session.commit()
+
     return redirect(url_for('behandlungsverlauf.index'))
 

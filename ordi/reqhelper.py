@@ -51,6 +51,8 @@ def fill_and_validate_tier(tier, request):
 
 
 def fill_and_validate_person(person, request):
+    error = ""
+
     try:
         person_id = int(request.form['person_id'])
     except:
@@ -79,34 +81,14 @@ def fill_and_validate_person(person, request):
     person.adr_ort=request.form['adr_ort']
     person.kontakte=request.form['kontakte']
 
-    error = ""
     if(len(person.familienname) == 0):
         error += "Familienname fehlt. "
     return person, error
 
 
-"""def fill_and_validate_adresse(adresse, request):
-    try:
-        adresse_id = int(request.form['adresse_id'])
-    except:
-        adresse_id = None
-
-    try:
-        person_id = int(request.form['person_id'])
-    except:
-        person_id = None
-
-    if(adresse == None):
-        adresse = Adresse(person_id=person_id)
-    adresse.strasse=request.form['strasse']
-    adresse.postleitzahl=request.form['postleitzahl']
-    adresse.ort=request.form['ort']
-
-    return adresse, "" """
-
-
 def fill_and_validate_behandlung(behandlung, req_behandlung):
     error = ""
+
     if(len(req_behandlung['datum']) > 10):
         str_datum = req_behandlung['datum'].split()[0]
     else:
@@ -239,6 +221,7 @@ def build_rechnungszeilen(request):
 
         req_rechnungszeilen.append(req_rechnungszeile)
     return req_rechnungszeilen
+
 
 def fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile):
     error = ""

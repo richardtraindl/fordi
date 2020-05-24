@@ -90,7 +90,11 @@
                     </textarea>
                 </td>
                 <td style="width: 5%"><textarea name="gewicht[]" disabled>{{- behandlung['gewicht'] or behandlung.gewicht|sn -}}</textarea></td>
-                <td style="width: 5%"><a href="#" onclick="enablerow($(this));">bearb.</a></td>
+                <td style="width: 5%">
+                    <a href="#" onclick="enablerow($(this));">bearb.</a>
+                    <hr>
+                    <a class="zeile_loeschen" behandlung_id="{{- behandlung.id -}}" href="#">lösch.</a>
+                </td>
             </tr>
           {% endfor %}
             <tr class="edit-focus">
@@ -171,11 +175,10 @@
             element.scrollTop = element.scrollHeight;
             
             $('.zeile_loeschen').click(function(){ 
-                var tierhaltung_id = $(this).attr("tierhaltung_id");
                 var behandlung_id = $(this).attr("behandlung_id");
-                if(tierhaltung_id != null && behandlung_id != null){
+                if(behandlung_id != null){
                     if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/" + tierhaltung_id.toString() + "/" + behandlung_id.toString() + "/delete_behandlung";
+                        window.location = "/" + behandlung_id.toString() + "/delete_behandlung";
                         return true;
                     }
                     else{
@@ -184,7 +187,7 @@
                 }
                 return false; 
             });
-            
+
             var $dialog_labor = $('<div></div>');
                 $dialog_labor.dialog({
                     autoOpen: false,

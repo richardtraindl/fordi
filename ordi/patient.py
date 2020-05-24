@@ -82,12 +82,6 @@ def create():
         db.session.add(tier)
         db.session.commit()
 
-        """adresse = fill_and_validate_adresse(None, request)[0]
-        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
-            adresse.person_id=person.id
-            db.session.add(adresse)
-            db.session.commit()"""
-
         tierhaltung = Tierhaltung(person_id = person.id, tier_id = tier.id)
         db.session.add(tierhaltung)
         db.session.commit()
@@ -239,17 +233,6 @@ def edit_person(id, person_id):
 
         db.session.commit()
 
-        """adresse = fill_and_validate_adresse(person.adresse, request)[0]
-        if(len(adresse.strasse) > 0 or len(adresse.postleitzahl) > 0 or len(adresse.ort) > 0):
-            if(adresse.id == None):
-                adresse.person_id=person_id
-                db.session.add(adresse)
-            db.session.commit()
-        else:
-            if(adresse.id):
-                db.session.delete(adresse)
-                db.session.commit()"""
-
         return redirect(url_for('patient.show', id=id))
 
     person = db.session.query(Person).get(person_id)
@@ -308,7 +291,11 @@ def save_behandlungen(id):
                     behandlung_id = None
                     behandlung = None
 
-            behandlung = fill_and_validate_behandlung(behandlung, req_behandlung)[0]
+            behandlung, error = fill_and_validate_behandlung(behandlung, req_behandlung)
+            if(len(error) > 0):
+                flash(error)
+                return redirect(url_for('patient.show', id=id))
+            
             if(behandlung.id == None):
                 behandlung.tier_id = tierhaltung.tier_id
                 db.session.add(behandlung)
@@ -322,12 +309,18 @@ def save_behandlungen(id):
     return redirect(url_for('patient.show', id=id))
 
 
-@bp.route('/<int:id>/<int:behandlung_id>/delete_behandlung', methods=('GET',))
+@bp.route('/<int:behandlung_id>/delete_behandlung', methods=('GET',))
 @login_required
-def delete_behandlung(id, behandlung_id):
+def delete_behandlung(behandlung_id):
     behandlung = db.session.query(Behandlung).get(behandlung_id)
-    db.session.delete(behandlung)
-    db.session.commit()
-    return redirect(url_for('patient.show', id=id))
+    if(behandlung):
+        tierhaltung = db.session.query(Tierhaltung) \
+            .filter(Tierhaltung.tier_id==behandlung.tier_id).first()
+        db.session.delete(behandlung)
+        db.session.commit()
+        return redirect(url_for('patient.show', id=tierhaltung.id))
+    else:
+        flash("Fehler beim Löschen der Behandlung: " + str(behandlung_id))
+        return redirect(url_for('patient.index'))
 # behandlung
 

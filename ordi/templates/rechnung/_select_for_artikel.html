@@ -1,11 +1,17 @@
     
-    <select name="artikelcode[]" class="change">    
-    {%- for artikelwert in artikelwerte -%}
-      {%- if artikelwert[1] == artikelcode or artikelwert[1] == artikelcode|int -%}
-        <option value="{{- artikelwert[1] -}}" selected>{{- artikelwert[0] -}}</option>
-      {%- else -%}
-        <option value="{{- artikelwert[1] -}}">{{- artikelwert[0] -}}</option>
-      {%- endif -%}
-    {%- endfor -%}
+  {% if active %}
+    <select name="artikelcode[]" class="change">
+  {%- else -%}
+    <select name="artikelcode[]" class="change" disabled>
+  {%- endif -%}
+
+  {%- for artikelwert in artikelwerte -%}
+    {%- if artikelwert[1] == artikelcode or artikelwert[1] == artikelcode|int -%}
+      <option value="{{- artikelwert[1] -}}" selected>{{- artikelwert[0] -}}</option>
+    {%- else -%}
+      <option value="{{- artikelwert[1] -}}">{{- artikelwert[0] -}}</option>
+    {%- endif -%}
+  {%- endfor -%}
+
     </select>
 

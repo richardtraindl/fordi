@@ -1,7 +1,7 @@
 
 
 from datetime import datetime
-import os
+import os, types
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 from werkzeug.exceptions import abort
@@ -57,12 +57,12 @@ def calc_and_fill_rechnung(rechnung, rechnungszeilen):
         except:
             return "Falsche Artikelart."
         try:
-            betrag = round(rechnungszeile.betrag, 2)
+            betrag = float(round(rechnungszeile.betrag, 2))
         except:
             return "Betrag ist keine Zahl."
 
         rechnung.brutto_summe += betrag
-        nettobetrag = round(betrag * 100 / (100 + steuersatz))
+        nettobetrag = round(float(betrag * 100) / float(100 + steuersatz))
         if(steuersatz == 20):
             rechnung.steuerbetrag_zwanzig += (betrag - nettobetrag)
         elif(steuersatz == 13):
@@ -81,7 +81,7 @@ def dl_rechnung(rechnung_id):
     html = render_template('rechnung/print.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen)
 
     name = filter_bad_chars(rechnung.person.familienname + "_" + rechnung.person.vorname)
-    print(name)
+
     filename = str(rechnung.id) + "_rechnung_fuer_" + name + ".pdf"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
 
@@ -113,7 +113,7 @@ def create(id):
 
         rechnungszeilen = []
         for req_rechnungszeile in req_rechnungszeilen:
-            rechnungszeile, error = fill_and_validate_rechnungszeile(None, req_rechnungszeile)
+            rechnungszeile, error = fill_and_validate_rechnungszeile(rechnung, None, req_rechnungszeile)
             if(len(error) > 0):
                 flash(error)
                 return render_template('rechnung/rechnung.html', id=id, 
@@ -164,58 +164,83 @@ def edit(rechnung_id):
 
     if(request.method == 'POST'):
         rechnung, error = fill_and_validate_rechnung(rechnung, request)
-        req_rechnungszeilen = build_rechnungszeilen(request)
-        if(len(req_rechnungszeilen) == 0):
-            error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
-        if(len(error) > 0):
-            flash(error)
-            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
-                rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                changed=True, page_title="Rechnung")
+        reqrechnungszeilen = build_rechnungszeilen(request)
 
-        new_rechnungszeilen = []
-        for req_rechnungszeile in req_rechnungszeilen:
-            new_rechnungszeile = None
-            if(len(req_rechnungszeile['rechnungszeile_id']) > 0):
-                try:
-                    rechnungszeile_id = int(req_rechnungszeile['rechnungszeile_id'])
-                    new_rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
-                except:
-                    rechnungszeile_id = None
-
-            new_rechnungszeile, error = fill_and_validate_rechnungszeile(new_rechnungszeile, req_rechnungszeile)
-            if(len(error) > 0):
-                flash(error)
-                return render_template('rechnung/rechnung.html', rechnung=rechnung, 
-                    rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                    changed=True, page_title="Rechnung")
-            else:
-                new_rechnungszeilen.append(new_rechnungszeile)
-
-        error = calc_and_fill_rechnung(rechnung, new_rechnungszeilen)
-        if(len(error) > 0):
-            flash(error)
-            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
-                rechnungszeilen=req_rechnungszeilen, artikelwerte=artikelwerte, 
-                changed=True, page_title="Rechnung")
-
-        db.session.commit() # commit rechnung
-
-        for new_rechnungszeile in new_rechnungszeilen:
-            if(new_rechnungszeile.id == None):
-                new_rechnungszeile.rechnung_id = rechnung.id
-                db.session.add(new_rechnungszeile)
-        db.session.commit()
-
+        #####################
+        # Rechnungszeilen aus Datenbank mit jenen des Request mergen
+        mergedzeilen = []
         for rechnungszeile in rechnungszeilen:
             found = False
-            for new_rechnungszeile in new_rechnungszeilen:
-                if(rechnungszeile.id == new_rechnungszeile.id):
-                    found = True
-                    break
+            for reqrechnungszeile in reqrechnungszeilen:
+                if(len(reqrechnungszeile['rechnungszeile_id']) > 0):
+                    try:
+                        rechnungszeile_id = int(reqrechnungszeile['rechnungszeile_id'])
+                    except:
+                        continue
+                    if(rechnungszeile.id == rechnungszeile_id):
+                        mergedzeilen.append(reqrechnungszeile)
+                        found = True
+                        break
             if(found == False):
-                db.session.delete(rechnungszeile)
+                mergedzeilen.append(rechnungszeile)
+
+        for reqrechnungszeile in reqrechnungszeilen:
+            if(len(reqrechnungszeile['rechnungszeile_id']) == 0):
+                mergedzeilen.append(reqrechnungszeile)
+        #####################
+
+        if(len(error) > 0):
+            flash(error)
+            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+                rechnungszeilen=reqrechnungszeilen, artikelwerte=artikelwerte, 
+                changed=True, page_title="Rechnung")
+
+        if(len(mergedzeilen) == 0):
+            error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
+            flash(error)
+            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+                rechnungszeilen=mergedzeilen, artikelwerte=artikelwerte, 
+                changed=True, page_title="Rechnung")
+
+        calczeilen = []
+        for mergedzeile in mergedzeilen:
+            if(type(mergedzeile) is dict):
+                rechnungszeile, error = fill_and_validate_rechnungszeile(rechnung, None, mergedzeile)
+                if(len(error) > 0):
+                    db.session.rollback()
+                    flash(error)
+                    return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+                        rechnungszeilen=mergedzeilen, artikelwerte=artikelwerte, 
+                        changed=True, page_title="Rechnung")
+                else:
+                    if(rechnungszeile.id):
+                        newrechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile.id)
+                        if(newrechnungszeile):
+                            if(mergedzeile['touched'] == "1"):
+                                newrechnungszeile.datum=rechnungszeile.datum
+                                newrechnungszeile.artikelcode=rechnungszeile.artikelcode
+                                newrechnungszeile.artikel=rechnungszeile.artikel
+                                newrechnungszeile.betrag=rechnungszeile.betrag
+                                calczeilen.append(newrechnungszeile)
+                            if(mergedzeile['touched'] == "-1"):
+                                db.session.delete(newrechnungszeile)
+                    else:
+                        db.session.add(rechnungszeile)
+                        calczeilen.append(rechnungszeile)
+            else:
+                calczeilen.append(mergedzeile)
+
+        error = calc_and_fill_rechnung(rechnung, calczeilen)
+        if(len(error) > 0):
+            db.session.rollback()
+            flash(error)
+            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+                rechnungszeilen=mergedzeilen, artikelwerte=artikelwerte, 
+                changed=True, page_title="Rechnung")
+
         db.session.commit()
+
+        rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung.id).all()
 
     return render_template('rechnung/rechnung.html', rechnung=rechnung, 
         rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, 

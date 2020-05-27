@@ -20,7 +20,7 @@ class Tierhaltung(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False, index=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False, index=True)
-    anlagezeit = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='immediate')
     tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='immediate')
     termine = db.relationship("Termin", cascade="all,delete", back_populates="tierhaltung", lazy='noload')
@@ -44,39 +44,9 @@ class Person(db.Model):
     adr_ort = db.Column(db.String(40))
     kontakte = db.Column(db.String(1000))
     tierhaltung = db.relationship("Tierhaltung", back_populates="person")
-    #adresse = db.relationship("Adresse", uselist=False, cascade="all,delete", back_populates="person", lazy='joined')
-    #kontakte = db.relationship("Kontakt", cascade="all,delete", back_populates="person", lazy='joined')
 
     def __repr__(self):
         return '<Person %r>' % (self.familienname)
-
-
-"""class Adresse(db.Model):
-    __tablename__ = 'adresse'
-
-    id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
-    strasse = db.Column(db.String(40))
-    postleitzahl = db.Column(db.String(40))
-    ort = db.Column(db.String(40))
-    person = db.relationship("Person", back_populates="adresse")
-
-    def __repr__(self):
-        return '<Adresse %r>' % (self.strasse)"""
-
-
-"""class Kontakt(db.Model):
-    __tablename__ = 'kontakt'
-
-    id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False)
-    kontaktcode = db.Column(db.Integer(), nullable=False)
-    kontakt = db.Column(db.String(50))
-    kontakt_intern = db.Column(db.String(50))
-    person = db.relationship("Person", back_populates="kontakte")
-
-    def __repr__(self):
-        return '<Kontakt %r>' % (self.kontakt)"""
 
 
 class Tier(db.Model):
@@ -106,7 +76,6 @@ class Behandlung(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
-    #behandlungsdatum = db.Column(db.Date(), nullable=False)
     datum = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     gewicht = db.Column(db.String(50))
     diagnose = db.Column(db.String(1000))
@@ -140,7 +109,7 @@ class Behandlungsverlauf(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False, index=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
-    datum = db.Column(db.Date(), nullable=False)
+    datum = db.Column(db.Date(), nullable=False, default=datetime.utcnow)
     diagnose = db.Column(db.String(256))
     behandlung = db.Column(db.String(1000))
     person = db.relationship("Person", uselist=False, lazy='immediate')
@@ -158,7 +127,7 @@ class Rechnung(db.Model):
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
     jahr = db.Column(db.Integer(), nullable=False)
     lfnr = db.Column(db.Integer(), nullable=False)
-    datum = db.Column(db.Date(), nullable=False)
+    datum = db.Column(db.Date(), nullable=False, default=datetime.utcnow)
     ort = db.Column(db.String(256))
     diagnose = db.Column(db.String(256))
     bezahlung = db.Column(db.String(256))
@@ -180,7 +149,7 @@ class Rechnungszeile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     rechnung_id = db.Column(db.Integer, db.ForeignKey('rechnung.id', ondelete='CASCADE'), nullable=False, index=True)
-    datum = db.Column(db.Date(), nullable=False)
+    datum = db.Column(db.Date(), nullable=False, default=datetime.utcnow)
     artikelcode = db.Column(db.Integer(), nullable=False)
     artikel = db.Column(db.String(256))
     betrag = db.Column(db.Numeric(8, 2))

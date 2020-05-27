@@ -114,7 +114,9 @@ def show(id):
         impfungswerte.append([key, value])
 
     tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
-    behandlungen = db.session.query(Behandlung).filter(Behandlung.tier_id == tierhaltung.tier.id).order_by(Behandlung.datum.asc()).all()
+    behandlungen = db.session.query(Behandlung) \
+        .filter(Behandlung.tier_id == tierhaltung.tier.id) \
+        .order_by(Behandlung.id.asc(), Behandlung.datum.asc()).all()
     datum = datetime.today()
     datum_ende = datum + timedelta(days=7)
 
@@ -260,7 +262,7 @@ def save_or_delete_impfungen(behandlung_id, impfungstexte):
         if(found == False):
             new_impfung = Impfung(behandlung_id=behandlung_id, impfungscode=impfungscode)
             db.session.add(new_impfung)
-            db.session.commit()
+    db.session.commit()
 
     for impfung in impfungen:
         found = False
@@ -271,7 +273,8 @@ def save_or_delete_impfungen(behandlung_id, impfungstexte):
                 break
         if(found == False):
             db.session.delete(impfung)
-            db.session.commit()
+    db.session.commit()
+
     return True
 
 @bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
@@ -306,6 +309,7 @@ def save_behandlungen(id):
             else:
                 impfungstexte = []
             save_or_delete_impfungen(behandlung.id, impfungstexte)
+
     return redirect(url_for('patient.show', id=id))
 
 

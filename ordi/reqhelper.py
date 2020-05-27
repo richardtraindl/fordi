@@ -161,11 +161,12 @@ def fill_and_validate_rechnung(rechnung, request):
         jahr = int(request.form['jahr'])
     except:
         jahr = None
-
+        error += "Jahr fehlt oder ungültig. "
     try:
         lfnr = int(request.form['lfnr'])
     except:
         lfnr = None
+        error += "Laufnummer fehlt oder ungültig. "
 
     if(len(request.form['datum']) > 10):
         str_datum = request.form['datum'].split()[0]
@@ -198,6 +199,7 @@ def fill_and_validate_rechnung(rechnung, request):
 def build_rechnungszeilen(request):
     data = (
         request.form.getlist('rechnungszeile_id[]'),
+        request.form.getlist('touched[]'),
         request.form.getlist('datum[]'),
         request.form.getlist('artikelcode[]'),
         request.form.getlist('artikel[]'),
@@ -207,11 +209,11 @@ def build_rechnungszeilen(request):
     for idx in range(len(data[0])):
         req_rechnungszeile = {}
         req_rechnungszeile['rechnungszeile_id'] = data[0][idx]
-        req_rechnungszeile['rechnung_id'] = request.form['rechnung_id']
-        req_rechnungszeile['datum'] = data[1][idx]
-        req_rechnungszeile['artikelcode'] = data[2][idx]
-        req_rechnungszeile['artikel'] = data[3][idx]
-        req_rechnungszeile['betrag'] = data[4][idx]
+        req_rechnungszeile['touched'] = data[1][idx]
+        req_rechnungszeile['datum'] = data[2][idx]
+        req_rechnungszeile['artikelcode'] = data[3][idx]
+        req_rechnungszeile['artikel'] = data[4][idx]
+        req_rechnungszeile['betrag'] = data[5][idx]
 
         if(len(req_rechnungszeile['rechnungszeile_id']) == 0 and 
            req_rechnungszeile['artikelcode'] == "0" and
@@ -223,8 +225,13 @@ def build_rechnungszeilen(request):
     return req_rechnungszeilen
 
 
-def fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile):
+def fill_and_validate_rechnungszeile(rechnung, rechnungszeile, req_rechnungszeile):
     error = ""
+
+    try:
+        rechnungszeile_id = int(req_rechnungszeile['rechnungszeile_id'])
+    except:
+        rechnungszeile_id = None
 
     if(len(req_rechnungszeile['datum']) > 10):
         str_datum = req_rechnungszeile['datum'].split()[0]
@@ -239,7 +246,7 @@ def fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile):
     try:
         artikelcode = int(req_rechnungszeile['artikelcode'])
     except:
-        artikelcode = 0
+        artikelcode = None
         error += "Falsche Artikelart. "
 
     if(len(req_rechnungszeile['artikel']) == 0):
@@ -258,6 +265,10 @@ def fill_and_validate_rechnungszeile(rechnungszeile, req_rechnungszeile):
     if(rechnungszeile == None):
         rechnungszeile = Rechnungszeile()
 
+    if(rechnungszeile_id):
+        rechnungszeile.id=rechnungszeile_id
+    if(rechnung and rechnung.id):
+        rechnungszeile.rechnung_id=rechnung.id
     rechnungszeile.datum=datum
     rechnungszeile.artikelcode=artikelcode
     rechnungszeile.artikel=req_rechnungszeile['artikel']

@@ -295,7 +295,7 @@ def import_tierhaltung():
 
                 tierhaltung.tier_id = int(arrline[1])
 
-                tierhaltung.anlagezeit = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
+                tierhaltung.created_at = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
 
                 db.session.add(tierhaltung)
                 print(".", end="", flush=True)

@@ -74,49 +74,61 @@
 
       <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="liste">
-            <tbody>
-              {% for rz in rechnungszeilen %}
-                <tr>
-                  <td style="width: 10%">
-                  {% if rz.id %}
-                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rz.id -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz.datum|dt -}}">
-                  {% else %}
-                    <input type="hidden" name="rechnungszeile_id[]" value="{{- rz[''] -}}">
-                    <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz['datum'] -}}">
-                  {% endif %}
-                  </td>
+          <tbody>
+          {% for rz in rechnungszeilen %}
+            <tr>
+              <td style="width: 10%">
+              {% if rz.id %}
+                <input type="hidden" name="rechnungszeile_id[]" value="{{- rz.id -}}" disabled>
+                <input type="hidden" name="touched[]" value="0" disabled>
+                <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz.datum|dt -}}" disabled>
+              {% else %}
+                <input type="hidden" name="rechnungszeile_id[]" value="{{- rz['id'] -}}">
+                <input type="hidden" name="touched[]" value="0">
+                <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz['datum'] -}}">
+              {% endif %}
+              </td>
 
-                  {% set artikelcode = rz.artikelcode %}
-                  <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
+              {% if rz.id %}
+                {% set artikelcode = rz.artikelcode %}
+                {% set active = False %}
+              {% else %}
+                {% set artikelcode = rz['artikelcode'] %}
+                {% set active = True %}
+              {% endif %}
+              <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
 
-                  {% if rz.id %}
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change">{{- rz.artikel -}}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz.betrag|sn -}}</textarea></td>
-                    <td style="width: 6%">
-                      <a class="zeile_loeschen" rechnungszeile_id="{{- rz.id -}}" href="#">Zeile löschen</a>
-                    </td>
-                  {% else %}
-                    <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change">{{- rz['artikel'] -}}</textarea></td>
-                    <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
-                    <td style="width: 6%">
-                      <a class="zeile_loeschen" rechnungszeile_id="{{- rz['rechnungszeile_id'] -}}" href="#">Zeile löschen</a>
-                    </td>
-                  {% endif %}
-                </tr>
-              {% endfor %}
-                <tr id="neue_zeile">
-                  <td style="width: 10%">
-                      <input type="hidden" name="rechnungszeile_id[]" value="">
-                      <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- datum -}}">
-                  </td>
-                  {% set artikelcode = 0 %}
-                  <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
-                  <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea></td>
-                  <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea></td>
-                  <td style="width: 6%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
-                </tr>
-            </tbody>
+              {% if rz.id %}
+                <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change" disabled>{{- rz.artikel -}}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change" disabled>{{- rz.betrag|sn -}}</textarea></td>
+              {% else %}
+                <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change">{{- rz['artikel'] -}}</textarea></td>
+                <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
+              {% endif %}
+                <td style="width: 6%">
+                  <a class="zeile_bearbeiten" href="#">bearb.</a>  
+                  <a class="zeile_loeschen" href="#">löschen</a>
+                  <a class="zeile_rücksetzen" href="#">rücksetzen</a>
+                </td>
+            </tr>
+          {% endfor %}
+
+            <tr id="neue_zeile">
+              <td style="width: 10%">
+                <input type="hidden" name="rechnungszeile_id[]" value="">
+                <input type="hidden" name="touched[]" value="0">
+                <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- datum -}}">
+              </td>
+
+              {% set artikelcode = 0 %}
+              {% set active = True %}
+              <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
+
+              <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea></td>
+              <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea></td>
+              <td style="width: 6%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
@@ -135,97 +147,117 @@
 
     <script>
         function newrow($obj) {
-            $obj.text("Zeile löschen");
-            $obj.attr("onclick", "delete_newrow($(this));");
-            $obj.closest("tr").removeAttr("id");
+          $obj.text("Zeile löschen");
+          $obj.attr("onclick", "delete_newrow($(this));");
+          $obj.closest("tr").removeAttr("id");
 
-            var date = new Date();
-            var year = String(date.getFullYear());
-            var month = String(date.getMonth() + 1);
-            if(month.length == 1){
-                month = "0" + month;
-            }
-            var day = String(date.getDate());
-                        if(day.length == 1){
-                day = "0" + day;
-            }
-            $obj.closest("tbody").append(
-              '<tr id="neue_zeile">' +
+          var date = new Date();
+          var year = String(date.getFullYear());
+          var month = String(date.getMonth() + 1);
+          if(month.length == 1){
+            month = "0" + month;
+          }
+          var day = String(date.getDate());
+          if(day.length == 1){
+            day = "0" + day;
+          }
+
+          $obj.closest("tbody").append(
+            '<tr id="neue_zeile">' +
+              '<td style="width: 10%">' + 
                 '<input type="hidden" name="rechnungszeile_id[]" value="">' +
-                '<td style="width: 10%">' + 
-                    '<input type="text" style="width: 100%" name="datum[]" class="date" value="' + day + "." + month + "." + year + '">' + 
-                '</td>' + 
-                '<td style="width: 20%">' + 
-                    '<select name="artikelcode[]">' +
-                        '<option value="0" selected>&nbsp;</option>' +
-                        '<option value="1">Visite</option>' +
-                        '<option value="2">Labor</option>' +
-                        '<option value="3">Injektion</option>' +
-                        '<option value="4">Röntgen</option>' +
-                        '<option value="5">Ultraschall</option>' +
-                        '<option value="6">Medikamente</option>' +
-                        '<option value="7">Futter und Medikamente</option>' +
-                        '<option value="8">Artikel mit 20%</option>' +
-                        '<option value="9">Artikel mit 13%</option>' +
-                        '<option value="10">Artikel mit 10%</option>' +
-                    '</select>' +
-                '</td>' +
-                '<td style="width: 54%">' + 
-                    '<textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea>' + 
-                '</td>' + 
-                '<td style="width: 10%">' +
-                    '<textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea>' + 
-                '</td>' + 
-                '<td style="width: 6%">' + 
-                    '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
-                '</td>' +
-              '</tr>'
+                '<input type="hidden" name="touched[]" value="1">' +
+                '<input type="text" style="width: 100%" name="datum[]" class="date" value="' + day + "." + month + "." + year + '">' + 
+              '</td>' + 
+              '<td style="width: 20%">' + 
+                '<select name="artikelcode[]">' +
+                    '<option value="0" selected>&nbsp;</option>' +
+                    '<option value="1">Visite</option>' +
+                    '<option value="2">Labor</option>' +
+                    '<option value="3">Injektion</option>' +
+                    '<option value="4">Röntgen</option>' +
+                    '<option value="5">Ultraschall</option>' +
+                    '<option value="6">Medikamente</option>' +
+                    '<option value="7">Futter und Medikamente</option>' +
+                    '<option value="8">Artikel mit 20%</option>' +
+                    '<option value="9">Artikel mit 13%</option>' +
+                    '<option value="10">Artikel mit 10%</option>' +
+                '</select>' +
+              '</td>' +
+              '<td style="width: 54%">' + 
+                '<textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea>' + 
+              '</td>' + 
+              '<td style="width: 10%">' +
+                '<textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea>' + 
+              '</td>' + 
+              '<td style="width: 6%">' + 
+                '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
+              '</td>' +
+            '</tr>'
             );
-        }
+          }
 
         function delete_newrow($obj) {
-            $obj.closest("tr").remove();
+          $obj.closest("tr").remove();
         };
-        
+
         $(document).ready(function(){
-            $.datepicker.setDefaults($.datepicker.regional["de"]);
-            $('.date').datepicker({ 
-                dateFormat: "dd.mm.yy",
-                changeMonth: true,
-                changeYear: true 
-            });
-            
-            $('#new-artikelcode').focus();
-
-            var element = document.getElementById("scroller");
-            element.scrollTop = element.scrollHeight;
-
-            $('.zeile_loeschen').click(function(){ 
-                var rechnungszeile_id = $(this).attr("rechnungszeile_id");
-                if(rechnungszeile_id != null){
-                    if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/rechnung/" + rechnungszeile_id.toString() + "/delete_rechnungszeile";
-                        return true;
-                    }
-                    else{
-                        return false;
-                    }
-                }
-                return false; 
-            });
-
-            $('.change').on('input', function(){
+          $.datepicker.setDefaults($.datepicker.regional["de"]);
+          $('.date').datepicker({ 
+            dateFormat: "dd.mm.yy",
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function(){
               $('#print').addClass('grayed');
-            });
+            }
+          });
 
-            $('#print').click(function(){ 
-              if($(this).hasClass('grayed') == false){
-                var rechnung_id = $('#rechnung_id').val();
-                window.location = "/rechnung/" + rechnung_id.toString() + "/download";
-              }
-              return false; 
-            });
+          $('#new-artikelcode').focus();
 
-         });
+          var element = document.getElementById("scroller");
+          element.scrollTop = element.scrollHeight;
+
+          $('.zeile_bearbeiten').click(function(){ 
+            $(this).closest("tr").find("textarea").removeAttr("disabled");
+            $(this).closest("tr").find("input").removeAttr("disabled");
+            $(this).closest("tr").find("select").removeAttr("disabled");
+            $(this).closest("tr").find("input[name='touched[]']").val("1");
+            return false; 
+          });
+
+          $('.zeile_loeschen').click(function(){ 
+            $(this).closest("tr").find("textarea").removeAttr("disabled");
+            $(this).closest("tr").find("input").removeAttr("disabled");
+            $(this).closest("tr").find("select").removeAttr("disabled");
+            $(this).closest("tr").find("input[name='touched[]']").val("-1");
+            $(this).closest("tr").find("td").addClass('delete');
+            $('#print').addClass('grayed');
+            return false; 
+          });
+
+          $('.zeile_rücksetzen').click(function(){ 
+            $(this).closest("tr").find("textarea").attr("disabled");
+            $(this).closest("tr").find("input").attr("disabled");
+            $(this).closest("tr").find("select").attr("disabled");
+            $(this).closest("tr").find("input[name='touched[]']").val("1");
+            $(this).closest("tr").find("td").removeClass('delete');
+            $('#print').addClass('grayed');
+            return false; 
+          });
+
+          $('.change').on('input', function(){
+            $('#print').addClass('grayed');
+            return false; 
+          });
+
+          $('#print').click(function(){ 
+            if($(this).hasClass('grayed') == false){
+              var rechnung_id = $('#rechnung_id').val();
+              window.location = "/rechnung/" + rechnung_id.toString() + "/download";
+            }
+            return false; 
+          });
+
+        });
     </script>
 {% endblock %}

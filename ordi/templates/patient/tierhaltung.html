@@ -40,7 +40,7 @@
     
     <div class="gap"></div>
 
-    <table class="liste">
+    <table class="records">
         <thead>
             <tr>
                 <th style="width: 8%">Datum</th>
@@ -58,7 +58,7 @@
 
     <form method="post" action="{{ url_for('patient.save_behandlungen', id=tierhaltung.id) }}">
       <div id="scroller" style="max-height: 40vh; overflow-y: scroll; overflow-x: hidden;">
-        <table class="liste">
+        <table class="records">
           <tbody>
           {% for behandlung in behandlungen %}
             <tr>

@@ -60,20 +60,20 @@
 
       <div class="gap"></div>
 
-      <table class="liste">
+      <table class="records">
         <thead>
             <tr>
                 <th style="width: 10%">Datum</th>
                 <th style="width: 19.8%">Artikelart</th>
                 <th style="width: 53.6">Detail</th>
-                <th style="width: 9.6%">Betrag</th>
-                <th style="width: 7%">&nbsp;</th>
+                <th style="width: 7.6%">Betrag</th>
+                <th style="width: 9%">&nbsp;</th>
             </tr>
         </thead>
       </table>
 
       <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
-        <table class="liste">
+        <table class="records">
           <tbody>
           {% for rz in rechnungszeilen %}
             <tr>
@@ -83,7 +83,7 @@
                 <input type="hidden" name="touched[]" value="0" disabled>
                 <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz.datum|dt -}}" disabled>
               {% else %}
-                <input type="hidden" name="rechnungszeile_id[]" value="{{- rz['id'] -}}">
+                <input type="hidden" name="rechnungszeile_id[]" value="{{- rz['rechnungszeile_id'] -}}">
                 <input type="hidden" name="touched[]" value="0">
                 <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz['datum'] -}}">
               {% endif %}
@@ -100,15 +100,14 @@
 
               {% if rz.id %}
                 <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change" disabled>{{- rz.artikel -}}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change" disabled>{{- rz.betrag|sn -}}</textarea></td>
+                <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change" disabled>{{- rz.betrag|sn -}}</textarea></td>
               {% else %}
                 <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change">{{- rz['artikel'] -}}</textarea></td>
-                <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
+                <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
               {% endif %}
-                <td style="width: 6%">
-                  <a class="zeile_bearbeiten" href="#">bearb.</a>  
-                  <a class="zeile_loeschen" href="#">löschen</a>
-                  <a class="zeile_rücksetzen" href="#">rücksetzen</a>
+                <td style="width: 8%">
+                  <p style="margin-bottom: 5px;"><a class="zeile_bearbeiten" href="#">ändern</a></p>
+                  <p><a href="#" onclick="delrow($(this));">löschen</a></p>
                 </td>
             </tr>
           {% endfor %}
@@ -117,7 +116,7 @@
               <td style="width: 10%">
                 <input type="hidden" name="rechnungszeile_id[]" value="">
                 <input type="hidden" name="touched[]" value="0">
-                <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- datum -}}">
+                <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- request.form['datum'] or rechnung.datum|dt or datum -}}">
               </td>
 
               {% set artikelcode = 0 %}
@@ -125,8 +124,8 @@
               <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
 
               <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea></td>
-              <td style="width: 10%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea></td>
-              <td style="width: 6%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
+              <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea></td>
+              <td style="width: 8%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
             </tr>
           </tbody>
         </table>
@@ -147,7 +146,7 @@
 
     <script>
         function newrow($obj) {
-          $obj.text("Zeile löschen");
+          $obj.text("");
           $obj.attr("onclick", "delete_newrow($(this));");
           $obj.closest("tr").removeAttr("id");
 
@@ -187,19 +186,35 @@
               '<td style="width: 54%">' + 
                 '<textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea>' + 
               '</td>' + 
-              '<td style="width: 10%">' +
+              '<td style="width: 8%">' +
                 '<textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea>' + 
               '</td>' + 
-              '<td style="width: 6%">' + 
+              '<td style="width: 8%">' + 
                 '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
               '</td>' +
             '</tr>'
             );
           }
 
-        function delete_newrow($obj) {
-          $obj.closest("tr").remove();
-        };
+        function delrow($obj){
+          $obj.closest("tr").find("td").addClass('delete');
+
+          if(confirm("Zeile Löschen?")){
+            var rechnungszeile_id = $obj.closest("tr").find("input[name='rechnungszeile_id[]']").val();
+            if(rechnungszeile_id != null){
+              var url = "/rechnung/" + rechnungszeile_id.toString() + "/async_delete_rechnungszeile"
+              $.get(url, function(data){
+                if(data.length > 0){
+                  $obj.closest("tr").remove();
+                }
+              });
+            }
+          }
+          else{
+            $obj.closest("tr").find("td").removeClass('delete');
+          }
+          return false
+        }
 
         $(document).ready(function(){
           $.datepicker.setDefaults($.datepicker.regional["de"]);
@@ -218,30 +233,23 @@
           element.scrollTop = element.scrollHeight;
 
           $('.zeile_bearbeiten').click(function(){ 
-            $(this).closest("tr").find("textarea").removeAttr("disabled");
-            $(this).closest("tr").find("input").removeAttr("disabled");
-            $(this).closest("tr").find("select").removeAttr("disabled");
-            $(this).closest("tr").find("input[name='touched[]']").val("1");
-            return false; 
-          });
-
-          $('.zeile_loeschen').click(function(){ 
-            $(this).closest("tr").find("textarea").removeAttr("disabled");
-            $(this).closest("tr").find("input").removeAttr("disabled");
-            $(this).closest("tr").find("select").removeAttr("disabled");
-            $(this).closest("tr").find("input[name='touched[]']").val("-1");
-            $(this).closest("tr").find("td").addClass('delete');
-            $('#print').addClass('grayed');
-            return false; 
-          });
-
-          $('.zeile_rücksetzen').click(function(){ 
-            $(this).closest("tr").find("textarea").attr("disabled");
-            $(this).closest("tr").find("input").attr("disabled");
-            $(this).closest("tr").find("select").attr("disabled");
-            $(this).closest("tr").find("input[name='touched[]']").val("1");
-            $(this).closest("tr").find("td").removeClass('delete');
-            $('#print').addClass('grayed');
+            var touched = $(this).closest("tr").find("input[name='touched[]']").val();
+            if(touched == 0){
+              $(this).closest("tr").find("textarea").removeAttr("disabled");
+              $(this).closest("tr").find("input").removeAttr("disabled");
+              $(this).closest("tr").find("select").removeAttr("disabled");
+              $(this).closest("tr").find("input[name='touched[]']").val(1);
+              $(this).text("ändern rückgängig");
+              $('#print').addClass('grayed');
+            }
+            if(touched == 1){
+              $(this).closest("tr").find("textarea").attr("disabled", "disabled");
+              $(this).closest("tr").find("input").attr("disabled", "disabled");
+              $(this).closest("tr").find("select").attr("disabled", "disabled");
+              $(this).closest("tr").find("input[name='touched[]']").val(0);
+              $(this).text("ändern");
+              $('#print').addClass('grayed');
+            }
             return false; 
           });
 

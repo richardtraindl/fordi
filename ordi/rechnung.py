@@ -101,23 +101,23 @@ def create(id):
 
     if(request.method == 'POST'):
         rechnung, error = fill_and_validate_rechnung(None, request)
-        req_rechnungszeilen = build_rechnungszeilen(request)
-        if(len(req_rechnungszeilen) == 0):
+        reqrechnungszeilen = build_rechnungszeilen(request)
+        if(len(reqrechnungszeilen) == 0):
             error += "Es muss mind. eine Rechnungszeile vorhanden sein. "
         if(len(error) > 0):
             flash(error)
             return render_template('rechnung/rechnung.html', id=id, 
-                rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                rechnung=rechnung, rechnungszeilen=reqrechnungszeilen, 
                 person=tierhaltung.person, tier=tierhaltung.tier, 
                 artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
 
         rechnungszeilen = []
-        for req_rechnungszeile in req_rechnungszeilen:
-            rechnungszeile, error = fill_and_validate_rechnungszeile(rechnung, None, req_rechnungszeile)
+        for reqrechnungszeile in reqrechnungszeilen:
+            rechnungszeile, error = fill_and_validate_rechnungszeile(rechnung, None, reqrechnungszeile)
             if(len(error) > 0):
                 flash(error)
                 return render_template('rechnung/rechnung.html', id=id, 
-                    rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                    rechnung=rechnung, rechnungszeilen=reqrechnungszeilen, 
                     person=tierhaltung.person, tier=tierhaltung.tier, 
                     artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
             else:
@@ -127,7 +127,7 @@ def create(id):
         if(len(error) > 0):
             flash(error)
             return render_template('rechnung/rechnung.html', id=id, 
-                rechnung=rechnung, rechnungszeilen=req_rechnungszeilen, 
+                rechnung=rechnung, rechnungszeilen=reqrechnungszeilen, 
                 person=tierhaltung.person, tier=tierhaltung.tier, 
                 artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
 
@@ -222,8 +222,8 @@ def edit(rechnung_id):
                                 newrechnungszeile.artikel=rechnungszeile.artikel
                                 newrechnungszeile.betrag=rechnungszeile.betrag
                                 calczeilen.append(newrechnungszeile)
-                            if(mergedzeile['touched'] == "-1"):
-                                db.session.delete(newrechnungszeile)
+                            #if(mergedzeile['touched'] == "-1"):
+                            #    db.session.delete(newrechnungszeile)
                     else:
                         db.session.add(rechnungszeile)
                         calczeilen.append(rechnungszeile)
@@ -271,4 +271,16 @@ def delete_rechnungszeile(rechnungszeile_id):
     db.session.delete(rechnungszeile)
     db.session.commit()
     return redirect(url_for('rechnung.edit', rechnung_id=rechnungszeile.rechnung_id))
+
+
+@bp.route('/<int:rechnungszeile_id>/async_delete_rechnungszeile', methods=('GET',))
+@login_required
+def async_delete_rechnungszeile(rechnungszeile_id):
+    rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
+    if(rechnungszeile):
+        db.session.delete(rechnungszeile)
+        db.session.commit()
+        return "OK"
+    return ""
+
 

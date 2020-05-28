@@ -77,10 +77,10 @@ textarea {
   resize: none;
 }
 
-.liste {
+.liste, .records {
     width: 100%;
 }
-.liste, .liste th, .liste td { 
+.liste, .records, .liste th, .records th, .liste td, .records td { 
   padding: 2px;
   border-color: grey;
   border-style: solid; 
@@ -95,10 +95,11 @@ textarea {
 .liste tr:nth-child(odd) { 
   background-color: #FFFFFF; 
 }
-.liste td { 
+.liste td, .records td { 
   max-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  background-color: GhostWhite;
 }
 
 .liste-wrapper {
@@ -128,7 +129,7 @@ textarea {
 
 .grayed { color: Gray; }
 
-.delete { background-color: LightGray; }
+.delete { background-color: Yellow !important; }
 
 .small-gap {
   padding-bottom: 10px;

@@ -284,3 +284,14 @@ def async_delete_rechnungszeile(rechnungszeile_id):
     return ""
 
 
+@bp.route('/<int:rechnungszeile_id>/async_read_rechnungszeile', methods=('GET',))
+@login_required
+def async_read_rechnungszeile(rechnungszeile_id):
+    rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
+    if(rechnungszeile):
+        return rechnungszeile.datum.strftime("%d.%m.%Y") + "§" + \
+               str(rechnungszeile.artikelcode) + "§" + \
+               str(rechnungszeile.artikel) + "§" + \
+               str(rechnungszeile.betrag)
+    return ""
+

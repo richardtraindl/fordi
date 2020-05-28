@@ -145,23 +145,24 @@
     </form>
 
     <script>
-        function newrow($obj) {
-          $obj.text("");
-          $obj.attr("onclick", "delete_newrow($(this));");
-          $obj.closest("tr").removeAttr("id");
 
-          var date = new Date();
-          var year = String(date.getFullYear());
-          var month = String(date.getMonth() + 1);
-          if(month.length == 1){
-            month = "0" + month;
-          }
-          var day = String(date.getDate());
-          if(day.length == 1){
-            day = "0" + day;
-          }
+      function newrow($obj) {
+        $obj.text("");
+        $obj.attr("onclick", "delete_newrow($(this));");
+        $obj.closest("tr").removeAttr("id");
 
-          $obj.closest("tbody").append(
+        var date = new Date();
+        var year = String(date.getFullYear());
+        var month = String(date.getMonth() + 1);
+        if(month.length == 1){
+          month = "0" + month;
+        }
+        var day = String(date.getDate());
+        if(day.length == 1){
+          day = "0" + day;
+        }
+
+        $obj.closest("tbody").append(
             '<tr id="neue_zeile">' +
               '<td style="width: 10%">' + 
                 '<input type="hidden" name="rechnungszeile_id[]" value="">' +
@@ -193,8 +194,9 @@
                 '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
               '</td>' +
             '</tr>'
-            );
-          }
+          );
+        }
+
 
         function delrow($obj){
           $obj.closest("tr").find("td").addClass('delete');
@@ -216,6 +218,7 @@
           return false
         }
 
+
         $(document).ready(function(){
           $.datepicker.setDefaults($.datepicker.regional["de"]);
           $('.date').datepicker({ 
@@ -227,36 +230,56 @@
             }
           });
 
+
           $('#new-artikelcode').focus();
 
           var element = document.getElementById("scroller");
           element.scrollTop = element.scrollHeight;
 
+
           $('.zeile_bearbeiten').click(function(){ 
-            var touched = $(this).closest("tr").find("input[name='touched[]']").val();
+            var row = $(this).closest("tr");
+
+            var touched = row.find("input[name='touched[]']").val();
             if(touched == 0){
-              $(this).closest("tr").find("textarea").removeAttr("disabled");
-              $(this).closest("tr").find("input").removeAttr("disabled");
-              $(this).closest("tr").find("select").removeAttr("disabled");
-              $(this).closest("tr").find("input[name='touched[]']").val(1);
+              row.find("textarea").removeAttr("disabled");
+              row.find("input").removeAttr("disabled");
+              row.find("select").removeAttr("disabled");
+              row.find("input[name='touched[]']").val(1);
               $(this).text("ändern rückgängig");
               $('#print').addClass('grayed');
             }
             if(touched == 1){
-              $(this).closest("tr").find("textarea").attr("disabled", "disabled");
-              $(this).closest("tr").find("input").attr("disabled", "disabled");
-              $(this).closest("tr").find("select").attr("disabled", "disabled");
-              $(this).closest("tr").find("input[name='touched[]']").val(0);
+              var rechnungszeile_id = row.find("input[name='rechnungszeile_id[]']").val();
+              if(rechnungszeile_id != null){
+                var url = "/rechnung/" + rechnungszeile_id.toString() + "/async_read_rechnungszeile"
+                $.get(url, function(data){
+                  if(data.length > 0){
+                    record = data.split("§");
+                    row.find("input[name='datum[]']").val(record[0]);
+                    row.find("select[name='artikelcode[]']").val(record[1]);
+                    row.find("textarea[name='artikel[]']").val(record[2]);
+                    row.find("textarea[name='betrag[]']").val(record[3]);
+                  }
+                });
+              }
+
+              row.find("textarea").attr("disabled", "disabled");
+              row.find("input").attr("disabled", "disabled");
+              row.find("select").attr("disabled", "disabled");
+              row.find("input[name='touched[]']").val(0);
               $(this).text("ändern");
               $('#print').addClass('grayed');
             }
             return false; 
           });
 
+
           $('.change').on('input', function(){
             $('#print').addClass('grayed');
             return false; 
           });
+
 
           $('#print').click(function(){ 
             if($(this).hasClass('grayed') == false){
@@ -267,5 +290,6 @@
           });
 
         });
+
     </script>
 {% endblock %}

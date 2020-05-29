@@ -283,22 +283,77 @@ def save_behandlungen(id):
     if(request.method == 'POST'):
         tierhaltung = Tierhaltung.query.get(id)
 
-        req_behandlungen = build_behandlungen(request)
-        for req_behandlung in req_behandlungen:
+        behandlungen = db.session.query(Behandlung) \
+                        .filter(Behandlung.tier_id == tierhaltung.tier.id) \
+                        .order_by(Behandlung.id.asc(), Behandlung.datum.asc()).all()
+                        
+        datum=datetime.today()
+        termin = db.session.query(Termin) \
+                        .filter(and_(Termin.tierhaltung_id==id, Termin.ende >= datum)).first()
+
+        reqbehandlungen = build_behandlungen(request)
+        for reqbehandlung in reqbehandlungen:
             behandlung = None
-            if(len(req_behandlung['behandlung_id']) > 0):
+            if(len(reqbehandlung['behandlung_id']) > 0):
                 try:
-                    behandlung_id = int(req_behandlung['behandlung_id'])
+                    behandlung_id = int(reqbehandlung['behandlung_id'])
                     behandlung = db.session.query(Behandlung).get(behandlung_id)
                 except:
                     behandlung_id = None
                     behandlung = None
 
-            behandlung, error = fill_and_validate_behandlung(behandlung, req_behandlung)
+            behandlung, error = fill_and_validate_behandlung(behandlung, reqbehandlung)
             if(len(error) > 0):
                 flash(error)
-                return redirect(url_for('patient.show', id=id))
-            
+
+                #####################
+                # Bahndlungen aus Datenbank mit jenen des Request mergen
+                mergedbehandlungen = []
+
+                for behandlung in behandlungen:
+                    found = False
+                    for reqbehandlung in reqbehandlungen:
+                        if(len(reqbehandlung['behandlung_id']) > 0):
+                            try:
+                                behandlung_id = int(reqbehandlung['behandlung_id'])
+                            except:
+                                continue
+                            if(behandlung.id == behandlung_id):
+                                mergedbehandlungen.append(reqbehandlung)
+                                found = True
+                                break
+                    if(found == False):
+                        mergedbehandlungen.append(behandlung)
+
+                for reqbehandlung in reqbehandlungen:
+                    if(len(reqbehandlung['behandlung_id']) == 0):
+                        mergedbehandlungen.append(reqbehandlung)
+                #####################
+
+                anredewerte = []
+                for key, value in ANREDE.items():
+                    anredewerte.append([key, value])
+
+                geschlechtswerte = []
+                for key, value in GESCHLECHT.items():
+                    geschlechtswerte.append([key, value])
+
+                laborreferenzen = []
+                for referenz in LABOR_REFERENZ:
+                    laborreferenzen.append(referenz)
+
+                impfungswerte = []
+                for key, value in IMPFUNG.items():
+                    impfungswerte.append([key, value])
+
+                return render_template('patient/tierhaltung.html', tierhaltung=tierhaltung, 
+                            termin=termin, behandlungen=mergedbehandlungen, 
+                            datum=datum.strftime("%d.%m.%Y"), anredewerte=anredewerte, 
+                            geschlechtswerte=geschlechtswerte, laborreferenzen=laborreferenzen, 
+                            impfungswerte=impfungswerte, page_title="Karteikarte")
+
+                #return redirect(url_for('patient.show', id=id))
+
             if(behandlung.id == None):
                 behandlung.tier_id = tierhaltung.tier_id
                 db.session.add(behandlung)
@@ -326,5 +381,33 @@ def delete_behandlung(behandlung_id):
     else:
         flash("Fehler beim Löschen der Behandlung: " + str(behandlung_id))
         return redirect(url_for('patient.index'))
+
+
+@bp.route('/<int:behandlung_id>/async_delete_behandlung', methods=('GET',))
+@login_required
+def async_delete_behandlung(behandlung_id):
+    behandlung = db.session.query(Behandlung).get(behandlung_id)
+    if(behandlung):
+        db.session.delete(behandlung)
+        db.session.commit()
+        return "OK"
+    return ""
+
+
+@bp.route('/<int:behandlung_id>/async_read_behandlung', methods=('GET',))
+@login_required
+def async_read_behandlung(behandlung_id):
+    print(behandlung_id)
+    behandlung = db.session.query(Behandlung).get(behandlung_id)
+    if(behandlung):
+        return { 'datum' : behandlung.datum.strftime("%d.%m.%Y"),
+                 'gewicht' : behandlung.gewicht,
+                 'diagnose' : behandlung.diagnose,
+                 'laborwerte1' : behandlung.laborwerte1,
+                 'laborwerte2' : behandlung.laborwerte2,
+                 'arzneien' : behandlung.arzneien,
+                 'arzneimittel' : behandlung.arzneimittel,
+                 'impfungen_extern' : behandlung.impfungen_extern }
+    return {}
 # behandlung
 

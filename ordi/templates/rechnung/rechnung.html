@@ -106,7 +106,7 @@
                 <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
               {% endif %}
                 <td style="width: 8%">
-                  <p style="margin-bottom: 5px;"><a class="zeile_bearbeiten" href="#">ändern</a></p>
+                  <p style="margin-bottom: 5px;"><a href="#" onclick="editrow($(this));">ändern</a></p>
                   <p><a href="#" onclick="delrow($(this));">löschen</a></p>
                 </td>
             </tr>
@@ -146,7 +146,7 @@
 
     <script>
 
-      function newrow($obj) {
+      function newrow($obj){
         $obj.text("");
         $obj.attr("onclick", "delete_newrow($(this));");
         $obj.closest("tr").removeAttr("id");
@@ -194,33 +194,82 @@
                 '<a href="#" onclick="newrow($(this));">neue Zeile</a>' + 
               '</td>' +
             '</tr>'
-          );
+        );
+      }
+
+
+      function editrow($obj){ 
+        var row = $obj.closest("tr");
+
+        var touched = row.find("input[name='touched[]']").val();
+        if(touched == 0){
+          row.find("textarea").removeAttr("disabled");
+          row.find("input").removeAttr("disabled");
+          row.find("select").removeAttr("disabled");
+          row.find("input[name='touched[]']").val(1);
+          $obj.text("ändern rückgängig");
+          $('#print').addClass('grayed');
         }
-
-
-        function delrow($obj){
-          $obj.closest("tr").find("td").addClass('delete');
-
-          if(confirm("Zeile Löschen?")){
-            var rechnungszeile_id = $obj.closest("tr").find("input[name='rechnungszeile_id[]']").val();
-            if(rechnungszeile_id != null){
-              var url = "/rechnung/" + rechnungszeile_id.toString() + "/async_delete_rechnungszeile"
-              $.get(url, function(data){
-                if(data.length > 0){
-                  $obj.closest("tr").remove();
+        if(touched == 1){
+          var rechnungszeile_id = row.find("input[name='rechnungszeile_id[]']").val();
+          if(rechnungszeile_id != null){
+            var url = "/rechnung/" + rechnungszeile_id.toString() + "/async_read_rechnungszeile"
+            $.get(url, function(data){
+              $.each(data, function(key, value){
+                if(key == "datum"){
+                  row.find("input[name='datum[]']").val(value);
+                }
+                else if(key == "artikelcode"){
+                  row.find("select[name='artikelcode[]']").val(value);
+                }
+                else if(key == "artikel"){
+                  row.find("textarea[name='artikel[]']").val(value);
+                }
+                else if(key == "betrag"){
+                    row.find("textarea[name='betrag[]']").val(value);
                 }
               });
-            }
+            });
           }
-          else{
-            $obj.closest("tr").find("td").removeClass('delete');
-          }
-          return false
+
+          row.find("textarea").attr("disabled", "disabled");
+          row.find("input").attr("disabled", "disabled");
+          row.find("select").attr("disabled", "disabled");
+          row.find("input[name='touched[]']").val(0);
+          $obj.text("ändern");
+          $('#print').addClass('grayed');
         }
+        return false; 
+      }
 
 
-        $(document).ready(function(){
+      function delrow($obj){
+        var row = $obj.closest("tr");
+
+        row.find("td").addClass('delete');
+
+        if(confirm("Zeile Löschen?")){
+          var rechnungszeile_id = row.find("input[name='rechnungszeile_id[]']").val();
+          if(rechnungszeile_id != null){
+            var url = "/rechnung/" + rechnungszeile_id.toString() + "/async_delete_rechnungszeile"
+            $.get(url, function(data){
+              if(data.length > 0){
+                row.remove();
+              }
+            });
+          }
+        }
+        else{
+          row.find("td").removeClass('delete');
+        }
+        return false
+      }
+
+
+      $(document).ready(function(){
+
           $.datepicker.setDefaults($.datepicker.regional["de"]);
+
           $('.date').datepicker({ 
             dateFormat: "dd.mm.yy",
             changeMonth: true,
@@ -230,56 +279,15 @@
             }
           });
 
-
           $('#new-artikelcode').focus();
 
           var element = document.getElementById("scroller");
           element.scrollTop = element.scrollHeight;
 
-
-          $('.zeile_bearbeiten').click(function(){ 
-            var row = $(this).closest("tr");
-
-            var touched = row.find("input[name='touched[]']").val();
-            if(touched == 0){
-              row.find("textarea").removeAttr("disabled");
-              row.find("input").removeAttr("disabled");
-              row.find("select").removeAttr("disabled");
-              row.find("input[name='touched[]']").val(1);
-              $(this).text("ändern rückgängig");
-              $('#print').addClass('grayed');
-            }
-            if(touched == 1){
-              var rechnungszeile_id = row.find("input[name='rechnungszeile_id[]']").val();
-              if(rechnungszeile_id != null){
-                var url = "/rechnung/" + rechnungszeile_id.toString() + "/async_read_rechnungszeile"
-                $.get(url, function(data){
-                  if(data.length > 0){
-                    record = data.split("§");
-                    row.find("input[name='datum[]']").val(record[0]);
-                    row.find("select[name='artikelcode[]']").val(record[1]);
-                    row.find("textarea[name='artikel[]']").val(record[2]);
-                    row.find("textarea[name='betrag[]']").val(record[3]);
-                  }
-                });
-              }
-
-              row.find("textarea").attr("disabled", "disabled");
-              row.find("input").attr("disabled", "disabled");
-              row.find("select").attr("disabled", "disabled");
-              row.find("input[name='touched[]']").val(0);
-              $(this).text("ändern");
-              $('#print').addClass('grayed');
-            }
-            return false; 
-          });
-
-
           $('.change').on('input', function(){
             $('#print').addClass('grayed');
             return false; 
           });
-
 
           $('#print').click(function(){ 
             if($(this).hasClass('grayed') == false){

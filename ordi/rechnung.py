@@ -289,9 +289,8 @@ def async_delete_rechnungszeile(rechnungszeile_id):
 def async_read_rechnungszeile(rechnungszeile_id):
     rechnungszeile = db.session.query(Rechnungszeile).get(rechnungszeile_id)
     if(rechnungszeile):
-        return rechnungszeile.datum.strftime("%d.%m.%Y") + "§" + \
-               str(rechnungszeile.artikelcode) + "§" + \
-               str(rechnungszeile.artikel) + "§" + \
-               str(rechnungszeile.betrag)
-    return ""
-
+        return { 'datum' : rechnungszeile.datum.strftime("%d.%m.%Y"),
+                 'artikelcode' : str(rechnungszeile.artikelcode),
+                 'artikel' : str(rechnungszeile.artikel),
+                 'betrag' : str(rechnungszeile.betrag) }
+    return {}

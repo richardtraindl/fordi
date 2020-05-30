@@ -60,6 +60,7 @@
       <div id="scroller" style="max-height: 40vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="records">
           <tbody>
+          {% set editerror = 0 %}
           {% for behandlung in behandlungen %}
             <tr>
             {% if behandlung.id %}
@@ -92,11 +93,17 @@
                 <p><a href="#" onclick="delrow($(this));">löschen</a></p>
               </td>
             {% else %}
+              {% set editerror = editerror + 1 %}
+
               <td style="width: 8%">
                 <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] -}}">
                 <input type="text" name="datum[]" class="date" value="{{- behandlung['datum'] -}}">
               </td>
-                <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung['diagnose'] -}}</textarea></td>
+                {% if editerror == 1 %}
+                  <td style="width: 30%"><textarea name="diagnose[]" id="diagnose">{{- behandlung['diagnose'] -}}</textarea></td>
+                {% else %}
+                  <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung['diagnose'] -}}</textarea></td>
+                {% endif %}
                 <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{- behandlung['laborwerte1'] -}}</textarea></td>
                 <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{- behandlung['laborwerte2'] -}}</textarea></td>
                 <td style="width: 14%"><textarea name="arzneien[]">{{- behandlung['arzneien'] -}}</textarea></td>
@@ -129,7 +136,11 @@
                   <input type="hidden" name="behandlung_id[]" value="">
                   <input type="text" name="datum[]" class="date" value="{{- datum -}}">
               </td>
-              <td style="width: 30%"><textarea name="diagnose[]" id="diagnose"></textarea></td>
+              {% if editerror == 0 %}
+                <td style="width: 30%"><textarea name="diagnose[]" id="diagnose"></textarea></td>
+              {% else %}
+                <td style="width: 30%"><textarea name="diagnose[]"></textarea></td>
+              {% endif %}
               <td style="width: 11%"><textarea name="laborwerte1[]" class="labor"></textarea></td>
               <td style="width: 11%"><textarea name="laborwerte2[]" class="labor"></textarea></td>
               <td style="width: 14%"><textarea name="arzneien[]"></textarea></td>

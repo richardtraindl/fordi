@@ -75,40 +75,54 @@
       <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
         <table class="records">
           <tbody>
+          {% set editerror = 0 %}
           {% for rz in rechnungszeilen %}
             <tr>
+            {% if rz.id %}
               <td style="width: 10%">
-              {% if rz.id %}
                 <input type="hidden" name="rechnungszeile_id[]" value="{{- rz.id -}}" disabled>
                 <input type="hidden" name="touched[]" value="0" disabled>
                 <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz.datum|dt -}}" disabled>
-              {% else %}
-                <input type="hidden" name="rechnungszeile_id[]" value="{{- rz['rechnungszeile_id'] -}}">
-                <input type="hidden" name="touched[]" value="0">
-                <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz['datum'] -}}">
-              {% endif %}
               </td>
 
-              {% if rz.id %}
-                {% set artikelcode = rz.artikelcode %}
-                {% set active = False %}
-              {% else %}
-                {% set artikelcode = rz['artikelcode'] %}
-                {% set active = True %}
-              {% endif %}
+              {% set artikelcode = rz.artikelcode %}
+              {% set active = False %}
+              <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
+              
+              <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change" disabled>{{- rz.artikel -}}</textarea></td>
+              
+              <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change" disabled>{{- rz.betrag|sn -}}</textarea></td>
+            
+              <td style="width: 8%">
+                <p style="margin-bottom: 5px;"><a href="#" onclick="editrow($(this));">ändern</a></p>
+                <p><a href="#" onclick="delrow($(this));">löschen</a></p>
+              </td>
+            {% else %}
+              {% set editerror = editerror + 1 %}
+
+              <td style="width: 10%">
+                <input type="hidden" name="rechnungszeile_id[]" value="{{- rz['rechnungszeile_id'] -}}">
+                <input type="hidden" name="touched[]" value="1">
+                <input type="text" style="width: 100%" name="datum[]" class="date change" value="{{- rz['datum'] -}}">
+              </td>
+
+              {% set artikelcode = rz['artikelcode'] %}
+              {% set active = True %}
               <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
 
-              {% if rz.id %}
-                <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change" disabled>{{- rz.artikel -}}</textarea></td>
-                <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change" disabled>{{- rz.betrag|sn -}}</textarea></td>
+              {% if editerror == 1 %}
+                <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change" id="edit">{{- rz['artikel'] -}}</textarea></td>
               {% else %}
                 <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change">{{- rz['artikel'] -}}</textarea></td>
-                <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
               {% endif %}
-                <td style="width: 8%">
-                  <p style="margin-bottom: 5px;"><a href="#" onclick="editrow($(this));">ändern</a></p>
-                  <p><a href="#" onclick="delrow($(this));">löschen</a></p>
-                </td>
+
+              <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change">{{- rz['betrag'] -}}</textarea></td>
+
+              <td style="width: 8%">
+                <p style="margin-bottom: 5px;"><a href="#" onclick="editrow($(this));">ändern rückgängig</a></p>
+                <p><a href="#" onclick="delrow($(this));">löschen</a></p>
+              </td>
+            {% endif %}
             </tr>
           {% endfor %}
 
@@ -116,7 +130,11 @@
               <td style="width: 10%">
                 <input type="hidden" name="rechnungszeile_id[]" value="">
                 <input type="hidden" name="touched[]" value="0">
+              {% if editerror == 0 %}
+                <input type="text" style="width: 100%" name="datum[]" class="date" id="edit" value="{{- request.form['datum'] or rechnung.datum|dt or datum -}}">
+              {% else %}
                 <input type="text" style="width: 100%" name="datum[]" class="date" value="{{- request.form['datum'] or rechnung.datum|dt or datum -}}">
+              {% endif %}
               </td>
 
               {% set artikelcode = 0 %}
@@ -124,7 +142,9 @@
               <td style="width: 20%">{% include 'rechnung/_select_for_artikel.html' %}</td>
 
               <td style="width: 54%"><textarea style="width: 100%; height: 42px;" name="artikel[]" class="change"></textarea></td>
+
               <td style="width: 8%"><textarea style="width: 100%; height: 42px;" name="betrag[]" class="change"></textarea></td>
+
               <td style="width: 8%"><a href="#" onclick="newrow($(this));">neue Zeile</a></td>
             </tr>
           </tbody>
@@ -279,7 +299,8 @@
             }
           });
 
-          $('#new-artikelcode').focus();
+          $('#edit').focus();
+          //$('#new-artikelcode').focus();
 
           var element = document.getElementById("scroller");
           element.scrollTop = element.scrollHeight;

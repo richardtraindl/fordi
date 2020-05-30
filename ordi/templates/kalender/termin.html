@@ -124,14 +124,15 @@
 
       {% if termin.id %}
         {% if th %}
-          <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id, th='th') }}">löschen</a></p>
+          <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id, th='th') }}" onclick="return confirm('Soll Termin gelöscht werden?')">löschen</a></p>
         {% else %}
-          <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}">löschen</a></p>
+          <p><a class="btn" href="{{ url_for('kalender.delete', id=termin.id) }}" onclick="return confirm('Soll Termin gelöscht werden?')">löschen</a></p>
         {% endif %}
       {% endif %}
     </div>
 
-    <div class="gap"></div>
+      <div class="gap"></div>
+    </form>
 
     <div id="kalender-wrapper">
       {% set preview = 1 %}

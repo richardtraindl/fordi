@@ -1,9 +1,9 @@
 
     <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         {% if tier %}
-            <input type="hidden" name="tier_id" value="{{- tier.id -}}">
+          <input type="hidden" name="tier_id" value="{{- tier.id -}}">
         {% else %}
-            <input type="hidden" name="tier_id" value="">
+          <input type="hidden" name="tier_id" value="">
         {% endif %}
 
         <label for="tiername">Tiername</label>
@@ -23,13 +23,13 @@
 
         <label for="geschlechtscode">Geschlecht</label>
         {% if tier %}
-            {% set geschlechtscode = tier.geschlechtscode %}
+          {% set geschlechtscode = tier.geschlechtscode %}
         {% else %}
-            {% if request.form['geschlechtscode'] %}
-                {% set geschlechtscode = request.form['geschlechtscode'] | int %}
-            {% else %}
-                {% set geschlechtscode = 0 %}
-            {% endif %}
+          {% if request.form['geschlechtscode'] %}
+            {% set geschlechtscode = request.form['geschlechtscode'] | int %}
+          {% else %}
+            {% set geschlechtscode = 0 %}
+          {% endif %}
         {% endif %}
         {% include 'patient/_select_for_geschlecht.html' %}
 
@@ -41,21 +41,21 @@
 
         <label for="patient">Patient</label>
         {% if tier %}
-            {% if tier.patient == 0 %}
-                <input type="checkbox" name="patient" value="0">
-            {% else %}
-                <input type="checkbox" name="patient" value="1" checked>
-            {% endif %}
+          {% if tier.patient == 0 %}
+            <input type="checkbox" name="patient" value="0">
+          {% else %}
+            <input type="checkbox" name="patient" value="1" checked>
+          {% endif %}
         {% else %}
-            {% if request.form['patient'] %}
-                {% if request.form.get('patient') %}
-                    <input type="checkbox" name="patient" value="1" checked>
-                {% else %}
-                    <input type="checkbox" name="patient" value="0">
-                {% endif %}
+          {% if request.form['patient'] %}
+            {% if request.form.get('patient') %}
+              <input type="checkbox" name="patient" value="1" checked>
             {% else %}
-                <input type="checkbox" name="patient" value="1" checked>
+              <input type="checkbox" name="patient" value="0">
             {% endif %}
+          {% else %}
+              <input type="checkbox" name="patient" value="1" checked>
+          {% endif %}
         {% endif %}
 
         <label for="viren">Viren</label>
@@ -64,4 +64,3 @@
         <label for="merkmal">Merkmal</label>
         <input size="20" name="merkmal" value="{{- request.form['merkmal'] or tier.merkmal|sn -}}">
     </div>
-

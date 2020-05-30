@@ -32,7 +32,8 @@
     {% else %}
       <form method="post" action="{{ url_for('behandlungsverlauf.create', id=id) }}">
     {% endif %}
-        <input type="hidden" name="behandlungsverlauf_id" id="behandlungsverlauf_id" value="{{- request.form['behandlungsverlauf_id'] or behandlungsverlauf.id -}}">
+    
+      <input type="hidden" name="behandlungsverlauf_id" id="behandlungsverlauf_id" value="{{- request.form['behandlungsverlauf_id'] or behandlungsverlauf.id -}}">
 
       <div class="row-grid" style="grid-template-columns: auto auto;">
         <label for="datum">Datum</label>
@@ -48,7 +49,7 @@
       <div class="small-gap"></div>
 
       <div class="flex-container">
-        <p><input class="btn" type="submit" value="Behandlungsverlauf speichern"></p>
+        <p><input type="submit" value="Behandlungsverlauf speichern"></p>
 
       {% if changed == False %}
         <p><a id="print" class="btn" href="#">Behandlungsverlauf drucken</a></p>

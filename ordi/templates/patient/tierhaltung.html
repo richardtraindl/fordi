@@ -64,15 +64,22 @@
           {% for behandlung in behandlungen %}
             <tr>
             {% if behandlung.id %}
+              <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}" disabled>
+
               <td style="width: 8%">
-                <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}" disabled>
                 <input type="text" name="datum[]" class="date" value="{{- behandlung.datum|dt -}}" disabled>
               </td>
+
               <td style="width: 30%"><textarea name="diagnose[]" disabled>{{- behandlung.diagnose -}}</textarea></td>
+
               <td style="width: 11%"><textarea name="laborwerte1[]" class="labor" disabled>{{- behandlung.laborwerte1 -}}</textarea></td>
+
               <td style="width: 11%"><textarea name="laborwerte2[]" class="labor" disabled>{{- behandlung.laborwerte2 -}}</textarea></td>
+
               <td style="width: 14%"><textarea name="arzneien[]" disabled>{{- behandlung.arzneien -}}</textarea></td>
+
               <td style="width: 7%"><textarea name="arzneimittel[]" disabled>{{- behandlung.arzneimittel -}}</textarea></td>
+
               <td style="width: 9%">
                 <textarea name="impfungen_extern[]" class="impfungen" readonly disabled>
                   {%- set vars = {'selected': False} -%}
@@ -88,26 +95,34 @@
                 </textarea>
               </td>
               <td style="width: 5%"><textarea name="gewicht[]" disabled>{{- behandlung.gewicht|sn -}}</textarea></td>
+
               <td style="width: 5%">
                 <p style="margin-bottom: 5px;"><a href="#" onclick="editrow($(this));">ändern</a></p>
+
                 <p><a href="#" onclick="delrow($(this));">löschen</a></p>
               </td>
             {% else %}
               {% set editerror = editerror + 1 %}
 
+              <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] -}}">
+
               <td style="width: 8%">
-                <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] -}}">
                 <input type="text" name="datum[]" class="date" value="{{- behandlung['datum'] -}}">
               </td>
                 {% if editerror == 1 %}
-                  <td style="width: 30%"><textarea name="diagnose[]" id="diagnose">{{- behandlung['diagnose'] -}}</textarea></td>
+                  <td style="width: 30%"><textarea name="diagnose[]" id="edit">{{- behandlung['diagnose'] -}}</textarea></td>
                 {% else %}
                   <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung['diagnose'] -}}</textarea></td>
                 {% endif %}
+
                 <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{- behandlung['laborwerte1'] -}}</textarea></td>
+
                 <td style="width: 11%"><textarea name="laborwerte2[]" class="labor">{{- behandlung['laborwerte2'] -}}</textarea></td>
+
                 <td style="width: 14%"><textarea name="arzneien[]">{{- behandlung['arzneien'] -}}</textarea></td>
+
                 <td style="width: 7%"><textarea name="arzneimittel[]">{{- behandlung['arzneimittel'] -}}</textarea></td>
+
                 <td style="width: 9%">
                   <textarea name="impfungen_extern[]" class="impfungen" readonly>
                     {%- set vars = {'selected': False} -%}
@@ -122,31 +137,42 @@
                     {%- endfor -%}
                   </textarea>
                 </td>
+
                 <td style="width: 5%"><textarea name="gewicht[]">{{- behandlung['gewicht'] -}}</textarea></td>
+
                 <td style="width: 5%">
                   <p style="margin-bottom: 5px;"><a href="#" onclick="editrow($(this));">ändern rückgängig</a></p>
+
                   <p><a href="#" onclick="delrow($(this));">löschen</a></p>  
                 </td>
             {% endif %}
             </tr>
           {% endfor %}
 
-            <tr class="edit-focus">
+            <tr>
               <td style="width: 8%">
                   <input type="hidden" name="behandlung_id[]" value="">
                   <input type="text" name="datum[]" class="date" value="{{- datum -}}">
               </td>
+
               {% if editerror == 0 %}
-                <td style="width: 30%"><textarea name="diagnose[]" id="diagnose"></textarea></td>
+                <td style="width: 30%"><textarea name="diagnose[]" id="edit"></textarea></td>
               {% else %}
                 <td style="width: 30%"><textarea name="diagnose[]"></textarea></td>
               {% endif %}
+
               <td style="width: 11%"><textarea name="laborwerte1[]" class="labor"></textarea></td>
+
               <td style="width: 11%"><textarea name="laborwerte2[]" class="labor"></textarea></td>
+
               <td style="width: 14%"><textarea name="arzneien[]"></textarea></td>
+
               <td style="width: 7%"><textarea name="arzneimittel[]"></textarea></td>
+
               <td style="width: 9%"><textarea name="impfungen_extern[]" class="impfungen" readonly></textarea></td>
+
               <td style="width: 5%"><textarea name="gewicht[]"></textarea></td>
+
               <td style="width: 5%">&nbsp;</td>
             </tr>
           </tbody>
@@ -159,19 +185,19 @@
     </form>
 
     <p style="display: none">
-        <select id="laborreferenzen" style="height: 240px" multiple>
-        {%- for referenz in laborreferenzen -%}
-            <option value="{{- loop.index -}}">{{- referenz -}}</option>
-        {%- endfor -%}
-        </select>
+      <select id="laborreferenzen" style="height: 240px" multiple>
+      {%- for referenz in laborreferenzen -%}
+        <option value="{{- loop.index -}}">{{- referenz -}}</option>
+      {%- endfor -%}
+      </select>
     </p>
 
     <p style="display: none">
-        <select id="impfungswerte" style="height: 240px" multiple>
-        {%- for impfungswert in impfungswerte -%}
-            <option value="{{- impfungswert[1] -}}">{{- impfungswert[0] -}}</option>
-        {%- endfor -%}
-        </select>
+      <select id="impfungswerte" style="height: 240px" multiple>
+      {%- for impfungswert in impfungswerte -%}
+        <option value="{{- impfungswert[1] -}}">{{- impfungswert[0] -}}</option>
+      {%- endfor -%}
+      </select>
     </p>
 
     <script>
@@ -195,7 +221,6 @@
         });
         return buf;
       }
-
 
       function editrow($obj){
         var row = $obj.closest("tr");
@@ -246,7 +271,6 @@
         return false; 
       }
 
-
       function delrow($obj){
         var row = $obj.closest("tr");
 
@@ -269,7 +293,6 @@
         return false
       }
 
-
       $(document).ready(function(){
 
         $.datepicker.setDefaults($.datepicker.regional["de"]);
@@ -280,7 +303,7 @@
           changeYear: true 
         });
 
-        $("#diagnose").focus();
+        $("#edit").focus();
 
         var element = document.getElementById("scroller");
         element.scrollTop = element.scrollHeight;
@@ -359,6 +382,5 @@
         });
 
       });
-
     </script>
 {% endblock %}

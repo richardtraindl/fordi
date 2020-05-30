@@ -1,20 +1,20 @@
 
     <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
         {% if person %}
-            <input type="hidden" name="person_id" value="{{- person.id -}}">
+          <input type="hidden" name="person_id" value="{{- person.id -}}">
         {% else %}
-            <input type="hidden" name="person_id" value="">
+          <input type="hidden" name="person_id" value="">
         {% endif %}
 
         <label for="anredecode">Anrede</label>
         {% if person %}
-            {% set anredecode = person.anredecode %}
+          {% set anredecode = person.anredecode %}
         {% else %}
-            {% if request.form['anredecode'] %}
-                {% set anredecode = request.form['anredecode'] | int %}
-            {% else %}
-                {% set anredecode = 0 %}
-            {% endif %}
+          {% if request.form['anredecode'] %}
+            {% set anredecode = request.form['anredecode'] | int %}
+          {% else %}
+            {% set anredecode = 0 %}
+          {% endif %}
         {% endif %}
         {% include 'patient/_select_for_anrede.html' %}
         
@@ -32,21 +32,21 @@
 
         <label for="kunde">Kunden Kennzeichen</label>
         {% if person %}
-            {% if person.kunde == 0 %}
-                <input type="checkbox" name="kunde" value="0">
-            {% else %}
-                <input type="checkbox" name="kunde" value="1" checked>
-            {% endif %}
+          {% if person.kunde == 0 %}
+            <input type="checkbox" name="kunde" value="0">
+          {% else %}
+            <input type="checkbox" name="kunde" value="1" checked>
+          {% endif %}
         {% else %}
-            {% if request.form['kunde'] %}
-                {% if request.form.get('kunde') %}
-                    <input type="checkbox" name="kunde" value="1" checked>
-                {% else %}
-                    <input type="checkbox" name="kunde" value="0">
-                {% endif %}
+          {% if request.form['kunde'] %}
+            {% if request.form.get('kunde') %}
+              <input type="checkbox" name="kunde" value="1" checked>
             {% else %}
-                <input type="checkbox" name="kunde" value="1" checked>
+              <input type="checkbox" name="kunde" value="0">
             {% endif %}
+          {% else %}
+             <input type="checkbox" name="kunde" value="1" checked>
+          {% endif %}
         {% endif %}
 
         <label for="adr_plz">Postleitzahl</label>

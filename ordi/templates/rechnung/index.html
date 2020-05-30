@@ -42,16 +42,27 @@
       {% for r in rechnungen %}
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- r.Rechnung.id -}}"></td>
+
             <td style="width: 4%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.jahr -}}</a></td>
+
             <td style="width: 2%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.lfnr -}}</a></td>
+
             <td style="width: 4%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- '{0:0.2f}'.format(r.Rechnung.brutto_summe | float) -}}</a></td>
+
             <td style="width: 6%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.anredecode|mapanrede -}}</a></td>
+
             <td style="width: 18%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.familienname -}}</a></td>
+
             <td style="width: 12%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.vorname -}}</a></td>
+
             <td style="width: 18%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tiername -}}</a></td>
+
             <td style="width: 12%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tierart -}}</a></td>
+
             <td style="width: 10%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.rasse -}}</a></td>
+
             <td style="width: 4%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
+
             <td style="width: 6%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum|dt -}}</a></td>
         </tr>
       {% endfor %}
@@ -62,11 +73,13 @@
 
     <div class="flex-container">
         <p><a class="btn" id="zur_rechnung" href="#">zur Rechnung</a></p>
+
         <p><a class="btn" id="rechnung_loeschen" href="#">Rechnung löschen</a></p>
     </div>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function(){
+
             $('#zur_rechnung').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
@@ -78,6 +91,7 @@
                 }
                 return false; 
             });
+
             $('#rechnung_loeschen').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
@@ -94,6 +108,7 @@
                 }
                 return false; 
             });
+
         });
     </script>
 {% endblock %}

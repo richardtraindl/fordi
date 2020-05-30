@@ -10,24 +10,27 @@
 {% block content %}
     <form method="post">
 
-        {% include 'patient/_form_for_tier.html' %}
+      {% include 'patient/_form_for_tier.html' %}
 
-        <div class="small-gap"></div>
+      <div class="small-gap"></div>
 
-        <div class="flex-container">
-            <input class="btn" type="submit" value="Speichern" style="margin-right: 20px;">
-            <p class="btn"><a href="{{ url_for('patient.show', id=id) }}">Abbrechen</a></p>
-        </div>
+      <div class="flex-container">
+        <input type="submit" value="Speichern" style="margin-right: 20px;">
+
+        <p><a class="btn" href="{{ url_for('patient.show', id=id) }}">Abbrechen</a></p>
+      </div>
     </form>
 
     <script>
-        $(document).ready(function(){
-            $.datepicker.setDefaults($.datepicker.regional["de"]);
-            $(".date").datepicker({ 
-                dateFormat: "dd.mm.yy",
-                changeMonth: true,
-                changeYear: true
-            });
-        });
+      $(document).ready(function(){
+
+      $.datepicker.setDefaults($.datepicker.regional["de"]);
+      $(".date").datepicker({ 
+        dateFormat: "dd.mm.yy",
+        changeMonth: true,
+        changeYear: true
+      });
+
+      });
     </script>
 {% endblock %}

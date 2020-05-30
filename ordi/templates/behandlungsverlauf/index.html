@@ -40,14 +40,23 @@
       {% for b in behandlungsverlaeufe %}
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- b.Behandlungsverlauf.id -}}"></td>
+
             <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum -}}</a></td>
+
             <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode|mapanrede -}}</a></td>
+
             <td style="width: 18%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.familienname -}}</a></td>
+
             <td style="width: 12%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.vorname -}}</a></td>
+
             <td style="width: 18%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tiername -}}</a></td>
+
             <td style="width: 12%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
+
             <td style="width: 10%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
+
             <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
+
             <td style="width: 8%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum|dt -}}</a></td>
         </tr>
       {% endfor %}
@@ -57,12 +66,14 @@
     <div class="gap"></div>
 
     <div class="flex-container">
-        <p><a class="btn" id="zum_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
-        <p><a class="btn" id="behandlungsverlauf_loeschen" href="#">Behandlungsverlauf löschen</a></p>
+      <p><a class="btn" id="zum_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
+
+      <p><a class="btn" id="behandlungsverlauf_loeschen" href="#">Behandlungsverlauf löschen</a></p>
     </div>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function(){
+
             $('#zum_behandlungsverlauf').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
@@ -74,6 +85,7 @@
                 }
                 return false; 
             });
+
             $('#behandlungsverlauf_loeschen').click(function(){ 
                 var id = $("input:radio[name=option]:checked").val(); 
                 if(id == null){
@@ -90,6 +102,7 @@
                 }
                 return false; 
             });
+
         });
     </script>
 {% endblock %}

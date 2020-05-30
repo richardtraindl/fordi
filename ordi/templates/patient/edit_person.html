@@ -15,8 +15,9 @@
         <div class="small-gap"></div>
 
         <div class="flex-container">
-            <input class="btn" type="submit" value="Speichern" style="margin-right: 20px;">
-            <p class="btn"><a href="{{ url_for('patient.show', id=id) }}">Abbrechen</a></p>
+            <input type="submit" value="Speichern" style="margin-right: 20px;">
+
+            <p><a class="btn" href="{{ url_for('patient.show', id=id) }}">Abbrechen</a></p>
         </div>
     </form>
 {% endblock %}

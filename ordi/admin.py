@@ -20,8 +20,7 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @login_required
 def index():
     dbwrite_ok = request.args.get('dbwrite_ok')
-    dbcheck_ok = request.args.get('dbcheck_ok')
-    return render_template('admin/index.html', dbwrite_ok=dbwrite_ok, dbcheck_ok=dbcheck_ok, page_title="Admin")
+    return render_template('admin/index.html', dbwrite_ok=dbwrite_ok, page_title="Admin")
 
 
 def clean_file(path_and_filename, rowcnt):
@@ -116,8 +115,11 @@ def import_tier():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -173,8 +175,11 @@ def import_person():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -217,8 +222,11 @@ def import_adresse():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -263,8 +271,11 @@ def import_kontakt():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -306,8 +317,11 @@ def import_tierhaltung():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -364,8 +378,11 @@ def import_behandlung():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -405,8 +422,11 @@ def import_impfung():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -457,8 +477,11 @@ def import_behandlungsverlauf():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -531,8 +554,11 @@ def import_rechnung():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -583,8 +609,11 @@ def import_rechnungszeile():
     os.remove(path_and_filename2)
 
     if(ok):
-        db.session.commit()
-        return True
+        try:
+            db.session.commit()
+            return True
+        except:
+            return False
     else:
         db.session.rollback()
         return False
@@ -625,48 +654,3 @@ def dbwrite():
 
     return redirect(url_for('admin.index', dbwrite_ok=True))
 
-
-@bp.route('/dbcheck', methods=('GET',))
-@login_required
-def dbcheck():
-    ok = True
-
-    behandlungen = db.session.query(Behandlung).all()
-
-    for behandlung in behandlungen:
-        #impfungen = db.session.query(Impfung) \
-        #    .filter(Impfung.behandlung_id==behandlung.id).all()
-
-        str_impfungen_extern = ""
-        for char in behandlung.impfungen_extern:
-            if(char != '\n' and char != '"'): #  and char != ' '
-                str_impfungen_extern += char
-
-        ary_impfungen = str_impfungen_extern.split(",")
-        for str_impfung in ary_impfungen:
-            if(len(str_impfung.strip()) == 0):
-                continue
-            found = False
-            for impfung in behandlung.impfungen:
-                if(str_impfung.strip() == reverse_lookup(IMPFUNG, impfung.impfungscode) or
-                   (str_impfung.strip() == "TW" and impfung.impfungscode == 4) or
-                   (str_impfung.strip() == "Leptospir" and impfung.impfungscode == 13)):
-                    found = True
-                    break
-            if(found == False):
-                print("NOT FOUND in table Impfung " + str_impfung.strip() + " " + str(behandlung.id))
-                ok = False
-
-        for impfung in behandlung.impfungen:
-            key = reverse_lookup(IMPFUNG, impfung.impfungscode)
-            for str_impfung in ary_impfungen:
-                found = False
-                if(key == str_impfung.strip() or key == str_impfung.strip() + "1"
-                   or key  + "spir" == str_impfung.strip()): # hack Lepto --> Leptospir
-                    found = True
-                    break
-            if(found == False):
-                print("NOT FOUND in table Behandlung.impfung_extern " + key + " " + str(behandlung.id))
-                ok = False
-
-    return redirect(url_for('admin.index', dbcheck_ok=ok))

@@ -86,34 +86,6 @@ def fill_and_validate_person(person, request):
     return person, error
 
 
-def fill_and_validate_behandlung(behandlung, req_behandlung):
-    error = ""
-
-    if(len(req_behandlung['datum']) > 10):
-        str_datum = req_behandlung['datum'].split()[0]
-    else:
-        str_datum = req_behandlung['datum']
-    try:
-        datum = datetime.strptime(str_datum, "%d.%m.%Y")
-    except:
-        datum = None
-        error += "Falsches Behandlungsdatum. "
-
-    if(behandlung == None):
-        behandlung = Behandlung()
-
-    behandlung.datum=datum 
-    behandlung.gewicht=req_behandlung['gewicht'] 
-    behandlung.diagnose=req_behandlung['diagnose']
-    behandlung.laborwerte1=req_behandlung['laborwerte1'] 
-    behandlung.laborwerte2=req_behandlung['laborwerte2']
-    behandlung.arzneien=req_behandlung['arzneien']
-    behandlung.arzneimittel=req_behandlung['arzneimittel']
-    behandlung.impfungen_extern=req_behandlung['impfungen_extern']
-
-    return behandlung, error
-
-
 def build_behandlungen(request):    
     data = (
         request.form.getlist('behandlung_id[]'),
@@ -124,34 +96,61 @@ def build_behandlungen(request):
         request.form.getlist('laborwerte2[]'),
         request.form.getlist('arzneien[]'),
         request.form.getlist('arzneimittel[]'),
-        request.form.getlist('impfungen_extern[]')
+        request.form.getlist('impfungen[]')
     )
-    req_behandlungen = []
+    reqbehandlungen = []
     for idx in range(len(data[0])):
-        req_behandlung = {}
-        req_behandlung['behandlung_id'] = data[0][idx]
-        req_behandlung['tier_id'] = ""
-        req_behandlung['datum'] = data[1][idx]
-        req_behandlung['gewicht'] = data[2][idx]
-        req_behandlung['diagnose'] = data[3][idx]
-        req_behandlung['laborwerte1'] = data[4][idx]
-        req_behandlung['laborwerte2'] = data[5][idx]
-        req_behandlung['arzneien'] = data[6][idx]
-        req_behandlung['arzneimittel'] = data[7][idx]
-        req_behandlung['impfungen_extern'] = data[8][idx]
+        reqbehandlung = {}
+        reqbehandlung['behandlung_id'] = data[0][idx]
+        reqbehandlung['tier_id'] = ""
+        reqbehandlung['datum'] = data[1][idx]
+        reqbehandlung['gewicht'] = data[2][idx]
+        reqbehandlung['diagnose'] = data[3][idx]
+        reqbehandlung['laborwerte1'] = data[4][idx]
+        reqbehandlung['laborwerte2'] = data[5][idx]
+        reqbehandlung['arzneien'] = data[6][idx]
+        reqbehandlung['arzneimittel'] = data[7][idx]
+        reqbehandlung['impfungen'] = data[8][idx]
 
-        if(len(req_behandlung['behandlung_id']) == 0 and 
-           len(req_behandlung['gewicht']) == 0 and
-           len(req_behandlung['diagnose']) == 0 and
-           len(req_behandlung['laborwerte1']) == 0 and
-           len(req_behandlung['laborwerte2']) == 0 and
-           len(req_behandlung['arzneien']) == 0 and
-           len(req_behandlung['arzneimittel']) == 0 and
-           len(req_behandlung['impfungen_extern']) == 0):
+        if(len(reqbehandlung['behandlung_id']) == 0 and 
+           len(reqbehandlung['gewicht']) == 0 and
+           len(reqbehandlung['diagnose']) == 0 and
+           len(reqbehandlung['laborwerte1']) == 0 and
+           len(reqbehandlung['laborwerte2']) == 0 and
+           len(reqbehandlung['arzneien']) == 0 and
+           len(reqbehandlung['arzneimittel']) == 0 and
+           len(reqbehandlung['impfungen']) == 0):
             continue
 
-        req_behandlungen.append(req_behandlung)
-    return req_behandlungen
+        reqbehandlungen.append(reqbehandlung)
+    return reqbehandlungen
+
+
+def fill_and_validate_behandlung(behandlung, reqbehandlung):
+    error = ""
+
+    if(len(reqbehandlung['datum']) > 10):
+        str_datum = reqbehandlung['datum'].split()[0]
+    else:
+        str_datum = reqbehandlung['datum']
+    try:
+        datum = datetime.strptime(str_datum, "%d.%m.%Y")
+    except:
+        error += "Falsches Behandlungsdatum. "
+        datum = None
+
+    if(behandlung == None):
+        behandlung = Behandlung()
+
+    behandlung.datum=datum 
+    behandlung.gewicht=reqbehandlung['gewicht'] 
+    behandlung.diagnose=reqbehandlung['diagnose']
+    behandlung.laborwerte1=reqbehandlung['laborwerte1'] 
+    behandlung.laborwerte2=reqbehandlung['laborwerte2']
+    behandlung.arzneien=reqbehandlung['arzneien']
+    behandlung.arzneimittel=reqbehandlung['arzneimittel']
+
+    return behandlung, reqbehandlung['impfungen'], error
 
 
 def fill_and_validate_rechnung(rechnung, request):

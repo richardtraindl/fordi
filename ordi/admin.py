@@ -353,8 +353,6 @@ def import_behandlung():
 
                 behandlung.arzneimittel = arrline[8].strip('"')
 
-                behandlung.impfungen_extern = arrline[9].strip('"')
-
                 db.session.add(behandlung)
                 print(".", end="", flush=True)
             except:
@@ -636,8 +634,8 @@ def dbcheck():
     behandlungen = db.session.query(Behandlung).all()
 
     for behandlung in behandlungen:
-        impfungen = db.session.query(Impfung) \
-            .filter(Impfung.behandlung_id==behandlung.id).all()
+        #impfungen = db.session.query(Impfung) \
+        #    .filter(Impfung.behandlung_id==behandlung.id).all()
 
         str_impfungen_extern = ""
         for char in behandlung.impfungen_extern:
@@ -649,7 +647,7 @@ def dbcheck():
             if(len(str_impfung.strip()) == 0):
                 continue
             found = False
-            for impfung in impfungen:
+            for impfung in behandlung.impfungen:
                 if(str_impfung.strip() == reverse_lookup(IMPFUNG, impfung.impfungscode) or
                    (str_impfung.strip() == "TW" and impfung.impfungscode == 4) or
                    (str_impfung.strip() == "Leptospir" and impfung.impfungscode == 13)):
@@ -659,7 +657,7 @@ def dbcheck():
                 print("NOT FOUND in table Impfung " + str_impfung.strip() + " " + str(behandlung.id))
                 ok = False
 
-        for impfung in impfungen:
+        for impfung in behandlung.impfungen:
             key = reverse_lookup(IMPFUNG, impfung.impfungscode)
             for str_impfung in ary_impfungen:
                 found = False

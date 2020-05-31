@@ -14,6 +14,7 @@ from ordi.models import *
 from ordi.reqhelper import *
 from ordi.values import *
 from ordi.createpdf import *
+from ordi.util.helper import *
 
 bp = Blueprint('patient', __name__)
 
@@ -116,7 +117,7 @@ def show(id):
     tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
     behandlungen = db.session.query(Behandlung) \
         .filter(Behandlung.tier_id == tierhaltung.tier.id) \
-        .order_by(Behandlung.id.asc(), Behandlung.datum.asc()).all()
+        .order_by(Behandlung.id.asc()).all()
     datum = datetime.today()
     datum_ende = datum + timedelta(days=7)
 
@@ -245,8 +246,8 @@ def edit_person(id, person_id):
 
 
 # behandlung
-def save_or_delete_impfungen(behandlung_id, impfungstexte):
-    impfungen = db.session.query(Impfung).filter(Impfung.behandlung_id==behandlung_id).all()
+def save_or_delete_impfungen(behandlung, impfungstexte):
+    #impfungen = db.session.query(Impfung).filter(Impfung.behandlung_id==behandlung_id).all()
     for impfungstext in impfungstexte:
         try:
             impfungscode = IMPFUNG[impfungstext]
@@ -255,16 +256,16 @@ def save_or_delete_impfungen(behandlung_id, impfungstexte):
             cursor.close()
             return False
         found = False
-        for impfung in impfungen:
+        for impfung in behandlung.impfungen:
             if(impfungscode == impfung.impfungscode):
                 found = True
                 break
         if(found == False):
-            new_impfung = Impfung(behandlung_id=behandlung_id, impfungscode=impfungscode)
+            new_impfung = Impfung(behandlung_id=behandlung.id, impfungscode=impfungscode)
             db.session.add(new_impfung)
     db.session.commit()
 
-    for impfung in impfungen:
+    for impfung in behandlung.impfungen:
         found = False
         for impfungstext in impfungstexte:
             impfungscode = IMPFUNG[impfungstext]
@@ -277,6 +278,7 @@ def save_or_delete_impfungen(behandlung_id, impfungstexte):
 
     return True
 
+
 @bp.route('/<int:id>/save_behandlungen', methods=('GET', 'POST'))
 @login_required
 def save_behandlungen(id):
@@ -285,8 +287,8 @@ def save_behandlungen(id):
 
         behandlungen = db.session.query(Behandlung) \
                         .filter(Behandlung.tier_id == tierhaltung.tier.id) \
-                        .order_by(Behandlung.id.asc(), Behandlung.datum.asc()).all()
-                        
+                        .order_by(Behandlung.id.asc()).all()
+
         datum=datetime.today()
         termin = db.session.query(Termin) \
                         .filter(and_(Termin.tierhaltung_id==id, Termin.ende >= datum)).first()
@@ -302,7 +304,7 @@ def save_behandlungen(id):
                     behandlung_id = None
                     behandlung = None
 
-            behandlung, error = fill_and_validate_behandlung(behandlung, reqbehandlung)
+            behandlung, str_impfungen, error = fill_and_validate_behandlung(behandlung, reqbehandlung)
             if(len(error) > 0):
                 flash(error)
 
@@ -357,11 +359,11 @@ def save_behandlungen(id):
                 db.session.add(behandlung)
             db.session.commit()
 
-            if(len(behandlung.impfungen_extern) > 0):
-                impfungstexte = behandlung.impfungen_extern.split(',')
+            if(len(str_impfungen) > 0):
+                impfungstexte = str_impfungen.split(',')
             else:
                 impfungstexte = []
-            save_or_delete_impfungen(behandlung.id, impfungstexte)
+            save_or_delete_impfungen(behandlung, impfungstexte)
 
     return redirect(url_for('patient.show', id=id))
 
@@ -398,6 +400,12 @@ def async_read_behandlung(behandlung_id):
     print(behandlung_id)
     behandlung = db.session.query(Behandlung).get(behandlung_id)
     if(behandlung):
+        str_impfungen = ""
+        for impfung in behandlung.impfungen:
+            if(len(str_impfungen) > 0):
+                str_impfungen += ","
+            str_impfungen += reverse_lookup(IMPFUNG, impfung.impfungscode)
+
         return { 'datum' : behandlung.datum.strftime("%d.%m.%Y"),
                  'gewicht' : behandlung.gewicht,
                  'diagnose' : behandlung.diagnose,
@@ -405,7 +413,7 @@ def async_read_behandlung(behandlung_id):
                  'laborwerte2' : behandlung.laborwerte2,
                  'arzneien' : behandlung.arzneien,
                  'arzneimittel' : behandlung.arzneimittel,
-                 'impfungen_extern' : behandlung.impfungen_extern }
+                 'impfungen' : str_impfungen }
     return {}
 # behandlung
 

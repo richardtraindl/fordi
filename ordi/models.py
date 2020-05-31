@@ -83,7 +83,6 @@ class Behandlung(db.Model):
     laborwerte2 = db.Column(db.String(1000))
     arzneien = db.Column(db.String(256))
     arzneimittel = db.Column(db.String(100))
-    impfungen_extern = db.Column(db.String(100))
     tier = db.relationship("Tier", back_populates="behandlungen")
     impfungen = db.relationship("Impfung", cascade="all,delete", back_populates="behandlung", lazy='joined')
 

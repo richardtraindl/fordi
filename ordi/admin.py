@@ -18,14 +18,8 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
-def index():
-    return render_template('admin/index.html', page_title="Admin")
-
-
-@bp.route('/database', methods=('GET', 'POST'))
-@login_required
-def database():
-    return render_template('admin/database.html', page_title="Database")
+def index(dbwrite_ok=None, dbcheck_ok=None):
+    return render_template('admin/index.html', dbwrite_ok=dbwrite_ok, dbcheck_ok=dbcheck_ok, page_title="Admin")
 
 
 def clean_file(path_and_filename, rowcnt):
@@ -596,40 +590,40 @@ def import_rechnungszeile():
         return False
 
 
-@bp.route('/write', methods=('GET',))
+@bp.route('/dbwrite', methods=('GET',))
 @login_required
-def write():
+def dbwrite():
     if(import_tier() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_person() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
     
     if(import_adresse() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_kontakt() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_tierhaltung() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_behandlung() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_impfung() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_behandlungsverlauf() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_rechnung() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
     if(import_rechnungszeile() == False):
-        return render_template('admin/index.html', write_ok=False, page_title="Admin")
+        return redirect(url_for('admin.index', dbwrite_ok=False))
 
-    return render_template('admin/index.html', write_ok=True, page_title="Admin")
+    return redirect(url_for('admin.index', dbwrite_ok=True))
 
 
 @bp.route('/dbcheck', methods=('GET',))
@@ -675,4 +669,4 @@ def dbcheck():
                 print("NOT FOUND in table Behandlung.impfung_extern " + key + " " + str(behandlung.id))
                 ok = False
 
-    return render_template('admin/index.html', dbcheck_ok=ok, page_title="Admin")
+    return redirect(url_for('admin.index', dbcheck_ok=ok))

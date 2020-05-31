@@ -18,7 +18,9 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
-def index(dbwrite_ok=None, dbcheck_ok=None):
+def index():
+    dbwrite_ok = request.args.get('dbwrite_ok')
+    dbcheck_ok = request.args.get('dbcheck_ok')
     return render_template('admin/index.html', dbwrite_ok=dbwrite_ok, dbcheck_ok=dbcheck_ok, page_title="Admin")
 
 

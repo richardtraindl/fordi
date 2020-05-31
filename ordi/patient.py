@@ -352,8 +352,6 @@ def save_behandlungen(id):
                             geschlechtswerte=geschlechtswerte, laborreferenzen=laborreferenzen, 
                             impfungswerte=impfungswerte, page_title="Karteikarte")
 
-                #return redirect(url_for('patient.show', id=id))
-
             if(behandlung.id == None):
                 behandlung.tier_id = tierhaltung.tier_id
                 db.session.add(behandlung)

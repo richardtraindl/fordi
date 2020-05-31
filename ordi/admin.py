@@ -10,6 +10,8 @@ from . import db
 from sqlalchemy import or_, and_
 from ordi.auth import login_required
 from ordi.models import *
+from ordi.values import *
+from ordi.util.helper import *
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -17,7 +19,7 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @bp.route('/', methods=('GET', 'POST'))
 @login_required
 def index():
-    return render_template('admin/admin.html', page_title="Admin")
+    return render_template('admin/index.html', page_title="Admin")
 
 
 @bp.route('/database', methods=('GET', 'POST'))
@@ -594,38 +596,83 @@ def import_rechnungszeile():
         return False
 
 
-@bp.route('/write', methods=('GET', 'POST'))
+@bp.route('/write', methods=('GET',))
 @login_required
 def write():
     if(import_tier() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_person() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
     
     if(import_adresse() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_kontakt() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_tierhaltung() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_behandlung() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_impfung() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_behandlungsverlauf() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_rechnung() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
     if(import_rechnungszeile() == False):
-        return render_template('admin/database.html', ok=False, page_title="Database")
+        return render_template('admin/index.html', write_ok=False, page_title="Admin")
 
-    return render_template('admin/database.html', ok=True, page_title="Database")
+    return render_template('admin/index.html', write_ok=True, page_title="Admin")
 
+
+@bp.route('/dbcheck', methods=('GET',))
+@login_required
+def dbcheck():
+    ok = True
+
+    behandlungen = db.session.query(Behandlung).all()
+
+    for behandlung in behandlungen:
+        impfungen = db.session.query(Impfung) \
+            .filter(Impfung.behandlung_id==behandlung.id).all()
+
+        str_impfungen_extern = ""
+        for char in behandlung.impfungen_extern:
+            if(char != '\n' and char != '"'): #  and char != ' '
+                str_impfungen_extern += char
+
+        ary_impfungen = str_impfungen_extern.split(",")
+        for str_impfung in ary_impfungen:
+            if(len(str_impfung.strip()) == 0):
+                continue
+            found = False
+            for impfung in impfungen:
+                if(str_impfung.strip() == reverse_lookup(IMPFUNG, impfung.impfungscode) or
+                   (str_impfung.strip() == "TW" and impfung.impfungscode == 4) or
+                   (str_impfung.strip() == "Leptospir" and impfung.impfungscode == 13)):
+                    found = True
+                    break
+            if(found == False):
+                print("NOT FOUND in table Impfung " + str_impfung.strip() + " " + str(behandlung.id))
+                ok = False
+
+        for impfung in impfungen:
+            key = reverse_lookup(IMPFUNG, impfung.impfungscode)
+            for str_impfung in ary_impfungen:
+                found = False
+                if(key == str_impfung.strip() or key == str_impfung.strip() + "1"
+                   or key  + "spir" == str_impfung.strip()): # hack Lepto --> Leptospir
+                    found = True
+                    break
+            if(found == False):
+                print("NOT FOUND in table Behandlung.impfung_extern " + key + " " + str(behandlung.id))
+                ok = False
+
+    return render_template('admin/index.html', dbcheck_ok=ok, page_title="Admin")

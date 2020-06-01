@@ -40,6 +40,7 @@
             {% else %}
               {% set autor = request.form['autor'] %}
             {% endif %}
+
             {% include 'kalender/_select_for_autoren.html' %}
             </div>
           </div>
@@ -168,7 +169,19 @@
           $(".date-pick").datepicker({ 
             dateFormat: "yy-mm-dd",
             changeMonth: true,
-            changeYear: true 
+            changeYear: true,
+            onSelect: function(){
+              if($("#autor option:selected").val() != "TP"){
+                if($(this).attr("id") == "date_begin"){
+                  var begin = $(this).val();
+                  $('#date_end').val(begin);
+                }
+                if($(this).attr("id") == "date_end"){
+                  var end = $(this).val();
+                  $('#date_begin').val(end);
+                }
+              }
+            }
           });
           
           $(".stunde1").click(function(){ 

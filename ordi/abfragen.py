@@ -145,6 +145,7 @@ def index():
                     .join(Behandlung, Behandlung.tier_id==Tier.id) \
                     .filter(Person.kunde==kunde, Tier.patient==patient, \
                             Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
+                            ~Behandlung.diagnose.contains('Tel%'), \
                             ~Tier.merkmal.contains('Abzeichen')) \
                     .order_by(Behandlung.datum.asc()).all()
 

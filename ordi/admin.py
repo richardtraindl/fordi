@@ -35,17 +35,17 @@ def clean_file(path_and_filename, rowcnt):
                     fo2.write(char)
                     continue
                 elif(char == ';'):
-                    if(quotecnt % 2 == 1):
-                        fo2.write(',')
-                    else:
+                    if(quotecnt % 2 == 0):
                         fo2.write(char)
                         cnt += 1
+                    else:
+                        fo2.write(',')
                     continue
                 elif(char == '\n'):
-                    if(cnt % rowcnt != 0):
+                    if(quotecnt % 2 == 1 or cnt % rowcnt != 0):
                         fo2.write('§')
                     else:
-                        fo2.write(char)                  
+                        fo2.write(char)
                     continue
                 else:
                     fo2.write(char)
@@ -446,7 +446,7 @@ def import_behandlungsverlauf():
             arrline = line.split(";")
 
             if(len(arrline) != 6):
-                print(arrline[0], end="", flush=True)
+                print(str(len(arrline)) + " " + line, end="", flush=True)
                 continue
 
             behandlungsverlauf = Behandlungsverlauf()

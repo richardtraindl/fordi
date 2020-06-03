@@ -21,7 +21,7 @@ class Tierhaltung(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False, index=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False, index=True)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
-    person = db.relationship("Person", uselist=False, back_populates="tierhaltung", lazy='immediate')
+    person = db.relationship("Person", uselist=False, back_populates="tierhaltungen", lazy='immediate')
     tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='immediate')
     termine = db.relationship("Termin", cascade="all,delete", back_populates="tierhaltung", lazy='noload')
 
@@ -43,7 +43,7 @@ class Person(db.Model):
     adr_plz = db.Column(db.String(40))
     adr_ort = db.Column(db.String(40))
     kontakte = db.Column(db.String(1000))
-    tierhaltung = db.relationship("Tierhaltung", back_populates="person")
+    tierhaltungen = db.relationship("Tierhaltung", back_populates="person")
 
     def __repr__(self):
         return '<Person %r>' % (self.familienname)

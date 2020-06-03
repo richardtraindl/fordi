@@ -139,32 +139,30 @@ def index():
         if(abfrage == "Arzneien" or abfrage == "Arzneimittel" or abfrage == "Behandlung" or 
            abfrage == "Diagnose" or abfrage == "Finanzamt"):
             if(abfrage == "Finanzamt" and output == "excel"):
-                tierhaltungen = db.session.query(Tierhaltung, Person, Behandlung) \
-                    .join(Person, Person.id==Tierhaltung.person_id) \
-                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                    .filter(Person.kunde==kunde, Tier.patient==patient, \
-                            Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
-                            ~Behandlung.diagnose.contains('Tel%'), \
-                            ~Tier.merkmal.contains('Abzeichen')) \
+                tierhaltungen = db.session.query(Person, Behandlung) \
+                    .join(Person.tierhaltungen) \
+                    .join(Tierhaltung.tier) \
+                    .join(Tier.behandlungen) \
+                    .filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
+                            ~Behandlung.diagnose.contains('%Tel%'), \
+                            ~Tier.merkmal.contains('%Abzeichen%')) \
                     .order_by(Behandlung.datum.asc()).all()
 
                 path_and_filename = dl_excel(abfrage, tierhaltungen)
                 return send_file(path_and_filename, as_attachment=True)
             else:
                 query = db.session.query(Tierhaltung, Person, Tier) \
-                    .join(Person, Person.id==Tierhaltung.person_id) \
-                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                    .filter(Person.kunde==kunde, Tier.patient==patient) \
+                    .join(Tierhaltung.person) \
+                    .join(Tierhaltung.tier) \
+                    .join(Tier.behandlungen) \
                     .order_by(Person.familienname.asc())
         elif(abfrage == "Impfung"):
             if(output == "etiketten"):
                 personen = db.session.query(Person) \
-                    .join(Tierhaltung, Tierhaltung.person_id==Person.id) \
-                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                    .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
+                    .join(Person.tierhaltungen) \
+                    .join(Tierhaltung.tier) \
+                    .join(Tier.behandlungen) \
+                    .join(Behandlung.impfungen) \
                     .filter(Person.kunde==kunde, Tier.patient==patient, \
                             Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum) \
                     .order_by(Person.familienname.asc()).all()
@@ -173,48 +171,60 @@ def index():
                 return send_file(path_and_filename, as_attachment=True)
             else:
                 query = db.session.query(Tierhaltung, Person, Tier) \
-                    .join(Person, Person.id==Tierhaltung.person_id) \
-                    .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                    .join(Behandlung, Behandlung.tier_id==Tier.id) \
-                    .join(Impfung, Impfung.behandlung_id==Behandlung.id) \
-                    .filter(Person.kunde==kunde, Tier.patient==patient) \
+                    .join(Tierhaltung.person) \
+                    .join(Tierhaltung.tier) \
+                    .join(Tier.behandlungen) \
+                    .join(Behandlung.impfungen) \
                     .order_by(Person.familienname.asc())
         else:
             query = db.session.query(Tierhaltung, Person, Tier) \
-                .join(Person, Person.id==Tierhaltung.person_id) \
-                .join(Tier, Tier.id==Tierhaltung.tier_id) \
-                .filter(Person.kunde==kunde, Tier.patient==patient) \
+                .join(Tierhaltung.person) \
+                .join(Tierhaltung.tier) \
                 .order_by(Person.familienname.asc())
 
         if(abfrage == "Arzneien"):
-            tierhaltungen = query.filter(Behandlung.arzneien.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Behandlung.arzneien.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Arzneimittel"):
-            tierhaltungen = query.filter(Behandlung.arzneimittel.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Behandlung.arzneimittel.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Behandlung"):
-            tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum).all()
+            tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Chipnummer"):
-            tierhaltungen = query.filter(Tier.chip_nummer.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Tier.chip_nummer.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Diagnose"):
-            tierhaltungen = query.filter(Behandlung.diagnose.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Behandlung.diagnose.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "EU-Passnummer"):
-            tierhaltungen = query.filter(Tier.eu_passnummer.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Tier.eu_passnummer.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Finanzamt"):
             tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, 
-                                ~Tier.merkmal.contains('Abzeichen')).all()
+                                ~Behandlung.diagnose.contains('Tel%'), \
+                                ~Tier.merkmal.contains('Abzeichen%')).all()
         elif(abfrage == "Impfung"):
-            tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum).all()
+            tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Kontakte"):
-            tierhaltungen = query.filter(Person.kontakte.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Person.kontakte.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Merkmal"):
-            tierhaltungen = query.filter(Tier.merkmal.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Tier.merkmal.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Postleitzahl"):
-            tierhaltungen = query.filter(Person.adr_plz.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Person.adr_plz.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Rasse"):
-            tierhaltungen = query.filter(Tier.rasse.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Tier.rasse.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Straße"):
-            tierhaltungen = query.filter(Person.adr_strasse.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Person.adr_strasse.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Tierart"):
-            tierhaltungen = query.filter(Tier.tierart.like("%" + kriterium1 + "%")).all()
+            tierhaltungen = query.filter(Tier.tierart.like("%" + kriterium1 + "%"), \
+                                         Person.kunde==kunde, Tier.patient==patient).all()
         else:
             tierhaltungen = []
     else:

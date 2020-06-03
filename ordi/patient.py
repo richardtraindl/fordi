@@ -41,8 +41,8 @@ def index():
             patient = False
     
     tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Person, Person.id==Tierhaltung.person_id) \
-        .join(Tier, Tier.id==Tierhaltung.tier_id) \
+        .join(Tierhaltung.person) \
+        .join(Tierhaltung.tier) \
         .filter(Person.familienname.like(familienname + "%"), 
                 Tier.tiername.like(tiername + "%"), 
                 Person.kunde==kunde, Tier.patient==patient).all() # .limit(500)
@@ -247,7 +247,6 @@ def edit_person(id, person_id):
 
 # behandlung
 def save_or_delete_impfungen(behandlung, impfungstexte):
-    #impfungen = db.session.query(Impfung).filter(Impfung.behandlung_id==behandlung_id).all()
     for impfungstext in impfungstexte:
         try:
             impfungscode = IMPFUNG[impfungstext]

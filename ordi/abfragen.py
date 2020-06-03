@@ -202,8 +202,8 @@ def index():
                                          Person.kunde==kunde, Tier.patient==patient).all()
         elif(abfrage == "Finanzamt"):
             tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, 
-                                ~Behandlung.diagnose.contains('Tel%'), \
-                                ~Tier.merkmal.contains('Abzeichen%')).all()
+                                         ~Behandlung.diagnose.contains('%Tel%'), \
+                                         ~Tier.merkmal.contains('%Abzeichen%')).all()
         elif(abfrage == "Impfung"):
             tierhaltungen = query.filter(Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum, \
                                          Person.kunde==kunde, Tier.patient==patient).all()

@@ -9,191 +9,217 @@
 
 {% block content %}
     <div class="gap"></div>
-      <form method="post" action="{{ url_for('abfrage.index') }}">
-        <div class="flex-container">
-            <div>
-                <label for="abfrage">Abfrage</label>
-                {% include 'abfragen/_select_for_abfragen.html' %}
-            </div>
-            <div>
-                <input id="kriterium1" type="text" size="10" name="kriterium1" value="{{- kriterium1 -}}">
-            </div>
-            <div>
-                {% if twokriteria == 1 %}
-                    <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}">
-                {% else %}
-                    <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}" disabled>
-                {% endif %}
-            </div>
-            <div id="kunde">
-              {%- if abfrage == "Finanzamt" -%}
-                <label for="kunde" class="grayed">Kunde</label>
 
-                <input type="checkbox" name="kunde" value="1" checked disabled>
-              {% else %}
-                <label for="kunde">Kunde</label>
-                {% if kunde == 0 %}
-                  <input type="checkbox" name="kunde" value="0">
-                {% else %}
-                  <input type="checkbox" name="kunde" value="1" checked>
-                {% endif %}
-              {% endif %}
-            </div>
-            <div id="patient">
-              {%- if abfrage == "Finanzamt" -%}
-                <label for="patient" class="grayed">Patient</label>
-
-                <input type="checkbox" name="patient" value="1" checked disabled>
-              {% else %}
-                <label for="patient">Patient</label>
-                {% if patient == 0 %}
-                  <input type="checkbox" name="patient" value="0">
-                {% else %}
-                  <input type="checkbox" name="patient" value="1" checked>
-                {% endif %}
-              {% endif %}
-            </div>
-            <div>
-                <input id="output" type="hidden" name="output" value="">
-                <input type="submit" value="suchen">
-            </div>
-
-            <div>
-                <p>{{- tierhaltungen|length -}}</p>
-            </div>
+    <form method="post" action="{{ url_for('abfrage.index') }}">
+      <div class="flex-container">
+        <div>
+          <label for="abfrage">Abfrage</label>
+          {% include 'abfragen/_select_for_abfragen.html' %}
         </div>
-      </form>
+
+        <div>
+          <input id="kriterium1" type="text" size="10" name="kriterium1" value="{{- kriterium1 -}}">
+        </div>
+
+        <div>
+        {% if twokriteria == 1 %}
+          <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}">
+        {% else %}
+          <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}" disabled>
+        {% endif %}
+        </div>
+
+        <div id="kunde">
+        {%- if abfrage == "Finanzamt" -%}
+          <label for="kunde" class="grayed">Kunde</label>
+
+          <input type="checkbox" name="kunde" value="1" checked disabled>
+        {% else %}
+          <label for="kunde">Kunde</label>
+          {% if kunde == 0 %}
+            <input type="checkbox" name="kunde" value="0">
+          {% else %}
+            <input type="checkbox" name="kunde" value="1" checked>
+          {% endif %}
+        {% endif %}
+        </div>
+
+        <div id="patient">
+        {%- if abfrage == "Finanzamt" -%}
+          <label for="patient" class="grayed">Patient</label>
+
+          <input type="checkbox" name="patient" value="1" checked disabled>
+        {% else %}
+          <label for="patient">Patient</label>
+          {% if patient == 0 %}
+            <input type="checkbox" name="patient" value="0">
+          {% else %}
+            <input type="checkbox" name="patient" value="1" checked>
+          {% endif %}
+        {% endif %}
+        </div>
+
+        <div>
+          <input id="output" type="hidden" name="output" value="">
+          <input type="submit" value="suchen">
+        </div>
+
+        <div>
+          <p>{{- tierhaltungen|length -}}</p>
+        </div>
+      </div>
+    </form>
 
     <div class="gap"></div>
 
-<div class="liste-wrapper">
-    <table class="liste">
+    <div class="liste-wrapper">
+      <table class="liste">
         <tr>
-            <th width="2%">&nbsp;</th>
-            <th width="6%">Anrede</th>
-            <th width="6%">Titel</th>
-            <th width="18%">Familienname</th>
-            <th width="12%">Vorname</th>
-            <th width="18%">Tiername</th>
-            <th width="12%">Tierart</th>
-            <th width="12%">Rasse</th>
-            <th width="6%">Geschl.</th>
-            <th width="8%">Geb.Datum</th>
+          <th width="2%">&nbsp;</th>
+
+          <th width="6%">Anrede</th>
+
+          <th width="6%">Titel</th>
+
+          <th width="18%">Familienname</th>
+
+          <th width="12%">Vorname</th>
+
+          <th width="18%">Tiername</th>
+
+          <th width="12%">Tierart</th>
+
+          <th width="12%">Rasse</th>
+
+          <th width="6%">Geschl.</th>
+
+          <th width="8%">Geb.Datum</th>
         </tr>
-      {% for th in tierhaltungen %}
-        <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ th.Tierhaltung.id }}"></td>
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.anredecode|mapanrede }}</a></td>
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.titel }}</a></td>
-            <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.familienname }}</a></td>
-            <td style="width: 12%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.vorname }}</a></td>
-            <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tiername }}</a></td>
-            <td style="width: 14%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tierart }}</a></td>
-            <td style="width: 10%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.rasse }}</a></td>
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geschlechtscode|mapgeschlecht }}</a></td>
-            <td style="width: 8%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geburtsdatum|dt }}</a></td>
-        </tr>
-      {% endfor %}
+
+    {% for th in tierhaltungen %}
+      <tr>
+        <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ th.Tierhaltung.id }}"></td>
+
+        <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.anredecode|mapanrede }}</a></td>
+
+        <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.titel }}</a></td>
+
+        <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.familienname }}</a></td>
+
+        <td style="width: 12%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.vorname }}</a></td>
+
+        <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tiername }}</a></td>
+
+        <td style="width: 14%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tierart }}</a></td>
+
+        <td style="width: 10%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.rasse }}</a></td>
+
+        <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geschlechtscode|mapgeschlecht }}</a></td>
+
+        <td style="width: 8%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geburtsdatum|dt }}</a></td>
+      </tr>
+    {% endfor %}
+
     </table>
   </div>
 
-    <div class="gap"></div>
+  <div class="gap"></div>
 
-    <div class="flex-container">
-        <p><a class="btn" id="zur-karteikarte" href="#">zur Karteikarte</a></p>
+  <div class="flex-container">
+    <p><a class="btn" id="zur-karteikarte" href="#">zur Karteikarte</a></p>
 
-        <p><a class="btn" id="bericht-drucken" href="#">Bericht drucken</a></p>
+    <p><a class="btn" id="bericht-drucken" href="#">Bericht drucken</a></p>
 
-        {% if abfrage == "Impfung" and tierhaltungen %}
-          <p><a class="btn" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
-        {% else %}
-          <p><a class="btn grayed" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
-        {% endif %}
+    {% if abfrage == "Impfung" and tierhaltungen %}
+      <p><a class="btn" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
+    {% else %}
+      <p><a class="btn grayed" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
+    {% endif %}
 
-        {%- if abfrage == "Finanzamt" and tierhaltungen -%}
-          <p><a class="btn" id="excel-exportieren" href="#">Finanzamt</a></p>
-        {% else %}
-          <p><a class="btn grayed" id="excel-exportieren" href="#">Finanzamt</a></p>
-        {% endif %}        
-    </div>
+    {%- if abfrage == "Finanzamt" and tierhaltungen -%}
+      <p><a class="btn" id="excel-exportieren" href="#">Finanzamt</a></p>
+    {% else %}
+      <p><a class="btn grayed" id="excel-exportieren" href="#">Finanzamt</a></p>
+    {% endif %}        
+  </div>
 
-    <script>
-      $(document).ready(function() {
-        $('#zur-karteikarte').click(function(){ 
-          var id = $("input:radio[name=option]:checked").val(); 
-          if(id == null){
-            alert("Bitte eine Karteikarte auswählen!");
-          }
-          else{
-            window.open("/" + id.toString() + "/show", "_blank");
-            //window.location = "/" + id.toString() + "/show";
-          }
-          return false; 
-        });
-
-        $('#bericht-drucken').click(function(){ 
-          var abfrage = $("select option:selected").text();
-          if(abfrage.length > 0){
-            $("#output").val("bericht-drucken");
-            $("form").submit();
-            $("#output").val("");
-          }
-          else{
-            alert("Bitte eine Abfrage auswählen!");
-          }
-          return false; 
-        });
-
-        $('#etiketten-drucken').click(function(){ 
-          if($(this).hasClass('grayed') == false){
-            $("#output").val("etiketten");
-            $("form").submit();
-          }
-          $("#output").val("");
-          return false;
-        });
-
-        $('#excel-exportieren').click(function(){ 
-          if($(this).hasClass('grayed') == false){
-            $("#output").val("excel");
-            $("form").submit();
-          }
-          $("#output").val("");
-          return false;
-        });
-
-        $('#abfrage').change(function () {
-            $("#output").val("");
-            var abfrage = $("select option:selected").text();
-            if(abfrage == "Behandlung" || abfrage == "Impfung"){
-              $('#kriterium2').removeAttr('disabled');
-              $('#kunde').find('label').removeClass('grayed');
-              $('#kunde').find('input').removeAttr('disabled');
-              $('#patient').find('label').removeClass('grayed');
-              $('#patient').find('input').removeAttr('disabled');
-              $('#etiketten-drucken').removeClass('grayed');
-              $('#excel-exportieren').removeClass('grayed');
-            }
-            else if(abfrage == "Finanzamt"){
-              $('#kriterium2').removeAttr('disabled');
-              $('#kunde').find('label').addClass('grayed');
-              $('#kunde').find('input').attr('disabled', 'disabled');
-              $('#patient').find('label').addClass('grayed');
-              $('#patient').find('input').attr('disabled', 'disabled');
-              $('#etiketten-drucken').removeClass('grayed');
-              $('#excel-exportieren').removeClass('grayed');
-            }
-            else{
-              $('#kriterium2').attr('disabled', 'disabled');
-              $('#kunde').find('label').removeClass('grayed');
-              $('#kunde').find('input').removeAttr('disabled');
-              $('#patient').find('label').removeClass('grayed');
-              $('#patient').find('input').removeAttr('disabled');
-              $('#etiketten-drucken').addClass('grayed');
-              $('#excel-exportieren').addClass('grayed');
-            }
-        });
+  <script>
+    $(document).ready(function(){
+      $('#zur-karteikarte').click(function(){ 
+        var id = $("input:radio[name=option]:checked").val(); 
+        if(id == null){
+          alert("Bitte eine Karteikarte auswählen!");
+        }
+        else{
+          window.open("/" + id.toString() + "/show", "_blank");
+          //window.location = "/" + id.toString() + "/show";
+        }
+        return false; 
       });
-    </script>
+
+      $('#bericht-drucken').click(function(){ 
+        var abfrage = $("select option:selected").text();
+        if(abfrage.length > 0){
+          $("#output").val("bericht-drucken");
+          $("form").submit();
+          $("#output").val("");
+        }
+        else{
+          alert("Bitte eine Abfrage auswählen!");
+        }
+        return false; 
+      });
+
+      $('#etiketten-drucken').click(function(){ 
+        if($(this).hasClass('grayed') == false){
+          $("#output").val("etiketten");
+          $("form").submit();
+        }
+        $("#output").val("");
+        return false;
+      });
+
+      $('#excel-exportieren').click(function(){ 
+        if($(this).hasClass('grayed') == false){
+          $("#output").val("excel");
+          $("form").submit();
+        }
+        $("#output").val("");
+        return false;
+      });
+
+      $('#abfrage').change(function () {
+        $("#output").val("");
+        var abfrage = $("select option:selected").text();
+        if(abfrage == "Behandlung" || abfrage == "Impfung"){
+          $('#kriterium2').removeAttr('disabled');
+          $('#kunde').find('label').removeClass('grayed');
+          $('#kunde').find('input').removeAttr('disabled');
+          $('#patient').find('label').removeClass('grayed');
+          $('#patient').find('input').removeAttr('disabled');
+          $('#etiketten-drucken').removeClass('grayed');
+          $('#excel-exportieren').removeClass('grayed');
+        }
+        else if(abfrage == "Finanzamt"){
+          $('#kriterium2').removeAttr('disabled');
+          $('#kunde').find('label').addClass('grayed');
+          $('#kunde').find('input').attr('disabled', 'disabled');
+          $('#patient').find('label').addClass('grayed');
+          $('#patient').find('input').attr('disabled', 'disabled');
+          $('#etiketten-drucken').removeClass('grayed');
+          $('#excel-exportieren').removeClass('grayed');
+        }
+        else{
+          $('#kriterium2').attr('disabled', 'disabled');
+          $('#kunde').find('label').removeClass('grayed');
+          $('#kunde').find('input').removeAttr('disabled');
+          $('#patient').find('label').removeClass('grayed');
+          $('#patient').find('input').removeAttr('disabled');
+          $('#etiketten-drucken').addClass('grayed');
+          $('#excel-exportieren').addClass('grayed');
+        }
+      });
+    });
+  </script>
 {% endblock %}
 

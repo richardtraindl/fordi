@@ -22,7 +22,7 @@
         </div>
 
         <div>
-        {% if twokriteria == 1 %}
+        {% if abfrage == "Behandlung" or abfrage == "Impfung" or abfrage == "Finanzamt" %}
           <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}">
         {% else %}
           <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}" disabled>
@@ -191,33 +191,40 @@
       $('#abfrage').change(function () {
         $("#output").val("");
         var abfrage = $("select option:selected").text();
-        if(abfrage == "Behandlung" || abfrage == "Impfung"){
+
+        if(abfrage == "Finanzamt"){
           $('#kriterium2').removeAttr('disabled');
-          $('#kunde').find('label').removeClass('grayed');
-          $('#kunde').find('input').removeAttr('disabled');
-          $('#patient').find('label').removeClass('grayed');
-          $('#patient').find('input').removeAttr('disabled');
-          $('#etiketten-drucken').removeClass('grayed');
-          $('#excel-exportieren').removeClass('grayed');
-        }
-        else if(abfrage == "Finanzamt"){
-          $('#kriterium2').removeAttr('disabled');
+
           $('#kunde').find('label').addClass('grayed');
           $('#kunde').find('input').attr('disabled', 'disabled');
           $('#patient').find('label').addClass('grayed');
           $('#patient').find('input').attr('disabled', 'disabled');
-          $('#etiketten-drucken').removeClass('grayed');
+
+          $('#etiketten-drucken').addClass('grayed');
           $('#excel-exportieren').removeClass('grayed');
         }
         else{
-          $('#kriterium2').attr('disabled', 'disabled');
+          $('#excel-exportieren').addClass('grayed');
+
           $('#kunde').find('label').removeClass('grayed');
           $('#kunde').find('input').removeAttr('disabled');
           $('#patient').find('label').removeClass('grayed');
           $('#patient').find('input').removeAttr('disabled');
-          $('#etiketten-drucken').addClass('grayed');
-          $('#excel-exportieren').addClass('grayed');
+          
+          if(abfrage == "Impfung"){
+            $('#kriterium2').removeAttr('disabled');
+            $('#etiketten-drucken').removeClass('grayed');
+          }
+          else if(abfrage == "Behandlung"){
+            $('#kriterium2').removeAttr('disabled');
+            $('#etiketten-drucken').addClass('grayed');
+          }
+          else{
+            $('#kriterium2').attr('disabled', 'disabled');
+            $('#etiketten-drucken').addClass('grayed');
+          }
         }
+
       });
     });
   </script>

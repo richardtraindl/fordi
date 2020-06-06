@@ -79,13 +79,16 @@ def index():
     if(request.method == 'POST'):
         abfrage = request.form['abfrage']
 
+        if(abfrage == "Behandlung" or abfrage == "Impfung" or abfrage == "Finanzamt"):
+            twokriteria = True
+        else:
+            twokriteria = False
+
         kriterium1 = request.form['kriterium1']
         try:
             kriterium2 = request.form['kriterium2']
         except:
             kriterium2 = ""
-
-        twokriteria = 0
 
         if(request.form.get('kunde')):
             kunde = True
@@ -104,21 +107,24 @@ def index():
 
         tierhaltungen = []
 
-        if(len(abfrage) == 0 or len(kriterium1) == 0):
+        if(len(abfrage) == 0 or len(kriterium1) == 0 or
+           (twokriteria and len(kriterium2) == 0)):
             error = ""
             if(len(abfrage) == 0):
                 error += "Abfrage fehlt. "
             if(len(kriterium1) == 0):
                 error += "Eingabe Textfeld1 fehlt. "
+            if(twokriteria and len(kriterium2) == 0):
+                error += "Eingabe Textfeld2 fehlt. "
+
             flash(error)
             return render_template('abfragen/index.html', abfragen=lst_abfragen, 
                 abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
-                twokriteria=twokriteria, kunde=kunde, patient=patient, 
-                tierhaltungen=tierhaltungen, page_title="Abfragen")
+                kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, 
+                page_title="Abfragen")
 
         if(abfrage == "Behandlung" or abfrage == "Finanzamt" or abfrage == "Impfung"):
             error = ""
-            twokriteria = 1
 
             if(len(kriterium2) == 0):
                 error += "Eingabe Textfeld2 fehlt. "
@@ -133,8 +139,8 @@ def index():
                 flash(error)
                 return render_template('abfragen/index.html', abfragen=lst_abfragen, 
                     abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
-                    twokriteria=twokriteria, kunde=kunde, patient=patient, 
-                    tierhaltungen=tierhaltungen, page_title="Abfragen")
+                    kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, 
+                    page_title="Abfragen")
 
         if(abfrage == "Arzneien" or abfrage == "Arzneimittel" or abfrage == "Behandlung" or 
            abfrage == "Diagnose" or abfrage == "Finanzamt"):
@@ -231,7 +237,6 @@ def index():
         abfrage = ""
         kriterium1 = ""
         kriterium2 = ""
-        twokriteria = 0
         kunde = 1
         patient = 1
         tierhaltungen = []
@@ -242,6 +247,6 @@ def index():
     else:
         return render_template('abfragen/index.html', abfragen=lst_abfragen, 
             abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
-            twokriteria=twokriteria, kunde=kunde, patient=patient, 
-            tierhaltungen=tierhaltungen, page_title="Abfragen")
+            kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, 
+            page_title="Abfragen")
 

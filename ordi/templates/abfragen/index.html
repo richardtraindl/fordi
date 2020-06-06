@@ -65,7 +65,7 @@
         </div>
 
         <div>
-          <p>{{- tierhaltungen|length -}}</p>
+          <p>{{- tierhaltungen|length -}} &nbsp; Datensätze gefunden.</p>
         </div>
       </div>
     </form>
@@ -144,6 +144,37 @@
   </div>
 
   <script>
+
+    function resetdate(){ 
+      var kriterium1 = $('#kriterium1').val();
+      if(kriterium1.substring(0, 6) == "01.01."){
+        $('#kriterium1').val("");
+      }
+
+      return false; 
+    }
+
+
+    function setdates(){ 
+      var date2 = new Date();
+      var date1 = new Date(date2.getFullYear() - 1, 1, 1);
+
+      var kriterium1 = $('#kriterium1').val();
+      if(kriterium1.length == 0 || kriterium1.substring(0, 6) != "01.01."){
+        var d1 = "01.01." + date1.getFullYear();
+        $('#kriterium1').val(d1);
+      }
+
+      var kriterium2 = $('#kriterium2').val();
+      if(kriterium2.length == 0 || kriterium2.substring(0, 6) != "01.01."){
+      var d2 = "01.01." + date2.getFullYear();
+        $('#kriterium2').val(d2);
+      }
+
+      return false; 
+    }
+
+
     $(document).ready(function(){
       $('#zur-karteikarte').click(function(){ 
         var id = $("input:radio[name=option]:checked").val(); 
@@ -202,6 +233,8 @@
 
           $('#etiketten-drucken').addClass('grayed');
           $('#excel-exportieren').removeClass('grayed');
+
+          setdates();
         }
         else{
           $('#excel-exportieren').addClass('grayed');
@@ -213,15 +246,24 @@
           
           if(abfrage == "Impfung"){
             $('#kriterium2').removeAttr('disabled');
+
             $('#etiketten-drucken').removeClass('grayed');
+
+            setdates();
           }
           else if(abfrage == "Behandlung"){
             $('#kriterium2').removeAttr('disabled');
+
             $('#etiketten-drucken').addClass('grayed');
+
+            setdates();
           }
           else{
             $('#kriterium2').attr('disabled', 'disabled');
+
             $('#etiketten-drucken').addClass('grayed');
+            
+            resetdate();
           }
         }
 

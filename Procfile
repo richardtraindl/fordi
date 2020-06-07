@@ -1,1 +1,2 @@
-web: gunicorn wsgi:ordi
+
+web: gunicorn "ordi:create_app()"

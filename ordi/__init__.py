@@ -5,32 +5,34 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from sqlalchemy.engine import Engine
-from sqlalchemy import event
+#from sqlalchemy.engine import Engine
+#from sqlalchemy import event
 
-@event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+#@event.listens_for(Engine, "connect")
+#def set_sqlite_pragma(dbapi_connection, connection_record):
+#    cursor = dbapi_connection.cursor()
+#    cursor.execute("PRAGMA foreign_keys=ON")
+#    cursor.close()
+
 
 db = SQLAlchemy()
 migrate = Migrate()
 
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-
+    
     app.config.from_mapping(
         SECRET_KEY = 'dev',
-        DATABASE = os.path.join(app.instance_path, 'ordi.sqlite'),
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.environ.get('DATABASE_URL'),
+        #DATABASE = os.path.join(app.instance_path, 'ordi.sqlite'),
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'],
+        #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.environ.get('DATABASE_URL'),
         #SQLALCHEMY_DATABASE_URI = 'sqlite:///C:\\wse4\\flask\\instance\\ordi.sqlite',
         #SQLALCHEMY_DATABASE_URI = 'sqlite:////home/richard/dev/flask/fordi/instance/ordi.sqlite',
         SQLALCHEMY_TRACK_MODIFICATIONS = False,
         SEND_FILE_MAX_AGE_DEFAULT = 0
     )
-
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

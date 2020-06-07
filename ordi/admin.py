@@ -102,7 +102,10 @@ def import_tier():
 
                 tier.eu_passnummer = arrline[10].strip('"')
 
-                tier.patient = int(arrline[11].strip('\n'))
+                if(arrline[11].strip('\n') == "1"):
+                    tier.patient = True
+                else:
+                    tier.patient = False
 
                 db.session.add(tier)
                 print(".", end="", flush=True)
@@ -117,8 +120,12 @@ def import_tier():
     if(ok):
         try:
             db.session.commit()
+            tiere = db.session.execute("SELECT id FROM tier ORDER BY Id DESC LIMIT 1")
+            tier = tiere.fetchone()
+            db.session.execute("ALTER SEQUENCE tier_id_seq RESTART WITH " + str(tier['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -162,7 +169,10 @@ def import_person():
 
                 person.notiz = arrline[5].strip('"')
 
-                person.kunde = int(arrline[6].strip('\n'))
+                if(arrline[6].strip('\n') == "1"):
+                    person.kunde = True
+                else:
+                    person.kunde = False
 
                 db.session.add(person)
                 print(".", end="", flush=True)
@@ -177,8 +187,12 @@ def import_person():
     if(ok):
         try:
             db.session.commit()
+            personen = db.session.execute("SELECT id FROM person ORDER BY Id DESC LIMIT 1")
+            person = personen.fetchone()
+            db.session.execute("ALTER SEQUENCE person_id_seq RESTART WITH " + str(person['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -225,7 +239,8 @@ def import_adresse():
         try:
             db.session.commit()
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -274,7 +289,8 @@ def import_kontakt():
         try:
             db.session.commit()
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -319,8 +335,12 @@ def import_tierhaltung():
     if(ok):
         try:
             db.session.commit()
+            tierhaltungen = db.session.execute("SELECT id FROM tierhaltung ORDER BY Id DESC LIMIT 1")
+            tierhaltung = tierhaltungen.fetchone()
+            db.session.execute("ALTER SEQUENCE tierhaltung_id_seq RESTART WITH " + str(tierhaltung['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -350,7 +370,7 @@ def import_behandlung():
 
                 behandlung.tier_id = int(arrline[0])
 
-                if(len(arrline[7]) > 0):
+                if(len(arrline[2]) > 0):
                     behandlung.datum = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
                 else:
                     behandlung.datum = date(year=1900, month=1, day=1)
@@ -380,8 +400,12 @@ def import_behandlung():
     if(ok):
         try:
             db.session.commit()
+            behandlungen = db.session.execute("SELECT id FROM behandlung ORDER BY Id DESC LIMIT 1")
+            behandlung = behandlungen.fetchone()
+            db.session.execute("ALTER SEQUENCE behandlung_id_seq RESTART WITH " + str(behandlung['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -424,8 +448,12 @@ def import_impfung():
     if(ok):
         try:
             db.session.commit()
+            impfungen = db.session.execute("SELECT id FROM impfung ORDER BY Id DESC LIMIT 1")
+            impfung = impfungen.fetchone()
+            db.session.execute("ALTER SEQUENCE impfung_id_seq RESTART WITH " + str(impfung['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -479,8 +507,12 @@ def import_behandlungsverlauf():
     if(ok):
         try:
             db.session.commit()
+            behandlungsverlaeufe = db.session.execute("SELECT id FROM behandlungsverlauf ORDER BY Id DESC LIMIT 1")
+            behandlungsverlauf = behandlungsverlaeufe.fetchone()
+            db.session.execute("ALTER SEQUENCE behandlungsverlauf_id_seq RESTART WITH " + str(behandlungsverlauf['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -556,8 +588,12 @@ def import_rechnung():
     if(ok):
         try:
             db.session.commit()
+            rechnungen = db.session.execute("SELECT id FROM rechnung ORDER BY Id DESC LIMIT 1")
+            rechnung = rechnungen.fetchone()
+            db.session.execute("ALTER SEQUENCE rechnung_id_seq RESTART WITH " + str(rechnung['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -611,8 +647,12 @@ def import_rechnungszeile():
     if(ok):
         try:
             db.session.commit()
+            rechnungszeilen = db.session.execute("SELECT id FROM rechnungszeile ORDER BY Id DESC LIMIT 1")
+            rechnungszeile = rechnungszeilen.fetchone()
+            db.session.execute("ALTER SEQUENCE rechnungszeile_id_seq RESTART WITH " + str(rechnungszeile['id'] + 1))
             return True
-        except:
+        except Exception as err:
+            print(err)
             return False
     else:
         db.session.rollback()
@@ -624,33 +664,43 @@ def import_rechnungszeile():
 def dbwrite():
     if(import_tier() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("tier")
 
     if(import_person() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
-    
+    print("person")
+
     if(import_adresse() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("adresse")
 
     if(import_kontakt() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("kontakt")
 
     if(import_tierhaltung() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("tierhaltung")
 
     if(import_behandlung() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("behandlung")
 
     if(import_impfung() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("impfung")
 
     if(import_behandlungsverlauf() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("behandlungsverlauf")
 
     if(import_rechnung() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("rechnung")
 
     if(import_rechnungszeile() == False):
         return redirect(url_for('admin.index', dbwrite_ok=False))
+    print("rechnungszeile")
 
     return redirect(url_for('admin.index', dbwrite_ok=True))
 

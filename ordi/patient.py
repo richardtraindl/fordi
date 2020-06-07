@@ -295,6 +295,7 @@ def save_behandlungen(id):
         reqbehandlungen = build_behandlungen(request)
         for reqbehandlung in reqbehandlungen:
             behandlung = None
+            behandlung_id = None
             if(len(reqbehandlung['behandlung_id']) > 0):
                 try:
                     behandlung_id = int(reqbehandlung['behandlung_id'])

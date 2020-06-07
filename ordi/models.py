@@ -17,7 +17,7 @@ class User(db.Model):
 class Tierhaltung(db.Model):
     __tablename__ = 'tierhaltung'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('tierhaltung_id_seq'), primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False, index=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False, index=True)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
@@ -32,16 +32,16 @@ class Tierhaltung(db.Model):
 class Person(db.Model):
     __tablename__ = 'person'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('person_id_seq'), primary_key=True)
     anredecode = db.Column(db.Integer(), nullable=False)
     titel = db.Column(db.String(40))
     familienname = db.Column(db.String(40), nullable=False)
     vorname = db.Column(db.String(40))
     notiz = db.Column(db.String(200))
     kunde = db.Column(db.Boolean(), nullable=False, default=True)
-    adr_strasse = db.Column(db.String(40))
+    adr_strasse = db.Column(db.String(50))
     adr_plz = db.Column(db.String(40))
-    adr_ort = db.Column(db.String(40))
+    adr_ort = db.Column(db.String(50))
     kontakte = db.Column(db.String(1000))
     tierhaltungen = db.relationship("Tierhaltung", back_populates="person")
 
@@ -52,12 +52,12 @@ class Person(db.Model):
 class Tier(db.Model):
     __tablename__ = 'tier'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('tier_id_seq'), primary_key=True)
     tiername = db.Column(db.String(30), nullable=False)
     tierart = db.Column(db.String(30))
     rasse = db.Column(db.String(30))
     farbe = db.Column(db.String(30))
-    viren = db.Column(db.String(30))
+    viren = db.Column(db.String(50))
     merkmal = db.Column(db.String(50))
     geburtsdatum = db.Column(db.Date(), nullable=False)
     geschlechtscode = db.Column(db.Integer(), nullable=False)
@@ -74,11 +74,11 @@ class Tier(db.Model):
 class Behandlung(db.Model):
     __tablename__ = 'behandlung'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('behandlung_id_seq'), primary_key=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
     datum = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     gewicht = db.Column(db.String(50))
-    diagnose = db.Column(db.String(1000))
+    diagnose = db.Column(db.String(2000))
     laborwerte1 = db.Column(db.String(1000))
     laborwerte2 = db.Column(db.String(1000))
     arzneien = db.Column(db.String(256))
@@ -93,7 +93,7 @@ class Behandlung(db.Model):
 class Impfung(db.Model):
     __tablename__ = 'impfung'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('impfung_id_seq'), primary_key=True)
     behandlung_id = db.Column(db.Integer, db.ForeignKey('behandlung.id', ondelete='CASCADE'), nullable=False, index=True)
     impfungscode = db.Column(db.Integer(), nullable=False)
     behandlung = db.relationship("Behandlung", back_populates="impfungen")
@@ -105,12 +105,12 @@ class Impfung(db.Model):
 class Behandlungsverlauf(db.Model):
     __tablename__ = 'behandlungsverlauf'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('behandlungsverlauf_id_seq'), primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False, index=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
     datum = db.Column(db.Date(), nullable=False, default=datetime.utcnow)
     diagnose = db.Column(db.String(256))
-    behandlung = db.Column(db.String(1000))
+    behandlung = db.Column(db.String(4000))
     person = db.relationship("Person", uselist=False, lazy='immediate')
     tier = db.relationship("Tier", uselist=False, lazy='immediate')
 
@@ -121,7 +121,7 @@ class Behandlungsverlauf(db.Model):
 class Rechnung(db.Model):
     __tablename__ = 'rechnung'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('rechnung_id_seq'), primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False, index=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
     jahr = db.Column(db.Integer(), nullable=False)
@@ -146,7 +146,7 @@ class Rechnung(db.Model):
 class Rechnungszeile(db.Model):
     __tablename__ = 'rechnungszeile'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('rechnungszeile_id_seq'), primary_key=True)
     rechnung_id = db.Column(db.Integer, db.ForeignKey('rechnung.id', ondelete='CASCADE'), nullable=False, index=True)
     datum = db.Column(db.Date(), nullable=False, default=datetime.utcnow)
     artikelcode = db.Column(db.Integer(), nullable=False)
@@ -161,7 +161,7 @@ class Rechnungszeile(db.Model):
 class Termin(db.Model):
     __tablename__ = 'termin'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('termin_id_seq'), primary_key=True)
     tierhaltung_id = db.Column(db.Integer, db.ForeignKey('tierhaltung.id'), index=True)
     autor = db.Column(db.String(30))
     beginn = db.Column(db.DateTime(timezone=True), nullable=False)

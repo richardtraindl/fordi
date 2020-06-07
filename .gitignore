@@ -6,8 +6,6 @@ venv/
 __pycache__/
 
 instance/
-downloads/*.pdf
-downloads/*.xlsx
 uploads/
 
 .pytest_cache/
@@ -21,5 +19,8 @@ build/
 *.sqlite
 
 *.geany
+
+*.pdf
+*.xlsx
 
 ordi.sh

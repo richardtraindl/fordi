@@ -120,8 +120,7 @@ def import_tier():
     if(ok):
         try:
             db.session.commit()
-            tiere = db.session.execute("SELECT id FROM tier ORDER BY Id DESC LIMIT 1")
-            tier = tiere.fetchone()
+            tier = db.session.execute("SELECT id FROM tier ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE tier_id_seq RESTART WITH " + str(tier['id'] + 1))
             return True
         except Exception as err:
@@ -187,8 +186,7 @@ def import_person():
     if(ok):
         try:
             db.session.commit()
-            personen = db.session.execute("SELECT id FROM person ORDER BY Id DESC LIMIT 1")
-            person = personen.fetchone()
+            person = db.session.execute("SELECT id FROM person ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE person_id_seq RESTART WITH " + str(person['id'] + 1))
             return True
         except Exception as err:
@@ -335,8 +333,7 @@ def import_tierhaltung():
     if(ok):
         try:
             db.session.commit()
-            tierhaltungen = db.session.execute("SELECT id FROM tierhaltung ORDER BY Id DESC LIMIT 1")
-            tierhaltung = tierhaltungen.fetchone()
+            tierhaltung = db.session.execute("SELECT id FROM tierhaltung ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE tierhaltung_id_seq RESTART WITH " + str(tierhaltung['id'] + 1))
             return True
         except Exception as err:
@@ -400,8 +397,7 @@ def import_behandlung():
     if(ok):
         try:
             db.session.commit()
-            behandlungen = db.session.execute("SELECT id FROM behandlung ORDER BY Id DESC LIMIT 1")
-            behandlung = behandlungen.fetchone()
+            behandlung = db.session.execute("SELECT id FROM behandlung ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE behandlung_id_seq RESTART WITH " + str(behandlung['id'] + 1))
             return True
         except Exception as err:
@@ -448,8 +444,7 @@ def import_impfung():
     if(ok):
         try:
             db.session.commit()
-            impfungen = db.session.execute("SELECT id FROM impfung ORDER BY Id DESC LIMIT 1")
-            impfung = impfungen.fetchone()
+            impfung = db.session.execute("SELECT id FROM impfung ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE impfung_id_seq RESTART WITH " + str(impfung['id'] + 1))
             return True
         except Exception as err:
@@ -507,8 +502,7 @@ def import_behandlungsverlauf():
     if(ok):
         try:
             db.session.commit()
-            behandlungsverlaeufe = db.session.execute("SELECT id FROM behandlungsverlauf ORDER BY Id DESC LIMIT 1")
-            behandlungsverlauf = behandlungsverlaeufe.fetchone()
+            behandlungsverlauf = db.session.execute("SELECT id FROM behandlungsverlauf ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE behandlungsverlauf_id_seq RESTART WITH " + str(behandlungsverlauf['id'] + 1))
             return True
         except Exception as err:
@@ -588,8 +582,7 @@ def import_rechnung():
     if(ok):
         try:
             db.session.commit()
-            rechnungen = db.session.execute("SELECT id FROM rechnung ORDER BY Id DESC LIMIT 1")
-            rechnung = rechnungen.fetchone()
+            rechnung = db.session.execute("SELECT id FROM rechnung ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE rechnung_id_seq RESTART WITH " + str(rechnung['id'] + 1))
             return True
         except Exception as err:
@@ -647,8 +640,7 @@ def import_rechnungszeile():
     if(ok):
         try:
             db.session.commit()
-            rechnungszeilen = db.session.execute("SELECT id FROM rechnungszeile ORDER BY Id DESC LIMIT 1")
-            rechnungszeile = rechnungszeilen.fetchone()
+            rechnungszeile = db.session.execute("SELECT id FROM rechnungszeile ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE rechnungszeile_id_seq RESTART WITH " + str(rechnungszeile['id'] + 1))
             return True
         except Exception as err:

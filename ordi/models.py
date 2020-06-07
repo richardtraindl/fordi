@@ -20,7 +20,7 @@ class Tierhaltung(db.Model):
     id = db.Column(db.Integer, db.Sequence('tierhaltung_id_seq'), primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False, index=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id'), nullable=False, index=True)
-    created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime(timezone=False), nullable=False, default=datetime.utcnow)
     person = db.relationship("Person", uselist=False, back_populates="tierhaltungen", lazy='immediate')
     tier = db.relationship("Tier", uselist=False, back_populates="tierhaltung", lazy='immediate')
     termine = db.relationship("Termin", cascade="all,delete", back_populates="tierhaltung", lazy='noload')
@@ -76,7 +76,7 @@ class Behandlung(db.Model):
 
     id = db.Column(db.Integer, db.Sequence('behandlung_id_seq'), primary_key=True)
     tier_id = db.Column(db.Integer, db.ForeignKey('tier.id', ondelete='CASCADE'), nullable=False, index=True)
-    datum = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    datum = db.Column(db.DateTime(timezone=False), nullable=False, default=datetime.utcnow)
     gewicht = db.Column(db.String(50))
     diagnose = db.Column(db.String(2000))
     laborwerte1 = db.Column(db.String(1000))
@@ -164,8 +164,8 @@ class Termin(db.Model):
     id = db.Column(db.Integer, db.Sequence('termin_id_seq'), primary_key=True)
     tierhaltung_id = db.Column(db.Integer, db.ForeignKey('tierhaltung.id'), index=True)
     autor = db.Column(db.String(30))
-    beginn = db.Column(db.DateTime(timezone=True), nullable=False)
-    ende = db.Column(db.DateTime(timezone=True), nullable=False)
+    beginn = db.Column(db.DateTime(timezone=False), nullable=False)
+    ende = db.Column(db.DateTime(timezone=False), nullable=False)
     thema = db.Column(db.String(50), nullable=False)
     tierhaltung = db.relationship("Tierhaltung", back_populates="termine")
 

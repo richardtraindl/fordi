@@ -263,6 +263,8 @@ def import_adresse():
 
     path_and_filename2 = clean_file(path_and_filename, 4)
 
+    personen = db.session.query(Person).order_by(Person.id.asc()).all()
+
     ok = True
 
     with open(path_and_filename2) as fo:
@@ -276,14 +278,12 @@ def import_adresse():
 
             try:
                 person_id = int(arrline[0])
-                person = db.session.query(Person).get(person_id)
-
-                person.adr_strasse = arrline[2].strip('"')
-
-                person.adr_plz = arrline[3].strip('"')
-
-                person.adr_ort = arrline[4].strip('"\n')
-
+                for person in personen:
+                    if(person.id == person_id):
+                        person.adr_strasse = arrline[2].strip('"')
+                        person.adr_plz = arrline[3].strip('"')
+                        person.adr_ort = arrline[4].strip('"\n')
+                        break
                 #print(".", end="", flush=True)
             except:
                 ok = False

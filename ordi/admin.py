@@ -3,6 +3,7 @@
 import os
 from datetime import date, datetime
 import random
+from multiprocessing import Process
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 from werkzeug.exceptions import abort
@@ -797,64 +798,69 @@ def import_rechnungszeile():
         return False
 
 
-@bp.route('/<int:phase>/dbwrite', methods=('GET',))
+@bp.route('/dbimport', methods=('GET',))
 @login_required
-def dbwrite(phase):
-    if(phase == 1):
-        print("starte tier import")
-        dbwrite_ok = import_tier()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+def dbimport():
+    heavy_process = Process(target=dbwrite, daemon=True)
 
-        print("starte person import")
-        dbwrite_ok = import_person(5000)
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-        print("starte adresse import")
-        dbwrite_ok = import_adresse()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-        print("starte kontakt import")
-        dbwrite_ok = import_kontakt()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-    if(phase == 2):
-        print("starte tierhaltung import")
-        dbwrite_ok = import_tierhaltung()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-    if(phase == 3):
-        print("starte behandlung import")
-        dbwrite_ok = import_behandlung()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-        print("starte impfung import")
-        dbwrite_ok = import_impfung()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-    if(phase == 4):
-        print("starte behandlungsverlauf import")
-        dbwrite_ok = import_behandlungsverlauf()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-        print("starte rechnung import")
-        dbwrite_ok = import_rechnung()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
-
-        print("starte rechnungszeile import")
-        dbwrite_ok = import_rechnungszeile()
-        if(dbwrite_ok == False):
-            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+    heavy_process.start()
 
     return redirect(url_for('admin.index', dbwrite_ok=True))
+
+
+def dbwrite():
+    print("starte tier import")
+    dbwrite_ok = import_tier()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte person import")
+    dbwrite_ok = import_person(5000)
+    if(dbwrite_ok == False):
+        return
+
+    print("starte adresse import")
+    dbwrite_ok = import_adresse()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte kontakt import")
+    dbwrite_ok = import_kontakt()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte tierhaltung import")
+    dbwrite_ok = import_tierhaltung()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte behandlung import")
+    dbwrite_ok = import_behandlung()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte impfung import")
+    dbwrite_ok = import_impfung()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte behandlungsverlauf import")
+    dbwrite_ok = import_behandlungsverlauf()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte rechnung import")
+    dbwrite_ok = import_rechnung()
+    if(dbwrite_ok == False):
+        return
+
+    print("starte rechnungszeile import")
+    dbwrite_ok = import_rechnungszeile()
+    if(dbwrite_ok == False):
+        return
+
+    print("alle Tabellen importiert!")
+    return
 
 
 @bp.route('/anonymize', methods=('GET',))

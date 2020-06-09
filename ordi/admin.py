@@ -311,6 +311,8 @@ def import_kontakt():
 
     path_and_filename2 = clean_file(path_and_filename, 4)
 
+    personen = db.session.query(Person).order_by(Person.id.asc()).all()
+
     ok = True
 
     with open(path_and_filename2) as fo:
@@ -327,12 +329,13 @@ def import_kontakt():
 
             try:
                 person_id = int(arrline[0])
-                person = db.session.query(Person).get(person_id)
-
-                if(person.kontakte and len(person.kontakte) > 0):
-                    person.kontakte += " " + arrline[3].strip('"\n')
-                else:
-                    person.kontakte = arrline[3].strip('"\n')
+                for person in personen:
+                    if(person.id == person_id):
+                        if(person.kontakte and len(person.kontakte) > 0):
+                            person.kontakte += " " + arrline[3].strip('"\n')
+                        else:
+                            person.kontakte = arrline[3].strip('"\n')
+                    break
 
                 #print(".", end="", flush=True)
             except:
@@ -426,7 +429,7 @@ def import_behandlung(behandlung_id):
                 behandlung.id = int(arrline[1])
                 if(behandlung.id <= behandlung_id):
                     continue
-                if(behandlung.id > behandlung_id + 30000):
+                if(behandlung.id > behandlung_id + 20000):
                     break
 
                 behandlung.tier_id = int(arrline[0])

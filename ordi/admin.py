@@ -2,6 +2,7 @@
 
 import os
 from datetime import date, datetime
+import random
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 from werkzeug.exceptions import abort
@@ -21,6 +22,30 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 def index():
     dbwrite_ok = request.args.get('dbwrite_ok')
     return render_template('admin/index.html', dbwrite_ok=dbwrite_ok, page_title="Admin")
+
+
+def anonymize_token(data):
+    new = ""
+    for char in data:
+        if(len(new) <= 2):
+            new += char
+        elif(ord(char) >= ord('0') and ord(char) <= ord('9')):
+            rndnum = random.randint(0, 3)
+            newnum = ord(char) + rndnum
+            if(newnum >= ord('0') and newnum <= ord('9')):
+                new += chr(newnum)
+            else:
+                new += '4'
+        elif(ord(char) >= ord('A') and ord(char) <= ord('z')):
+            rndnum = random.randint(0, 9)
+            newnum = ord(char) + rndnum
+            if(newnum >= ord('A') and newnum <= ord('z')):
+                new += chr(newnum)
+            else:
+                new += 'g'
+        else:
+            new += char
+    return new
 
 
 def clean_file(path_and_filename, rowcnt):
@@ -50,6 +75,41 @@ def clean_file(path_and_filename, rowcnt):
                 else:
                     fo2.write(char)
     return path_and_filename2
+
+
+def anonymize_file(filename, rowcnt, indices):
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'raw', filename)
+
+    path_and_filename2 = clean_file(path_and_filename, rowcnt - 1)
+
+    path_and_filenameX = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+
+    with open(path_and_filename2) as fo2:
+        with open(path_and_filenameX, "w") as foX:
+            for line in fo2:
+                line = line.replace('§', '\n')
+                arrline = line.split(";")
+
+                if(len(arrline) != rowcnt):
+                    print("error", end=" ", flush=True)
+                    print(arrline, end="", flush=True)
+                    continue
+
+                for idx in range(len(arrline)):
+                    found = False
+                    for idx2 in indices:
+                        if(idx == idx2):
+                            #token = arrline[idx].strip('"')
+                            #if(len(token) > 0):
+                            foX.write(anonymize_token(arrline[idx]))
+                            found = True
+                            break
+                    if(found == False):
+                        foX.write(arrline[idx])
+                    if(idx < rowcnt - 1):
+                        foX.write(";")
+
+    os.remove(path_and_filename2)
 
 
 def import_tier():
@@ -221,8 +281,8 @@ def import_adresse():
                 person.adr_strasse = arrline[2].strip('"')
 
                 person.adr_plz = arrline[3].strip('"')
-                
-                person.adr_ort = arrline[4].strip('"')
+
+                person.adr_ort = arrline[4].strip('"\n')
 
                 print(".", end="", flush=True)
             except:
@@ -270,9 +330,9 @@ def import_kontakt():
                 person = db.session.query(Person).get(person_id)
 
                 if(person.kontakte and len(person.kontakte) > 0):
-                    person.kontakte += " " + arrline[3].strip('"')
+                    person.kontakte += " " + arrline[3].strip('"\n')
                 else:
-                    person.kontakte = arrline[3].strip('"')
+                    person.kontakte = arrline[3].strip('"\n')
 
                 print(".", end="", flush=True)
             except:
@@ -487,7 +547,7 @@ def import_behandlungsverlauf():
 
                 behandlungsverlauf.diagnose = arrline[4].strip('"')
 
-                behandlungsverlauf.behandlung = arrline[5].strip('"')
+                behandlungsverlauf.behandlung = arrline[5].strip('"\n')
 
                 db.session.add(behandlungsverlauf)
                 print(".", end="", flush=True)
@@ -696,3 +756,28 @@ def dbwrite():
 
     return redirect(url_for('admin.index', dbwrite_ok=True))
 
+
+@bp.route('/anonymize', methods=('GET',))
+@login_required
+def anonymize():
+    anonymize_file("tblTier.txt", 12, [1, 5, 6])
+
+    anonymize_file("tblPerson.txt", 7, [3, 4, 5])
+
+    anonymize_file("tblAdresse.txt", 5, [2, 3, 4])
+
+    anonymize_file("tblKontakt.txt", 5, [3])
+
+    anonymize_file("tblTierhaltung.txt", 3, [])
+
+    anonymize_file("tblBehandlung.txt", 10, [4])
+
+    anonymize_file("tblImpfung.txt", 2, [])
+
+    anonymize_file("tblBehandlungsverlauf.txt", 6, [4, 5])
+
+    anonymize_file("tblRechnung.txt", 14, [7])
+
+    anonymize_file("tblRechnungszeile.txt", 6, [])
+
+    return redirect(url_for('admin.index', dbwrite_ok=True))

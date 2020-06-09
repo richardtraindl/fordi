@@ -113,8 +113,7 @@ def anonymize_file(filename, rowcnt, indices):
 
 
 def import_tier():
-    filename = "tblTier.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblTier.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 11)
 
@@ -129,8 +128,9 @@ def import_tier():
                 print(arrline[0], end="", flush=True)
                 continue
 
-            tier = Tier()
-            try:            
+            try:
+                tier = Tier()
+
                 tier.id = int(arrline[0])
 
                 if(len(arrline[1]) > 0):
@@ -168,7 +168,6 @@ def import_tier():
                     tier.patient = False
 
                 db.session.add(tier)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -191,9 +190,8 @@ def import_tier():
         return False
 
 
-def import_person():
-    filename = "tblPerson.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+def import_person(person_id):
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblPerson.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 6)
 
@@ -208,9 +206,15 @@ def import_person():
                 print(arrline[0], end="", flush=True)
                 continue
 
-            person = Person()
-            try:            
-                person.id = int(arrline[0])
+            try:
+                p_id = int(arrline[0])
+
+                if(p_id < person_id):
+                    continue
+
+                person = Person()
+
+                person.id = p_id
 
                 if(len(arrline[1]) > 0):
                     person.anredecode = int(arrline[1])
@@ -234,7 +238,6 @@ def import_person():
                     person.kunde = False
 
                 db.session.add(person)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -258,12 +261,11 @@ def import_person():
 
 
 def import_adresse():
-    filename = "tblAdresse.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblAdresse.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 4)
 
-    personen = db.session.query(Person).order_by(Person.id.asc()).all()
+    personen = db.session.query(Person).all()
 
     ok = True
 
@@ -277,14 +279,14 @@ def import_adresse():
                 continue
 
             try:
-                person_id = int(arrline[0])
+                p_id = int(arrline[0])
+
                 for person in personen:
-                    if(person.id == person_id):
+                    if(person.id == p_id):
                         person.adr_strasse = arrline[2].strip('"')
                         person.adr_plz = arrline[3].strip('"')
                         person.adr_ort = arrline[4].strip('"\n')
                         break
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -306,12 +308,11 @@ def import_adresse():
 
 
 def import_kontakt():
-    filename = "tblKontakt.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblKontakt.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 4)
 
-    personen = db.session.query(Person).order_by(Person.id.asc()).all()
+    personen = db.session.query(Person).all()
 
     ok = True
 
@@ -328,16 +329,15 @@ def import_kontakt():
                 continue
 
             try:
-                person_id = int(arrline[0])
+                p_id = int(arrline[0])
+
                 for person in personen:
-                    if(person.id == person_id):
+                    if(person.id == p_id):
                         if(person.kontakte and len(person.kontakte) > 0):
                             person.kontakte += " " + arrline[3].strip('"\n')
                         else:
                             person.kontakte = arrline[3].strip('"\n')
                     break
-
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -359,10 +359,11 @@ def import_kontakt():
 
 
 def import_tierhaltung():
-    filename = "tblTierhaltung.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblTierhaltung.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 2)
+
+    personen = db.session.query(Person).all()
 
     ok = True
 
@@ -375,16 +376,32 @@ def import_tierhaltung():
                 print(arrline[0], end="", flush=True)
                 continue
 
-            tierhaltung = Tierhaltung()
-            try:            
-                tierhaltung.person_id = int(arrline[0])
+            try:
+                person_id = int(arrline[0])
 
-                tierhaltung.tier_id = int(arrline[1])
+                tier_id = int(arrline[1])
+
+                found = False
+
+                for person in personen:
+                    if(person.id == person_id):
+                        found = True
+                        break
+                if(found == False):
+                    tier = db.session.query(Tier).get(tier_id)
+                    if(tier):
+                        db.session.delete(tier)
+                        continue
+
+                tierhaltung = Tierhaltung()
+
+                tierhaltung.person_id = person_id
+
+                tierhaltung.tier_id = tier_id
 
                 tierhaltung.created_at = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
 
                 db.session.add(tierhaltung)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -407,11 +424,12 @@ def import_tierhaltung():
         return False
 
 
-def import_behandlung(behandlung_id):
-    filename = "tblBehandlung.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+def import_behandlung():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblBehandlung.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 9)
+
+    tierhaltungen = db.session.query(Tierhaltung).all()
 
     ok = True
 
@@ -424,15 +442,23 @@ def import_behandlung(behandlung_id):
                 print(arrline[0], end="", flush=True)
                 continue
 
-            behandlung = Behandlung()
             try:
-                behandlung.id = int(arrline[1])
-                if(behandlung.id <= behandlung_id):
-                    continue
-                if(behandlung.id > behandlung_id + 20000):
-                    break
+                tier_id = int(arrline[0])
 
-                behandlung.tier_id = int(arrline[0])
+                found = False
+
+                for tierhaltung in tierhaltungen:
+                    if(tierhaltung.tier_id == tier_id):
+                        found = True
+                        break
+                if(found == False):
+                    continue
+
+                behandlung = Behandlung()
+
+                behandlung.id = int(arrline[1])
+
+                behandlung.tier_id = tier_id
 
                 if(len(arrline[2]) > 0):
                     behandlung.datum = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
@@ -452,7 +478,6 @@ def import_behandlung(behandlung_id):
                 behandlung.arzneimittel = arrline[8].strip('"')
 
                 db.session.add(behandlung)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -476,10 +501,11 @@ def import_behandlung(behandlung_id):
 
 
 def import_impfung():
-    filename = "tblImpfung.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblImpfung.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 1)
+
+    behandlungen = db.session.query(Behandlung).all()
 
     ok = True
 
@@ -492,14 +518,25 @@ def import_impfung():
                 print(arrline[0], end="", flush=True)
                 continue
 
-            impfung = Impfung()
             try:
-                impfung.behandlung_id = int(arrline[0])
+                behandlung_id = int(arrline[0])
+
+                found = False
+
+                for behandlung in behandlungen:
+                    if(behandlung.id == behandlung_id):
+                        found = True
+                        break
+                if(found == False):
+                    continue
+
+                impfung = Impfung()
+
+                impfung.behandlung_id = behandlung_id
 
                 impfung.impfungscode = int(arrline[1])
 
                 db.session.add(impfung)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -511,8 +548,8 @@ def import_impfung():
     if(ok):
         try:
             db.session.commit()
-            impfung = db.session.execute("SELECT id FROM impfung ORDER BY Id DESC LIMIT 1").fetchone()
-            db.session.execute("ALTER SEQUENCE impfung_id_seq RESTART WITH " + str(impfung['id'] + 1))
+            #impfung = db.session.execute("SELECT id FROM impfung ORDER BY Id DESC LIMIT 1").fetchone()
+            #db.session.execute("ALTER SEQUENCE impfung_id_seq RESTART WITH " + str(impfung['id'] + 1))
             return True
         except Exception as err:
             print(err)
@@ -523,10 +560,11 @@ def import_impfung():
 
 
 def import_behandlungsverlauf():
-    filename = "tblBehandlungsverlauf.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblBehandlungsverlauf.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 5)
+
+    tierhaltungen = db.session.query(Tierhaltung).all()
 
     ok = True
 
@@ -539,13 +577,28 @@ def import_behandlungsverlauf():
                 print(str(len(arrline)) + " " + line, end="", flush=True)
                 continue
 
-            behandlungsverlauf = Behandlungsverlauf()
             try:
-                behandlungsverlauf.id = int(arrline[0])
+                person_id = int(arrline[1])
 
-                behandlungsverlauf.person_id = int(arrline[1])
+                tier_id = int(arrline[2])
 
-                behandlungsverlauf.tier_id = int(arrline[2])
+                found = False
+
+                for tierhaltung in tierhaltungen:
+                    if(tierhaltung.person_id == person_id and 
+                       tierhaltung.tier_id == tier_id):
+                        found = True
+                        break
+                if(found == False):
+                    continue
+
+                behandlungsverlauf = Behandlungsverlauf()
+
+                #behandlungsverlauf.id = int(arrline[0])
+
+                behandlungsverlauf.person_id = person_id
+
+                behandlungsverlauf.tier_id = tier_id
 
                 if(len(arrline[3]) > 0):
                     behandlungsverlauf.datum = datetime.strptime((arrline[3])[:10], "%Y-%m-%d")
@@ -557,7 +610,6 @@ def import_behandlungsverlauf():
                 behandlungsverlauf.behandlung = arrline[5].strip('"\n')
 
                 db.session.add(behandlungsverlauf)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -569,8 +621,8 @@ def import_behandlungsverlauf():
     if(ok):
         try:
             db.session.commit()
-            behandlungsverlauf = db.session.execute("SELECT id FROM behandlungsverlauf ORDER BY Id DESC LIMIT 1").fetchone()
-            db.session.execute("ALTER SEQUENCE behandlungsverlauf_id_seq RESTART WITH " + str(behandlungsverlauf['id'] + 1))
+            #behandlungsverlauf = db.session.execute("SELECT id FROM behandlungsverlauf ORDER BY Id DESC LIMIT 1").fetchone()
+            #db.session.execute("ALTER SEQUENCE behandlungsverlauf_id_seq RESTART WITH " + str(behandlungsverlauf['id'] + 1))
             return True
         except Exception as err:
             print(err)
@@ -581,10 +633,11 @@ def import_behandlungsverlauf():
 
 
 def import_rechnung():
-    filename = "tblRechnung.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblRechnung.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 13)
+
+    tierhaltungen = db.session.query(Tierhaltung).all()
 
     ok = True
 
@@ -597,13 +650,28 @@ def import_rechnung():
                 print(arrline[0], end="", flush=True)
                 continue
 
-            rechnung = Rechnung()
             try:
+                person_id = int(arrline[1])
+
+                tier_id = int(arrline[2])
+
+                found = False
+
+                for tierhaltung in tierhaltungen:
+                    if(tierhaltung.person_id == person_id and 
+                       tierhaltung.tier_id == tier_id):
+                        found = True
+                        break
+                if(found == False):
+                    continue
+
+                rechnung = Rechnung()
+
                 rechnung.id = int(arrline[0])
 
-                rechnung.person_id = int(arrline[1])
+                rechnung.person_id = person_id
 
-                rechnung.tier_id = int(arrline[2])
+                rechnung.tier_id = tier_id
 
                 if(len(arrline[3]) > 0):
                     rechnung.jahr = int(arrline[3])
@@ -637,7 +705,6 @@ def import_rechnung():
                 rechnung.steuerbetrag_zehn = float(arrline[13].replace(',','.'))
 
                 db.session.add(rechnung)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -661,10 +728,11 @@ def import_rechnung():
 
 
 def import_rechnungszeile():
-    filename = "tblRechnungszeile.txt"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', "tblRechnungszeile.txt")
 
     path_and_filename2 = clean_file(path_and_filename, 5)
+
+    rechnungen = db.session.query(Rechnung).all()
 
     ok = True
 
@@ -677,11 +745,23 @@ def import_rechnungszeile():
                 print(arrline[0], end="", flush=True)
                 continue
 
-            rechnungszeile = Rechnungszeile()
             try:
-                rechnungszeile.id = int(arrline[0])
+                rechnung_id = int(arrline[1])
 
-                rechnungszeile.rechnung_id = int(arrline[1])
+                found = False
+
+                for rechnung in rechnungen:
+                    if(rechnung.id == rechnung_id):
+                        found = True
+                        break
+                if(found == False):
+                    continue
+
+                rechnungszeile = Rechnungszeile()
+
+                #rechnungszeile.id = int(arrline[0])
+
+                rechnungszeile.rechnung_id = rechnung_id
 
                 rechnungszeile.artikelcode = int(arrline[2])
 
@@ -695,7 +775,6 @@ def import_rechnungszeile():
                 rechnungszeile.betrag = float(arrline[5].replace(',', '.'))
 
                 db.session.add(rechnungszeile)
-                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -707,8 +786,8 @@ def import_rechnungszeile():
     if(ok):
         try:
             db.session.commit()
-            rechnungszeile = db.session.execute("SELECT id FROM rechnungszeile ORDER BY Id DESC LIMIT 1").fetchone()
-            db.session.execute("ALTER SEQUENCE rechnungszeile_id_seq RESTART WITH " + str(rechnungszeile['id'] + 1))
+            #rechnungszeile = db.session.execute("SELECT id FROM rechnungszeile ORDER BY Id DESC LIMIT 1").fetchone()
+            #db.session.execute("ALTER SEQUENCE rechnungszeile_id_seq RESTART WITH " + str(rechnungszeile['id'] + 1))
             return True
         except Exception as err:
             print(err)
@@ -718,77 +797,64 @@ def import_rechnungszeile():
         return False
 
 
-@bp.route('/dbwrite', methods=('GET',))
+@bp.route('/<int:phase>/dbwrite', methods=('GET',))
 @login_required
-def dbwrite():
-    tier = db.session.query(Tier).first()
-    if(tier == None):
+def dbwrite(phase):
+    if(phase == 1):
         print("starte tier import")
         dbwrite_ok = import_tier()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    person = db.session.query(Person).first()
-    if(person == None):
         print("starte person import")
-        dbwrite_ok = import_person()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        dbwrite_ok = import_person(5000)
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    person = db.session.query(Person).filter(Person.adr_ort.like("Wi%")).first()
-    if(person == None):
         print("starte adresse import")
         dbwrite_ok = import_adresse()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    person = db.session.query(Person).filter(Person.kontakte.like("06%")).first()
-    if(person == None):
         print("starte kontakt import")
         dbwrite_ok = import_kontakt()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    tierhaltung = db.session.query(Tierhaltung).first()
-    if(tierhaltung == None):
+    if(phase == 2):
         print("starte tierhaltung import")
         dbwrite_ok = import_tierhaltung()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    count1 = db.session.query(Behandlung.id).count()
-    behandlung = db.session.execute("SELECT id FROM behandlung ORDER BY Id DESC LIMIT 1").fetchone()
-    try:
-        behandlung_id = int(behandlung['id'])
-    except:
-        behandlung_id = -1
-    print("starte behandlung import")
-    dbwrite_ok = import_behandlung(behandlung_id)
-    count2 = db.session.query(Behandlung.id).count()
-    if(count1 != count2):
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+    if(phase == 3):
+        print("starte behandlung import")
+        dbwrite_ok = import_behandlung()
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    impfung = db.session.query(Impfung).first()
-    if(impfung == None):
         print("starte impfung import")
         dbwrite_ok = import_impfung()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    behandlungsverlauf = db.session.query(Behandlungsverlauf).first()
-    if(behandlungsverlauf == None):
+    if(phase == 4):
         print("starte behandlungsverlauf import")
         dbwrite_ok = import_behandlungsverlauf()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    rechnung = db.session.query(Rechnung).first()
-    if(rechnung == None):
         print("starte rechnung import")
         dbwrite_ok = import_rechnung()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    rechnungszeile = db.session.query(Rechnungszeile).first()
-    if(rechnungszeile == None):
         print("starte rechnungszeile import")
         dbwrite_ok = import_rechnungszeile()
-        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+        if(dbwrite_ok == False):
+            return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    print("keine tabellen geschrieben")
-    return redirect(url_for('admin.index', dbwrite_ok=False))
+    return redirect(url_for('admin.index', dbwrite_ok=True))
 
 
 @bp.route('/anonymize', methods=('GET',))

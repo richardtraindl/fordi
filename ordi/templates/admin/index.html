@@ -16,7 +16,7 @@
         <div class="gap"></div>
 
         <div>
-          <p><a href="{{ url_for('admin.dbwrite') }}">Starte Datenbank-Import</a></p>
+          <p><a href="{{ url_for('admin.dbwrite', phase=1) }}">Starte Datenbank-Import</a></p>
         
           <p>{{- dbwrite_ok|sn -}}</p>
         </div>

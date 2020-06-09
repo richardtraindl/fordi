@@ -168,7 +168,7 @@ def import_tier():
                     tier.patient = False
 
                 db.session.add(tier)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -234,7 +234,7 @@ def import_person():
                     person.kunde = False
 
                 db.session.add(person)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -284,7 +284,7 @@ def import_adresse():
 
                 person.adr_ort = arrline[4].strip('"\n')
 
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -334,7 +334,7 @@ def import_kontakt():
                 else:
                     person.kontakte = arrline[3].strip('"\n')
 
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -381,7 +381,7 @@ def import_tierhaltung():
                 tierhaltung.created_at = datetime.strptime((arrline[2])[:10], "%Y-%m-%d")
 
                 db.session.add(tierhaltung)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -404,7 +404,7 @@ def import_tierhaltung():
         return False
 
 
-def import_behandlung():
+def import_behandlung(behandlung_id):
     filename = "tblBehandlung.txt"
     path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
 
@@ -424,6 +424,10 @@ def import_behandlung():
             behandlung = Behandlung()
             try:
                 behandlung.id = int(arrline[1])
+                if(behandlung.id <= behandlung_id):
+                    continue
+                if(behandlung.id > behandlung_id + 30000):
+                    break
 
                 behandlung.tier_id = int(arrline[0])
 
@@ -445,7 +449,7 @@ def import_behandlung():
                 behandlung.arzneimittel = arrline[8].strip('"')
 
                 db.session.add(behandlung)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -492,7 +496,7 @@ def import_impfung():
                 impfung.impfungscode = int(arrline[1])
 
                 db.session.add(impfung)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -550,7 +554,7 @@ def import_behandlungsverlauf():
                 behandlungsverlauf.behandlung = arrline[5].strip('"\n')
 
                 db.session.add(behandlungsverlauf)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -630,7 +634,7 @@ def import_rechnung():
                 rechnung.steuerbetrag_zehn = float(arrline[13].replace(',','.'))
 
                 db.session.add(rechnung)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -688,7 +692,7 @@ def import_rechnungszeile():
                 rechnungszeile.betrag = float(arrline[5].replace(',', '.'))
 
                 db.session.add(rechnungszeile)
-                print(".", end="", flush=True)
+                #print(".", end="", flush=True)
             except:
                 ok = False
                 print("error", end=" ", flush=True)
@@ -724,10 +728,18 @@ def dbwrite():
     if(person == None):
         print("starte person import")
         dbwrite_ok = import_person()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+
+    person = db.session.query(Person).filter(Person.adr_ort.like("Wi%")).first()
+    if(person == None):
         print("starte adresse import")
-        dbwrite_ok = dbwrite_ok and import_adresse()
+        dbwrite_ok = import_adresse()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
+
+    person = db.session.query(Person).filter(Person.kontakte.like("06%")).first()
+    if(person == None):
         print("starte kontakt import")
-        dbwrite_ok = dbwrite_ok and import_kontakt()
+        dbwrite_ok = import_kontakt()
         return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
     tierhaltung = db.session.query(Tierhaltung).first()
@@ -736,10 +748,16 @@ def dbwrite():
         dbwrite_ok = import_tierhaltung()
         return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    behandlung = db.session.query(Behandlung).first()
-    if(behandlung == None):
-        print("starte behandlung import")
-        dbwrite_ok = import_behandlung()
+    count1 = db.session.query(Behandlung.id).count()
+    behandlung = db.session.execute("SELECT id FROM behandlung ORDER BY Id DESC LIMIT 1").fetchone()
+    try:
+        behandlung_id = int(behandlung['id'])
+    except:
+        behandlung_id = -1
+    print("starte behandlung import")
+    dbwrite_ok = import_behandlung(behandlung_id)
+    count2 = db.session.query(Behandlung.id).count()
+    if(count1 != count2):
         return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
     impfung = db.session.query(Impfung).first()

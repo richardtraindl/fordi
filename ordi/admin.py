@@ -714,47 +714,60 @@ def import_rechnungszeile():
 @bp.route('/dbwrite', methods=('GET',))
 @login_required
 def dbwrite():
-    if(import_tier() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("tier")
+    tier = db.session.query(Tier).first()
+    if(tier == None):
+        print("starte tier import")
+        dbwrite_ok = import_tier()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_person() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("person")
+    person = db.session.query(Person).first()
+    if(person == None):
+        print("starte person import")
+        dbwrite_ok = import_person()
+        print("starte adresse import")
+        dbwrite_ok = dbwrite_ok and import_adresse()
+        print("starte kontakt import")
+        dbwrite_ok = dbwrite_ok and import_kontakt()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_adresse() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("adresse")
+    tierhaltung = db.session.query(Tierhaltung).first()
+    if(tierhaltung == None):
+        print("starte tierhaltung import")
+        dbwrite_ok = import_tierhaltung()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_kontakt() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("kontakt")
+    behandlung = db.session.query(Behandlung).first()
+    if(behandlung == None):
+        print("starte behandlung import")
+        dbwrite_ok = import_behandlung()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_tierhaltung() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("tierhaltung")
+    impfung = db.session.query(Impfung).first()
+    if(impfung == None):
+        print("starte impfung import")
+        dbwrite_ok = import_impfung()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_behandlung() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("behandlung")
+    behandlungsverlauf = db.session.query(Behandlungsverlauf).first()
+    if(behandlungsverlauf == None):
+        print("starte behandlungsverlauf import")
+        dbwrite_ok = import_behandlungsverlauf()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_impfung() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("impfung")
+    rechnung = db.session.query(Rechnung).first()
+    if(rechnung == None):
+        print("starte rechnung import")
+        dbwrite_ok = import_rechnung()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_behandlungsverlauf() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("behandlungsverlauf")
+    rechnungszeile = db.session.query(Rechnungszeile).first()
+    if(rechnungszeile == None):
+        print("starte rechnungszeile import")
+        dbwrite_ok = import_rechnungszeile()
+        return redirect(url_for('admin.index', dbwrite_ok=dbwrite_ok))
 
-    if(import_rechnung() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("rechnung")
-
-    if(import_rechnungszeile() == False):
-        return redirect(url_for('admin.index', dbwrite_ok=False))
-    print("rechnungszeile")
-
-    return redirect(url_for('admin.index', dbwrite_ok=True))
+    print("keine tabellen geschrieben")
+    return redirect(url_for('admin.index', dbwrite_ok=False))
 
 
 @bp.route('/anonymize', methods=('GET',))
@@ -780,4 +793,4 @@ def anonymize():
 
     anonymize_file("tblRechnungszeile.txt", 6, [])
 
-    return redirect(url_for('admin.index', dbwrite_ok=True))
+    return redirect(url_for('admin.index', dbwrite_ok=False))

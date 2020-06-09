@@ -388,10 +388,8 @@ def import_tierhaltung():
                         found = True
                         break
                 if(found == False):
-                    tier = db.session.query(Tier).get(tier_id)
-                    if(tier):
-                        db.session.delete(tier)
-                        continue
+                    db.session.delete(tier_id)
+                    continue
 
                 tierhaltung = Tierhaltung()
 

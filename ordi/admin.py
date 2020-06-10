@@ -3,26 +3,93 @@
 import os
 from datetime import date, datetime
 import random
-from multiprocessing import Process
 
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for
-from werkzeug.exceptions import abort
+from flask import Flask, Blueprint
 
 from . import db
-from sqlalchemy import or_, and_
-from ordi.auth import login_required
 from ordi.models import *
-from ordi.values import *
-from ordi.util.helper import *
-
-bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
-@bp.route('/', methods=('GET', 'POST'))
-@login_required
-def index():
-    dbwrite_ok = request.args.get('dbwrite_ok')
-    return render_template('admin/index.html', dbwrite_ok=dbwrite_ok, page_title="Admin")
+bp = Blueprint('admin', __name__,)
+
+
+@bp.cli.command("anonymize")
+def anonymize():
+    anonymize_file("tblTier.txt", 12, [1, 5, 6])
+
+    anonymize_file("tblPerson.txt", 7, [3, 4, 5])
+
+    anonymize_file("tblAdresse.txt", 5, [2, 3, 4])
+
+    anonymize_file("tblKontakt.txt", 5, [3])
+
+    anonymize_file("tblTierhaltung.txt", 3, [])
+
+    anonymize_file("tblBehandlung.txt", 10, [4])
+
+    anonymize_file("tblImpfung.txt", 2, [])
+
+    anonymize_file("tblBehandlungsverlauf.txt", 6, [4, 5])
+
+    anonymize_file("tblRechnung.txt", 14, [7])
+
+    anonymize_file("tblRechnungszeile.txt", 6, [])
+
+
+@bp.cli.command("write-db")
+def dbwrite():
+    print("starte tier import")
+    dbwrite_ok = import_tier()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte person import")
+    dbwrite_ok = import_person(5000)
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte adresse import")
+    dbwrite_ok = import_adresse()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte kontakt import")
+    dbwrite_ok = import_kontakt()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte tierhaltung import")
+    dbwrite_ok = import_tierhaltung()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte behandlung import")
+    dbwrite_ok = import_behandlung()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte impfung import")
+    dbwrite_ok = import_impfung()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte behandlungsverlauf import")
+    dbwrite_ok = import_behandlungsverlauf()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte rechnung import")
+    dbwrite_ok = import_rechnung()
+    if(dbwrite_ok == False):
+        return False
+
+    print("starte rechnungszeile import")
+    dbwrite_ok = import_rechnungszeile()
+    if(dbwrite_ok == False):
+        return False
+
+    print("alle Tabellen importiert!")
+    return True
 
 
 def anonymize_token(data):
@@ -100,8 +167,6 @@ def anonymize_file(filename, rowcnt, indices):
                     found = False
                     for idx2 in indices:
                         if(idx == idx2):
-                            #token = arrline[idx].strip('"')
-                            #if(len(token) > 0):
                             foX.write(anonymize_token(arrline[idx]))
                             found = True
                             break
@@ -796,94 +861,3 @@ def import_rechnungszeile():
     else:
         db.session.rollback()
         return False
-
-
-@bp.route('/dbimport', methods=('GET',))
-@login_required
-def dbimport():
-    heavy_process = Process(target=dbwrite, daemon=True)
-
-    heavy_process.start()
-
-    return redirect(url_for('admin.index', dbwrite_ok=True))
-
-
-def dbwrite():
-    print("starte tier import")
-    dbwrite_ok = import_tier()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte person import")
-    dbwrite_ok = import_person(5000)
-    if(dbwrite_ok == False):
-        return
-
-    print("starte adresse import")
-    dbwrite_ok = import_adresse()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte kontakt import")
-    dbwrite_ok = import_kontakt()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte tierhaltung import")
-    dbwrite_ok = import_tierhaltung()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte behandlung import")
-    dbwrite_ok = import_behandlung()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte impfung import")
-    dbwrite_ok = import_impfung()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte behandlungsverlauf import")
-    dbwrite_ok = import_behandlungsverlauf()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte rechnung import")
-    dbwrite_ok = import_rechnung()
-    if(dbwrite_ok == False):
-        return
-
-    print("starte rechnungszeile import")
-    dbwrite_ok = import_rechnungszeile()
-    if(dbwrite_ok == False):
-        return
-
-    print("alle Tabellen importiert!")
-    return
-
-
-@bp.route('/anonymize', methods=('GET',))
-@login_required
-def anonymize():
-    anonymize_file("tblTier.txt", 12, [1, 5, 6])
-
-    anonymize_file("tblPerson.txt", 7, [3, 4, 5])
-
-    anonymize_file("tblAdresse.txt", 5, [2, 3, 4])
-
-    anonymize_file("tblKontakt.txt", 5, [3])
-
-    anonymize_file("tblTierhaltung.txt", 3, [])
-
-    anonymize_file("tblBehandlung.txt", 10, [4])
-
-    anonymize_file("tblImpfung.txt", 2, [])
-
-    anonymize_file("tblBehandlungsverlauf.txt", 6, [4, 5])
-
-    anonymize_file("tblRechnung.txt", 14, [7])
-
-    anonymize_file("tblRechnungszeile.txt", 6, [])
-
-    return redirect(url_for('admin.index', dbwrite_ok=False))

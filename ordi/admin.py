@@ -95,22 +95,20 @@ def dbwrite():
 def anonymize_token(data):
     new = ""
     for char in data:
-        if(len(new) <= 2):
-            new += char
-        elif(ord(char) >= ord('0') and ord(char) <= ord('9')):
+        if(ord(char) >= ord('0') and ord(char) <= ord('9')):
             rndnum = random.randint(0, 3)
             newnum = ord(char) + rndnum
             if(newnum >= ord('0') and newnum <= ord('9')):
                 new += chr(newnum)
             else:
-                new += '4'
+                new += chr(ord(char) - rndnum)
         elif(ord(char) >= ord('A') and ord(char) <= ord('z')):
             rndnum = random.randint(0, 9)
             newnum = ord(char) + rndnum
             if(newnum >= ord('A') and newnum <= ord('z')):
                 new += chr(newnum)
             else:
-                new += 'g'
+                new += chr(ord(char) - rndnum)
         else:
             new += char
     return new

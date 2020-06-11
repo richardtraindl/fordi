@@ -45,11 +45,9 @@
 
       <p style="text-align: right; padding-right: 8px">
       {% if g.user %}
-        <span>{{ g.user['username'] }}</span>
-        &nbsp;
-        <a href="{{ url_for('auth.logout') }}">Abmelden</a>
+        <a href="{{ url_for('auth.logout') }}">abmelden</a>
       {% else %}
-        <a href="{{ url_for('auth.login') }}">Anmelden</a>
+        <a href="{{ url_for('auth.login') }}">anmelden</a>
       {% endif %}
     </p>
   </header>

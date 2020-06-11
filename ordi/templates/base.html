@@ -35,9 +35,13 @@
   </head>
   <body>
     <header>
+    {% if request.MOBILE %}
+      <h1 style="padding-left: 8px">Ordi {{ page_title }}</h1>
+    {% else %}
       <h1 style="padding-left: 8px">Ordi</h1>
 
       <h2>{{ page_title }}</h2>
+    {% endif %}
 
       <p style="text-align: right; padding-right: 8px">
       {% if g.user %}
@@ -45,8 +49,6 @@
         &nbsp;
         <a href="{{ url_for('auth.logout') }}">Abmelden</a>
       {% else %}
-        <a href="{{ url_for('auth.register') }}">Registrieren</a>
-        &nbsp;
         <a href="{{ url_for('auth.login') }}">Anmelden</a>
       {% endif %}
     </p>

@@ -11,6 +11,9 @@ h3, h3 a { margin: auto 0; padding: 0; font-size: 34px; }
 
 #content-wrapper { padding: 8px; background-color: #EEE; }
 
+header { 
+  display: block;
+}
 header p, header p a { font-size: 32px; line-height: 36px; }
 
 nav a, nav a:link, nav a:visited, nav a:active { font-size: 32px; }

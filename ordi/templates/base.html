@@ -12,6 +12,14 @@
         {% if page_title == "Kalender" %}
           <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
         {% endif %}
+        <script>
+          if(typeof window.orientation !== 'undefined'){
+            console.log("mobile")
+          }
+          else{
+            console.log("desktop")
+          }
+        </script>
         {% if page_title == "Termin" %}
           <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
           <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">

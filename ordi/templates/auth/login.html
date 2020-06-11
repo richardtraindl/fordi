@@ -9,7 +9,11 @@
 
 {% block content %}
   <form method="post">
+  {% if request.MOBILE %}
+    <div>
+  {% else %}
     <div class="row-grid" style="grid-template-columns: auto auto;">
+  {% endif %}
       <label for="username">Username</label>
       <input type="text" name="username" id="username" required>
 

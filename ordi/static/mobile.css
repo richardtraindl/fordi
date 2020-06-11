@@ -4,7 +4,7 @@
     line-height: 32px;
 }
 
-body { width: 96%; max-width: 96%; }
+body { width: 100%; max-width: 100%; }
 h1, h1 a { font-size: 36px; }
 h2, h2 a { font-size: 34px; }
 h3, h3 a { font-size: 32px; }

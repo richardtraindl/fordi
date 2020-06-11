@@ -1,69 +1,83 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width" initial-scale="1.0">
-        <title>Ordi - {% block title %}{% endblock %}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui-1.12.1.min.css') }}">
-        <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='jquery-ui-1.12.1.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
-        {% if page_title == "Kalender" %}
-          <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
-        {% endif %}
-        <script>
-          if(typeof window.orientation !== 'undefined'){
-            console.log("mobile")
-          }
-          else{
-            console.log("desktop")
-          }
-        </script>
-        {% if page_title == "Termin" %}
-          <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
-          <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">
-          <script src="{{ url_for('static', filename='jquery.timePicker.js') }}"></script>
-        {% endif %}
-    </head>
-    <body>
-        <header>
-            <h1 style="padding-left: 8px">Ordi</h1>
-            <h2>{{ page_title }}</h2>
-            <p style="text-align: right; padding-right: 8px">
-              {% if g.user %}
-                <span>{{ g.user['username'] }}</span>
-                &nbsp;
-                <a href="{{ url_for('auth.logout') }}">Abmelden</a>
-              {% else %}
-                <a href="{{ url_for('auth.register') }}">Registrieren</a>
-                &nbsp;
-                <a href="{{ url_for('auth.login') }}">Anmelden</a>
-              {% endif %}
-            </p>
-        </header>
+  <head>
+    <meta name="viewport" content="width=device-width" initial-scale="1.0">
 
-        {% if page_title != "Anmelden" and page_title != "Registrieren" %}
-        <nav class="flex-container">
-            <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
-            <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
-            <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
-            <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
-            <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
-        </nav>
-        {% endif %}
+    <title>Ordi - {% block title %}{% endblock %}</title>
 
-        <div id="content-wrapper">
-          <div id="msg">
-            {% for message in get_flashed_messages() %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-          </div>
-          <section id="content">
-            {% block content %}{% endblock %}
-          </section>
-        </div>
-    </body>
+    <link rel="stylesheet" href="{{ url_for('static', filename='all.css') }}">
+
+    {% if request.MOBILE %}
+      <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+    {% endif %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui-1.12.1.min.css') }}">
+
+    <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='jquery-ui-1.12.1.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
+
+    {% if page_title == "Kalender" %}
+      <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+    {% endif %}
+
+    {% if page_title == "Termin" %}
+      <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+
+      <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">
+
+      <script src="{{ url_for('static', filename='jquery.timePicker.js') }}"></script>
+    {% endif %}
+
+  </head>
+  <body>
+    <header>
+      <h1 style="padding-left: 8px">Ordi</h1>
+
+      <h2>{{ page_title }}</h2>
+
+      <p style="text-align: right; padding-right: 8px">
+      {% if g.user %}
+        <span>{{ g.user['username'] }}</span>
+        &nbsp;
+        <a href="{{ url_for('auth.logout') }}">Abmelden</a>
+      {% else %}
+        <a href="{{ url_for('auth.register') }}">Registrieren</a>
+        &nbsp;
+        <a href="{{ url_for('auth.login') }}">Anmelden</a>
+      {% endif %}
+    </p>
+  </header>
+
+  {% if page_title != "Anmelden" and page_title != "Registrieren" %}
+    <nav class="flex-container">
+      <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
+
+      <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
+
+      <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
+
+      <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
+
+      <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
+    </nav>
+  {% endif %}
+
+    <div id="content-wrapper">
+      <div id="msg">
+        {% for message in get_flashed_messages() %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      </div>
+
+      <section id="content">
+        {% block content %}{% endblock %}
+      </section>
+    </div>
+  </body>
 </html>
  
   

@@ -1,22 +1,20 @@
 
 * { 
-    font-size: 32px; 
-    line-height: 36px;
+    font-size: 30px; 
+    line-height: 32px;
 }
 
 body { width: 96%; max-width: 96%; }
-h1, h1 a { margin: auto 0; padding: 0; font-size: 40px; }
-h2, h2 a { margin: auto 0; padding: 0; font-size: 36px; text-decoration: underline; }
-h3, h3 a { margin: auto 0; padding: 0; font-size: 34px; }
-
-#content-wrapper { padding: 8px; background-color: #EEE; }
+h1, h1 a { font-size: 36px; }
+h2, h2 a { font-size: 34px; }
+h3, h3 a { font-size: 32px; }
 
 header { 
   display: block;
 }
-header p, header p a { font-size: 32px; line-height: 36px; }
+header p, header p a { font-size: 30px; line-height: 32px; }
 
-nav a, nav a:link, nav a:visited, nav a:active { font-size: 32px; }
+nav a, nav a:link, nav a:visited, nav a:active { font-size: 30px; }
 
 /* input[type=submit] {
   align-self: start; 

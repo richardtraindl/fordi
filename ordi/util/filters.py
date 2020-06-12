@@ -1,7 +1,7 @@
 
 
 from datetime import datetime, date, timedelta
-from ..values import ANREDE, GESCHLECHT, ARTIKEL
+from ..values import ANREDE, GESCHLECHT, IMPFUNG, ARTIKEL
 from .helper import reverse_lookup, gibFeiertag
 
 
@@ -17,6 +17,13 @@ def mapgeschlecht(geschlechtscode):
     if(geschlecht == None):
         geschlecht = ""
     return geschlecht
+
+
+def mapimpfung(impfungscode):
+    impfung = reverse_lookup(IMPFUNG, impfungscode)
+    if(impfung == None):
+        impfung = ""
+    return impfung
 
 
 def mapartikel(artikelcode):

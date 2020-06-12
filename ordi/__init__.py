@@ -62,11 +62,12 @@ def create_app(test_config=None):
     from . import admin
     app.register_blueprint(admin.bp)
 
-    from .util.filters import mapanrede, mapgeschlecht, mapartikel, filter_supress_none, \
-                              filter_format_date, filter_format_datetime, calc_kw, \
-                              add_days, add_hours, add_mins, gib_feiertag
+    from .util.filters import mapanrede, mapgeschlecht, mapimpfung, mapartikel, \
+                              filter_supress_none, filter_format_date, filter_format_datetime, \
+                              calc_kw, add_days, add_hours, add_mins, gib_feiertag
     app.jinja_env.filters['mapanrede'] = mapanrede
     app.jinja_env.filters['mapgeschlecht'] = mapgeschlecht
+    app.jinja_env.filters['mapimpfung'] = mapimpfung
     app.jinja_env.filters['mapartikel'] = mapartikel
     app.jinja_env.filters['sn'] = filter_supress_none
     app.jinja_env.filters['dt'] = filter_format_date

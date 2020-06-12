@@ -1,0 +1,131 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Karteikarte
+{% endblock %}
+
+
+{% block content %}
+  <div style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden; background-color: Cornsilk;">
+  <p>
+    {{- tierhaltung.person.anredecode|mapanrede -}} &nbsp;
+    {{- tierhaltung.person.titel -}} &nbsp;
+    {{- tierhaltung.person.familienname -}} &nbsp;
+    {{- tierhaltung.person.vorname -}}
+    <br>
+    {{- tierhaltung.person.adr_plz|sn -}} &nbsp;
+    {{- tierhaltung.person.adr_ort|sn -}} &nbsp;
+    {{- tierhaltung.person.adr_strasse|sn -}} &nbsp;
+    {{- tierhaltung.person.kontakte|sn -}}
+  </p>
+
+  <p>
+    {{- tierhaltung.tier.tiername -}} &nbsp;
+    {{- tierhaltung.tier.tierart -}} &nbsp;
+    {{- tierhaltung.tier.geburtsdatum|dt -}} &nbsp;
+    {{- tierhaltung.tier.geschlechtscode|mapgeschlecht -}}
+    <br>
+    {% if tierhaltung.tier.chip_nummer|length > 0 %}
+      Chipnr. &nbsp; {{- tierhaltung.tier.chip_nummer -}} &nbsp;
+    {% endif %}
+
+    {% if tierhaltung.tier.eu_passnummer|length > 0 %}
+      EU-Passnr. &nbsp; {{- tierhaltung.tier.eu_passnummer -}} &nbsp;
+    {% endif %}
+
+    {% if tierhaltung.tier.viren|length > 0 %}
+      Viren &nbsp; {{- tierhaltung.tier.viren -}} &nbsp;
+    {% endif %}
+
+    {% if tierhaltung.tier.merkmal|length > 0 %}
+      Merkmal &nbsp; {{- tierhaltung.tier.merkmal -}}
+    {% endif %}
+  </p>
+  </div>
+
+  <div class="small-gap" style="background-color: White;"></div>
+
+  <div id="scroller" class="mobile-behandlungen" style="max-height: 65vh; overflow-y: scroll; overflow-x: hidden;">
+    {% for behandlung in behandlungen %}
+        <p style="display: none;">{{- behandlung.id -}}"</p>
+
+        <ul style="border: 1px solid black">
+          <li style="background-color: LightBlue">
+              <span style="font-weight: bold">{{- behandlung.datum|dt -}}</span>
+          </li>
+
+          {% if behandlung.diagnose|length > 0 %}
+            <li>
+                <span style="font-weight: bold">Diagnose</span>
+                <br>
+                {{- behandlung.diagnose -}}
+            </li>
+          {% endif %}
+
+          {% if behandlung.laborwerte1|length > 0 %}
+            <li>
+                <span style="font-weight: bold">Laborwerte1</span>
+                <br>
+                {{- behandlung.laborwerte1 -}}
+            </li>
+          {% endif %}
+
+          {% if behandlung.laborwerte2|length > 0 %}
+            <li>
+                <span style="font-weight: bold">Laborwerte2</span>
+                <br>
+                {{- behandlung.laborwerte2 -}}
+            </li>
+          {% endif %}
+
+          {% if behandlung.arzneien|length > 0 %}
+            <li>
+                <span style="font-weight: bold">Arzneien</span>
+                <br>
+                {{- behandlung.arzneien -}}
+            </li>
+          {% endif %}
+
+          {% if behandlung.arzneimittel|length > 0 %}
+            <li>
+                <span style="font-weight: bold">Arzneimittel</span>
+                <br>
+                {{- behandlung.arzneimittel -}}
+            </li>
+          {% endif %}
+
+          {% if behandlung.impfungen %}
+            <li>
+                <span style="font-weight: bold">Impfungen</span>
+                <br>
+                {%- for impfung in behandlung.impfungen -%}
+                  {% if loop.index > 1 %},{%- endif -%}
+                  {{- impfung.impfungscode|mapimpfung -}}
+                {%- endfor -%}
+            </li>
+          {% endif %}
+
+          {% if behandlung.gewicht|length > 0 %}
+            <li>
+                <span style="font-weight: bold">Gewicht</span>
+                <br>
+                {{- behandlung.gewicht|sn -}}
+            </li>
+          {% endif %}
+        </ul>
+      {% endfor %}
+   </div>
+
+    <script>
+      $(document).ready(function(){
+
+        $("#edit").focus();
+
+        var element = document.getElementById("scroller");
+        element.scrollTop = element.scrollHeight;
+
+      });
+    </script>
+{% endblock %}

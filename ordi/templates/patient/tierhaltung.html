@@ -83,16 +83,10 @@
 
               <td style="width: 9%">
                 <textarea name="impfungen[]" class="impfungen" readonly disabled>
-                  {%- set vars = {'selected': False} -%}
-                  {%- for impfungswert in impfungswerte -%}
-                    {%- for impfung in behandlung.impfungen -%}
-                      {%- if impfung.impfungscode|string == impfungswert[1]|string -%}
-                        {%- if vars.selected -%}, {%- endif -%}
-                        {{- impfungswert[0] -}}
-                        {%- if vars.update({'selected': True}) -%} {%- endif -%}
-                      {%- endif -%}
-                    {%- endfor -%}
-                  {%- endfor -%}
+                {%- for impfung in behandlung.impfungen -%}
+                  {% if loop.index > 1 %},{%- endif -%}
+                  {{- impfung.impfungscode|mapimpfung -}}
+                {%- endfor -%}
                 </textarea>
               </td>
 

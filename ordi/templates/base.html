@@ -63,31 +63,30 @@
     {% endif %}      
   </header>
 
-  {% if page_title != "Anmelden" and page_title != "Registrieren" %}
-    {% if request.MOBILE %}
-      <nav id="mobile-nav" class="flex-container">
-        <ul>
-          <li><a href="{{ url_for('patient.index') }}">Patienten</a></li>
-          <li><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></li>
-          <li><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></li>
-          <li><a href="{{ url_for('kalender.index') }}">Kalender</a></li>
-          <li><a href="{{ url_for('auth.logout') }}">Abmelden</a></li>
-        </ul>
-      </nav>
-    {% else %}
-      <nav class="flex-container">
-        <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
+  {% if request.MOBILE %}
+  <nav id="mobile-nav" class="flex-container">
+    <ul>
+      <li><a href="{{ url_for('patient.index') }}">Patienten</a></li>
+      <li><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></li>
+      <li><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></li>
+      <li><a href="{{ url_for('kalender.index') }}">Kalender</a></li>
+      <li><a href="{{ url_for('auth.logout') }}">Abmelden</a></li>
+    </ul>
+  </nav>
+  {% else %}
+  <nav class="flex-container">
+    <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
 
-        <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
+    <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
 
-        <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
+    <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
 
-        <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
+    <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
 
-        <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
-      </nav>
-    {% endif %}
+    <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
+  </nav>
   {% endif %}
+
 
     <div id="content-wrapper">
       <div id="msg">

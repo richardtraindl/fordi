@@ -54,48 +54,6 @@ def index(template):
         page_title="Karteikarten")
 
 
-"""def index():
-    print("###")
-    familienname = "A"
-    tiername = ""
-    kunde = True
-    patient = True
-
-    if(request.method == 'POST'):
-        familienname = request.form['familienname']
-        tiername = request.form['tiername']
-        if(request.form.get('kunde')):
-            kunde = True
-        else:
-            kunde = False
-        if(request.form.get('patient')):
-            patient = True
-        else:
-            patient = False
-    
-    tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
-        .join(Tierhaltung.person) \
-        .join(Tierhaltung.tier) \
-        .filter(Person.familienname.like(familienname + "%"), 
-                Tier.tiername.like(tiername + "%"), 
-                Person.kunde==kunde, Tier.patient==patient).all()
-
-    th = []
-    for tierhaltung in tierhaltungen:
-        token = tierhaltung.Person.titel + \
-                tierhaltung.Person.familienname + \
-                tierhaltung.Person.vorname + \
-                tierhaltung.Tier.tiername + \
-                tierhaltung.Tier.tierart + \
-                mapgeschlecht(tierhaltung.Tier.geschlechtscode) + \
-                filter_format_date(tierhaltung.Tier.geburtsdatum)
-        th.append(token)
-
-    return render_template('patient/mobile_index.html', tierhaltungen=th, 
-        familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 
-        page_title="Karteikarten")"""
-
-
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
@@ -140,8 +98,9 @@ def create():
 
 
 @bp.route('/<int:id>/show', methods=('GET',))
+@mobile_template('patient/{mobile_}tierhaltung.html')
 @login_required
-def show(id):
+def show(template, id=id):
     anredewerte = []
     for key, value in ANREDE.items():
         anredewerte.append([key, value])
@@ -168,7 +127,7 @@ def show(id):
     termin = db.session.query(Termin) \
                .filter(and_(Termin.tierhaltung_id==id, Termin.ende >= datum)).first()
 
-    return render_template('patient/tierhaltung.html', tierhaltung=tierhaltung, 
+    return render_template(template, tierhaltung=tierhaltung, 
         termin=termin, behandlungen=behandlungen, datum=datum.strftime("%d.%m.%Y"), 
         anredewerte=anredewerte, geschlechtswerte=geschlechtswerte, 
         laborreferenzen=laborreferenzen, impfungswerte=impfungswerte, page_title="Karteikarte")

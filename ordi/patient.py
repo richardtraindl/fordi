@@ -5,6 +5,7 @@ from operator import attrgetter
 import re, os
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
+from flask_mobility.decorators import mobile_template
 from werkzeug.exceptions import abort
 from sqlalchemy import func, distinct, or_, and_
 
@@ -21,8 +22,9 @@ bp = Blueprint('patient', __name__)
 
 #tierhaltung
 @bp.route('/', methods=('GET', 'POST'))
+@mobile_template('patient/{mobile_}index.html')
 @login_required
-def index():
+def index(template):
     familienname = "A"
     tiername = ""
     kunde = True
@@ -47,9 +49,51 @@ def index():
                 Tier.tiername.like(tiername + "%"), 
                 Person.kunde==kunde, Tier.patient==patient).all() # .limit(500)
 
-    return render_template('patient/index.html', tierhaltungen=tierhaltungen, 
+    return render_template(template, tierhaltungen=tierhaltungen, 
         familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 
         page_title="Karteikarten")
+
+
+"""def index():
+    print("###")
+    familienname = "A"
+    tiername = ""
+    kunde = True
+    patient = True
+
+    if(request.method == 'POST'):
+        familienname = request.form['familienname']
+        tiername = request.form['tiername']
+        if(request.form.get('kunde')):
+            kunde = True
+        else:
+            kunde = False
+        if(request.form.get('patient')):
+            patient = True
+        else:
+            patient = False
+    
+    tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
+        .join(Tierhaltung.person) \
+        .join(Tierhaltung.tier) \
+        .filter(Person.familienname.like(familienname + "%"), 
+                Tier.tiername.like(tiername + "%"), 
+                Person.kunde==kunde, Tier.patient==patient).all()
+
+    th = []
+    for tierhaltung in tierhaltungen:
+        token = tierhaltung.Person.titel + \
+                tierhaltung.Person.familienname + \
+                tierhaltung.Person.vorname + \
+                tierhaltung.Tier.tiername + \
+                tierhaltung.Tier.tierart + \
+                mapgeschlecht(tierhaltung.Tier.geschlechtscode) + \
+                filter_format_date(tierhaltung.Tier.geburtsdatum)
+        th.append(token)
+
+    return render_template('patient/mobile_index.html', tierhaltungen=th, 
+        familienname=familienname, tiername=tiername, kunde=kunde, patient=patient, 
+        page_title="Karteikarten")"""
 
 
 @bp.route('/create', methods=('GET', 'POST'))

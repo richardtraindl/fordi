@@ -36,34 +36,57 @@
   <body>
     <header>
     {% if request.MOBILE %}
-      <h1 style="padding-left: 8px">Ordi {{ page_title }}</h1>
+      <h1>Ordi</h1>
+
+      {% if page_title == "Behandlungsverläufe" %}
+        <h2>Beh.Verläufe</h2>
+      {% else %}
+        <h2>{{ page_title }}</h2>
+      {% endif %}
+
+      <p><a id="nav-button" href="#">
+         <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}"></a></p>
     {% else %}
       <h1 style="padding-left: 8px">Ordi</h1>
 
       <h2>{{ page_title }}</h2>
-    {% endif %}
 
       <p style="text-align: right; padding-right: 8px">
       {% if g.user %}
         <a href="{{ url_for('auth.logout') }}">abmelden</a>
       {% else %}
-        <a href="{{ url_for('auth.login') }}">anmelden</a>
+        {% if page_title != "Anmelden" %}
+          <a href="{{ url_for('auth.login') }}">anmelden</a>
+        {% endif %}
       {% endif %}
-    </p>
+      </p>
+    {% endif %}      
   </header>
 
   {% if page_title != "Anmelden" and page_title != "Registrieren" %}
-    <nav class="flex-container">
-      <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
+    {% if request.MOBILE %}
+      <nav id="mobile-nav" class="flex-container">
+        <ul>
+          <li><a href="{{ url_for('patient.index') }}">Patienten</a></li>
+          <li><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></li>
+          <li><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></li>
+          <li><a href="{{ url_for('kalender.index') }}">Kalender</a></li>
+          <li><a href="{{ url_for('auth.logout') }}">Abmelden</a></li>
+        </ul>
+      </nav>
+    {% else %}
+      <nav class="flex-container">
+        <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
 
-      <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
+        <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
 
-      <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
+        <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
 
-      <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
+        <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
 
-      <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
-    </nav>
+        <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
+      </nav>
+    {% endif %}
   {% endif %}
 
     <div id="content-wrapper">
@@ -77,6 +100,18 @@
         {% block content %}{% endblock %}
       </section>
     </div>
+
+    {% if request.MOBILE %}
+     <script>
+      $(document).ready(function(){
+        $("#nav-button").on("click",function(){
+          $("#mobile-nav").toggle();
+          return false;
+        });
+      });
+     </script>
+    {% endif %}
+
   </body>
 </html>
  

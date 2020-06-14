@@ -5,8 +5,8 @@
     box-sizing: border-box;
 }
 
-html { width: 100vw; max-width: 100vw; margin: 0px; padding: 0px; }
-body { padding: 8px; }
+html { margin: 0px; padding: 0px; }
+body { padding: 4px; }
 h1, h1 a { font-size: 32px; }
 h2, h2 a { font-size: 30px; }
 h3, h3 a { font-size: 28px; }
@@ -23,10 +23,6 @@ nav a, nav a:link, nav a:visited, nav a:active { font-size: 24px; }
   display: none;
 }
 #mobile-nav ul { list-style-type: none; }
-
-.liste-wrapper {
-    max-height: 55vh;
-}
 
 .mobile-behandlungen ul { list-style-type: none; margin: 0px; padding: 0px}
 

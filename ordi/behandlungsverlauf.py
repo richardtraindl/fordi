@@ -4,6 +4,7 @@ from datetime import date, timedelta
 import os
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
+from flask_mobility.decorators import mobile_template
 from werkzeug.exceptions import abort
 from sqlalchemy import func, distinct, or_, and_
 
@@ -19,8 +20,9 @@ bp = Blueprint('behandlungsverlauf', __name__, url_prefix='/behandlungsverlauf')
 
 
 @bp.route('/index', methods=('GET', 'POST'))
+@mobile_template('behandlungsverlauf/{mobile_}index.html')
 @login_required
-def index():
+def index(template):
     if(request.method == 'POST'):
         try:
             jahr = int(request.form['jahr'])
@@ -45,7 +47,7 @@ def index():
     else:
         str_jahr = ""
 
-    return render_template('behandlungsverlauf/index.html', behandlungsverlaeufe=behandlungsverlaeufe, 
+    return render_template(template, behandlungsverlaeufe=behandlungsverlaeufe, 
         jahr=str_jahr, page_title="Behandlungsverläufe")
 
 
@@ -111,6 +113,15 @@ def edit(behandlungsverlauf_id):
     return render_template('behandlungsverlauf/behandlungsverlauf.html', 
         behandlungsverlauf=behandlungsverlauf, changed=False, 
         page_title="Behandlungsverlauf")
+
+
+@bp.route('/<int:behandlungsverlauf_id>/show', methods=('GET',))
+@login_required
+def show(behandlungsverlauf_id):
+    behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
+
+    return render_template('behandlungsverlauf/mobile_behandlungsverlauf.html', 
+        behandlungsverlauf=behandlungsverlauf, page_title="Behandlungsverlauf")
 
 
 @bp.route('/<int:behandlungsverlauf_id>/download', methods=('GET', 'POST'))

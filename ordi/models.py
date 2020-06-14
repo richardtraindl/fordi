@@ -120,6 +120,7 @@ class Behandlungsverlauf(db.Model):
 
 class Rechnung(db.Model):
     __tablename__ = 'rechnung'
+    __table_args__ = (db.UniqueConstraint('jahr', 'lfnr'),)
 
     id = db.Column(db.Integer, db.Sequence('rechnung_id_seq'), primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id', ondelete='CASCADE'), nullable=False, index=True)

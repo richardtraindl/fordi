@@ -44,7 +44,7 @@ def dbwrite():
         return False
 
     print("starte person import")
-    dbwrite_ok = import_person(5000)
+    dbwrite_ok = import_person(0)
     if(dbwrite_ok == False):
         return False
 

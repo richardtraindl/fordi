@@ -41,7 +41,11 @@
       {% if page_title == "Behandlungsverläufe" %}
         <h2>Beh.Verläufe</h2>
       {% else %}
-        <h2>{{ page_title }}</h2>
+        {% if page_title == "Behandlungsverlauf" %}
+          <h2>Beh.Verlauf</h2>
+        {% else %}
+          <h2>{{ page_title }}</h2>
+        {% endif %}
       {% endif %}
 
       <p><a id="nav-button" href="#">

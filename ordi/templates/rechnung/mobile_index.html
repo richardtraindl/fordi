@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Rechnungen
+{% endblock %}
+
+
+{% block content %}
+  <div class="small-gap"></div>
+
+  <form method="post" action="{{ url_for('rechnung.index') }}">
+    <div class="row-grid" style="grid-template-columns: auto auto; max-height: 20vh;">
+      <label for="jahr">Jahr</label>
+
+      <input type="text" size="8" name="jahr" value="{{- jahr -}}">
+    </div>
+
+    <div class="small-gap"></div>
+
+    <div>
+      <input type="submit" value="suchen">
+    </div>
+  </form>
+
+  <div class="small-gap"></div>
+
+  <div class="liste-wrapper">
+    <table class="liste">
+      <tr>
+        <th width="50%">Kunde</th>
+        <th width="50%">Patient</th>
+      </tr>
+      {% for rechnung in rechnungen %}
+        <tr>
+          <td style="width: 50%">
+            <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
+              {{ rechnung.Person.anredecode|mapanrede }}
+              {{ rechnung.Person.titel }}
+              {{ rechnung.Person.familienname }}
+              {{ rechnung.Person.vorname }}
+            </a>
+          </td>
+          <td style="width: 50%">
+            <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
+              {{ rechnung.Tier.tiername }}
+              {{ rechnung.Tier.tierart }}
+              {{ rechnung.Tier.geschlechtscode|mapgeschlecht }}
+              {{ rechnung.Tier.geburtsdatum|dt }}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+   </div>
+{% endblock %}
+

@@ -1,0 +1,23 @@
+
+  <p>
+    {{- tier.tiername -}} &nbsp;
+    {{- tier.tierart -}} &nbsp;
+    {{- tier.geburtsdatum|dt -}} &nbsp;
+    {{- tier.geschlechtscode|mapgeschlecht -}}
+    <br>
+    {% if tier.chip_nummer|length > 0 %}
+      Chipnr. &nbsp; {{- tier.chip_nummer -}} &nbsp;
+    {% endif %}
+
+    {% if tier.eu_passnummer|length > 0 %}
+      EU-Passnr. &nbsp; {{- tier.eu_passnummer -}} &nbsp;
+    {% endif %}
+
+    {% if tier.viren|length > 0 %}
+      Viren &nbsp; {{- tier.viren -}} &nbsp;
+    {% endif %}
+
+    {% if tier.merkmal|length > 0 %}
+      Merkmal &nbsp; {{- tier.merkmal -}}
+    {% endif %}
+  </p>

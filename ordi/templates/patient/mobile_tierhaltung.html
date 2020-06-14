@@ -8,50 +8,22 @@
 
 
 {% block content %}
-  <div style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden; background-color: Cornsilk;">
-  <p>
-    {{- tierhaltung.person.anredecode|mapanrede -}} &nbsp;
-    {{- tierhaltung.person.titel -}} &nbsp;
-    {{- tierhaltung.person.familienname -}} &nbsp;
-    {{- tierhaltung.person.vorname -}}
-    <br>
-    {{- tierhaltung.person.adr_plz|sn -}} &nbsp;
-    {{- tierhaltung.person.adr_ort|sn -}} &nbsp;
-    {{- tierhaltung.person.adr_strasse|sn -}} &nbsp;
-    {{- tierhaltung.person.kontakte|sn -}}
-  </p>
+  <div style="max-height: 24vh; overflow-y: scroll; overflow-x: hidden;">
+    {% with person=tierhaltung.person %}
+      {% include '_mobile_person.html' %}
+    {% endwith %}
 
-  <p>
-    {{- tierhaltung.tier.tiername -}} &nbsp;
-    {{- tierhaltung.tier.tierart -}} &nbsp;
-    {{- tierhaltung.tier.geburtsdatum|dt -}} &nbsp;
-    {{- tierhaltung.tier.geschlechtscode|mapgeschlecht -}}
-    <br>
-    {% if tierhaltung.tier.chip_nummer|length > 0 %}
-      Chipnr. &nbsp; {{- tierhaltung.tier.chip_nummer -}} &nbsp;
-    {% endif %}
+    {% with tier=tierhaltung.tier %}
+      {% include '_mobile_tier.html' %}
+    {% endwith %}
 
-    {% if tierhaltung.tier.eu_passnummer|length > 0 %}
-      EU-Passnr. &nbsp; {{- tierhaltung.tier.eu_passnummer -}} &nbsp;
-    {% endif %}
-
-    {% if tierhaltung.tier.viren|length > 0 %}
-      Viren &nbsp; {{- tierhaltung.tier.viren -}} &nbsp;
-    {% endif %}
-
-    {% if tierhaltung.tier.merkmal|length > 0 %}
-      Merkmal &nbsp; {{- tierhaltung.tier.merkmal -}}
-    {% endif %}
-  </p>
+    <div class="small-gap"></div>
   </div>
 
-  <div class="small-gap" style="background-color: White;"></div>
+  <div id="scroller" class="mobile-behandlungen" style="max-height: 70vh; overflow-y: scroll; overflow-x: hidden;">
 
-  <div id="scroller" class="mobile-behandlungen" style="max-height: 65vh; overflow-y: scroll; overflow-x: hidden;">
     {% for behandlung in behandlungen %}
-        <p style="display: none;">{{- behandlung.id -}}"</p>
-
-        <ul style="border: 1px solid black">
+        <ul style="border: 1px solid black; background-color: Snow";>
           <li style="background-color: LightBlue">
               <span style="font-weight: bold">{{- behandlung.datum|dt -}}</span>
           </li>
@@ -120,8 +92,6 @@
 
     <script>
       $(document).ready(function(){
-
-        $("#edit").focus();
 
         var element = document.getElementById("scroller");
         element.scrollTop = element.scrollHeight;

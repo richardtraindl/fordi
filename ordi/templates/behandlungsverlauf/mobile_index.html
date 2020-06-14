@@ -1,0 +1,58 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Behandlungsverläufe
+{% endblock %}
+
+
+{% block content %}
+  <div class="small-gap"></div>
+  
+  <form method="post" action="{{ url_for('behandlungsverlauf.index') }}">
+    <div class="row-grid" style="grid-template-columns: auto auto; max-height: 20vh;">
+      <label for="jahr">Behandlungsjahr</label>
+
+      <input type="text" size="10" name="jahr" value="{{- jahr -}}">
+    </div>
+
+    <div class="small-gap"></div>
+
+    <div>
+      <input type="submit" value="suchen">
+    </div>
+  </form>
+
+  <div class="small-gap"></div>
+
+<div class="liste-wrapper">
+    <table class="liste">
+      <tr>
+        <th width="50%">Kunde</th>
+        <th width="50%">Patient</th>
+      </tr>
+      {% for b in behandlungsverlaeufe %}
+      <tr>
+        <td style="width: 50%">
+            <a href="{{ url_for('behandlungsverlauf.show', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">
+              {{ b.Person.anredecode|mapanrede }}
+              {{ b.Person.titel }}
+              {{ b.Person.familienname }}
+              {{ b.Person.vorname }}
+            </a>
+          </td>
+          <td style="width: 50%">
+            <a href="{{ url_for('behandlungsverlauf.show', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">
+              {{ b.Tier.tiername }}
+              {{ b.Tier.tierart }}
+              {{ b.Tier.geschlechtscode|mapgeschlecht }}
+              {{ b.Tier.geburtsdatum|dt }}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}
+

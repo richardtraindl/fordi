@@ -4,8 +4,10 @@ from datetime import datetime
 import os, types
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
+from flask_mobility.decorators import mobile_template
 from werkzeug.exceptions import abort
 from sqlalchemy import func, distinct, or_, and_
+from sqlalchemy.exc import SQLAlchemyError
 
 from . import db
 from ordi.auth import login_required
@@ -19,8 +21,9 @@ bp = Blueprint('rechnung', __name__, url_prefix='/rechnung')
 
 
 @bp.route('/index', methods=('GET', 'POST'))
+@mobile_template('rechnung/{mobile_}index.html')
 @login_required
-def index():
+def index(template):
     if(request.method == 'POST'):
         try:
             jahr = int(request.form['jahr'])
@@ -42,7 +45,7 @@ def index():
         str_jahr = str(jahr)
     else:
         str_jahr = ""
-    return render_template('rechnung/index.html', rechnungen=rechnungen, jahr=str_jahr, page_title="Rechnungen")
+    return render_template(template, rechnungen=rechnungen, jahr=str_jahr, page_title="Rechnungen")
 
 
 def calc_and_fill_rechnung(rechnung, rechnungszeilen):
@@ -126,6 +129,7 @@ def create(id):
         error = calc_and_fill_rechnung(rechnung, rechnungszeilen)
         if(len(error) > 0):
             flash(error)
+            db.session.rollback()
             return render_template('rechnung/rechnung.html', id=id, 
                 rechnung=rechnung, rechnungszeilen=reqrechnungszeilen, 
                 person=tierhaltung.person, tier=tierhaltung.tier, 
@@ -134,12 +138,30 @@ def create(id):
         rechnung.person_id = tierhaltung.person.id
         rechnung.tier_id = tierhaltung.tier.id
         db.session.add(rechnung)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            error = str(e.__dict__['orig'])
+            flash(error)
+            return render_template('rechnung/rechnung.html', id=id, 
+                rechnung=rechnung, rechnungszeilen=reqrechnungszeilen, 
+                person=tierhaltung.person, tier=tierhaltung.tier, 
+                artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
 
         for rechnungszeile in rechnungszeilen:
             rechnungszeile.rechnung_id = rechnung.id
             db.session.add(rechnungszeile)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            error = str(e.__dict__['orig'])
+            flash(error)
+            return render_template('rechnung/rechnung.html', id=id, 
+                rechnung=rechnung, rechnungszeilen=reqrechnungszeilen, 
+                person=tierhaltung.person, tier=tierhaltung.tier, 
+                artikelwerte=artikelwerte, changed=True, page_title="Rechnung")
 
         return redirect(url_for('rechnung.edit', rechnung_id=rechnung.id))
     else:
@@ -163,6 +185,13 @@ def edit(rechnung_id):
     rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung.id).all()
 
     if(request.method == 'POST'):
+        try:
+            new = request.form['new']
+            print("new")
+            return redirect(url_for('rechnung.create'))
+        except:
+            pass
+
         rechnung, error = fill_and_validate_rechnung(rechnung, request)
         reqrechnungszeilen = build_rechnungszeilen(request)
 
@@ -238,13 +267,35 @@ def edit(rechnung_id):
                 rechnungszeilen=mergedzeilen, artikelwerte=artikelwerte, 
                 changed=True, page_title="Rechnung")
 
-        db.session.commit()
+        try:
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            error = str(e.__dict__['orig'])
+            flash(error)
+            return render_template('rechnung/rechnung.html', rechnung=rechnung, 
+                rechnungszeilen=mergedzeilen, artikelwerte=artikelwerte, 
+                changed=True, page_title="Rechnung")
 
         rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung.id).all()
 
     return render_template('rechnung/rechnung.html', rechnung=rechnung, 
         rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, 
         changed=False, page_title="Rechnung")
+
+
+@bp.route('/<int:rechnung_id>/show', methods=('GET',))
+@login_required
+def show(rechnung_id):
+    artikelwerte = []
+    for key, value in ARTIKEL.items():
+        artikelwerte.append([key, value])
+
+    rechnung = db.session.query(Rechnung).get(rechnung_id)
+    rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung.id).all()
+
+    return render_template('rechnung/mobile_rechnung.html', rechnung=rechnung, 
+        rechnungszeilen=rechnungszeilen, artikelwerte=artikelwerte, page_title="Rechnung")
 
 
 @bp.route('/<int:rechnung_id>/download', methods=('GET', 'POST'))

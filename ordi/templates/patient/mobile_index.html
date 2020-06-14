@@ -8,47 +8,41 @@
 
 
 {% block content %}
-    <div class="gap"></div>
+    <div class="small-gap"></div>
 
     <form method="post" action="{{ url_for('patient.index') }}">
-        <div class="flex-container">
-          <div>
-            <p><label for="familienname">Familienname</label></p>
-            <p><input type="text" size="10" name="familienname" value="{{ familienname }}"></p>
-          </div>
+      <div class="row-grid" style="grid-template-columns: auto auto; max-height: 20vh;">
+        <label for="familienname">Familienname</label>
 
-          <div>
-            <p><label for="tiername">Tiername</label></p>
-            <p><input type="text" size="10" name="tiername" value="{{ tiername }}"></p>
-          </div>
-        </div>
+        <input type="text" size="8" name="familienname" value="{{ familienname }}">
 
-        <div class="flex-container">
-          <div>
-            <label for="kunde">Kunde</label>
-          {% if kunde == 0 %}
-            <input type="checkbox" name="kunde" value="0">
-          {% else %}
-            <input type="checkbox" name="kunde" value="1" checked>
-          {% endif %}
-          </div>
+        <label for="tiername">Tiername</label>
 
-          <div>
-            <label for="patient">Patient</label>
-          {% if patient == 0 %}
-            <input type="checkbox" name="patient" value="0">
-          {% else %}
-            <input type="checkbox" name="patient" value="1" checked>
-          {% endif %}
-          </div>
-        </div>
+        <input type="text" size="8" name="tiername" value="{{ tiername }}">
 
-        <div>
-          <input type="submit" value="suchen">
-        </div>
+        <label for="kunde">Kunde</label>
+        {% if kunde == 0 %}
+          <input type="checkbox" name="kunde" value="0">
+        {% else %}
+          <input type="checkbox" name="kunde" value="1" checked>
+        {% endif %}
+
+        <label for="patient">Patient</label>
+        {% if patient == 0 %}
+          <input type="checkbox" name="patient" value="0">
+        {% else %}
+          <input type="checkbox" name="patient" value="1" checked>
+        {% endif %}
+      </div>
+
+      <div class="small-gap"></div>
+
+      <div>
+        <input type="submit" value="suchen">
+      </div>
     </form>
 
-    <div class="gap"></div>
+    <div class="small-gap"></div>
 
   <div class="liste-wrapper">
     <table class="liste">

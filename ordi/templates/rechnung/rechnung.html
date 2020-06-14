@@ -158,6 +158,8 @@
 
       <div class="flex-container">
         <p><input type="submit" value="Rechnung speichern"></p>
+        
+        <p><a class="btn" id="als_neue_rechnung" href="#">als neue Rechnung speichern</a></p>
 
       {% if changed == False %}
         <p><a id="print" class="btn" href="#">Rechnung drucken</a></p>
@@ -305,6 +307,16 @@
 
           $('.change').on('input', function(){
             $('#print').addClass('grayed');
+            return false; 
+          });
+
+          $('#als_neue_rechnung').click(function(){ 
+            var rechnung_id = $("#rechnung_id").val();
+            if(rechnung_id != null){
+              var input = $("<input>").attr("type", "hidden").attr("name", "new").val("new");
+              $('form').append(input);
+              $('form').submit();
+            }
             return false; 
           });
 

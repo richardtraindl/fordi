@@ -4,13 +4,42 @@ import os
 from datetime import date, datetime
 import random
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, flash, g, redirect, render_template, request, url_for
+from werkzeug.utils import secure_filename
 
 from . import db
+from ordi.auth import admin_login_required
 from ordi.models import *
 
 
-bp = Blueprint('admin', __name__,)
+bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+
+@bp.route('/', methods=('GET', 'POST'))
+@admin_login_required
+def index(filename=None):
+    return render_template('admin/index.html', filename=filename, page_title="Admin")
+
+
+@bp.route('/upload', methods=['GET', 'POST'])
+@admin_login_required
+def upload():
+    if request.method == 'POST':
+        if('file' not in request.files):
+            flash('No file part')
+            return redirect(url_for('admin.index'))
+
+        file = request.files['file']
+
+        if(file.filename == ''):
+            flash('No selected file')
+            return redirect(url_for('admin.index'))
+
+        if(file):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename))
+            return redirect(url_for('admin.index', filename=file.filename))
+    return
 
 
 @bp.cli.command("anonymize")

@@ -20,7 +20,7 @@ def create_app(test_config=None):
         SECRET_KEY = 'dev',
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'],
         SQLALCHEMY_TRACK_MODIFICATIONS = False,
-        SEND_FILE_MAX_AGE_DEFAULT = 0
+        SEND_FILE_MAX_AGE_DEFAULT = 0,
     )
 
     if test_config is None:

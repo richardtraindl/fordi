@@ -25,6 +25,17 @@ def login_required(view):
     return wrapped_view
 
 
+def admin_login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if(g.user is None or g.user.username != "richard"):
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if(request.method == 'POST'):

@@ -1,0 +1,21 @@
+
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Admin
+{% endblock %}
+
+
+{% block content %}
+  <h3>Datei hochladen</h3>
+
+  <div class="gap"></div>
+
+  <form method="post" enctype="multipart/form-data" action="{{ url_for('admin.upload') }}">
+    <input type="file" name="file" value="{{ filename }}">
+    <input type="submit" value="Upload">
+  </form>
+{% endblock %}
+

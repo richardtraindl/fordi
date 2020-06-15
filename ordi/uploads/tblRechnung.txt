@@ -1,0 +1,210 @@
+35;3162;4184;2016;6;2016-06-09 00:00:00;"Wien";"Vomitus und Diarrhoe";;64,20;62,42;1,20;0,00;0,58
+52;4745;6752;2016;1;2016-07-22 00:00:00;"Wien";"Krallen schneiden, Bravecto";;40,40;35,82;2,00;0,00;2,58
+53;4750;6759;2016;2;2016-07-23 00:00:00;"Wien";"Durchfall mit Erbrechen, Scheinträchtigkeit";;50,20;47,24;2,50;0,00;0,46
+55;3491;4712;2016;6;2016-09-12 00:00:00;"Wien";"";;82,65;73,03;6,67;2,95;0,00
+56;3491;4712;2016;6;2016-09-12 00:00:00;"Wien";"Coxarthrose";;82,65;73,03;6,67;2,95;0,00
+57;3491;4712;2016;6;2016-09-12 00:00:00;"Wien";"Coxarthrose";;82,65;73,03;6,67;2,95;0,00
+65;4745;6752;2015;;2016-09-22 00:00:00;"Wien";"Krallen schneiden";;0,00;0,00;0,00;0,00;0,00
+66;4745;6752;2015;6;2016-09-22 00:00:00;"Wien";"Krallen schneiden";;0,00;0,00;0,00;0,00;0,00
+67;4745;6752;2015;6;2016-09-22 00:00:00;"Wien";"Krallen schneiden";;0,00;0,00;0,00;0,00;0,00
+73;1395;1934;2016;5;2016-09-23 00:00:00;"Wien";"hhh";;123,00;102,50;20,50;0,00;0,00
+74;1395;1934;2016;12;2016-09-23 00:00:00;"Wien";"6hhh";;55,00;45,83;9,17;0,00;0,00
+75;4121;5750;2016;1;2016-09-23 00:00:00;"Wien";"";;0,00;0,00;0,00;0,00;0,00
+80;1395;1934;2016;6;2016-09-25 00:00:00;"Wien";"";;0,00;0,00;0,00;0,00;0,00
+81;4563;6472;2016;6;2016-09-26 00:00:00;"Wien";"EU-Pass, Krallen, entwurmen";;39,00;35,50;3,33;0,00;0,17
+82;4928;7016;2016;7;2016-10-01 00:00:00;"Wien";"Hundebiss";;49,10;47,32;0,58;0,00;1,20
+83;3491;4712;2016;8;2016-10-04 00:00:00;"Wien";"Gingivitis durch den Zahnstein";;106,50;88,86;17,50;0,00;0,14
+84;3491;4828;2016;1;2016-10-04 00:00:00;"Wien";"";;0,00;0,00;0,00;0,00;0,00
+85;3491;4712;2016;8;2016-10-04 00:00:00;"Wien";"Gingivitis durch Zahnstein";;106,50;88,86;17,50;0,00;0,14
+86;4078;5695;2016;9;2016-10-10 00:00:00;"Wien";"purulente Rhinitis";;48,80;46,08;1,83;0,00;0,89
+87;3162;4184;2016;10;2016-10-12 00:00:00;"Wien";"Malassezien-Pododermaditis";;80,20;74,07;2,83;0,00;3,29
+88;1699;3184;2016;11;2016-10-18 00:00:00;"Wien";"hgr. Gingivitis";;176,40;149,76;23,33;0,00;3,31
+89;1699;3184;2016;;2016-10-18 00:00:00;"Wien";"";;0,00;0,00;0,00;0,00;0,00
+90;1699;3184;2016;11;2016-10-18 00:00:00;"Wien";"hgr. Gingivitis";;184,40;157,03;23,33;0,00;4,04
+91;1699;3184;2016;12;2016-10-18 00:00:00;"Wien";"Inkontinenz";;184,00;180,65;0,00;0,00;3,35
+92;1699;3184;2016;13;2016-10-18 00:00:00;"Wien";"";;0,00;0,00;0,00;0,00;0,00
+93;1699;3184;2016;13;2016-10-18 00:00:00;"Wien";"deutliche Mitralisendokardiose";;349,20;344,35;0,00;0,00;4,85
+94;4935;7026;;;2016-10-21 00:00:00;"Wien";"";;0,00;0,00;0,00;0,00;0,00
+95;1699;7074;2016;14;2016-10-28 00:00:00;"Wien";"";;0,00;0,00;0,00;0,00;0,00
+96;3520;4756;2016;14;2016-10-28 00:00:00;"Wien";"Pyometra";;334,00;329,75;3,75;0,00;0,50
+98;4745;6752;2016;15;2016-10-31 00:00:00;"Wien";"Impfung, Entwurmung, Floh-Zecken-Prophylaxe";;83,00;72,83;8,00;0,00;2,17
+99;2511;3123;2016;16;2016-12-02 00:00:00;"Wien";"kkoo";;28,00;23,33;4,67;0,00;0,00
+100;4745;6752;2016;16;2016-12-15 00:00:00;"Wien";"Konjunktivits, beiderseits";;38,60;32,80;4,67;0,78;0,35
+101;3162;4184;2016;17;2016-12-20 00:00:00;"Wien";"hgr. Gingivitis";;136,50;114,40;21,33;0,00;0,77
+102;3162;4184;2016;18;2016-12-20 00:00:00;"Wien";"Pododermatitis auf allen 4 Pfoten";;122,30;104,58;17,72;0,00;0,00
+103;2511;3123;2016;19;2016-12-20 00:00:00;"Wien";"Polydipsie/ Polyurie, VD auf Cushing";;226,90;217,24;6,97;0,00;2,69
+104;2511;3123;2016;19;2016-12-20 00:00:00;"Wien";"Polydipsie / Polyrie, VD auf Cushing";;226,90;218,74;4,75;3,41;0,00
+105;2511;3123;2016;21;2016-12-20 00:00:00;"Wien";"Diarrhoe";;63,70;58,72;4,98;0,00;0,00
+106;2511;3123;2016;20;2016-12-20 00:00:00;"Wien";"Diarrhoe";;63,70;58,72;4,98;0,00;0,00
+107;3162;4184;2017;1;2017-01-09 00:00:00;"Wien";"Tonsillitis und Laryngitis";;62,20;61,45;0,65;0,00;0,10
+111;3491;4712;2017;3;2017-01-12 00:00:00;"Wien";"Vomitus";;83,50;70,38;12,17;0,00;0,95
+112;4745;6752;2017;3;2017-01-16 00:00:00;"Wien";"Tonsillitis, Laryngitis, blutige Diarrhoe";;62,10;53,67;6,12;0,00;2,31
+113;3162;4184;2017;4;2017-02-01 00:00:00;"Wien";"Konjunktivitis";;33,40;28,24;4,67;0,00;0,49
+114;4745;6752;2017;5;2017-02-10 00:00:00;"Wien";"Diarrhoe, unregelmäßiger Appetit";;182,90;172,08;10,62;0,20;0,00
+116;4745;6752;2017;6;2017-03-04 00:00:00;"Wien";"Diarrhoe und Vomitus";;87,70;84,89;0,83;1,04;0,93
+118;4745;6752;2017;7;2017-03-04 00:00:00;"Wien";"Dermatitis an beiden VE, VD auf Malassezien";;61,90;59,56;0,00;0,00;2,34
+119;5069;7255;2017;8;2017-05-02 00:00:00;"Wien";"Hundebiss am rechten Ohr";;411,20;397,58;11,38;0,00;2,24
+122;3520;4756;2017;9;2017-05-15 00:00:00;"Wien";"Zerrung und Distorsion der linken Vorderextremität";;42,80;41,68;0,75;0,00;0,37
+123;2511;3123;2017;10;2017-06-05 00:00:00;"Wien";"Coxarthrose";;132,85;129,80;1,75;0,72;0,58
+124;4745;6752;2017;11;2017-06-09 00:00:00;"Wien";"Konjunktivitis, Floh-Zeckenprophylase";;49,30;43,72;3,17;0,00;2,41
+125;3102;6558;2017;12;2017-06-19 00:00:00;"Wien";"Hundebiss-Verletzung an rechten Wange";;283,05;281,46;0,83;0,60;0,16
+126;3102;6558;2017;13;2017-06-24 00:00:00;"Wien";"Wundheilungsstörung der Hundebißverletzung";;210,50;205,67;3,33;0,00;1,50
+127;3491;4712;2017;14;2017-06-26 00:00:00;"Wien";"Vomitus, Diarrhoe, Fieber";;209,40;205,89;2,58;0,33;0,60
+128;4412;6212;2017;15;2017-06-26 00:00:00;"Wien";"VD auf isolierten Processus coronideus ulnai med.";;185,20;169,58;15,00;0,00;0,62
+129;3520;4756;2017;15;2017-07-05 00:00:00;"Wien";"Impfung, Entwurmung, Zecken-Flohprohylaxe";;78,25;67,84;8,00;0,00;2,41
+130;4795;6825;2017;16;2017-07-12 00:00:00;"Wien";"Hundekratz-,bissverletzung am linken Ohr";;87,60;85,42;2,08;0,00;0,10
+131;5115;7330;2017;17;2017-07-12 00:00:00;"Wien";"Jahresimpfung, Entwurmung, Ohrentropfen-reiniger, EU-Pass";;140,30;132,90;3,83;0,00;3,57
+133;4795;6825;2017;16;2017-07-13 00:00:00;"Wien";"Hundekratz- , und bißverletzung am linken Ohr";;91,40;88,97;2,08;0,00;0,35
+134;4695;6662;2017;18;2017-07-27 00:00:00;"Wien";"Kastration und Kryptorchide-Operation";;385,30;379,30;4,15;0,00;1,85
+135;3162;4184;2017;19;2017-08-10 00:00:00;"Wien";"Laryngitis mit Husten";;173,00;171,10;1,42;0,00;0,48
+136;4745;6752;2017;20;2017-09-13 00:00:00;"Wien";"Cystitis";;61,90;57,58;2,92;0,00;1,40
+137;4745;6752;2017;21;2017-09-13 00:00:00;"Wien";"Zahnsteinentfernung";;130,00;127,50;2,50;0,00;0,00
+139;2083;4603;2017;22;2017-09-18 00:00:00;"Wien";"infizierte  Hundbiss-Verletzung";;867,90;861,99;5,83;0,00;0,08
+140;3162;4184;2017;23;2017-09-22 00:00:00;"Wien";"Laryngitis mit Husten";;80,90;74,66;2,12;2,67;1,45
+141;4745;6752;2017;24;2017-09-25 00:00:00;"Wien";"Floh- und Zeckenprophylaxe";;53,00;48,18;0,00;0,00;4,82
+142;4521;6399;2017;25;2017-09-26 00:00:00;"Wien";"hgr Keratitis, Durchfall";;173,00;167,23;4,67;0,00;1,10
+143;5108;7321;2017;26;2017-10-04 00:00:00;"Wien";"Hundebissverletzung";;61,90;59,14;2,50;0,00;0,26
+144;5108;7321;2017;27;2017-10-06 00:00:00;"Wien";"Hundebiss-Verletzung";;41,30;38,32;1,67;0,00;1,31
+145;3491;4712;2017;28;2017-10-06 00:00:00;"Wien";"Rhinitis, Laryngitis";;136,40;131,39;1,75;0,00;3,26
+146;4563;6472;2017;29;2017-10-16 00:00:00;"Wien";"VD auf Trächtigkeit";;35,00;29,17;5,83;0,00;0,00
+149;2800;3570;2017;30;2017-10-17 00:00:00;"Wien";"Pyometra";;406,30;339,06;66,67;0,00;0,57
+151;2800;3570;2017;30;2017-10-18 00:00:00;"Wien";"Pyometra-Operation";;386,30;322,40;63,33;0,00;0,57
+154;3491;4712;2017;31;2017-10-21 00:00:00;"Wien";"lange Krallen und gefüllte Analdrüsen";;20,00;16,67;3,33;0,00;0,00
+155;5173;7429;2017;32;2017-10-21 00:00:00;"Wien";"neurologisches Schwanzbeißen";;70,00;59,85;8,33;0,00;1,82
+156;1731;7347;2017;33;2017-10-30 00:00:00;"Wien";"Laryngitis, Vomitus";"Betrag bar erhalten.";96,40;82,55;10,42;1,66;1,77
+157;4745;6752;2017;34;2017-11-03 00:00:00;"Wien";"Impfung";"mit Bankomat bezahlt";49,00;40,83;8,17;0,00;0,00
+160;5185;7450;2017;35;2017-11-03 00:00:00;"Wien";"Diarrhoe";"Bankomat";155,80;130,67;24,13;0,00;1,00
+161;3241;4457;2017;36;2017-11-09 00:00:00;"Wien";"FIP";"Betrag ist noch offen";189,00;157,50;31,50;0,00;0,00
+162;5081;7272;2017;37;2017-11-11 00:00:00;"Wien";"Hundebiss-Verletzung";"Betrag bar erhalten.";117,90;99,76;16,33;0,00;1,81
+163;4425;6249;2017;38;2017-11-16 00:00:00;"Wien";"Tierpension von Kleiner und Dülin  03.10. - 06.10.2017";"Betrag bar erhalten.";120,00;100,00;20,00;0,00;0,00
+164;4425;6249;2017;39;2017-11-16 00:00:00;"Wien";"blutige Cystitis";"Betrag noch offen";74,30;62,84;10,35;0,00;1,11
+165;3286;4381;2017;;2017-11-17 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+168;4711;6687;2017;40;2017-11-17 00:00:00;"Wien";"Hundebißverletzung am 04.11.2017";"Betrag mit Bankomat erhalten";64,00;53,33;10,67;0,00;0,00
+169;3491;4712;2017;41;2017-11-18 00:00:00;"Wien";"Erbrechen, Diarrhoe, Inappetenz; Flöhe";"Betrag bar erhalten.";140,00;121,13;13,52;0,00;5,35
+170;1884;5022;2017;42;2017-11-18 00:00:00;"Wien";"Tierhotel";"Betrag bar erhalten.";348,00;290,00;58,00;0,00;0,00
+171;3162;4184;2017;43;2017-11-23 00:00:00;"Wien";"Lipom, Zahnstein, Warze, Arthrose";"Betrag bar erhalten.";373,50;312,15;60,27;0,00;1,08
+172;3491;4712;2017;44;2017-12-18 00:00:00;"Wien";"Dermatitis und Trauma (Schweif eingeklemmt)";"Betrag bar erhalten.";126,20;107,15;16,67;0,00;2,38
+173;4521;6399;2017;;2017-12-18 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+174;4521;6399;2017;45;2017-12-18 00:00:00;"Wien";"Keratitis";"Betrag bar erhalten.";120,60;103,95;12,50;0,00;4,15
+175;1709;1979;2017;;2017-12-20 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+176;5209;7493;2017;;2017-12-20 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+177;3491;4712;2018;441;2018-01-16 00:00:00;"Wien";"Coxarthrose, li Hüfte hgr. Und re Hüfte mgr.";"Betrag bar erhalten.";99,50;82,92;16,58;0,00;0,00
+178;3808;5250;2018;2;2018-02-03 00:00:00;"Wien";"Hundebiss-Verletzung";"Betrag bar erhalten.";524,20;439,47;81,45;0,25;3,03
+182;1699;3184;2018;3;2018-02-08 00:00:00;"Wien";"Mitralisendokardiose und Inkontinenz";"Betrag bar erhalten.";526,80;478,91;0,00;0,00;47,89
+183;1699;3184;2018;4;2018-02-08 00:00:00;"Wien";"Gingivitis durch Zahnstein";"Betrag bar erhalten.";140,00;116,67;23,33;0,00;0,00
+184;4745;6752;2018;5;2018-02-10 00:00:00;"Wien";"Krallen schneiden, Parasitenprophylaxe";"Betrag bar erhalten.";65,00;56,30;6,15;0,00;2,55
+185;3491;4712;2018;6;2018-02-16 00:00:00;"Wien";"Laryngistis, Tonsillitis, Herzinsuffizienz";"Betrag bar erhalten.";100,70;87,02;9,95;0,00;3,73
+186;3491;4712;2018;7;2018-03-05 00:00:00;"Wien";"Rhinitis, Laryngitis, Husten";"Betrag bar erhalten.";71,10;60,28;9,58;0,00;1,24
+187;4521;6399;2018;;2018-03-06 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+188;4521;6399;2018;8;2018-03-06 00:00:00;"Wien";"Keratitis am rechten Auge";"Betrag bar erhalten.";54,60;46,97;5,87;0,00;1,76
+189;4521;6399;2018;9;2018-03-06 00:00:00;"Wien";"Gastritis und Laryngitis";"Betrag bar erhalten.";111,30;97,44;6,92;2,82;4,12
+190;3491;4712;2018;10;2018-04-11 00:00:00;"Wien";"Parodontitis, Mundhygenie mit Politur, Zahn-Röntgen";"Betrag bar erhalten.";175,00;145,83;29,17;0,00;0,00
+193;5185;7450;2018;11;2018-04-15 00:00:00;"Wien";"Mundhygenie, neigt zu Verdauungsbeschwerden";"Betrag bar erhalten.";236,10;204,49;20,00;5,02;6,59
+194;3162;4184;2018;12;2018-04-15 00:00:00;"Wien";"Laryngitis, Tracheitis";"Betrag bar erhalten.";204,20;172,25;29,45;0,00;2,50
+195;4745;6752;2018;13;2018-04-18 00:00:00;"Wien";"Tonsillitis, Inappetenz";"Betrag bar erhalten.";96,40;81,06;14,48;0,00;0,86
+196;3162;4184;2018;14;2018-04-24 00:00:00;"Wien";"Impfung, Zecken - und Flöheprophylaxe";"Betrag bar erhalten.";69,40;59,91;7,00;0,00;2,49
+197;5185;7450;2018;15;2018-04-27 00:00:00;"Wien";"Jahresimpfung, SHLPPi";"mit Bankomat bezahlt";69,00;57,50;11,50;0,00;0,00
+198;3491;4712;2018;16;2018-05-18 00:00:00;"Wien";"Rhinitis, Laryngitis, Husten";"Betrag bar erhalten.";75,00;62,50;12,50;0,00;0,00
+199;3162;4184;2018;17;2018-06-01 00:00:00;"Wien";"akutes Abdomen";"Betrag bar erhalten.";63,20;52,67;10,53;0,00;0,00
+200;5076;7266;2018;18;2018-06-04 00:00:00;"Wien";"Hundebissverletzung am Ellbogen und Rücken";"Betrag bar erhalten.";348,90;292,06;55,27;0,00;1,57
+201;1731;7347;2018;19;2018-06-12 00:00:00;"Wien";"Lahmheit in der rechten Hinterextremität";"Betrag bar erhalten.";51,50;43,90;6,43;0,00;1,17
+202;1731;7347;2018;20;2018-06-17 00:00:00;"Wien";"Verdacht auf Kreuzbandriß, rechte Hinterextremität";"Betrag bar erhalten.";122,00;109,32;3,50;0,00;9,18
+203;5330;7666;2018;21;2018-06-29 00:00:00;"Wien";"Laryngitis, Fieber";"Betrag bar erhalten.";76,70;66,32;7,50;0,00;2,88
+204;1731;7347;2018;22;2018-07-03 00:00:00;"Wien";"Kreuzbandriß an linker Hinterextremität";"Bankomat";153,30;133,71;10,63;3,93;5,03
+205;5306;7636;2018;23;2018-07-03 00:00:00;"Wien";"Laryngitis";"Betrag bar erhalten.";53,70;45,86;6,50;0,00;1,34
+206;5306;7636;2018;24;2018-07-03 00:00:00;"Wien";"Vomitus und Diarrhoe";"Betrag bar erhalten.";457,30;388,27;58,58;3,97;6,48
+207;5306;7636;2018;4;2018-07-05 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+208;5306;7636;2018;25;2018-07-05 00:00:00;"Wien";"Impfung";"Betrag bar erhalten.";43,00;35,83;7,17;0,00;0,00
+209;4521;6399;2018;26;2018-07-16 00:00:00;"Wien";"Distichiasis an beiden Augen";"Betrag bar erhalten.";55,20;47,68;5,50;0,00;2,02
+210;2071;7289;2018;27;2018-07-25 00:00:00;"Wien";"FORL und Zahnstein";"Betrag bar erhalten.";397,80;332,44;64,22;0,00;1,14
+211;3491;4712;2018;28;2018-07-25 00:00:00;"Wien";"Zahnfraktur am linken Canini, 2 Incisivifrakturen durch Unfall";"Betrag bar erhalten.";263,60;220,57;41,95;0,00;1,08
+212;3162;4184;2018;29;2018-07-26 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+213;3162;4184;2018;29;2018-07-26 00:00:00;"Wien";"Verdacht auf Hypothyreose, virale Sommergrippe";"Betrag bar erhalten.";336,70;282,78;51,27;0,00;2,65
+214;3162;4184;2018;30;2018-07-26 00:00:00;"Wien";"ggr. Spondylarthrose an LWS und Coxarthrose";"Betrag bar erhalten.";139,90;121,50;12,50;0,00;5,90
+215;5262;7566;2018;31;2018-07-26 00:00:00;"Wien";"Daumenkrallenfraktur bis zum Krallenbein";"Betrag bar erhalten.";190,70;162,00;25,00;0,00;3,70
+216;4164;5815;2018;32;2018-09-14 00:00:00;"Wien";"Hundebißverletzungen an 3 Stellen (Kopf und Hals)";"Betrag noch offen, Anzahlung von 20,-";227,50;189,58;37,92;0,00;0,00
+217;5185;7450;2018;33;2018-09-14 00:00:00;"Wien";"chronische Diarrhoe mit Inappetenz";"Betrag bar erhalten.";273,50;228,78;43,67;0,00;1,05
+218;3491;4712;2018;34;2018-09-28 00:00:00;"Wien";"geriatrische Blutkontrolle";"Betrag bar erhalten.";77,00;64,17;12,83;0,00;0,00
+219;3232;7556;2018;35;2018-10-01 00:00:00;"Wien";"Laryngitis und Tonsillitis";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+220;3232;7556;2018;;2018-10-01 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+221;3232;7556;2018;35;2018-10-01 00:00:00;"Wien";"Laryngitis und Tonsillitis";"Betrag bar erhalten.";75,70;65,13;7,32;1,71;1,54
+222;3232;7556;2018;35;2018-10-01 00:00:00;"Wien";"Laryngitis und Tonsillitis";"Betrag bar erhalten.";75,70;65,13;7,32;1,71;1,54
+223;3232;7556;2018;35;2018-10-01 00:00:00;"Wien";"Tonsillitis und Laryngitis";"Betrag bar erhalten.";75,70;65,13;7,32;1,71;1,54
+224;3232;7556;2018;35;2018-10-01 00:00:00;"Wien";"Laryngitis und Tonsillitis";"Betrag bar erhalten.";75,70;65,13;7,32;1,71;1,54
+225;2071;5501;2018;36;2018-10-02 00:00:00;"Wien";"Mundhygenie, Krallen schneiden";"Betrag noch offen";160,00;133,33;26,67;0,00;0,00
+226;2071;5501;2018;36;2018-10-02 00:00:00;"Wien";"Mundhygenie mit Politur und Sedierung, Krallen schneiden";"Betrag noch offen";160,00;133,33;26,67;0,00;0,00
+227;2071;5501;2018;36;2018-10-02 00:00:00;"Wien";"Mundhygenie, Krallen schneiden";"Betrag noch offen!";160,00;133,33;26,67;0,00;0,00
+228;4745;6752;2018;37;2018-10-03 00:00:00;"Wien";"Prophylaxe gegen Flöhe, Zecken, Würmer";"mit Bankomat bezahlt";62,90;57,18;0,00;0,00;5,72
+229;2428;3002;2018;38;2018-10-04 00:00:00;"Wien";"Medikamente";"Betrag wird überwiesen";84,39;76,73;0,00;0,00;7,67
+230;3491;4712;2018;39;2018-10-05 00:00:00;"Wien";"permanenter Juckreiz, Allergietest bestätigt Allergie auf Rind und Lamm";"Betrag bar erhalten.";120,00;100,00;20,00;0,00;0,00
+231;5386;7744;2018;40;2018-10-05 00:00:00;"Wien";"Kastration";"mit Bankomat bezahlt";214,30;179,67;33,33;0,00;1,30
+232;5386;7744;2018;40;2018-10-05 00:00:00;"Wien";"Kastration";"Mit Bankomat bezahlt";214,30;179,67;33,33;0,00;1,30
+233;3162;4184;2018;41;2018-10-08 00:00:00;"Wien";"Diarrhoe";"Betrag bar erhalten.";73,50;63,16;7,25;1,73;1,36
+234;3520;4756;2018;42;2018-10-31 00:00:00;"Wien";"geriat. Blutuntersuchung für Narkose-Mundhygenie, Entwurmen, Floh-Zeckenprophylaxe";"Betrag bar erhalten.";138,30;117,77;17,50;0,00;3,03
+235;3491;4712;2018;43;2018-11-09 00:00:00;"Wien";"Laryngitis mit Husten";"Betrag bar erhalten.";84,80;72,83;9,38;0,00;2,59
+236;5398;7763;2018;44;2018-11-13 00:00:00;"Wien";"Impfung, Chip-Registration, Floh-Zeckenmittel";"mit Visa";193,40;164,38;25,17;0,00;3,85
+237;3162;4184;2018;45;2018-11-14 00:00:00;"Wien";"Vomitus un Diarrhoe";"Betrag bar erhalten.";94,30;80,53;10,88;1,24;1,65
+238;3199;4236;2018;46;2018-11-20 00:00:00;"Wien";"kann nicht gut alleine bleiben";"Betrag offen";16,50;15,00;0,00;0,00;1,50
+239;4754;6767;2018;47;2018-11-20 00:00:00;"Wien";"Hündin trächtig";"Betrag offen";103,10;86,92;14,97;0,00;1,21
+240;5362;7712;2018;48;2018-11-20 00:00:00;"Wien";"Spondylarthrose, Coxarthrose";"Betrag offen";85,00;70,83;14,17;0,00;0,00
+241;3325;5361;2018;49;2018-11-20 00:00:00;"Wien";"Narkose, Zahn-Röntgen, Zahnoperationen";"Betrag offen";93,80;78,17;15,63;0,00;0,00
+242;3162;4184;2018;50;2018-12-04 00:00:00;"Wien";"Konjunktivitis im rechten Auge";"Betrag bar erhalten.";38,40;32,41;5,50;0,00;0,49
+243;3520;4756;2018;51;2018-12-06 00:00:00;"Wien";"Mundhygenie";"Betrag bar erhalten.";150,00;125,00;25,00;0,00;0,00
+244;2071;7289;2018;52;2018-12-27 00:00:00;"Wien";"Laryngitis";"Betrag bar erhalten.";129,20;110,15;16,08;0,00;2,97
+245;3491;4712;2018;53;2018-12-29 00:00:00;"Wien";"Tonsillitis, LK-Schwellung";"Betrag bar erhalten.";47,30;39,42;7,88;0,00;0,00
+246;4745;6752;2019;1;2019-01-02 00:00:00;"Wien";"Impfung und Entwurmung";"Betrag bar erhalten.";55,70;46,69;8,67;0,00;0,34
+247;2351;5311;2019;2;2019-01-06 00:00:00;"Wien";"Impfung";"Betrag bar erhalten.";42,00;35,00;7,00;0,00;0,00
+249;3162;4184;2018;54;2019-01-09 00:00:00;"Wien";"Keratokonjunktivitis";"Betrag bar erhalten.";43,30;36,33;6,67;0,00;0,30
+250;5398;7763;2019;3;2019-01-13 00:00:00;"Wien";"Impfung, Chip-Registrierung";"mit Kreditkarte bezahlt";69,00;57,50;11,50;0,00;0,00
+251;5398;7763;2019;4;2019-01-13 00:00:00;"Wien";"Impfung, Floh- und Zeckenprophylaxe";"mit Kredtikarte bezahlt";124,40;106,88;13,67;0,00;3,85
+253;5398;7763;2019;5;2019-01-13 00:00:00;"Wien";"Cystitis";"mit Kreditkarte bezahlt";125,60;105,35;19,42;0,00;0,83
+254;3485;6090;2019;6;2019-02-08 00:00:00;"Wien";"Adipositas";"Betrag bar erhalten.";18,00;15,93;0,00;2,07;0,00
+255;3491;4712;2019;7;2019-02-08 00:00:00;"Wien";"Tonsillitis, Herztherapie";"Betrag bar erhalten.";114,90;101,18;5,50;3,68;4,54
+256;3286;4381;2019;8;2019-02-11 00:00:00;"Wien";"Impfung";"Betrag bar erhalten.";52,00;43,33;8,67;0,00;0,00
+257;4711;6687;2019;8;2019-02-11 00:00:00;"Wien";"Impfung";"Betrag bar erhalten.";52,00;43,33;8,67;0,00;0,00
+258;4711;6687;2019;9;2019-02-11 00:00:00;"Wien";"Laryngitis, linke VE erbsengroße Zyste";"Betrag bar erhalten.";87,10;74,15;11,08;0,00;1,87
+259;3286;4381;2019;10;2019-02-11 00:00:00;"Wien";"Impfung, geriatrischer Blutcheck, Herzinsuffizien, Konjunktivitis";"Betrag bar erhalten.";202,10;173,42;22,67;0,00;6,01
+260;4711;6687;2019;2;2019-02-11 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+261;3491;4712;2019;11;2019-02-14 00:00:00;"Wien";"Gastritis mit Inappetenz";"Betrag bar erhalten.";98,60;82,69;15,28;0,00;0,63
+262;3491;4712;2019;12;2019-03-05 00:00:00;"Wien";"Futtermittelunverträglichkeit, Analdrüsen verstopft";"Betrag bar erhalten.";39,80;34,45;2,50;2,85;0,00
+263;5400;7765;2019;13;2019-03-06 00:00:00;"Wien";"Otitis externa, Futtermittelunverträglichkeit";"Betrag bar erhalten.";201,60;175,09;16,00;4,36;6,15
+264;5400;7765;2019;14;2019-03-06 00:00:00;"Wien";"Otitis externa, Futtermittelunverträglichkeit";"Betrag bar erhalten.";269,50;233,42;20,67;10,37;5,04
+265;5400;7765;2019;15;2019-03-06 00:00:00;"Wien";"Otitis externa, Futtermittelunverträglichkeit";"Betrag bar erhalten.";273,50;239,05;11,50;20,78;2,17
+266;3162;4184;2019;16;2019-03-09 00:00:00;"Wien";"Diarrhoe mit Vomitus";"Betrag bar erhalten.";61,60;51,94;8,70;0,51;0,45
+267;3485;6090;2019;17;2019-04-01 00:00:00;"Wien";"Diätfutter für Übergewicht";"Betrag bar erhalten.";15,00;13,27;0,00;1,73;0,00
+268;4745;6752;2019;18;2019-04-01 00:00:00;"Wien";"Mundhygenie mit Politur, Konjunktivitis";"Betrag bar erhalten.";166,60;139,33;26,67;0,00;0,60
+269;3162;4184;2019;19;2019-04-01 00:00:00;"Wien";"Laryngitis mit Husten";"Betrag bar erhalten.";77,50;67,95;5,50;0,00;4,05
+270;3491;4712;2019;20;2019-04-05 00:00:00;"Wien";"Laryngitis und Husten";"Betrag bar erhalten.";64,30;53,87;10,08;0,00;0,35
+271;2351;5311;2019;21;2019-04-10 00:00:00;"Wien";"Leukoseimpfung";"Bankomat";45,00;37,50;7,50;0,00;0,00
+272;4711;6687;2019;22;2019-04-16 00:00:00;"Wien";"Vomitus, Diarrhoe, Laryngitis";"Betrag ist geparkt";198,70;166,56;30,97;0,00;1,17
+273;4711;6687;2019;;2019-04-16 00:00:00;"Wien";"";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00
+274;2351;5311;2019;23;2019-05-09 00:00:00;"Wien";"Vomitus und Diarrhoe";"Betrag bar erhalten.";58,30;49,70;7,25;0,00;1,35
+275;4745;6752;2019;24;2019-05-10 00:00:00;"Wien";"Konjunktivitis";"Betrag bar erhalten.";31,60;26,83;4,17;0,00;0,60
+276;2071;7279;2019;25;2019-05-28 00:00:00;"Wien";"Gastritis";"mit Bankomat bezahlt";64,60;55,23;6,92;1,65;0,80
+277;5185;7450;2019;26;2019-06-06 00:00:00;"Wien";"Hydrometra";"Betrag bar erhalten.";520,50;433,75;86,75;0,00;0,00
+278;3232;7556;2019;28;2019-06-06 00:00:00;"Wien";"Cystitis, Inappetenz und Fieber";"mit Bankomat bezahlt";185,10;155,48;28,15;0,00;1,47
+279;3232;7556;2019;27;2019-06-07 00:00:00;"Wien";"Dermatitis am Bauch";"Betrag bar erhalten.";115,90;102,37;6,58;0,00;6,95
+280;5487;7913;2019;29;2019-06-21 00:00:00;"Wien";"Furunkulose an li VE";"Betrag offen";133,20;111,24;21,67;0,00;0,29
+281;4711;6687;2019;30;2019-07-02 00:00:00;"Wien";"Vomitus und Diarrhoe";"Betrag  offen";51,70;43,56;7,58;0,00;0,56
+282;3232;7556;2019;31;2019-07-16 00:00:00;"Wien";"Impfung, Kontrolle der Cystitis";"Betrag bar erhalten.";202,00;168,33;33,67;0,00;0,00
+283;4545;6432;2019;32;2019-07-17 00:00:00;"Wien";"Erkältung, Niesen, Husten und Erbrechen";"Betrag offen";130,50;108,98;21,25;0,00;0,27
+284;5185;7450;2019;33;2019-08-01 00:00:00;"Wien";"Otitis externa, links";"Betrag bar erhalten.";46,00;39,32;5,50;0,00;1,18
+285;3232;7556;2019;34;2019-08-01 00:00:00;"Wien";"Dermatitis";"BA bezahlt";74,30;65,05;5,50;0,00;3,75
+286;4711;6687;2019;35;2019-08-01 00:00:00;"Wien";"Diarrhoe mit Vomitus";"Betrag offen";53,50;44,83;8,37;0,00;0,30
+287;3491;4712;2019;36;2019-08-02 00:00:00;"Wien";"Laryngitis und Konjunktivitis";"Betrag bar erhalten.";81,70;69,89;9,63;0,00;2,17
+288;4711;6687;2019;37;2019-08-13 00:00:00;"Wien";"Diarrhoe mit Vomitus, Kontrollen zur Rechnung 35";"Betrag offen";30,00;25,00;5,00;0,00;0,00
+289;4711;6687;2019;38;2019-08-13 00:00:00;"Wien";"Mastozytom Grad 1 an HE und Mucoidcyste an VE";"Betrag offen";312,00;260,00;52,00;0,00;0,00
+290;4423;6233;2019;39;2019-09-19 00:00:00;"Wien";"Gingivitis";"Betrag bar erhalten.";40,10;34,10;5,17;0,00;0,83
+291;5500;7934;2019;40;2019-10-08 00:00:00;"Wien";"Harn-Inkontinenz";"Betrag mit Visa erhalten.";74,20;62,55;10,80;0,00;0,85
+292;5185;7450;2019;41;2019-10-11 00:00:00;"Wien";"Erkältung mit Fieber, Inappetenz, Konjunktivitis";"Betrag bar erhalten.";114,40;98,58;11,92;0,00;3,90
+293;3520;4756;2019;52;2019-11-04 00:00:00;"Wien";"Impfung und Entwurmung";"Betrag bar erhalten.";63,80;53,45;10,00;0,00;0,35
+294;3232;7556;2019;43;2019-11-06 00:00:00;"Wien";"VD auf Cystitis";"Betrag bar erhalten.";31,60;26,33;5,27;0,00;0,00
+295;4745;6752;2019;44;2019-11-11 00:00:00;"Wien";"Konjunktivitis";"Betrag bar erhalten.";33,00;27,50;5,50;0,00;0,00
+296;1699;3184;2019;45;2019-11-13 00:00:00;"Wien";"Herzinsuffizienz";"Betrag bar erhalten.";56,20;51,09;0,00;0,00;5,11
+297;1699;3184;2019;46;2019-11-13 00:00:00;"Wien";"Atemnot, Herzinsuffizienz, Bronchitis";"Betrag bar erhalten.";239,60;203,37;31,78;0,00;4,45
+298;1699;3184;2019;47;2019-11-13 00:00:00;"Wien";"Herzinsuffizienz";"Betrag bar erhalten.";92,90;84,45;0,00;0,00;8,45
+299;1699;3184;2019;48;2019-11-13 00:00:00;"Wien";"Diarrhoe, Inkontinenz";"Betrag bar erhalten.";146,50;129,13;8,92;0,00;8,45
+300;1699;3184;2019;49;2019-11-13 00:00:00;"Wien";"Spondylarthrose, Coxarthrose, Otitis";"Betrag bar erhalten.";152,20;135,86;5,50;0,00;10,84
+301;1699;3184;2019;50;2019-11-13 00:00:00;"Wien";"Inkontinenz, Herzinsuffizienz, Arthrose";"Betrag bar erhalten.";149,90;136,27;0,00;0,00;13,63
+302;4745;6752;2019;51;2019-12-02 00:00:00;"Wien";"Entwurmung und Floh-Zeckenprophylaxe";"Betrag bar erhalten";64,00;58,18;0,00;0,00;5,82
+303;4745;6752;2019;53;2019-12-02 00:00:00;"Wien";"entwurmung";"Betrag bar erhalten.";0,00;0,00;0,00;0,00;0,00

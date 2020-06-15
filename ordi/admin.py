@@ -37,8 +37,8 @@ def upload():
 
         if(file):
             filename = secure_filename(file.filename)
-            print('./ordi/uploads/' + filename)
-            file.save('./ordi/uploads/' + filename)
+            print(os.path.join(os.path.join(bp.root_path, 'uploads'), filename))
+            file.save(os.path.join(os.path.join(bp.root_path, 'uploads'), filename))
             return redirect(url_for('admin.index', filename=file.filename))
     return
 

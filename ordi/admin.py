@@ -28,7 +28,7 @@ def import_file(file):
         import_tier(str_file)
         return
     if(file.filename == "tblPerson.txt"):
-        import_person(str_file, 4000)
+        import_person(str_file, 5000)
         return
     if(file.filename == "tblAdresse.txt"):
         import_adresse(str_file)

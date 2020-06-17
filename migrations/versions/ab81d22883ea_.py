@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e21546aca06f
+Revision ID: ab81d22883ea
 Revises: 
-Create Date: 2020-06-14 15:49:31.405665
+Create Date: 2020-06-17 22:24:48.342370
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e21546aca06f'
+revision = 'ab81d22883ea'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -99,8 +99,7 @@ def upgrade():
     sa.Column('steuerbetrag_zehn', sa.Numeric(precision=8, scale=2), nullable=True),
     sa.ForeignKeyConstraint(['person_id'], ['person.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['tier_id'], ['tier.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('jahr', 'lfnr')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_rechnung_person_id'), 'rechnung', ['person_id'], unique=False)
     op.create_index(op.f('ix_rechnung_tier_id'), 'rechnung', ['tier_id'], unique=False)

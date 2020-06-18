@@ -21,41 +21,6 @@ def index(filename=None):
     return render_template('admin/index.html', filename=filename, page_title="Admin")
 
 
-def import_file(file):
-    str_file = file.read().decode('UTF-8')
-
-    if(file.filename == "tblTier.txt"):
-        import_tier(str_file)
-        return
-    if(file.filename == "tblPerson.txt"):
-        import_person(str_file, 5000)
-        return
-    if(file.filename == "tblAdresse.txt"):
-        import_adresse(str_file)
-        return
-    if(file.filename == "tblKontakt.txt"):
-        import_kontakt(str_file)
-        return
-    if(file.filename == "tblTierhaltung.txt"):
-        import_tierhaltung(str_file)
-        return
-    if(file.filename == "tblBehandlung.txt"):
-        import_behandlung(str_file)
-        return
-    if(file.filename == "tblImpfung.txt"):
-        import_impfung(str_file)
-        return
-    if(file.filename == "tblBehandlungsverlauf.txt"):
-        import_behandlungsverlauf(str_file)
-        return
-    if(file.filename == "tblRechnung.txt"):
-        import_rechnung(str_file)
-        return
-    if(file.filename == "tblRechnungszeile.txt"):
-        import_rechnungszeile(str_file)
-        return
-    return
-
 @bp.route('/upload', methods=['GET', 'POST'])
 @admin_login_required
 def upload():
@@ -71,9 +36,10 @@ def upload():
             return redirect(url_for('admin.index'))
 
         if(file):
-            import_file(file)
+            filename = secure_filename(file.filename)
+            path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', filename)
+            file.save(path_and_filename)
             return redirect(url_for('admin.index', filename=file.filename))
-    return
 
 
 def clean_str_file(str_file, rowcnt):
@@ -105,7 +71,16 @@ def clean_str_file(str_file, rowcnt):
     return new
 
 
-def import_tier(str_file):
+@bp.cli.command("import_tier")
+def import_tier():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblTier.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 11)
@@ -180,7 +155,16 @@ def import_tier(str_file):
         return False
 
 
-def import_person(str_file, person_id):
+@bp.cli.command("import_person")
+def import_person():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblPerson.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 6)
@@ -198,7 +182,7 @@ def import_person(str_file, person_id):
         try:
             p_id = int(arrline[0])
 
-            if(p_id < person_id):
+            if(p_id < 5000): # hack to limit record count
                 continue
 
             person = Person()
@@ -247,7 +231,16 @@ def import_person(str_file, person_id):
         return False
 
 
-def import_adresse(str_file):
+@bp.cli.command("import_adresse")
+def import_adresse():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblAdresse.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 4)
@@ -291,7 +284,16 @@ def import_adresse(str_file):
         return False
 
 
-def import_kontakt(str_file):
+@bp.cli.command("import_kontakt")
+def import_kontakt():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblKontakt.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 4)
@@ -339,7 +341,16 @@ def import_kontakt(str_file):
         return False
 
 
-def import_tierhaltung(str_file):
+@bp.cli.command("import_tierhaltung")
+def import_tierhaltung():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblTierhaltung.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 2)
@@ -401,7 +412,16 @@ def import_tierhaltung(str_file):
         return False
 
 
-def import_behandlung(str_file):
+@bp.cli.command("import_behandlung")
+def import_behandlung():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblBehandlung.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 9)
@@ -474,7 +494,16 @@ def import_behandlung(str_file):
         return False
 
 
-def import_impfung(str_file):
+@bp.cli.command("import_impfung")
+def import_impfung():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblImpfung.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 1)
@@ -529,7 +558,16 @@ def import_impfung(str_file):
         return False
 
 
-def import_behandlungsverlauf(str_file):
+@bp.cli.command("import_behandlungsverlauf")
+def import_behandlungsverlauf():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblBehandlungsverlauf.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 5)
@@ -599,7 +637,16 @@ def import_behandlungsverlauf(str_file):
         return False
 
 
-def import_rechnung(str_file):
+@bp.cli.command("import_rechnung")
+def import_tier():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblRechnung.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 13)
@@ -691,7 +738,16 @@ def import_rechnung(str_file):
         return False
 
 
-def import_rechnungszeile(str_file):
+@bp.cli.command("import_rechnungszeile")
+def import_rechnungszeile():
+    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblRechnungszeile.txt')
+
+    try:
+        with open(path_and_filename) as fo:
+            str_file = fo.read()
+    except:
+        return False
+
     ok = True
 
     new = clean_str_file(str_file, 5)

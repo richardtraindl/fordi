@@ -2,10 +2,9 @@
 
 import os, io
 from datetime import date, datetime
-import random
+from multiprocessing import Process
 
 from flask import Flask, Blueprint, flash, g, redirect, render_template, request, url_for
-from werkzeug.utils import secure_filename
 
 from . import db
 from ordi.auth import admin_login_required
@@ -36,10 +35,46 @@ def upload():
             return redirect(url_for('admin.index'))
 
         if(file):
-            filename = secure_filename(file.filename)
-            path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', filename)
-            file.save(path_and_filename)
+            process = Process(target=dbwrite, args=(file,), daemon=True)
+            process.start()
             return redirect(url_for('admin.index', filename=file.filename))
+
+
+def dbwrite(file):
+    str_file = file.read().decode("utf-8")
+
+    if(file.filename == "tblTier.txt"):
+        return import_tier(str_file)
+
+    if(file.filename == "tblPerson.txt"):
+        return import_person(str_file)
+
+    if(file.filename == "tblAdresse.txt"):
+        return import_adresse(str_file)
+
+    if(file.filename == "tblKontakt.txt"):
+        return import_kontakt(str_file)
+
+    if(file.filename == "tblTierhaltung.txt"):
+        return import_tierhaltung(str_file)
+
+    if(file.filename == "tblBehandlung.txt"):
+        return import_behandlung(str_file)
+
+    if(file.filename == "tblImpfung.txt"):
+        return import_impfung(str_file)
+
+    if(file.filename == "tblBehandlungsverlauf.txt"):
+        return import_behandlungsverlauf(str_file)
+
+    if(file.filename == "tblRechnung.txt"):
+        return import_rechnung(str_file)
+
+    if(file.filename == "tblRechnungszeile.txt"):
+        return import_rechnungszeile(str_file)
+
+    print("Keine Tabelle importiert!")
+    return False
 
 
 def clean_str_file(str_file, rowcnt):
@@ -71,15 +106,8 @@ def clean_str_file(str_file, rowcnt):
     return new
 
 
-@bp.cli.command("import_tier")
-def import_tier():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblTier.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_tier(str_file):
+    print("starte tier import")
 
     ok = True
 
@@ -146,24 +174,20 @@ def import_tier():
             db.session.commit()
             tier = db.session.execute("SELECT id FROM tier ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE tier_id_seq RESTART WITH " + str(tier['id'] + 1))
+            print("tier import ende")
             return True
         except Exception as err:
             print(err)
+            print("tier import ende")
             return False
     else:
         db.session.rollback()
+        print("tier import ende")
         return False
 
 
-@bp.cli.command("import_person")
-def import_person():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblPerson.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_person(str_file):
+    print("starte person import")
 
     ok = True
 
@@ -222,24 +246,20 @@ def import_person():
             db.session.commit()
             person = db.session.execute("SELECT id FROM person ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE person_id_seq RESTART WITH " + str(person['id'] + 1))
+            print("person import ende")
             return True
         except Exception as err:
             print(err)
+            print("person import ende")
             return False
     else:
         db.session.rollback()
+        print("person import ende")
         return False
 
 
-@bp.cli.command("import_adresse")
-def import_adresse():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblAdresse.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_adresse(str_file):
+    print("starte adresse import")
 
     ok = True
 
@@ -275,24 +295,20 @@ def import_adresse():
     if(ok):
         try:
             db.session.commit()
+            print("adresse import ende")
             return True
         except Exception as err:
             print(err)
+            print("adresse import ende")
             return False
     else:
         db.session.rollback()
+        print("adresse import ende")
         return False
 
 
-@bp.cli.command("import_kontakt")
-def import_kontakt():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblKontakt.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_kontakt(str_file):
+    print("starte kontakt import")
 
     ok = True
 
@@ -332,25 +348,21 @@ def import_kontakt():
     if(ok):
         try:
             db.session.commit()
+            print("kontakt import ende")
             return True
         except Exception as err:
             print(err)
+            print("kontakt import ende")
             return False
     else:
         db.session.rollback()
+        print("kontakt import ende")
         return False
 
 
-@bp.cli.command("import_tierhaltung")
-def import_tierhaltung():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblTierhaltung.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
-
+def import_tierhaltung(str_file):
+    print("starte tierhaltung import")
+    
     ok = True
 
     new = clean_str_file(str_file, 2)
@@ -358,6 +370,8 @@ def import_tierhaltung():
     lines = new.split('\n')
 
     personen = db.session.query(Person).all()
+    
+    tiere = db.session.query(Tier).all()
 
     for line in lines:
         arrline = line.split(";")
@@ -372,16 +386,16 @@ def import_tierhaltung():
             tier_id = int(arrline[1])
 
             found = False
-
+            
             for person in personen:
                 if(person.id == person_id):
                     found = True
                     break
             if(found == False):
-                tier = db.session.query(Tier).get(tier_id)
-                if(tier):
-                    db.session.delete(tier)
-                    continue
+                for tier in tiere:
+                    if(tier.id == tier_id):
+                        db.session.delete(tier)
+                continue
 
             tierhaltung = Tierhaltung()
 
@@ -403,24 +417,20 @@ def import_tierhaltung():
             db.session.commit()
             tierhaltung = db.session.execute("SELECT id FROM tierhaltung ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE tierhaltung_id_seq RESTART WITH " + str(tierhaltung['id'] + 1))
+            print("tierhaltung import ende")
             return True
         except Exception as err:
             print(err)
+            print("tierhaltung import ende")
             return False
     else:
         db.session.rollback()
+        print("tierhaltung import ende")
         return False
 
 
-@bp.cli.command("import_behandlung")
-def import_behandlung():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblBehandlung.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_behandlung(str_file):
+    print("starte behandlung import")
 
     ok = True
 
@@ -485,24 +495,20 @@ def import_behandlung():
             db.session.commit()
             behandlung = db.session.execute("SELECT id FROM behandlung ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE behandlung_id_seq RESTART WITH " + str(behandlung['id'] + 1))
+            print("behandlung import ende")
             return True
         except Exception as err:
             print(err)
+            print("behandlung import ende")
             return False
     else:
         db.session.rollback()
+        print("behandlung import ende")
         return False
 
 
-@bp.cli.command("import_impfung")
-def import_impfung():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblImpfung.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_impfung(str_file):
+    print("starte impfung import")
 
     ok = True
 
@@ -549,24 +555,20 @@ def import_impfung():
             db.session.commit()
             #impfung = db.session.execute("SELECT id FROM impfung ORDER BY Id DESC LIMIT 1").fetchone()
             #db.session.execute("ALTER SEQUENCE impfung_id_seq RESTART WITH " + str(impfung['id'] + 1))
+            print("impfung import ende")
             return True
         except Exception as err:
             print(err)
+            print("impfung import ende")
             return False
     else:
         db.session.rollback()
+        print("impfung import ende")
         return False
 
 
-@bp.cli.command("import_behandlungsverlauf")
-def import_behandlungsverlauf():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblBehandlungsverlauf.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_behandlungsverlauf(str_file):
+    print("starte behandlungsverlauf import")
 
     ok = True
 
@@ -578,6 +580,7 @@ def import_behandlungsverlauf():
 
     for line in lines:
         line = line.replace('§', '\n')
+
         arrline = line.split(";")
 
         if(len(arrline) != 6):
@@ -613,6 +616,7 @@ def import_behandlungsverlauf():
                 behandlungsverlauf.datum = date(year=1900, month=1, day=1)
 
             behandlungsverlauf.diagnose = arrline[4].strip('"')
+            print(behandlungsverlauf.diagnose)
 
             behandlungsverlauf.behandlung = arrline[5].strip('"\n')
 
@@ -628,24 +632,20 @@ def import_behandlungsverlauf():
             db.session.commit()
             #behandlungsverlauf = db.session.execute("SELECT id FROM behandlungsverlauf ORDER BY Id DESC LIMIT 1").fetchone()
             #db.session.execute("ALTER SEQUENCE behandlungsverlauf_id_seq RESTART WITH " + str(behandlungsverlauf['id'] + 1))
+            print("behandlungsverlauf import ende")
             return True
         except Exception as err:
             print(err)
+            print("behandlungsverlauf import ende")
             return False
     else:
         db.session.rollback()
+        print("behandlungsverlauf import ende")
         return False
 
 
-@bp.cli.command("import_rechnung")
-def import_tier():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblRechnung.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_rechnung(str_file):
+    print("starte rechnung import")
 
     ok = True
 
@@ -729,24 +729,20 @@ def import_tier():
             db.session.commit()
             rechnung = db.session.execute("SELECT id FROM rechnung ORDER BY Id DESC LIMIT 1").fetchone()
             db.session.execute("ALTER SEQUENCE rechnung_id_seq RESTART WITH " + str(rechnung['id'] + 1))
+            print("rechnung import ende")
             return True
         except Exception as err:
             print(err)
+            print("rechnung import ende")
             return False
     else:
         db.session.rollback()
+        print("rechnung import ende")
         return False
 
 
-@bp.cli.command("import_rechnungszeile")
-def import_rechnungszeile():
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp', 'tblRechnungszeile.txt')
-
-    try:
-        with open(path_and_filename) as fo:
-            str_file = fo.read()
-    except:
-        return False
+def import_rechnungszeile(str_file):
+    print("starte rechnungszeile import")
 
     ok = True
 
@@ -805,172 +801,14 @@ def import_rechnungszeile():
             db.session.commit()
             #rechnungszeile = db.session.execute("SELECT id FROM rechnungszeile ORDER BY Id DESC LIMIT 1").fetchone()
             #db.session.execute("ALTER SEQUENCE rechnungszeile_id_seq RESTART WITH " + str(rechnungszeile['id'] + 1))
+            print("rechnungszeile import ende")
             return True
         except Exception as err:
             print(err)
+            print("rechnungszeile import ende")
             return False
     else:
         db.session.rollback()
+        print("rechnungszeile import ende")
         return False
 
-
-"""@bp.cli.command("anonymize")
-def anonymize():
-    anonymize_file("tblTier.txt", 12, [1, 5, 6])
-
-    anonymize_file("tblPerson.txt", 7, [3, 4, 5])
-
-    anonymize_file("tblAdresse.txt", 5, [2, 3, 4])
-
-    anonymize_file("tblKontakt.txt", 5, [3])
-
-    anonymize_file("tblTierhaltung.txt", 3, [])
-
-    anonymize_file("tblBehandlung.txt", 10, [4])
-
-    anonymize_file("tblImpfung.txt", 2, [])
-
-    anonymize_file("tblBehandlungsverlauf.txt", 6, [4, 5])
-
-    anonymize_file("tblRechnung.txt", 14, [7])
-
-    anonymize_file("tblRechnungszeile.txt", 6, [])
-
-
-@bp.cli.command("write-db")
-def dbwrite():
-    print("starte tier import")
-    dbwrite_ok = import_tier()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte person import")
-    dbwrite_ok = import_person(0)
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte adresse import")
-    dbwrite_ok = import_adresse()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte kontakt import")
-    dbwrite_ok = import_kontakt()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte tierhaltung import")
-    dbwrite_ok = import_tierhaltung()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte behandlung import")
-    dbwrite_ok = import_behandlung()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte impfung import")
-    dbwrite_ok = import_impfung()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte behandlungsverlauf import")
-    dbwrite_ok = import_behandlungsverlauf()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte rechnung import")
-    dbwrite_ok = import_rechnung()
-    if(dbwrite_ok == False):
-        return False
-
-    print("starte rechnungszeile import")
-    dbwrite_ok = import_rechnungszeile()
-    if(dbwrite_ok == False):
-        return False
-
-    print("alle Tabellen importiert!")
-    return True
-
-
-def anonymize_token(data):
-    new = ""
-    for char in data:
-        if(ord(char) >= ord('0') and ord(char) <= ord('9')):
-            rndnum = random.randint(0, 3)
-            newnum = ord(char) + rndnum
-            if(newnum >= ord('0') and newnum <= ord('9')):
-                new += chr(newnum)
-            else:
-                new += chr(ord(char) - rndnum)
-        elif(ord(char) >= ord('A') and ord(char) <= ord('z')):
-            rndnum = random.randint(0, 9)
-            newnum = ord(char) + rndnum
-            if(newnum >= ord('A') and newnum <= ord('z')):
-                new += chr(newnum)
-            else:
-                new += chr(ord(char) - rndnum)
-        else:
-            new += char
-    return new
-
-def clean_file_ori(path_and_filename, rowcnt):
-    path_and_filename2 = path_and_filename + "2"
-    with open(path_and_filename, "r") as fo:
-        with open(path_and_filename2, "w") as fo2:
-            cnt = 0
-            quotecnt = 0
-            for char in fo.read():
-                if(char == '"'):
-                    quotecnt += 1
-                    fo2.write(char)
-                    continue
-                elif(char == ';'):
-                    if(quotecnt % 2 == 0):
-                        fo2.write(char)
-                        cnt += 1
-                    else:
-                        fo2.write(',')
-                    continue
-                elif(char == '\n'):
-                    if(quotecnt % 2 == 1 or cnt % rowcnt != 0):
-                        fo2.write('§')
-                    else:
-                        fo2.write(char)
-                    continue
-                else:
-                    fo2.write(char)
-    return path_and_filename2
-
-
-def anonymize_file(filename, rowcnt, indices):
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'raw', filename)
-
-    path_and_filename2 = clean_file(path_and_filename, rowcnt - 1)
-
-    path_and_filenameX = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
-
-    with open(path_and_filename2) as fo2:
-        with open(path_and_filenameX, "w") as foX:
-            for line in fo2:
-                line = line.replace('§', '\n')
-                arrline = line.split(";")
-
-                if(len(arrline) != rowcnt):
-                    print("error", end=" ", flush=True)
-                    print(arrline, end="", flush=True)
-                    continue
-
-                for idx in range(len(arrline)):
-                    found = False
-                    for idx2 in indices:
-                        if(idx == idx2):
-                            foX.write(anonymize_token(arrline[idx]))
-                            found = True
-                            break
-                    if(found == False):
-                        foX.write(arrline[idx])
-                    if(idx < rowcnt - 1):
-                        foX.write(";")
-
-    os.remove(path_and_filename2)"""

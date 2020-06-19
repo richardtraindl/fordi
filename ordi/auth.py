@@ -28,10 +28,10 @@ def login_required(view):
 def admin_login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if(g.user is None or g.user.username != "richard"):
-            return redirect(url_for('auth.login'))
-
-        return view(**kwargs)
+        if(g.user and g.user.username == "richard"):
+            return view(**kwargs)
+        else:
+            return redirect(url_for('auth.login'))        
 
     return wrapped_view
 

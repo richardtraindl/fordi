@@ -2,7 +2,7 @@
 
 import os, io
 from datetime import date, datetime
-from multiprocessing import Process
+import gdown
 
 from flask import Flask, Blueprint, flash, g, redirect, render_template, request, url_for
 
@@ -35,9 +35,19 @@ def upload():
             return redirect(url_for('admin.index'))
 
         if(file):
-            process = Process(target=dbwrite, args=(file,), daemon=True)
+            process = Process(target=dbwrite, args=(file,), daemon=False)
             process.start()
             return redirect(url_for('admin.index', filename=file.filename))
+
+
+@bp.cli.command("import-tier")
+def import_tier():
+    url = 'https://drive.google.com/uc?id=1wu9F8YQOqg5cesFf5sKTBcPJUPAIUHZ3'
+    output = 'tblTier.txt'
+    gdown.download(url, output, quiet=False) 
+    gdown.cached_download(url, output, postprocess=gdown.extractall)
+    import_tier(output)
+    os.remove("tblTier.txt")
 
 
 def dbwrite(file):
@@ -106,8 +116,11 @@ def clean_str_file(str_file, rowcnt):
     return new
 
 
-def import_tier(str_file):
+def import_tier(filename):
     print("starte tier import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -610,13 +623,12 @@ def import_behandlungsverlauf(str_file):
 
             behandlungsverlauf.tier_id = tier_id
 
-            if(len(arrline[3]) > 0):
+            if(len(arrline[3]) > 0 and len(arrline[3]) >= 10):
                 behandlungsverlauf.datum = datetime.strptime((arrline[3])[:10], "%Y-%m-%d")
             else:
                 behandlungsverlauf.datum = date(year=1900, month=1, day=1)
 
             behandlungsverlauf.diagnose = arrline[4].strip('"')
-            print(behandlungsverlauf.diagnose)
 
             behandlungsverlauf.behandlung = arrline[5].strip('"\n')
 

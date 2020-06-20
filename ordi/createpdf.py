@@ -264,7 +264,7 @@ class CustomPDF(HTML2PDF):
         self.cell(w=0, h=5, txt=kontakt, align='L')
 
 
-def html2pdf(html, path_and_filename):
+def html2pdf(html):
     fpdf = CustomPDF()
     fpdf.t_margin = 25
     fpdf.r_margin = 25
@@ -275,10 +275,11 @@ def html2pdf(html, path_and_filename):
     fpdf.add_page()
     parser = MyHTMLParser(fpdf)
     parser.feed(html)
-    fpdf.output(path_and_filename)
+    byte_string = fpdf.output(dest="S").encode('latin-1')
+    return byte_string
 
 
-def html2pdf_blank(html, path_and_filename):
+def html2pdf_blank(html):
     fpdf = HTML2PDF()
     fpdf.t_margin = 20
     fpdf.r_margin = 16
@@ -288,8 +289,8 @@ def html2pdf_blank(html, path_and_filename):
     fpdf.format = 'A4'
     fpdf.set_font('Arial', '', 11)
     fpdf.add_page()
-    
     parser = MyHTMLParser(fpdf)
     parser.feed(html)
-    fpdf.output(path_and_filename)
+    byte_string = fpdf.output(dest="S").encode('latin-1')
+    return byte_string
 

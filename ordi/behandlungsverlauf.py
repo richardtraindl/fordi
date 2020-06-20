@@ -2,8 +2,9 @@
 
 from datetime import date, timedelta
 import os
+from io import BytesIO    
 
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, make_response
 from flask_mobility.decorators import mobile_template
 from werkzeug.exceptions import abort
 from sqlalchemy import func, distinct, or_, and_
@@ -51,19 +52,12 @@ def index(template):
         jahr=str_jahr, page_title="Behandlungsverläufe")
 
 
-def dl_behandlungsverlauf(behandlungsverlauf_id):
-    behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
-
+def create_pdf(behandlungsverlauf):
     html = render_template('behandlungsverlauf/print.html', behandlungsverlauf=behandlungsverlauf)
 
-    name = filter_bad_chars(behandlungsverlauf.person.familienname + \
-                "_" + behandlungsverlauf.person.vorname)
-    filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + name + ".pdf"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+    byte_string = html2pdf(html)
 
-    html2pdf(html, path_and_filename)
-
-    return path_and_filename
+    return byte_string
 
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
@@ -127,9 +121,21 @@ def show(behandlungsverlauf_id):
 @bp.route('/<int:behandlungsverlauf_id>/download', methods=('GET', 'POST'))
 @login_required
 def download(behandlungsverlauf_id):
-    path_and_filename = dl_behandlungsverlauf(behandlungsverlauf_id)
+    behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
 
-    return send_file(path_and_filename, as_attachment=True)
+    byte_string = create_pdf(behandlungsverlauf)
+
+    name = filter_bad_chars(behandlungsverlauf.person.familienname + \
+                "_" + behandlungsverlauf.person.vorname)
+    filename = str(behandlungsverlauf.id) + "_behandlungsverlauf_fuer_" + name + ".pdf"
+
+    response = make_response(byte_string)
+
+    response.headers.set('Content-Disposition', 'attachment', filename=filename)
+
+    response.headers.set('Content-Type', 'application/pdf')
+
+    return response
 
 
 @bp.route('/<int:behandlungsverlauf_id>/delete', methods=('GET',))

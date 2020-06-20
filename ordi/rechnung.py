@@ -3,7 +3,7 @@
 from datetime import datetime
 import os, types
 
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, make_response
 from flask_mobility.decorators import mobile_template
 from werkzeug.exceptions import abort
 from sqlalchemy import func, distinct, or_, and_
@@ -77,20 +77,12 @@ def calc_and_fill_rechnung(rechnung, rechnungszeilen):
     return ""
 
 
-def dl_rechnung(rechnung_id):
-    rechnung = db.session.query(Rechnung).get(rechnung_id)
-    rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung_id).all()
-
+def create_pdf(rechnung, rechnungszeilen):
     html = render_template('rechnung/print.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen)
 
-    name = filter_bad_chars(rechnung.person.familienname + "_" + rechnung.person.vorname)
+    byte_string = html2pdf(html)
 
-    filename = str(rechnung.id) + "_rechnung_fuer_" + name + ".pdf"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-
-    html2pdf(html, path_and_filename)
-
-    return path_and_filename
+    return byte_string
 
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
@@ -301,9 +293,22 @@ def show(rechnung_id):
 @bp.route('/<int:rechnung_id>/download', methods=('GET', 'POST'))
 @login_required
 def download(rechnung_id):
-    path_and_filename = dl_rechnung(rechnung_id)
+    rechnung = db.session.query(Rechnung).get(rechnung_id)
 
-    return send_file(path_and_filename, as_attachment=True)
+    rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung_id).all()
+
+    byte_string = create_pdf(rechnung, rechnungszeilen)
+
+    name = filter_bad_chars(rechnung.person.familienname + "_" + rechnung.person.vorname)
+    filename = str(rechnung.id) + "_rechnung_fuer_" + name + ".pdf"
+
+    response = make_response(byte_string)
+
+    response.headers.set('Content-Disposition', 'attachment', filename=filename)
+
+    response.headers.set('Content-Type', 'application/pdf')
+
+    return response
 
 
 @bp.route('/<int:rechnung_id>/delete', methods=('GET',))

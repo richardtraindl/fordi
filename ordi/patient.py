@@ -45,8 +45,8 @@ def index(template):
     tierhaltungen = db.session.query(Tierhaltung, Person, Tier) \
         .join(Tierhaltung.person) \
         .join(Tierhaltung.tier) \
-        .filter(Person.familienname.like(familienname + "%"), 
-                Tier.tiername.like(tiername + "%"), 
+        .filter(func.lower(Person.familienname).like(func.lower(familienname) + "%"), 
+                func.lower(Tier.tiername).like(func.lower(tiername) + "%"), 
                 Person.kunde==kunde, Tier.patient==patient).all() # .limit(500)
 
     return render_template(template, tierhaltungen=tierhaltungen, 

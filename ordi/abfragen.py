@@ -2,8 +2,9 @@
 
 from datetime import date, datetime
 import os
+from io import BytesIO  
 
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, make_response
 from werkzeug.exceptions import abort
 from sqlalchemy import func, distinct, or_, and_
 
@@ -17,42 +18,39 @@ from ordi.createpdf import *
 bp = Blueprint('abfrage', __name__, url_prefix='/abfrage')
 
 
-def dl_bericht(abfrage, tierhaltungen, kriterium1, kriterium2):
+def create_pdf_bericht(abfrage, tierhaltungen, kriterium1, kriterium2):
     html = render_template('abfragen/print.html', abfrage=abfrage, kriterium1=kriterium1, 
-        kriterium2=kriterium2, tierhaltungen=tierhaltungen)
-    filename = abfrage + "_bericht.pdf"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
+                            kriterium2=kriterium2, tierhaltungen=tierhaltungen)
 
-    html2pdf_blank(html, path_and_filename)
+    byte_string = html2pdf_blank(html)
 
-    return path_and_filename
+    return byte_string
 
 
-def dl_etiketten(abfrage, personen):
+def create_pdf_etiketten(abfrage, personen):
     html = render_template('abfragen/print_etiketten.html', personen=personen)
-    filename = abfrage + "_etiketten.pdf"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
 
-    html2pdf_blank(html, path_and_filename)
+    byte_string = html2pdf_blank(html)
 
-    return path_and_filename
+    return byte_string
 
 
-def dl_excel(abfrage, tierhaltungen):
-    filename = abfrage + ".xlsx"
-    path_and_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads', filename)
-
+def create_excel_finanzamt(abfrage, tierhaltungen):
     from openpyxl import Workbook
+    from tempfile import NamedTemporaryFile
+
     wb = Workbook()
     ws = wb.active
     ws['A1'] = "Behandlungsdatum"
     ws['B1'] = "Familienname"
     for tierhaltung in tierhaltungen:
-        print(tierhaltung)
         ws.append([tierhaltung.Behandlung.datum.strftime("%d.%m.%Y"), tierhaltung.Person.familienname])
-    wb.save(path_and_filename)
 
-    return path_and_filename
+    with NamedTemporaryFile() as tmp:
+        wb.save(tmp.name)
+        tmp.seek(0)
+        byte_string = tmp.read()
+    return byte_string
 
 
 def str_to_date(str_date):
@@ -154,8 +152,12 @@ def index():
                             ~Tier.merkmal.contains('%Abzeichen%')) \
                     .order_by(Behandlung.datum.asc()).all()
 
-                path_and_filename = dl_excel(abfrage, tierhaltungen)
-                return send_file(path_and_filename, as_attachment=True)
+                byte_string = create_excel_finanzamt(abfrage, tierhaltungen)
+                response = make_response(byte_string)
+                filename = abfrage + ".xlsx"
+                response.headers.set('Content-Disposition', 'attachment', filename=filename)
+                response.headers.set('Content-Type', 'text/csv')
+                return response
             else:
                 query = db.session.query(Tierhaltung, Person, Tier) \
                     .join(Tierhaltung.person) \
@@ -173,8 +175,12 @@ def index():
                             Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum) \
                     .order_by(Person.familienname.asc()).all()
 
-                path_and_filename = dl_etiketten(abfrage, personen)
-                return send_file(path_and_filename, as_attachment=True)
+                byte_string = create_pdf_etiketten(abfrage, personen)
+                response = make_response(byte_string)
+                filename = abfrage + "_etiketten.pdf"
+                response.headers.set('Content-Disposition', 'attachment', filename=filename)
+                response.headers.set('Content-Type', 'application/pdf')
+                return response
             else:
                 query = db.session.query(Tierhaltung, Person, Tier) \
                     .join(Tierhaltung.person) \
@@ -242,8 +248,12 @@ def index():
         tierhaltungen = []
 
     if(output == "bericht-drucken"):
-        path_and_filename = dl_bericht(abfrage, tierhaltungen, kriterium1, kriterium2)
-        return send_file(path_and_filename, as_attachment=True)
+        byte_string = create_pdf_bericht(abfrage, tierhaltungen, kriterium1, kriterium2)
+        response = make_response(byte_string)
+        filename = abfrage + "_bericht.pdf"
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        response.headers.set('Content-Type', 'application/pdf')
+        return response
     else:
         return render_template('abfragen/index.html', abfragen=lst_abfragen, 
             abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 

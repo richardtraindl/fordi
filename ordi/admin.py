@@ -5,6 +5,7 @@ from datetime import date, datetime
 import gdown
 
 from flask import Flask, Blueprint, flash, g, redirect, render_template, request, url_for
+import click
 
 from . import db
 from ordi.auth import admin_login_required
@@ -21,17 +22,17 @@ def index(filename=None):
 
 
 @bp.cli.command("import-tier")
-def import_tier():
-    url = 'https://drive.google.com/uc?id=1wu9F8YQOqg5cesFf5sKTBcPJUPAIUHZ3'
+@click.argument("url")
+def import_tier(url):
     filename = 'tblTier.txt'
-    gdown.download(url, output, quiet=False) 
+    gdown.download(url, filename, quiet=False) 
     import_tier(filename)
     os.remove(filename)
 
 
 @bp.cli.command("import-person")
-def import_person():
-    url = 'https://drive.google.com/uc?id=1u53hst1HyqJsiBVwf7ajDag5AQbdZKFK'
+@click.argument("url")
+def import_person(url):
     filename = 'tblPerson.txt'
     gdown.download(url, filename, quiet=False) 
     import_person(filename)
@@ -39,8 +40,8 @@ def import_person():
 
 
 @bp.cli.command("import-adresse")
-def import_adresse():
-    url = 'https://drive.google.com/uc?id=1kRAhDccKKR2yS-9g31lctJSbdFkSYq0z'
+@click.argument("url")
+def import_adresse(url):
     filename = 'tblAdresse.txt'
     gdown.download(url, filename, quiet=False) 
     import_adresse(filename)
@@ -48,8 +49,8 @@ def import_adresse():
 
 
 @bp.cli.command("import-kontakt")
-def import_kontakt():
-    url = 'https://drive.google.com/uc?id=1tE2DFFysOJMJ56JVxn7YgvlumXjnNHLZ'
+@click.argument("url")
+def import_kontakt(url):
     filename = 'tblKontakt.txt'
     gdown.download(url, filename, quiet=False) 
     import_kontakt(filename)
@@ -57,8 +58,8 @@ def import_kontakt():
 
 
 @bp.cli.command("import-tierhaltung")
-def import_tierhaltung():
-    url = 'https://drive.google.com/uc?id=1BpggO7Ke1YzXrnXsR3tu3s-nJ5RzbSTG'
+@click.argument("url")
+def import_tierhaltung(url):
     filename = 'tblTierhaltung.txt'
     gdown.download(url, filename, quiet=False) 
     import_tierhaltung(filename)
@@ -66,8 +67,8 @@ def import_tierhaltung():
 
 
 @bp.cli.command("import-behandlung")
-def import_behandlung():
-    url = 'https://drive.google.com/uc?id=1yT3LiBK6PIUXc0Rpnb965oTpUN4RCFQ2'
+@click.argument("url")
+def import_behandlung(url):
     filename = 'tblBehandlung.txt'
     gdown.download(url, filename, quiet=False) 
     import_behandlung(filename)
@@ -75,8 +76,8 @@ def import_behandlung():
 
 
 @bp.cli.command("import-impfung")
-def import_impfung():
-    url = 'https://drive.google.com/uc?id=1dn2LmjS4uQ2OT4CL6khXFOn1kaGmdXS4'
+@click.argument("url")
+def import_impfung(url):
     filename = 'tblImpfung.txt'
     gdown.download(url, filename, quiet=False) 
     import_impfung(filename)
@@ -84,8 +85,8 @@ def import_impfung():
 
 
 @bp.cli.command("import-behandlungsverlauf")
-def import_behandlungsverlauf():
-    url = 'https://drive.google.com/uc?id=1hH4fNXURhSmcReEAEvjyciJnPBBWAwX-'
+@click.argument("url")
+def import_behandlungsverlauf(url):
     filename = 'tblBehandlungsverlauf.txt'
     gdown.download(url, filename, quiet=False) 
     import_behandlungsverlauf(filename)
@@ -93,19 +94,18 @@ def import_behandlungsverlauf():
 
 
 @bp.cli.command("import-rechnung")
-def import_rechnung():
-    url = 'https://drive.google.com/uc?id=1QufIGxZ2IfENItlfjCXQi55K9Q4jwOiV'
+@click.argument("url")
+def import_rechnung(url):
     filename = 'tblRechnung.txt'
     gdown.download(url, filename, quiet=False) 
     import_rechnung(filename)
     os.remove(filename)
 
 @bp.cli.command("import-rechnungszeile")
-def import_rechnungszeile():
-    url = 'https://drive.google.com/uc?id=1HkOfoqhb5XjuQQ0SSBO_fXp8A3fCf5-3'
+@click.argument("url")
+def import_rechnungszeile(url):
     filename = 'tblRechnungszeile.txt'
     gdown.download(url, filename, quiet=False) 
-    #gdown.cached_download(url, output, postprocess=gdown.extractall)
     import_rechnungszeile(filename)
     os.remove(filename)
 

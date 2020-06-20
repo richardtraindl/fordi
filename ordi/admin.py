@@ -17,74 +17,97 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @bp.route('/', methods=('GET', 'POST'))
 @admin_login_required
 def index(filename=None):
-    return render_template('admin/index.html', filename=filename, page_title="Admin")
-
-
-@bp.route('/upload', methods=['GET', 'POST'])
-@admin_login_required
-def upload():
-    if request.method == 'POST':
-        if('file' not in request.files):
-            flash('No file part')
-            return redirect(url_for('admin.index'))
-
-        file = request.files['file']
-
-        if(file.filename == ''):
-            flash('No selected file')
-            return redirect(url_for('admin.index'))
-
-        if(file):
-            process = Process(target=dbwrite, args=(file,), daemon=False)
-            process.start()
-            return redirect(url_for('admin.index', filename=file.filename))
+    return render_template('admin/index.html', page_title="Admin")
 
 
 @bp.cli.command("import-tier")
 def import_tier():
     url = 'https://drive.google.com/uc?id=1wu9F8YQOqg5cesFf5sKTBcPJUPAIUHZ3'
-    output = 'tblTier.txt'
+    filename = 'tblTier.txt'
     gdown.download(url, output, quiet=False) 
-    gdown.cached_download(url, output, postprocess=gdown.extractall)
-    import_tier(output)
-    os.remove("tblTier.txt")
+    import_tier(filename)
+    os.remove(filename)
 
 
-def dbwrite(file):
-    str_file = file.read().decode("utf-8")
+@bp.cli.command("import-person")
+def import_person():
+    url = 'https://drive.google.com/uc?id=1u53hst1HyqJsiBVwf7ajDag5AQbdZKFK'
+    filename = 'tblPerson.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_person(filename)
+    os.remove(filename)
 
-    if(file.filename == "tblTier.txt"):
-        return import_tier(str_file)
 
-    if(file.filename == "tblPerson.txt"):
-        return import_person(str_file)
+@bp.cli.command("import-adresse")
+def import_adresse():
+    url = 'https://drive.google.com/uc?id=1kRAhDccKKR2yS-9g31lctJSbdFkSYq0z'
+    filename = 'tblAdresse.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_adresse(filename)
+    os.remove(filename)
 
-    if(file.filename == "tblAdresse.txt"):
-        return import_adresse(str_file)
 
-    if(file.filename == "tblKontakt.txt"):
-        return import_kontakt(str_file)
+@bp.cli.command("import-kontakt")
+def import_kontakt():
+    url = 'https://drive.google.com/uc?id=1tE2DFFysOJMJ56JVxn7YgvlumXjnNHLZ'
+    filename = 'tblKontakt.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_tier(filename)
+    os.remove(filename)
 
-    if(file.filename == "tblTierhaltung.txt"):
-        return import_tierhaltung(str_file)
 
-    if(file.filename == "tblBehandlung.txt"):
-        return import_behandlung(str_file)
+@bp.cli.command("import-tierhaltung")
+def import_tierhaltung():
+    url = 'https://drive.google.com/uc?id=1BpggO7Ke1YzXrnXsR3tu3s-nJ5RzbSTG'
+    filename = 'tblTierhaltung.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_tier(filename)
+    os.remove(filename)
 
-    if(file.filename == "tblImpfung.txt"):
-        return import_impfung(str_file)
 
-    if(file.filename == "tblBehandlungsverlauf.txt"):
-        return import_behandlungsverlauf(str_file)
+@bp.cli.command("import-behandlung")
+def import_behandlung():
+    url = 'https://drive.google.com/uc?id=1yT3LiBK6PIUXc0Rpnb965oTpUN4RCFQ2'
+    filename = 'tblBehandlung.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_tier(filename)
+    os.remove(filename)
 
-    if(file.filename == "tblRechnung.txt"):
-        return import_rechnung(str_file)
 
-    if(file.filename == "tblRechnungszeile.txt"):
-        return import_rechnungszeile(str_file)
+@bp.cli.command("import-impfung")
+def import_impfung():
+    url = 'https://drive.google.com/uc?id=1dn2LmjS4uQ2OT4CL6khXFOn1kaGmdXS4'
+    filename = 'tblImpfung.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_tier(filename)
+    os.remove(filename)
 
-    print("Keine Tabelle importiert!")
-    return False
+
+@bp.cli.command("import-behandlungsverlauf")
+def import_behandlungsverlauf():
+    url = 'https://drive.google.com/uc?id=1hH4fNXURhSmcReEAEvjyciJnPBBWAwX-'
+    filename = 'tblBehandlungsverlauf.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_tier(filename)
+    os.remove(filename)
+
+
+@bp.cli.command("import-rechnung")
+def import_rechnung():
+    url = 'https://drive.google.com/uc?id=1QufIGxZ2IfENItlfjCXQi55K9Q4jwOiV'
+    filename = 'tblRechnung.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_tier(filename)
+    os.remove(filename)
+
+@bp.cli.command("import-rechnungszeile")
+def import_rechnungszeile():
+    url = 'https://drive.google.com/uc?id=1HkOfoqhb5XjuQQ0SSBO_fXp8A3fCf5-3'
+    filename = 'tblRechnungszeile.txt'
+    gdown.download(url, filename, quiet=False) 
+    #gdown.cached_download(url, output, postprocess=gdown.extractall)
+    import_tier(filename)
+    os.remove(filename)
 
 
 def clean_str_file(str_file, rowcnt):
@@ -199,8 +222,11 @@ def import_tier(filename):
         return False
 
 
-def import_person(str_file):
+def import_person(filename):
     print("starte person import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -271,8 +297,11 @@ def import_person(str_file):
         return False
 
 
-def import_adresse(str_file):
+def import_adresse(filename):
     print("starte adresse import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -320,8 +349,11 @@ def import_adresse(str_file):
         return False
 
 
-def import_kontakt(str_file):
+def import_kontakt(filename):
     print("starte kontakt import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -373,9 +405,12 @@ def import_kontakt(str_file):
         return False
 
 
-def import_tierhaltung(str_file):
+def import_tierhaltung(filename):
     print("starte tierhaltung import")
-    
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
+
     ok = True
 
     new = clean_str_file(str_file, 2)
@@ -442,8 +477,11 @@ def import_tierhaltung(str_file):
         return False
 
 
-def import_behandlung(str_file):
+def import_behandlung(filename):
     print("starte behandlung import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -520,8 +558,11 @@ def import_behandlung(str_file):
         return False
 
 
-def import_impfung(str_file):
+def import_impfung(filename):
     print("starte impfung import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -580,8 +621,11 @@ def import_impfung(str_file):
         return False
 
 
-def import_behandlungsverlauf(str_file):
+def import_behandlungsverlauf(filename):
     print("starte behandlungsverlauf import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -656,8 +700,11 @@ def import_behandlungsverlauf(str_file):
         return False
 
 
-def import_rechnung(str_file):
+def import_rechnung(filename):
     print("starte rechnung import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 
@@ -753,8 +800,11 @@ def import_rechnung(str_file):
         return False
 
 
-def import_rechnungszeile(str_file):
+def import_rechnungszeile(filename):
     print("starte rechnungszeile import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
 
     ok = True
 

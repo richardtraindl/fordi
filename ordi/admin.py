@@ -52,7 +52,7 @@ def import_kontakt():
     url = 'https://drive.google.com/uc?id=1tE2DFFysOJMJ56JVxn7YgvlumXjnNHLZ'
     filename = 'tblKontakt.txt'
     gdown.download(url, filename, quiet=False) 
-    import_tier(filename)
+    import_kontakt(filename)
     os.remove(filename)
 
 
@@ -61,7 +61,7 @@ def import_tierhaltung():
     url = 'https://drive.google.com/uc?id=1BpggO7Ke1YzXrnXsR3tu3s-nJ5RzbSTG'
     filename = 'tblTierhaltung.txt'
     gdown.download(url, filename, quiet=False) 
-    import_tier(filename)
+    import_tierhaltung(filename)
     os.remove(filename)
 
 
@@ -70,7 +70,7 @@ def import_behandlung():
     url = 'https://drive.google.com/uc?id=1yT3LiBK6PIUXc0Rpnb965oTpUN4RCFQ2'
     filename = 'tblBehandlung.txt'
     gdown.download(url, filename, quiet=False) 
-    import_tier(filename)
+    import_behandlung(filename)
     os.remove(filename)
 
 
@@ -79,7 +79,7 @@ def import_impfung():
     url = 'https://drive.google.com/uc?id=1dn2LmjS4uQ2OT4CL6khXFOn1kaGmdXS4'
     filename = 'tblImpfung.txt'
     gdown.download(url, filename, quiet=False) 
-    import_tier(filename)
+    import_impfung(filename)
     os.remove(filename)
 
 
@@ -88,7 +88,7 @@ def import_behandlungsverlauf():
     url = 'https://drive.google.com/uc?id=1hH4fNXURhSmcReEAEvjyciJnPBBWAwX-'
     filename = 'tblBehandlungsverlauf.txt'
     gdown.download(url, filename, quiet=False) 
-    import_tier(filename)
+    import_behandlungsverlauf(filename)
     os.remove(filename)
 
 
@@ -97,7 +97,7 @@ def import_rechnung():
     url = 'https://drive.google.com/uc?id=1QufIGxZ2IfENItlfjCXQi55K9Q4jwOiV'
     filename = 'tblRechnung.txt'
     gdown.download(url, filename, quiet=False) 
-    import_tier(filename)
+    import_rechnung(filename)
     os.remove(filename)
 
 @bp.cli.command("import-rechnungszeile")
@@ -106,7 +106,7 @@ def import_rechnungszeile():
     filename = 'tblRechnungszeile.txt'
     gdown.download(url, filename, quiet=False) 
     #gdown.cached_download(url, output, postprocess=gdown.extractall)
-    import_tier(filename)
+    import_rechnungszeile(filename)
     os.remove(filename)
 
 

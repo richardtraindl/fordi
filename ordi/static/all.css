@@ -25,16 +25,15 @@ a { color: #377ba8; text-decoration: none; }
 
 header { 
     background-color: Lightgray;
-    width: 100%; 
-    margin: 0 auto;
-    padding: 8px 0px 8px 0px;
+    margin: 0px;
+    padding: 8px 8px 8px 8px;
     display: grid; 
     grid-template-columns: auto auto auto;
 }
 
 header p, header p a { font-size: 16px; line-height: 18px; }
 
-nav { background-color: Lightgray; margin-top: 1px; padding: 8px 0px 6px 0px; }
+nav { background-color: Lightgray; margin-top: 1px; padding: 8px 0px 8px 0px; }
 nav a, 
 nav a:link, 
 nav a:visited,

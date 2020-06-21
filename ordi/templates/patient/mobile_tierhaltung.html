@@ -9,12 +9,12 @@
 
 {% block content %}
   <div style="max-height: 24vh; overflow-y: scroll; overflow-x: hidden;">
-    {% with person=tierhaltung.person %}
-      {% include '_mobile_person.html' %}
-    {% endwith %}
-
     {% with tier=tierhaltung.tier %}
       {% include '_mobile_tier.html' %}
+    {% endwith %}
+
+    {% with person=tierhaltung.person %}
+      {% include '_mobile_person.html' %}
     {% endwith %}
 
     <div class="small-gap"></div>

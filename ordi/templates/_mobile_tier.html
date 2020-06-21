@@ -1,23 +1,42 @@
 
   <p>
-    {{- tier.tiername -}} &nbsp;
-    {{- tier.tierart -}} &nbsp;
-    {{- tier.geburtsdatum|dt -}} &nbsp;
-    {{- tier.geschlechtscode|mapgeschlecht -}}
-    <br>
-    {% if tier.chip_nummer|length > 0 %}
-      Chipnr. &nbsp; {{- tier.chip_nummer -}} &nbsp;
+    <span style="font-weight: bold;">Tier:</span> &nbsp;
+    {{- tier.tiername -}}
+
+    {% if tier.tierart %}
+      ,&nbsp;{{- tier.tierart -}}
     {% endif %}
 
-    {% if tier.eu_passnummer|length > 0 %}
-      EU-Passnr. &nbsp; {{- tier.eu_passnummer -}} &nbsp;
+    {% if tier.geburtsdatum %}
+      ,&nbsp;{{- tier.geburtsdatum|dt -}}
     {% endif %}
 
-    {% if tier.viren|length > 0 %}
-      Viren &nbsp; {{- tier.viren -}} &nbsp;
-    {% endif %}
-
-    {% if tier.merkmal|length > 0 %}
-      Merkmal &nbsp; {{- tier.merkmal -}}
+    {% if tier.geschlechtscode %}
+      ,&nbsp;{{- tier.geschlechtscode|mapgeschlecht -}}
     {% endif %}
   </p>
+  
+  {% if tier.chip_nummer|length > 0 %}
+    <p>
+        <span style="font-weight: bold;">Chipnr.:</span>&nbsp;{{- tier.chip_nummer -}}
+    </p>
+  {% endif %}
+
+  {% if tier.eu_passnummer|length > 0 %}
+    <p>
+      <span style="font-weight: bold;">EU-Passnr.:</span>&nbsp;{{- tier.eu_passnummer -}}
+    </p>
+  {% endif %}
+
+  {% if tier.viren|length > 0 %}
+    <p>
+      <span style="font-weight: bold;">Viren:</span>&nbsp;{{- tier.viren -}}
+    </p>
+  {% endif %}
+
+  {% if tier.merkmal|length > 0 %}
+    <p>
+      <span style="font-weight: bold;">Merkmal:</span>&nbsp;{{- tier.merkmal -}}
+    </p>
+  {% endif %}
+

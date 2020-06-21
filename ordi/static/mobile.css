@@ -13,7 +13,7 @@ h3, h3 a { font-size: 28px; }
 
 #content-wrapper { padding: 0px; }
 
-header { margin: 0px; padding: 8px 0px 8px 0px; }
+header { padding: 6px 6px 6px 6px; }
 header p, header p a { font-size: 24px; line-height: 26px; }
 
 nav a, nav a:link, nav a:visited, nav a:active { font-size: 24px; }
@@ -24,6 +24,8 @@ nav a, nav a:link, nav a:visited, nav a:active { font-size: 24px; }
   display: none;
 }
 #mobile-nav ul { list-style-type: none; }
+
+.mobile-behandlungen { border-top: 1px solid Black; }
 
 .mobile-behandlungen ul { list-style-type: none; margin: 0px; padding: 0px}
 

@@ -36,7 +36,7 @@
   <body>
     <header>
     {% if request.MOBILE %}
-      <h1>Ordi</h1>
+      <h1 style="background-color: Green;">Ordi</h1>
 
       {% if page_title == "Behandlungsverläufe" %}
         <h2>Beh.Verläufe</h2>
@@ -44,11 +44,11 @@
         {% if page_title == "Behandlungsverlauf" %}
           <h2>Beh.Verlauf</h2>
         {% else %}
-          <h2>{{ page_title }}</h2>
+          <h2 style="background-color: Blue;">{{ page_title }}</h2>
         {% endif %}
       {% endif %}
 
-      <p><a id="nav-button" href="#">
+      <p style="background-color: Red; text-align: right;"><a id="nav-button" href="#">
          <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}"></a>
       </p>
     {% else %}

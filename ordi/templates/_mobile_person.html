@@ -1,12 +1,21 @@
 
   <p>
-    {{- person.anredecode|mapanrede -}} &nbsp;
-    {{- person.titel -}} &nbsp;
-    {{- person.familienname -}} &nbsp;
+    <span style="font-weight: bold;">Kunde:</span> &nbsp;
+    {{- person.titel -}}&nbsp;
+    {{- person.familienname -}}&nbsp;
     {{- person.vorname -}}
-    <br>
-    {{- person.adr_plz|sn -}} &nbsp;
-    {{- person.adr_ort|sn -}} &nbsp;
-    {{- person.adr_strasse|sn -}} &nbsp;
-    {{- person.kontakte|sn -}}
   </p>
+  {% if person.adr_plz or person.adr_ort or person.adr_strasse %}
+    <p>
+      <span style="font-weight: bold;">Anschrift:</span> &nbsp;
+      {{- person.adr_plz|sn -}}&nbsp;
+      {{- person.adr_ort|sn -}}&nbsp;
+      {{- person.adr_strasse|sn -}}&nbsp;
+    </p>
+  {% endif %}
+
+  {% if person.kontakte %}
+    <p>
+      <span style="font-weight: bold;">Kontakt:</span>&nbsp;{{- person.kontakte|sn -}}
+    </p>
+  {% endif %}

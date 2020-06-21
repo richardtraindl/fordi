@@ -8,17 +8,10 @@ from flask import Flask, Blueprint, flash, g, redirect, render_template, request
 import click
 
 from . import db
-from ordi.auth import admin_login_required
 from ordi.models import *
 
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
-
-
-@bp.route('/', methods=('GET', 'POST'))
-@admin_login_required
-def index(filename=None):
-    return render_template('admin/index.html', page_title="Admin")
 
 
 @bp.cli.command("import-tier")

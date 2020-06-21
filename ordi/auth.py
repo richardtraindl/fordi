@@ -4,9 +4,8 @@ import functools
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-#from flask_mobility import Mobility
-#from flask_mobility.decorators import mobile_template
 from werkzeug.security import check_password_hash, generate_password_hash
+import click
 
 from . import db
 from ordi.models import User
@@ -25,41 +24,28 @@ def login_required(view):
     return wrapped_view
 
 
-def admin_login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if(g.user and g.user.username == "richard"):
-            return view(**kwargs)
-        else:
-            return redirect(url_for('auth.login'))        
+@bp.cli.command("register")
+@click.argument("username")
+@click.argument("password")
+def register(username, password):
+    error = None
 
-    return wrapped_view
-
-
-@bp.route('/register', methods=('GET', 'POST'))
-def register():
-    if(request.method == 'POST'):
-        username = request.form['username']
-        password = request.form['password']
-        error = None
-
-        if(not username):
-            error = 'Username is required.'
-        elif(not password):
-            error = 'Password is required.'
-        else:
-            user = db.session.query(User).filter(User.username == username).scalar()
-            if(user):
-                error = 'User {} is already registered.'.format(username)
+    if(not username):
+        error = 'Username is required.'
+    elif(not password):
+        error = 'Password is required.'
+    else:
+        user = db.session.query(User).filter(User.username == username).scalar()
+        if(user):
+            error = 'User {} is already registered.'.format(username)
 
         if(error is None):
             user = User(username=username, password=generate_password_hash(password))
             db.session.add(user)
             db.session.commit()
-            return redirect(url_for('auth.login'))
-
-        flash(error)
-    return render_template('auth/register.html', page_title="Registrieren")
+            print("user registered")
+        else:
+            print(error)
 
 
 @bp.route('/login', methods=('GET', 'POST'))

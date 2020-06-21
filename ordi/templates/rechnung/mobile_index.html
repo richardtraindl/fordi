@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'mobile_base.html' %}
 
 
 {% block title %}
@@ -14,41 +14,43 @@
       <label for="jahr">Jahr</label>
 
       <input type="text" size="8" name="jahr" value="{{- jahr -}}">
-    </div>
-
-    <div class="small-gap"></div>
-
-    <div>
+      
       <input type="submit" value="suchen">
+      <div></div>
     </div>
   </form>
 
   <div class="small-gap"></div>
 
+  <table class="liste">
+    <tr>
+      <th width="24%">Rechn.</th>
+
+      <th width="38%">Kunde</th>
+
+      <th width="38%">Patient</th>
+    </tr>
+  </table>
+
   <div class="liste-wrapper">
     <table class="liste">
-      <tr>
-        <th width="10%">Rechn.</th>
-        <th width="40%">Kunde</th>
-        <th width="50%">Patient</th>
-      </tr>
       {% for rechnung in rechnungen %}
         <tr>
-          <td style="width: 10%">
+          <td width="24%">
             <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
-              {{- rechnung.Rechnung.jahr -}}
+              {{- rechnung.Rechnung.jahr -}}/
               <br>
-              / {{- rechnung.Rechnung.lfnr -}}
-              </a>
+              {{- rechnung.Rechnung.lfnr -}}
+            </a>
           </td>
-          <td style="width: 40%">
+          <td width="38%">
             <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
               {{ rechnung.Person.titel }}
               {{ rechnung.Person.familienname }}
               {{ rechnung.Person.vorname }}
             </a>
           </td>
-          <td style="width: 50%">
+          <td width="38%">
             <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
               {{ rechnung.Tier.tiername }}
               {{ rechnung.Tier.tierart }}

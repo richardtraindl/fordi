@@ -2,14 +2,14 @@
 * { 
     font-size: 24px; 
     line-height: 26px;
-    box-sizing: border-box;
+    /*box-sizing: border-box; */
 }
 
 html { margin: 0px; padding: 0px; }
-body { width: 100%; max-width: 100%; margin: 0px; padding: 4px; background-color: White; }
-h1, h1 a { font-size: 32px; }
-h2, h2 a { font-size: 30px; }
-h3, h3 a { font-size: 28px; }
+body { width: 100%; max-width: 100%; margin: 0px; padding: 0px; background-color: White; }
+h1, h1 a { margin: 0px; padding: 0px; font-size: 32px; }
+h2, h2 a { margin: 0px; padding: 0px; font-size: 30px; }
+h3, h3 a { margin: 0px; padding: 0px; font-size: 28px; }
 
 #content-wrapper { padding: 0px; }
 
@@ -29,3 +29,4 @@ nav a, nav a:link, nav a:visited, nav a:active { font-size: 24px; }
 
 .mobile-behandlungen ul { list-style-type: none; margin: 0px; padding: 0px}
 
+.liste-wrapper { height: 70vh; max-height: 70vh; }

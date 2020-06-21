@@ -1,5 +1,5 @@
 
-{% extends 'base.html' %}
+{% extends 'mobile_base.html' %}
 
 
 {% block title %}
@@ -11,7 +11,7 @@
     <div class="small-gap"></div>
 
     <form method="post" action="{{ url_for('patient.index') }}">
-      <div class="row-grid" style="grid-template-columns: auto auto; max-height: 20vh;">
+      <div class="row-grid" style="grid-template-columns: auto auto; max-height: 35vh;">
         <label for="familienname">Familienname</label>
 
         <input type="text" size="8" name="familienname" value="{{ familienname }}">
@@ -33,33 +33,34 @@
         {%- else -%}
           <input type="checkbox" name="patient" value="1" checked>
         {%- endif -%}
-      </div>
 
-      <div class="small-gap"></div>
-
-      <div>
         <input type="submit" value="suchen">
+        <div></div>
       </div>
     </form>
 
-    <div class="small-gap"></div>
+  <div class="small-gap"></div>
 
-  <div class="liste-wrapper">
+  <table class="liste">
+    <tr>
+      <th width="50%">Kunde</th>
+
+      <th width="50%">Patient</th>
+    </tr>
+  </table>
+  
+  <div class="liste-wrapper" style="max-height: 55vh;">
     <table class="liste">
-        <tr>
-            <th width="50%">Kunde</th>
-            <th width="50%">Patient</th>
-        </tr>
       {% for th in tierhaltungen %}
         <tr>
-          <td style="width: 50%">
+          <td width="50%">
             <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
               {{ th.Person.titel }}
               {{ th.Person.familienname }}
               {{ th.Person.vorname }}
             </a>
           </td>
-          <td style="width: 50%">
+          <td width="50%">
             <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
               {{ th.Tier.tiername }}
               {{ th.Tier.tierart }}

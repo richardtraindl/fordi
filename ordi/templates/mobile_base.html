@@ -8,6 +8,8 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='all.css') }}">
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui-1.12.1.min.css') }}">
 
     <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
@@ -27,32 +29,37 @@
 
       <script src="{{ url_for('static', filename='jquery.timePicker.js') }}"></script>
     {% endif %}
+
   </head>
   <body>
     <header>
-      <h1 style="padding-left: 8px">Ordi</h1>
+      <h1>Ordi</h1>
 
-      <h2>{{ page_title }}</h2>
-
-      <p style="text-align: right; padding-right: 8px">
-      {% if g.user %}
-        <a href="{{ url_for('auth.logout') }}">abmelden</a>
-      {% elif page_title != "Anmelden" %}
-        <a href="{{ url_for('auth.login') }}">anmelden</a>
+      {% if page_title == "Behandlungsverläufe" %}
+        <h2>Beh.Verläufe</h2>
+      {% elif page_title == "Behandlungsverlauf" %}
+        <h2>Beh.Verlauf</h2>
+      {% else %}
+        <h2>{{ page_title }}</h2>
       {% endif %}
+
+      <p style="text-align: right;"><a id="nav-button" href="#">
+         <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}"></a>
       </p>
     </header>
 
-    <nav class="flex-container">
-        <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
+    <nav id="mobile-nav" class="flex-container">
+      <ul>
+        <li><a href="{{ url_for('patient.index') }}">Patienten</a></li>
 
-        <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
+        <li><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></li>
 
-        <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
+        <li><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></li>
 
-        <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
+        <li><a href="{{ url_for('kalender.index') }}">Kalender</a></li>
 
-        <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
+        <li><a href="{{ url_for('auth.logout') }}">Abmelden</a></li>
+      </ul>
     </nav>
 
     <div id="content-wrapper">
@@ -66,6 +73,15 @@
         {% block content %}{% endblock %}
       </section>
     </div>
+
+    <script>
+      $(document).ready(function(){
+        $("#nav-button").on("click",function(){
+          $("#mobile-nav").toggle();
+          return false;
+        });
+      });
+    </script>
 
   </body>
 </html>

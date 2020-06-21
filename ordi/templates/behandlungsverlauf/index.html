@@ -41,7 +41,7 @@
         <tr>
             <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- b.Behandlungsverlauf.id -}}"></td>
 
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum -}}</a></td>
+            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum|dt -}}</a></td>
 
             <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode|mapanrede -}}</a></td>
 

@@ -53,6 +53,19 @@ def filter_format_date(val):
         return ""
 
 
+def filter_mformat_date(val):
+    if not val is None:
+        if(val.year==1900 and val.month==1 and val.day==1):
+            return ""
+        else:
+            try:
+                return val.strftime("%d.%m. %Y")
+            except:
+                return ""
+    else:
+        return ""
+
+
 def filter_format_datetime(val):
     if not val is None:
         return val.strftime("%d.%m.%Y, %H:%M")

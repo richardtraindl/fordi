@@ -34,24 +34,24 @@
 
   </head>
   <body>
+  {% if request.MOBILE %}
     <header>
-    {% if request.MOBILE %}
       <h1 style="background-color: Green;">Ordi</h1>
 
       {% if page_title == "Behandlungsverläufe" %}
         <h2>Beh.Verläufe</h2>
+      {% elif page_title == "Behandlungsverlauf" %}
+        <h2>Beh.Verlauf</h2>
       {% else %}
-        {% if page_title == "Behandlungsverlauf" %}
-          <h2>Beh.Verlauf</h2>
-        {% else %}
-          <h2 style="background-color: Blue;">{{ page_title }}</h2>
-        {% endif %}
+        <h2 style="background-color: Blue;">{{ page_title }}</h2>
       {% endif %}
 
       <p style="background-color: Red; text-align: right;"><a id="nav-button" href="#">
          <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}"></a>
       </p>
-    {% else %}
+    </header>
+  {% else %}
+    <header>
       <h1 style="padding-left: 8px">Ordi</h1>
 
       <h2>{{ page_title }}</h2>
@@ -59,14 +59,12 @@
       <p style="text-align: right; padding-right: 8px">
       {% if g.user %}
         <a href="{{ url_for('auth.logout') }}">abmelden</a>
-      {% else %}
-        {% if page_title != "Anmelden" %}
-          <a href="{{ url_for('auth.login') }}">anmelden</a>
-        {% endif %}
+      {% elif page_title != "Anmelden" %}
+        <a href="{{ url_for('auth.login') }}">anmelden</a>
       {% endif %}
       </p>
-    {% endif %}      
-  </header>
+    </header>
+  {% endif %}      
 
   {% if request.MOBILE %}
   <nav id="mobile-nav" class="flex-container">

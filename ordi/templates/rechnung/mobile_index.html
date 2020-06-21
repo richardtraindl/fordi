@@ -28,14 +28,21 @@
   <div class="liste-wrapper">
     <table class="liste">
       <tr>
-        <th width="50%">Kunde</th>
+        <th width="10%">Rechn.</th>
+        <th width="40%">Kunde</th>
         <th width="50%">Patient</th>
       </tr>
       {% for rechnung in rechnungen %}
         <tr>
-          <td style="width: 50%">
+          <td style="width: 10%">
             <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
-              {{ rechnung.Person.anredecode|mapanrede }}
+              {{- rechnung.Rechnung.jahr -}}
+              <br>
+              / {{- rechnung.Rechnung.lfnr -}}
+              </a>
+          </td>
+          <td style="width: 40%">
+            <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
               {{ rechnung.Person.titel }}
               {{ rechnung.Person.familienname }}
               {{ rechnung.Person.vorname }}

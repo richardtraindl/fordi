@@ -28,47 +28,47 @@
               <span style="font-weight: bold">{{- behandlung.datum|dt -}}</span>
           </li>
 
-          {% if behandlung.diagnose|length > 0 %}
+          {%- if behandlung.diagnose|length > 0 -%}
             <li>
                 <span style="font-weight: bold">Diagnose</span>
                 <br>
                 {{- behandlung.diagnose -}}
             </li>
-          {% endif %}
+          {%- endif -%}
 
-          {% if behandlung.laborwerte1|length > 0 %}
+          {%- if behandlung.laborwerte1|length > 0 -%}
             <li>
                 <span style="font-weight: bold">Laborwerte1</span>
                 <br>
                 {{- behandlung.laborwerte1 -}}
             </li>
-          {% endif %}
+          {%- endif -%}
 
-          {% if behandlung.laborwerte2|length > 0 %}
+          {%- if behandlung.laborwerte2|length > 0 -%}
             <li>
                 <span style="font-weight: bold">Laborwerte2</span>
                 <br>
                 {{- behandlung.laborwerte2 -}}
             </li>
-          {% endif %}
+          {%- endif -%}
 
-          {% if behandlung.arzneien|length > 0 %}
+          {%- if behandlung.arzneien|length > 0 -%}
             <li>
                 <span style="font-weight: bold">Arzneien</span>
                 <br>
                 {{- behandlung.arzneien -}}
             </li>
-          {% endif %}
+          {%- endif -%}
 
-          {% if behandlung.arzneimittel|length > 0 %}
+          {%- if behandlung.arzneimittel|length > 0 -%}
             <li>
                 <span style="font-weight: bold">Arzneimittel</span>
                 <br>
                 {{- behandlung.arzneimittel -}}
             </li>
-          {% endif %}
+          {%- endif -%}
 
-          {% if behandlung.impfungen %}
+          {%- if behandlung.impfungen -%}
             <li>
                 <span style="font-weight: bold">Impfungen</span>
                 <br>
@@ -77,15 +77,15 @@
                   {{- impfung.impfungscode|mapimpfung -}}
                 {%- endfor -%}
             </li>
-          {% endif %}
+          {%- endif -%}
 
-          {% if behandlung.gewicht|length > 0 %}
+          {%- if behandlung.gewicht|length > 0 -%}
             <li>
                 <span style="font-weight: bold">Gewicht</span>
                 <br>
                 {{- behandlung.gewicht|sn -}}
             </li>
-          {% endif %}
+          {%- endif -%}
         </ul>
       {% endfor %}
    </div>

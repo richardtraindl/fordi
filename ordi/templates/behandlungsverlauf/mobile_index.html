@@ -29,14 +29,19 @@
 <div class="liste-wrapper">
     <table class="liste">
       <tr>
-        <th width="50%">Kunde</th>
+        <th width="10%">Datum</th>
+        <th width="40%">Kunde</th>
         <th width="50%">Patient</th>
       </tr>
       {% for b in behandlungsverlaeufe %}
       <tr>
-        <td style="width: 50%">
+        <td style="width: 10%">
+          <a href="{{ url_for('behandlungsverlauf.show', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">
+            {{- b.Behandlungsverlauf.datum|mdt -}}
+          </a>
+        </td>
+        <td style="width: 40%">
             <a href="{{ url_for('behandlungsverlauf.show', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">
-              {{ b.Person.anredecode|mapanrede }}
               {{ b.Person.titel }}
               {{ b.Person.familienname }}
               {{ b.Person.vorname }}

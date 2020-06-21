@@ -9,38 +9,55 @@
 
 {% block content %}
   <div style="max-height: 24vh; overflow-y: scroll; overflow-x: hidden;">
-    {% with person=rechnung.person %}
-      {% include '_mobile_person.html' %}
-    {% endwith %}
-
     {% with tier=rechnung.tier %}
       {% include '_mobile_tier.html' %}
+    {% endwith %}
+
+    {% with person=rechnung.person %}
+      {% include '_mobile_person.html' %}
     {% endwith %}
 
     <div class="small-gap"></div>
   </div>
 
   <div id="scroller" class="mobile-behandlungen" style="max-height: 70vh; overflow-y: scroll; overflow-x: hidden; background-color: Snow;">
-    <p>Rechnungsjahr: &nbsp; {{- rechnung.jahr|sn -}}</p>
-
-    <p>Rechnungslfnr: &nbsp; {{- rechnung.lfnr|sn -}}</p>
-
-    <p>Ausstellungsdatum: &nbsp; {{- rechnung.datum|dt -}}</p>
-
-    <p>Ausstellungsort: &nbsp; {{- rechnung.ort -}}</p>
+    <p>
+        <span style="font-weight: bold">Rechnungsjahr:&nbsp;</span>
+        {{- rechnung.jahr|sn -}}
+    </p>
 
     <p>
-        Diagnose:<br>
-        {{- rechnung.diagnose|sn -}}</p>
+        <span style="font-weight: bold">Rechnungslfnr:&nbsp;</span>
+        {{- rechnung.lfnr|sn -}}
+    </p>
 
-    <p>Bezahlung: &nbsp; {{- rechnung.bezahlung|sn -}}</p>
+    <p>
+        <span style="font-weight: bold">Ausstellungsdatum:&nbsp;</span>
+        {{- rechnung.datum|dt -}}
+    </p>
+
+    <p>
+        <span style="font-weight: bold">Ausstellungsort:&nbsp;</span>
+        {{- rechnung.ort -}}
+    </p>
+
+    <p>
+        <span style="font-weight: bold">Diagnose:</span>
+        <br>
+        {{- rechnung.diagnose|sn -}}
+    </p>
+
+    <p>
+        <span style="font-weight: bold">Bezahlung:&nbsp;</span>
+        {{- rechnung.bezahlung|sn -}}
+    </p>
 
     <div class="small-gap"></div>
 
     {% for rz in rechnungszeilen %}
       <ul style="border: 1px solid black; background-color: Snow";>
         <li>{{- rz.datum|dt -}}</li>
-        <li>{{- rz.artikelcode -}}</li>
+        <li>{{- rz.artikelcode|mapartikel -}}</li>
         <li>{{- rz.artikel -}}</li>
         <li>{{- rz.betrag|sn -}}</li>
       </ul>

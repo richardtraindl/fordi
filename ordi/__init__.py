@@ -23,6 +23,9 @@ def create_app(test_config=None):
         SEND_FILE_MAX_AGE_DEFAULT = 0,
     )
 
+    #app.jinja_env.trim_blocks = True
+    #app.jinja_env.lstrip_blocks = True
+
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -64,13 +67,15 @@ def create_app(test_config=None):
 
     from .util.filters import mapanrede, mapgeschlecht, mapimpfung, mapartikel, \
                               filter_supress_none, filter_format_date, filter_format_datetime, \
-                              calc_kw, add_days, add_hours, add_mins, gib_feiertag
+                              filter_mformat_date, calc_kw, add_days, add_hours, add_mins, \
+                              gib_feiertag
     app.jinja_env.filters['mapanrede'] = mapanrede
     app.jinja_env.filters['mapgeschlecht'] = mapgeschlecht
     app.jinja_env.filters['mapimpfung'] = mapimpfung
     app.jinja_env.filters['mapartikel'] = mapartikel
     app.jinja_env.filters['sn'] = filter_supress_none
     app.jinja_env.filters['dt'] = filter_format_date
+    app.jinja_env.filters['mdt'] = filter_mformat_date
     app.jinja_env.filters['dttm'] = filter_format_datetime    
     app.jinja_env.filters['calc_kw'] = calc_kw
     app.jinja_env.filters['add_days'] = add_days

@@ -5,17 +5,17 @@
     {{- person.familienname -}}&nbsp;
     {{- person.vorname -}}
   </p>
-  {% if person.adr_plz or person.adr_ort or person.adr_strasse %}
+  {%- if person.adr_plz or person.adr_ort or person.adr_strasse -%}
     <p>
       <span style="font-weight: bold;">Anschrift:</span> &nbsp;
       {{- person.adr_plz|sn -}}&nbsp;
       {{- person.adr_ort|sn -}}&nbsp;
       {{- person.adr_strasse|sn -}}&nbsp;
     </p>
-  {% endif %}
+  {%- endif -%}
 
-  {% if person.kontakte %}
+  {%- if person.kontakte -%}
     <p>
       <span style="font-weight: bold;">Kontakt:</span>&nbsp;{{- person.kontakte|sn -}}
     </p>
-  {% endif %}
+  {%- endif -%}

@@ -1,42 +1,42 @@
 
   <p>
-    <span style="font-weight: bold;">Tier:</span> &nbsp;
+    <span style="font-weight: bold;">Tier:&nbsp;</span>
     {{- tier.tiername -}}
 
-    {% if tier.tierart %}
+    {%- if tier.tierart -%}
       ,&nbsp;{{- tier.tierart -}}
-    {% endif %}
+    {%- endif -%}
 
-    {% if tier.geburtsdatum %}
+    {%- if tier.geburtsdatum -%}
       ,&nbsp;{{- tier.geburtsdatum|dt -}}
-    {% endif %}
+    {%- endif -%}
 
-    {% if tier.geschlechtscode %}
+    {%- if tier.geschlechtscode -%}
       ,&nbsp;{{- tier.geschlechtscode|mapgeschlecht -}}
-    {% endif %}
+    {%- endif -%}
   </p>
-  
-  {% if tier.chip_nummer|length > 0 %}
+
+  {%- if tier.chip_nummer|length > 0 -%}
     <p>
         <span style="font-weight: bold;">Chipnr.:</span>&nbsp;{{- tier.chip_nummer -}}
     </p>
-  {% endif %}
+  {%- endif -%}
 
-  {% if tier.eu_passnummer|length > 0 %}
+  {%- if tier.eu_passnummer|length > 0 -%}
     <p>
       <span style="font-weight: bold;">EU-Passnr.:</span>&nbsp;{{- tier.eu_passnummer -}}
     </p>
-  {% endif %}
+  {%- endif -%}
 
-  {% if tier.viren|length > 0 %}
+  {%- if tier.viren|length > 0 -%}
     <p>
       <span style="font-weight: bold;">Viren:</span>&nbsp;{{- tier.viren -}}
     </p>
-  {% endif %}
+  {%- endif -%}
 
-  {% if tier.merkmal|length > 0 %}
+  {%- if tier.merkmal|length > 0 -%}
     <p>
       <span style="font-weight: bold;">Merkmal:</span>&nbsp;{{- tier.merkmal -}}
     </p>
-  {% endif %}
+  {%- endif -%}
 

@@ -21,18 +21,18 @@
         <input type="text" size="8" name="tiername" value="{{ tiername }}">
 
         <label for="kunde">Kunde</label>
-        {% if kunde == 0 %}
+        {%- if kunde == 0 -%}
           <input type="checkbox" name="kunde" value="0">
-        {% else %}
+        {%- else -%}
           <input type="checkbox" name="kunde" value="1" checked>
-        {% endif %}
+        {%- endif -%}
 
         <label for="patient">Patient</label>
-        {% if patient == 0 %}
+        {%- if patient == 0 -%}
           <input type="checkbox" name="patient" value="0">
-        {% else %}
+        {%- else -%}
           <input type="checkbox" name="patient" value="1" checked>
-        {% endif %}
+        {%- endif -%}
       </div>
 
       <div class="small-gap"></div>
@@ -54,7 +54,6 @@
         <tr>
           <td style="width: 50%">
             <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-              {{ th.Person.anredecode|mapanrede }}
               {{ th.Person.titel }}
               {{ th.Person.familienname }}
               {{ th.Person.vorname }}

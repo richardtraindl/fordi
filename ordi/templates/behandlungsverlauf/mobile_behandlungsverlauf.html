@@ -9,27 +9,31 @@
 
 {% block content %}
   <div style="max-height: 24vh; overflow-y: scroll; overflow-x: hidden;">
-    {% with person=behandlungsverlauf.person %}
-      {% include '_mobile_person.html' %}
-    {% endwith %}
-
     {% with tier=behandlungsverlauf.tier %}
       {% include '_mobile_tier.html' %}
+    {% endwith %}
+
+    {% with person=behandlungsverlauf.person %}
+      {% include '_mobile_person.html' %}
     {% endwith %}
 
     <div class="small-gap"></div>
   </div>
 
   <div id="scroller" class="mobile-behandlungen" style="max-height: 70vh; overflow-y: scroll; overflow-x: hidden; background-color: Snow;">
-    <p>Datum: &nbsp; {{- behandlungsverlauf.datum|dt -}}</p>
+    <p>
+        <span style="font-weight: bold">Datum:</span>&nbsp;{{- behandlungsverlauf.datum|dt -}}
+    </p>
 
     <p>
-        Diagnose:<br>
+        <span style="font-weight: bold">Diagnose:</span>
+        <br>
         {{- behandlungsverlauf.diagnose|sn -}}
     </p>
 
     <p>
-        Behandlung:<br>
+        <span style="font-weight: bold">Behandlung:</span>
+        <br>
         {{- behandlungsverlauf.behandlung|sn -}}
     </p>
   </div>

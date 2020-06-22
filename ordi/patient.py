@@ -120,7 +120,7 @@ def show(template, id=id):
     tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
     behandlungen = db.session.query(Behandlung) \
         .filter(Behandlung.tier_id == tierhaltung.tier.id) \
-        .order_by(Behandlung.id.asc()).all()
+        .order_by(Behandlung.datum.asc()).all()
     datum = datetime.today()
     datum_ende = datum + timedelta(days=7)
 
@@ -289,7 +289,7 @@ def save_behandlungen(id):
 
         behandlungen = db.session.query(Behandlung) \
                         .filter(Behandlung.tier_id == tierhaltung.tier.id) \
-                        .order_by(Behandlung.id.asc()).all()
+                        .order_by(Behandlung.datum.asc()).all()
 
         datum=datetime.today()
         termin = db.session.query(Termin) \

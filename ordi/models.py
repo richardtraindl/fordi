@@ -167,7 +167,7 @@ class Termin(db.Model):
     autor = db.Column(db.String(30))
     beginn = db.Column(db.DateTime(timezone=False), nullable=False)
     ende = db.Column(db.DateTime(timezone=False), nullable=False)
-    thema = db.Column(db.String(50), nullable=False)
+    thema = db.Column(db.String(256), nullable=False)
     tierhaltung = db.relationship("Tierhaltung", back_populates="termine")
 
     def __repr__(self):

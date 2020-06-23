@@ -103,24 +103,39 @@ def import_rechnungszeile(url):
     os.remove(filename)
 
 
-def clean_str_file(str_file, rowcnt):
+@bp.cli.command("import-termin")
+@click.argument("url")
+def import_termin(url):
+    filename = 'tblTermin.txt'
+    gdown.download(url, filename, quiet=False) 
+    import_termin(filename)
+    os.remove(filename)
+
+
+def clean_str_file(str_file, dchar, dcnt):
+    if(dchar == ';'):
+        rchar = ','
+    else:
+        rchar = ';'
+
     new = ""
     cnt = 0
     quotecnt = 0
+
     for char in str_file:
         if(char == '"'):
             quotecnt += 1
             new += char
             continue
-        elif(char == ';'):
+        elif(char == dchar):
             if(quotecnt % 2 == 0):
                 new += char
                 cnt += 1
             else:
-                new += ','
+                new += rchar
             continue
         elif(char == '\n'):
-            if(quotecnt % 2 == 1 or cnt % rowcnt != 0):
+            if(quotecnt % 2 == 1 or cnt % dcnt != 0):
                 new += '§'
             else:
                 new += char
@@ -140,7 +155,7 @@ def import_tier(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 11)
+    new = clean_str_file(str_file, ';', 11)
 
     lines = new.split('\n')
     
@@ -223,7 +238,7 @@ def import_person(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 6)
+    new = clean_str_file(str_file, ';', 6)
 
     lines = new.split('\n')
 
@@ -298,7 +313,7 @@ def import_adresse(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 4)
+    new = clean_str_file(str_file, ';', 4)
 
     lines = new.split('\n')
 
@@ -350,7 +365,7 @@ def import_kontakt(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 4)
+    new = clean_str_file(str_file, ';', 4)
 
     lines = new.split('\n')
 
@@ -406,7 +421,7 @@ def import_tierhaltung(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 2)
+    new = clean_str_file(str_file, ';', 2)
 
     lines = new.split('\n')
 
@@ -478,7 +493,7 @@ def import_behandlung(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 9)
+    new = clean_str_file(str_file, ';', 9)
 
     lines = new.split('\n')
 
@@ -559,7 +574,7 @@ def import_impfung(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 1)
+    new = clean_str_file(str_file, ';', 1)
 
     lines = new.split('\n')
 
@@ -622,7 +637,7 @@ def import_behandlungsverlauf(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 5)
+    new = clean_str_file(str_file, ';', 5)
 
     lines = new.split('\n')
 
@@ -701,7 +716,7 @@ def import_rechnung(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 13)
+    new = clean_str_file(str_file, ';', 13)
 
     lines = new.split('\n')
 
@@ -801,7 +816,7 @@ def import_rechnungszeile(filename):
 
     ok = True
 
-    new = clean_str_file(str_file, 5)
+    new = clean_str_file(str_file, ';', 5)
 
     lines = new.split('\n')
 
@@ -865,5 +880,68 @@ def import_rechnungszeile(filename):
     else:
         db.session.rollback()
         print("rechnungszeile import ende")
+        return False
+
+
+def import_termin(filename):
+    print("starte termin import")
+
+    with open(filename, "r") as fo:
+        str_file = fo.read()
+
+    ok = True
+
+    new = clean_str_file(str_file, ',', 4)
+
+    lines = new.split('\n')
+
+    for line in lines:
+        line = line.replace('§', '\n')
+
+        arrline = line.split(",")
+
+        if(len(arrline) != 5):
+            print(arrline[0], end="", flush=True)
+            continue
+
+        try:
+            termin = Termin()
+
+            t_id = int(arrline[0].strip('"'))
+
+            if(t_id < 29000): # hack to limit record count
+                continue
+
+            #termin.id = t_id
+
+            #termin.tierhaltung_id = None
+
+            termin.autor = arrline[1].strip(' "')
+
+            termin.beginn = datetime.strptime((arrline[2].strip(' "')), "%Y-%m-%d %H:%M:%S")
+
+            termin.ende = datetime.strptime((arrline[3]).strip(' "'), "%Y-%m-%d %H:%M:%S")
+
+            termin.thema = arrline[4].strip(' "\n')
+
+            db.session.add(termin)
+        except:
+            ok = False
+            print("error", end=" ", flush=True)
+            print(arrline, flush=True)
+            break
+    
+    if(ok):
+        try:
+            db.session.commit()
+            print("termin import ende")
+            return True
+        except Exception as err:
+            print(err)
+            print("termin import ende")
+            return False
+    else:
+        db.session.rollback()
+        print("termin import ende")
         return False
 

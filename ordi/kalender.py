@@ -32,7 +32,8 @@ def read_termine(kaldatum):
 
     return db.session.query(Termin) \
             .filter(or_(and_(Termin.beginn < kaldatum, Termin.ende > kaldatum), 
-                        and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))).all()
+                        and_(Termin.beginn >= kaldatum, Termin.beginn < kaldatum_ende))) \
+            .order_by(Termin.beginn.asc()).all()
 
 
 @bp.route('/preview', methods=('GET', 'POST'))

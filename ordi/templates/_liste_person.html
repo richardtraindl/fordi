@@ -1,0 +1,14 @@
+
+    {%- if person.titel -%}
+      &nbsp;{{- person.titel -}}
+    {%- endif -%}
+
+    {%- if person.anredecode -%}
+      &nbsp;{{- person.anredecode|mapanrede -}}&nbsp;
+    {%- endif -%}
+
+    {{- person.familienname -}}
+
+    {%- if person.vorname -%}
+      &nbsp;{{- person.vorname -}}
+    {%- endif -%}

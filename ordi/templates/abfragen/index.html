@@ -8,7 +8,9 @@
 
 
 {% block content %}
-    <div class="gap"></div>
+  <div class="search">
+
+    <div class="small-gap"></div>
 
     <form method="post" action="{{ url_for('abfrage.index') }}">
       <div class="flex-container">
@@ -70,62 +72,46 @@
       </div>
     </form>
 
-    <div class="gap"></div>
+    <div class="small-gap"></div>
 
-    <div class="liste-wrapper">
-      <table class="liste">
-        <tr>
-          <th width="2%">&nbsp;</th>
-
-          <th width="6%">Anrede</th>
-
-          <th width="6%">Titel</th>
-
-          <th width="18%">Familienname</th>
-
-          <th width="12%">Vorname</th>
-
-          <th width="18%">Tiername</th>
-
-          <th width="12%">Tierart</th>
-
-          <th width="12%">Rasse</th>
-
-          <th width="6%">Geschl.</th>
-
-          <th width="8%">Geb.Datum</th>
-        </tr>
-
-    {% for th in tierhaltungen %}
+    <table class="liste">
       <tr>
-        <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ th.Tierhaltung.id }}"></td>
+        <th width="2%">&nbsp;</th>
 
-        <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.anredecode|mapanrede }}</a></td>
+        <th width="49%">Kunde</th>
 
-        <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.titel }}</a></td>
-
-        <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.familienname }}</a></td>
-
-        <td style="width: 12%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.vorname }}</a></td>
-
-        <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tiername }}</a></td>
-
-        <td style="width: 14%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tierart }}</a></td>
-
-        <td style="width: 10%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.rasse }}</a></td>
-
-        <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geschlechtscode|mapgeschlecht }}</a></td>
-
-        <td style="width: 8%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geburtsdatum|dt }}</a></td>
+        <th width="49%">Patient</th>
       </tr>
-    {% endfor %}
-
     </table>
   </div>
 
-  <div class="gap"></div>
+  <table class="liste">
+  {% for th in tierhaltungen %}
+    <tr>
+      <td style="width: 2%; text-align: center">
+        <input type="radio" name="option" value="{{ th.Tierhaltung.id }}">
+      </td>
 
-  <div class="flex-container">
+      <td style="width: 49%">
+        <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+        {% with person=th.Person %}
+          {% include '_liste_person.html' %}
+        {% endwith %}  
+        </a>
+      </td>
+
+      <td style="width: 49%">
+        <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+        {% with tier=th.Tier %}
+          {% include '_liste_tier.html' %}
+        {% endwith %} 
+        </a>
+      </td>
+    </tr>
+  {% endfor %}
+  </table>
+
+  <div class="action">
     <p><a class="btn" id="zur-karteikarte" href="#">zur Karteikarte</a></p>
 
     <p><a class="btn" id="bericht-drucken" href="#">Bericht drucken</a></p>
@@ -143,8 +129,9 @@
     {% endif %}        
   </div>
 
-  <script>
+  <div class="action-bottom"></div>
 
+  <script>
     function resetdate(){ 
       var kriterium1 = $('#kriterium1').val();
       if(kriterium1.substring(0, 6) == "01.01."){

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Ordi - {% block title %}{% endblock %}</title>
 
@@ -44,23 +44,25 @@
       {% endif %}
 
       <p style="text-align: right;"><a id="nav-button" href="#">
-         <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}"></a>
+       <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}"></a>
       </p>
     </header>
 
-    <nav id="mobile-nav" class="flex-container">
-      <ul>
-        <li><a href="{{ url_for('patient.index') }}">Patienten</a></li>
+    {% if page_title != "Anmelden" %}
+      <div id="mobile-nav" class="flex-container">
+        <ul>
+          <li><a href="{{ url_for('patient.index') }}">Patienten</a></li>
 
-        <li><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></li>
+          <li><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></li>
 
-        <li><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></li>
+          <li><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></li>
 
-        <li><a href="{{ url_for('kalender.index') }}">Kalender</a></li>
+          <li><a href="{{ url_for('kalender.index') }}">Kalender</a></li>
 
-        <li><a href="{{ url_for('auth.logout') }}">Abmelden</a></li>
-      </ul>
-    </nav>
+          <li><a href="{{ url_for('auth.logout') }}">Abmelden</a></li>
+        </ul>
+      </div>
+    {% endif %}
 
     <div id="content-wrapper">
       <div id="msg">

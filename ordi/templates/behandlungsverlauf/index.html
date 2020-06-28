@@ -8,102 +8,112 @@
 
 
 {% block content %}
-    <div class="gap"></div>
+  <div class="search">
+
+    <div class="small-gap"></div>
+
       <form method="post" action="{{ url_for('behandlungsverlauf.index') }}">
         <div class="flex-container">
-            <div>
-                <label for="jahr">Behandlungsjahr</label>
-                <input type="text" size="10" name="jahr" value="{{- jahr -}}">
-            </div>
-            <div>
+          <div>
+            <label for="jahr">Behandlungsjahr</label>
+
+             <input type="text" size="10" name="jahr" value="{{- jahr -}}">
+          </div>
+
+          <div>
                 <input type="submit" value="suchen">
-            </div>
-        </div>
-      </form>
+          </div>
+      </div>
+    </form>
 
-    <div class="gap"></div>
+    <div class="small-gap"></div>
 
-    <div class="liste-wrapper">
-      <table class="liste">
-        <tr>
-            <th width="2%">&nbsp;</th>
-            <th width="8%">Behandlungsdatum</th>
-            <th width="6%">Anrede</th>
-            <th width="18%">Familienname</th>
-            <th width="12%">Vorname</th>
-            <th width="18%">Tiername</th>
-            <th width="12%">Tierart</th>
-            <th width="10%">Rasse</th>
-            <th width="6%">Geschl.</th>
-            <th width="8%">Geb.Datum</th>
-        </tr>
-      {% for b in behandlungsverlaeufe %}
-        <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{- b.Behandlungsverlauf.id -}}"></td>
+    <table class="liste">
+      <tr>
+        <th width="2%">&nbsp;</th>
 
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Behandlungsverlauf.datum|dt -}}</a></td>
+        <th width="10%">Beh.Datum</th>
 
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.anredecode|mapanrede -}}</a></td>
+        <th width="44%">Kunde</th>
 
-            <td style="width: 18%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.familienname -}}</a></td>
+        <th width="44%">Patient</th>
+      </tr>
+    </table>
+  </div>
 
-            <td style="width: 12%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Person.vorname -}}</a></td>
+   <table class="liste">
+   {% for behverlauf in behandlungsverlaeufe %}
+     <tr>
+       <td style="width: 2%; text-align: center">
+         <input type="radio" name="option" value="{{- behverlauf.Behandlungsverlauf.id -}}">
+       </td>
 
-            <td style="width: 18%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tiername -}}</a></td>
+       <td style="width: 10%">
+         <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+           {{- behverlauf.Behandlungsverlauf.datum|dt -}}
+         </a>
+       </td>
 
-            <td style="width: 12%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.tierart -}}</a></td>
+       <td style="width: 44%">
+         <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+         {% with person=behverlauf.Person %}
+           {% include '_liste_person.html' %}
+         {% endwith %}  
+         </a>
+       </td>
 
-            <td style="width: 10%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.rasse -}}</a></td>
+       <td style="width: 44%">
+         <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+         {% with tier=behverlauf.Tier %}
+           {% include '_liste_tier.html' %}
+         {% endwith %} 
+         </a>
+       </td>
+     </tr>
+  {% endfor %}
+  </table>
 
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
+  <div class="action">
+    <p><a class="btn" id="zum_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
 
-            <td style="width: 8%"><a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=b.Behandlungsverlauf.id) }}">{{- b.Tier.geburtsdatum|dt -}}</a></td>
-        </tr>
-      {% endfor %}
-      </table>
-    </div>
+    <p><a class="btn" id="behandlungsverlauf_loeschen" href="#">Behandlungsverlauf löschen</a></p>
+  </div>
 
-    <div class="gap"></div>
+  <div class="action-bottom"></div>
 
-    <div class="flex-container">
-      <p><a class="btn" id="zum_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
+  <script>
+    $(document).ready(function(){
 
-      <p><a class="btn" id="behandlungsverlauf_loeschen" href="#">Behandlungsverlauf löschen</a></p>
-    </div>
-
-    <script>
-        $(document).ready(function(){
-
-            $('#zum_behandlungsverlauf').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.open("/behandlungsverlauf/" + id.toString() + "/edit", "_blank");
-                    //window.location = "/behandlungsverlauf/" + id.toString() + "/edit";
-                }
-                return false; 
-            });
-
-            $('#behandlungsverlauf_loeschen').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/behandlungsverlauf/" + id.toString() + "/delete";
-                        return true;
-                    }
-                    else{
-                        return false;
-                    }
-                }
-                return false; 
-            });
-
+        $('#zum_behandlungsverlauf').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                window.open("/behandlungsverlauf/" + id.toString() + "/edit", "_blank");
+                //window.location = "/behandlungsverlauf/" + id.toString() + "/edit";
+            }
+            return false; 
         });
-    </script>
+
+        $('#behandlungsverlauf_loeschen').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                if(confirm("Soll der Datensatz gelöscht werden?")){
+                    window.location = "/behandlungsverlauf/" + id.toString() + "/delete";
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            return false; 
+        });
+
+    });
+  </script>
 {% endblock %}
 

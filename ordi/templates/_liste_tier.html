@@ -1,0 +1,14 @@
+ 
+    {{- tier.tiername -}}
+
+    {%- if tier.tierart -%}
+      ,&nbsp;{{- tier.tierart -}}
+    {%- endif -%}
+
+    {%- if tier.geburtsdatum -%}
+      ,&nbsp;{{- tier.geburtsdatum|dt -}}
+    {%- endif -%}
+
+    {%- if tier.geschlechtscode -%}
+      ,&nbsp;{{- tier.geschlechtscode|mapgeschlecht -}}
+    {%- endif -%}

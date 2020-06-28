@@ -1,10 +1,12 @@
 
 {% if preview == 0 %} 
+<div class="search">
   <form id="mainform" method="post" action="{{ url_for('kalender.index') }}">
 {% else %}
+<div class="search" style="top: 10em;">
   <form id="mainform" method="post" action="{{ url_for('kalender.preview') }}">
 {% endif %}
-    <div class="nav" style="width: 100%; display: grid; grid-template-columns: auto auto auto;">
+    <div class="kal-nav">
       <div>
         <label for="kjahr">Jahr:</label>
         {% include 'kalender/_select_for_jahre.html' %}
@@ -39,6 +41,7 @@
       </div>
     </div>
   </form>
+</div>
 
   <table id="calender">
     <colgroup>
@@ -209,7 +212,7 @@
   </div>
 
   <script>
-    var zindexmax = 9;
+    // var zindexmax = 9;
 
     function platziere_termine(){
         var dwtagvor = -1;

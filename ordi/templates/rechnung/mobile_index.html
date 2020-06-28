@@ -7,10 +7,11 @@
 
 
 {% block content %}
+<!-- div style="position: sticky; top: 40px;" -->
   <div class="small-gap"></div>
 
   <form method="post" action="{{ url_for('rechnung.index') }}">
-    <div class="row-grid" style="grid-template-columns: auto auto; max-height: 20vh;">
+    <div class="row-grid" style="grid-template-columns: auto auto;">
       <label for="jahr">Jahr</label>
 
       <input type="text" size="8" name="jahr" value="{{- jahr -}}">
@@ -31,6 +32,7 @@
       <th width="38%">Patient</th>
     </tr>
   </table>
+<!-- /div><!-- end sticky -->
 
   <div class="liste-wrapper">
     <table class="liste">

@@ -8,7 +8,9 @@
 
 
 {% block content %}
-    <div class="gap"></div>
+  <div class="search">
+
+    <div class="small-gap"></div>
 
     <form method="post" action="{{ url_for('patient.index') }}">
         <div class="flex-container">
@@ -46,142 +48,137 @@
         </div>
     </form>
 
-    <div class="gap"></div>
+    <div class="small-gap"></div>
 
-  <div class="liste-wrapper">
     <table class="liste">
-        <tr>
-            <th width="2%">&nbsp;</th>
-            <th width="6%">Anrede</th>
-            <th width="6%">Titel</th>
-            <th width="18%">Familienname</th>
-            <th width="12%">Vorname</th>
-            <th width="18%">Tiername</th>
-            <th width="12%">Tierart</th>
-            <th width="12%">Rasse</th>
-            <th width="6%">Geschl.</th>
-            <th width="8%">Geb.Datum</th>
-        </tr>
+      <tr>
+        <th width="2%">&nbsp;</th>
+
+        <th width="49%">Kunde</th>
+
+        <th width="49%">Patient</th>
+      </tr>
+    </table>
+  </div>
+  
+    <table class="liste">
       {% for th in tierhaltungen %}
         <tr>
-            <td style="width: 2%; text-align: center"><input type="radio" name="option" value="{{ th.Tierhaltung.id }}"></td>
+          <td width="2%" style="text-align: center"><input type="radio" name="option" value="{{ th.Tierhaltung.id }}"></td>
 
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.anredecode|mapanrede }}</a></td>
+          <td width="49%">
+            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+            {% with person=th.Person %}
+              {% include '_liste_person.html' %}
+            {% endwith %}            
+            </a>
+          </td>
 
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.titel }}</a></td>
-
-            <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.familienname }}</a></td>
-
-            <td style="width: 12%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Person.vorname }}</a></td>
-
-            <td style="width: 18%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tiername }}</a></td>
-
-            <td style="width: 14%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.tierart }}</a></td>
-
-            <td style="width: 10%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.rasse }}</a></td>
-
-            <td style="width: 6%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geschlechtscode|mapgeschlecht }}</a></td>
-
-            <td style="width: 8%"><a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">{{ th.Tier.geburtsdatum|dt }}</a></td>
+          <td width="49%">
+            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+            {% with tier=th.Tier %}
+              {% include '_liste_tier.html' %}
+            {% endwith %}
+            </a>
+          </td>
         </tr>
       {% endfor %}
     </table>
+
+  <div class="action">
+    <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
+
+    <p><a target="_blank" class="btn" href="{{ url_for('patient.create') }}">neue Karteikarte</a></p>
+
+    <p><a class="btn" id="neuer_termin" href="#">neuer Termin</a></p>
+
+    <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
+
+    <p><a class="btn" id="neue_rechnung" href="#">neue Rechnung</a></p>
+
+    <p><a class="btn" id="neuer_behandlungsverlauf" href="#">neuer Behandlungsverlauf</a></p>
+
+    <p><a class="btn" id="karteikarte_loeschen" href="#">Karteikarte löschen</a></p>
   </div>
 
-    <div class="gap"></div>
+  <div class="action-bottom"></div>
+    
+  <script>
+    $(document).ready(function() {
 
-      <div class="flex-container">
-        <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
-
-        <p><a target="_blank" class="btn" href="{{ url_for('patient.create') }}">neue Karteikarte</a></p>
-
-        <p><a class="btn" id="neuer_termin" href="#">neuer Termin</a></p>
-
-        <p><a class="btn" id="neues_tier" href="#">neues Tier</a></p>
-
-        <p><a class="btn" id="neue_rechnung" href="#">neue Rechnung</a></p>
-
-        <p><a class="btn" id="neuer_behandlungsverlauf" href="#">neuer Behandlungsverlauf</a></p>
-
-        <p><a class="btn" id="karteikarte_loeschen" href="#">Karteikarte löschen</a></p>
-    </div>
-
-    <script>
-        $(document).ready(function() {
-
-            $('#zur_karteikarte').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.open("/" + id.toString() + "/show", "_blank");
-                    //window.location = "/" + id.toString() + "/show";
-                }
-                return false; 
-            });
-            $('#neuer_termin').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.open("/kalender/tierhaltung/" + id.toString() + "/create", "_blank");
-                    //window.location = "/kalender/tierhaltung/" + id.toString() + "/create";
-                }
-                return false; 
-            });
-            $('#neues_tier').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.open("/" + id.toString() + "/create_tier", "_blank");
-                    //window.location = "/" + id.toString() + "/create_tier";
-                }
-                return false; 
-            });
-            $('#karteikarte_loeschen').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/" + id.toString() + "/delete";
-                        return true;
-                    }
-                    else{
-                        return false;
-                    }
-                }
-                return false; 
-            });
-            $('#neuer_behandlungsverlauf').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.open("/behandlungsverlauf/" + id.toString() + "/create", "_blank");
-                    //window.location = "/behandlungsverlauf/" + id.toString() + "/create";
-                }
-                return false; 
-            });
-            $('#neue_rechnung').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.open("/rechnung/" + id.toString() + "/create", "_blank");
-                    //window.location = "/rechnung/" + id.toString() + "/create";
-                }
-                return false; 
-            });
-
+        $('#zur_karteikarte').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                window.open("/" + id.toString() + "/show", "_blank");
+                //window.location = "/" + id.toString() + "/show";
+            }
+            return false; 
         });
-    </script>
+        $('#neuer_termin').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                window.open("/kalender/tierhaltung/" + id.toString() + "/create", "_blank");
+                //window.location = "/kalender/tierhaltung/" + id.toString() + "/create";
+            }
+            return false; 
+        });
+        $('#neues_tier').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                window.open("/" + id.toString() + "/create_tier", "_blank");
+                //window.location = "/" + id.toString() + "/create_tier";
+            }
+            return false; 
+        });
+        $('#karteikarte_loeschen').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                if(confirm("Soll der Datensatz gelöscht werden?")){
+                    window.location = "/" + id.toString() + "/delete";
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            return false; 
+        });
+        $('#neuer_behandlungsverlauf').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                window.open("/behandlungsverlauf/" + id.toString() + "/create", "_blank");
+                //window.location = "/behandlungsverlauf/" + id.toString() + "/create";
+            }
+            return false; 
+        });
+        $('#neue_rechnung').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                window.open("/rechnung/" + id.toString() + "/create", "_blank");
+                //window.location = "/rechnung/" + id.toString() + "/create";
+            }
+            return false; 
+        });
+
+    });
+  </script>
 {% endblock %}
 

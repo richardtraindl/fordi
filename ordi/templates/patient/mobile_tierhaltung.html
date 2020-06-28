@@ -8,7 +8,7 @@
 
 
 {% block content %}
-  <div style="max-height: 20vh; height: 20vh; overflow-y: scroll; overflow-x: hidden;">
+  <div style="max-height: 24vh; overflow-y: scroll; overflow-x: hidden;">
     {% with tier=tierhaltung.tier %}
       {% include '_mobile_tier.html' %}
     {% endwith %}
@@ -20,7 +20,7 @@
     <div class="small-gap"></div>
   </div>
 
-  <div id="scroller" class="mobile-behandlungen" style="height: 70vh; max-height: 70vh; overflow-y: scroll; overflow-x: hidden;">
+  <div id="scroller" class="mobile-behandlungen" style="height: 72vh; max-height: 72vh; overflow-y: scroll; overflow-x: hidden;">
     {% for behandlung in behandlungen %}
         <ul style="border: 1px solid black; background-color: Snow";>
           <li style="background-color: LightBlue">

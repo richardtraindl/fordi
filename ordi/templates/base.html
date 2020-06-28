@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Ordi - {% block title %}{% endblock %}</title>
 
@@ -29,13 +29,16 @@
     {% endif %}
   </head>
   <body>
+    <div style="position: sticky; top: 0; height: 0.5em; background-color: White; z-index: 10;"></div>
+
     <header>
-      <h1 style="padding-left: 8px">Ordi</h1>
+      <h1 style="padding-left: 8px;">Ordi</h1>
 
       <h2>{{ page_title }}</h2>
 
-      <p style="text-align: right; padding-right: 8px">
+      <p style="text-align: right; padding-right: 8px;">
       {% if g.user %}
+        <span>{{- g.user.username -}} &nbsp;</span>
         <a href="{{ url_for('auth.logout') }}">abmelden</a>
       {% elif page_title != "Anmelden" %}
         <a href="{{ url_for('auth.login') }}">anmelden</a>
@@ -43,7 +46,10 @@
       </p>
     </header>
 
+    <div style="height: 0.7em; position: sticky; top: 2.3em; background-color: White; z-index: 10;"></div>
+
     <nav class="flex-container">
+      {% if page_title != "Anmelden" %}
         <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
 
         <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
@@ -53,6 +59,9 @@
         <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
 
         <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
+      {% else %}
+        <p>&nbsp;</p>
+      {% endif %}
     </nav>
 
     <div id="content-wrapper">

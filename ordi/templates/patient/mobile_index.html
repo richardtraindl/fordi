@@ -8,10 +8,9 @@
 
 
 {% block content %}
-    <div class="small-gap"></div>
-
+  <div style="position: sticky; top: 2em; background-color: LightBlue;">
     <form method="post" action="{{ url_for('patient.index') }}">
-      <div class="row-grid" style="grid-template-columns: auto auto; max-height: 35vh;">
+      <div class="row-grid" style="grid-template-columns: auto auto;"><!-- max-height: 35vh; -->
         <label for="familienname">Familienname</label>
 
         <input type="text" size="8" name="familienname" value="{{ familienname }}">
@@ -48,8 +47,10 @@
       <th width="50%">Patient</th>
     </tr>
   </table>
-  
-  <div class="liste-wrapper" style="max-height: 55vh;">
+
+</div>  
+
+  <div><!-- class="liste-wrapper" style="max-height: 55vh;" --> 
     <table class="liste">
       {% for th in tierhaltungen %}
         <tr>

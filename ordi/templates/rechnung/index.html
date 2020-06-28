@@ -8,74 +8,75 @@
 
 
 {% block content %}
-    <div class="gap"></div>
-      <form method="post" action="{{ url_for('rechnung.index') }}">
-        <div class="flex-container">
-            <div>
-                <label for="jahr">Jahr</label>
-                <input type="text" size="10" name="jahr" value="{{- jahr -}}">
-            </div>
-            <div>
-                <input type="submit" value="suchen">
-            </div>
+  <div class="search">
+
+    <div class="small-gap"></div>
+
+    <form method="post" action="{{ url_for('rechnung.index') }}">
+      <div class="flex-container">
+        <div>
+          <label for="jahr">Jahr</label>
+
+          <input type="text" size="10" name="jahr" value="{{- jahr -}}">
         </div>
-      </form>
 
-    <div class="gap"></div>
+        <div>
+          <input type="submit" value="suchen">
+        </div>
+      </div>
+    </form>
 
-  <div class="liste-wrapper">
+    <div class="small-gap"></div>
+
     <table class="liste">
-        <tr>
-            <th width="3%">&nbsp;</th>
-            <th width="5%">Rechn.Jahr</th>
-            <th width="2%">Rechn.Lfnr.</th>
-            <th width="4%">Bto.Summe</th>
-            <th width="6%">Anrede</th>
-            <th width="18%">Familienname</th>
-            <th width="12%">Vorname</th>
-            <th width="18%">Tiername</th>
-            <th width="12%">Tierart</th>
-            <th width="10%">Rasse</th>
-            <th width="4%">Geschl.</th>
-            <th width="6%">Geb.Datum</th>
-        </tr>
-      {% for r in rechnungen %}
-        <tr>
-            <td style="text-align: center"><input type="radio" name="option" value="{{- r.Rechnung.id -}}"></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.jahr -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Rechnung.lfnr -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- '{0:0.2f}'.format(r.Rechnung.brutto_summe | float) -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.anredecode|mapanrede -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.familienname -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Person.vorname -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tiername -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.tierart -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.rasse -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geschlechtscode|mapgeschlecht -}}</a></td>
-
-            <td><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=r.Rechnung.id) }}">{{- r.Tier.geburtsdatum|dt -}}</a></td>
-        </tr>
-      {% endfor %}
+      <tr>
+        <th width="2%">&nbsp;</th>
+        <th width="6%">Jahr</th>
+        <th width="6%">Lfnr.</th>
+        <th width="10%">Bto.Summe</th>
+        <th width="38%">Kunde</th>
+        <th width="38%">Patient</th>
+      </tr>
     </table>
   </div>
 
-    <div class="gap"></div>
+   <table class="liste">
+    {% for rechnung in rechnungen %}
+      <tr>
+        <td width="2%" style="text-align: center"><input type="radio" name="option" value="{{- rechnung.Rechnung.id -}}"></td>
 
-    <div class="flex-container">
-        <p><a class="btn" id="zur_rechnung" href="#">zur Rechnung</a></p>
+        <td width="6%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">{{- rechnung.Rechnung.jahr -}}</a></td>
 
-        <p><a class="btn" id="rechnung_loeschen" href="#">Rechnung löschen</a></p>
-    </div>
+        <td width="6%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">{{- rechnung.Rechnung.lfnr -}}</a></td>
+
+        <td width="10%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">{{- '{0:0.2f}'.format(rechnung.Rechnung.brutto_summe | float) -}}</a></td>
+
+        <td width="38%">
+          <a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
+          {% with person=rechnung.Person %}
+            {% include '_liste_person.html' %}
+          {% endwith %}
+          </a>
+        </td>
+
+        <td width="38%">
+          <a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
+          {% with tier=rechnung.Tier %}
+            {% include '_liste_tier.html' %}
+          {% endwith %}
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </table>
+
+  <div class="action">
+    <p><a class="btn" id="zur_rechnung" href="#">zur Rechnung</a></p>
+
+    <p><a class="btn" id="rechnung_loeschen" href="#">Rechnung löschen</a></p>
+  </div>
+
+  <div class="action-bottom"></div>
 
     <script>
         $(document).ready(function(){

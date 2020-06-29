@@ -29,8 +29,6 @@
     {% endif %}
   </head>
   <body>
-    <div style="position: sticky; top: 0; height: 0.5em; background-color: White; z-index: 10;"></div>
-
     <header>
       <h1 style="padding-left: 8px;">Ordi</h1>
 
@@ -45,8 +43,6 @@
       {% endif %}
       </p>
     </header>
-
-    <div style="height: 0.7em; position: sticky; top: 2.3em; background-color: White; z-index: 10;"></div>
 
     <nav class="flex-container">
       {% if page_title != "Anmelden" %}
@@ -71,9 +67,9 @@
         {% endfor %}
       </div>
 
-      <section id="content">
+      <div id="content">
         {% block content %}{% endblock %}
-      </section>
+      </div>
     </div>
 
   </body>

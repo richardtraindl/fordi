@@ -8,39 +8,42 @@
 
 
 {% block content %}
-  <div class="search">
+  <div class="small-gap"></div>
 
-    <div class="small-gap"></div>
+  <form method="post" action="{{ url_for('rechnung.index') }}">
+    <div class="flex-container">
+      <div>
+        <label for="jahr">Jahr</label>
 
-    <form method="post" action="{{ url_for('rechnung.index') }}">
-      <div class="flex-container">
-        <div>
-          <label for="jahr">Jahr</label>
-
-          <input type="text" size="10" name="jahr" value="{{- jahr -}}">
-        </div>
-
-        <div>
-          <input type="submit" value="suchen">
-        </div>
+        <input type="text" size="10" name="jahr" value="{{- jahr -}}">
       </div>
-    </form>
 
-    <div class="small-gap"></div>
+      <div>
+        <input type="submit" value="suchen">
+      </div>
+    </div>
+  </form>
 
+  <div class="small-gap"></div>
+
+  <table class="liste">
+    <tr>
+      <th width="2%">&nbsp;</th>
+
+      <th width="6%">Jahr</th>
+
+      <th width="6%">Lfnr.</th>
+
+      <th width="10%">Bto.Summe</th>
+
+      <th width="38%">Kunde</th>
+
+      <th width="38%">Patient</th>
+    </tr>
+  </table>
+
+  <div class="liste-wrapper">
     <table class="liste">
-      <tr>
-        <th width="2%">&nbsp;</th>
-        <th width="6%">Jahr</th>
-        <th width="6%">Lfnr.</th>
-        <th width="10%">Bto.Summe</th>
-        <th width="38%">Kunde</th>
-        <th width="38%">Patient</th>
-      </tr>
-    </table>
-  </div>
-
-   <table class="liste">
     {% for rechnung in rechnungen %}
       <tr>
         <td width="2%" style="text-align: center"><input type="radio" name="option" value="{{- rechnung.Rechnung.id -}}"></td>
@@ -69,6 +72,7 @@
       </tr>
     {% endfor %}
     </table>
+  </div>
 
   <div class="action">
     <p><a class="btn" id="zur_rechnung" href="#">zur Rechnung</a></p>
@@ -76,41 +80,39 @@
     <p><a class="btn" id="rechnung_loeschen" href="#">Rechnung löschen</a></p>
   </div>
 
-  <div class="action-bottom"></div>
+  <script>
+    $(document).ready(function(){
 
-    <script>
-        $(document).ready(function(){
-
-            $('#zur_rechnung').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    window.open("/rechnung/" + id.toString() + "/edit", "_blank");
-                    //window.location = "/rechnung/" + id.toString() + "/edit";
-                }
-                return false; 
-            });
-
-            $('#rechnung_loeschen').click(function(){ 
-                var id = $("input:radio[name=option]:checked").val(); 
-                if(id == null){
-                    alert("Bitte eine Karteikarte auswählen!");
-                }
-                else{
-                    if(confirm("Soll der Datensatz gelöscht werden?")){
-                        window.location = "/rechnung/" + id.toString() + "/delete";
-                        return true;
-                    }
-                    else{
-                        return false;
-                    }
-                }
-                return false; 
-            });
-
+        $('#zur_rechnung').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                window.open("/rechnung/" + id.toString() + "/edit", "_blank");
+                //window.location = "/rechnung/" + id.toString() + "/edit";
+            }
+            return false; 
         });
-    </script>
+
+        $('#rechnung_loeschen').click(function(){ 
+            var id = $("input:radio[name=option]:checked").val(); 
+            if(id == null){
+                alert("Bitte eine Karteikarte auswählen!");
+            }
+            else{
+                if(confirm("Soll der Datensatz gelöscht werden?")){
+                    window.location = "/rechnung/" + id.toString() + "/delete";
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            return false; 
+        });
+
+    });
+  </script>
 {% endblock %}
 

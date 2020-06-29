@@ -8,78 +8,76 @@
 
 
 {% block content %}
-  <div class="search">
+  <div class="small-gap"></div>
 
-    <div class="small-gap"></div>
+  <form method="post" action="{{ url_for('behandlungsverlauf.index') }}">
+    <div class="flex-container">
+      <div>
+        <label for="jahr">Behandlungsjahr</label>
 
-      <form method="post" action="{{ url_for('behandlungsverlauf.index') }}">
-        <div class="flex-container">
-          <div>
-            <label for="jahr">Behandlungsjahr</label>
-
-             <input type="text" size="10" name="jahr" value="{{- jahr -}}">
-          </div>
-
-          <div>
-                <input type="submit" value="suchen">
-          </div>
+        <input type="text" size="10" name="jahr" value="{{- jahr -}}">
       </div>
-    </form>
 
-    <div class="small-gap"></div>
+      <div>
+        <input type="submit" value="suchen">
+      </div>
+    </div>
+  </form>
 
+  <div class="small-gap"></div>
+
+  <table class="liste">
+    <tr>
+      <th width="2%">&nbsp;</th>
+
+      <th width="10%">Beh.Datum</th>
+
+      <th width="44%">Kunde</th>
+
+      <th width="44%">Patient</th>
+    </tr>
+  </table>
+
+
+  <div class="liste-wrapper">
     <table class="liste">
+    {% for behverlauf in behandlungsverlaeufe %}
       <tr>
-        <th width="2%">&nbsp;</th>
+        <td style="width: 2%; text-align: center">
+          <input type="radio" name="option" value="{{- behverlauf.Behandlungsverlauf.id -}}">
+        </td>
 
-        <th width="10%">Beh.Datum</th>
+        <td style="width: 10%">
+          <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+            {{- behverlauf.Behandlungsverlauf.datum|dt -}}
+          </a>
+        </td>
 
-        <th width="44%">Kunde</th>
+        <td style="width: 44%">
+          <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+          {% with person=behverlauf.Person %}
+            {% include '_liste_person.html' %}
+          {% endwith %}  
+          </a>
+        </td>
 
-        <th width="44%">Patient</th>
+        <td style="width: 44%">
+          <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+          {% with tier=behverlauf.Tier %}
+            {% include '_liste_tier.html' %}
+          {% endwith %} 
+          </a>
+        </td>
       </tr>
+    {% endfor %}
     </table>
   </div>
-
-   <table class="liste">
-   {% for behverlauf in behandlungsverlaeufe %}
-     <tr>
-       <td style="width: 2%; text-align: center">
-         <input type="radio" name="option" value="{{- behverlauf.Behandlungsverlauf.id -}}">
-       </td>
-
-       <td style="width: 10%">
-         <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
-           {{- behverlauf.Behandlungsverlauf.datum|dt -}}
-         </a>
-       </td>
-
-       <td style="width: 44%">
-         <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
-         {% with person=behverlauf.Person %}
-           {% include '_liste_person.html' %}
-         {% endwith %}  
-         </a>
-       </td>
-
-       <td style="width: 44%">
-         <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
-         {% with tier=behverlauf.Tier %}
-           {% include '_liste_tier.html' %}
-         {% endwith %} 
-         </a>
-       </td>
-     </tr>
-  {% endfor %}
-  </table>
 
   <div class="action">
     <p><a class="btn" id="zum_behandlungsverlauf" href="#">zum Behandlungsverlauf</a></p>
 
     <p><a class="btn" id="behandlungsverlauf_loeschen" href="#">Behandlungsverlauf löschen</a></p>
   </div>
-
-  <div class="action-bottom"></div>
 
   <script>
     $(document).ready(function(){

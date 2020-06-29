@@ -8,8 +8,6 @@
 
 
 {% block content %}
-  <div class="search">
-
     <div class="small-gap"></div>
 
     <form method="post" action="{{ url_for('abfrage.index') }}">
@@ -85,31 +83,33 @@
     </table>
   </div>
 
-  <table class="liste">
-  {% for th in tierhaltungen %}
-    <tr>
-      <td style="width: 2%; text-align: center">
-        <input type="radio" name="option" value="{{ th.Tierhaltung.id }}">
-      </td>
+  <div class="liste-wrapper">
+    <table class="liste">
+    {% for th in tierhaltungen %}
+      <tr>
+        <td style="width: 2%; text-align: center">
+          <input type="radio" name="option" value="{{ th.Tierhaltung.id }}">
+        </td>
 
-      <td style="width: 49%">
-        <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-        {% with person=th.Person %}
-          {% include '_liste_person.html' %}
-        {% endwith %}  
-        </a>
-      </td>
+        <td style="width: 49%">
+          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          {% with person=th.Person %}
+            {% include '_liste_person.html' %}
+          {% endwith %}  
+          </a>
+        </td>
 
-      <td style="width: 49%">
-        <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-        {% with tier=th.Tier %}
-          {% include '_liste_tier.html' %}
-        {% endwith %} 
-        </a>
-      </td>
-    </tr>
-  {% endfor %}
-  </table>
+        <td style="width: 49%">
+          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          {% with tier=th.Tier %}
+            {% include '_liste_tier.html' %}
+          {% endwith %} 
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
 
   <div class="action">
     <p><a class="btn" id="zur-karteikarte" href="#">zur Karteikarte</a></p>
@@ -128,8 +128,6 @@
       <p><a class="btn grayed" id="excel-exportieren" href="#">Finanzamt</a></p>
     {% endif %}        
   </div>
-
-  <div class="action-bottom"></div>
 
   <script>
     function resetdate(){ 

@@ -49,6 +49,9 @@
             <input type="text" size=10 name="ort" id="ort" class="change" value="{{- request.form['ort'] or rechnung.ort or ort -}}" required>
         </div>
       </div>
+      
+      <div class="small-gap"></div>
+          
       <div>
         <div class="row-grid" style="grid-template-columns: auto auto;">
             <label for="diagnose">Diagnose</label>
@@ -73,7 +76,7 @@
         </thead>
       </table>
 
-      <div id="scroller" style="max-height: 25vh; overflow-y: scroll; overflow-x: hidden;">
+      <div id="scroller" style="max-height: calc(100vh - 39em); overflow-y: scroll; overflow-x: hidden;">
         <table class="records">
           <tbody>
           {% set editerror = 0 %}

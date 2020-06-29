@@ -28,7 +28,8 @@ a { color: #377ba8; text-decoration: none; }
 header { 
     background-color: Lightgray;
     margin-top: 0.5em;
-    width: 100%;
+    padding: 0 0.6em;
+    /* width: 100%; */
     height: 1.8em;
     display: grid; 
     grid-template-columns: auto auto auto;
@@ -41,9 +42,9 @@ header p, header p a { font-size: 1em; line-height: 1.2em; }
 
 nav { 
   background-color: Lightgray; 
-  width: 100%;
+  /* width: 100%; */
   margin-top: 0.7em; /*0.1em; */
-  padding: 0.5em 0; 
+  padding: 0.5em 0.6em; 
 }
 nav a, 
 nav a:link, 
@@ -52,6 +53,8 @@ nav a:active {
     text-decoration: none;
     font-size: 1em;
 }
+
+#content-wrapper { padding-left: 0.6em; }
 
 .row-grid { 
     display: inline-grid; 

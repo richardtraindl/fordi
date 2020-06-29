@@ -26,22 +26,18 @@
 
   <div class="small-gap"></div>
 
-  <table class="liste">
-    <tr>
-      <th width="2%">&nbsp;</th>
-
-      <th width="10%">Beh.Datum</th>
-
-      <th width="44%">Kunde</th>
-
-      <th width="44%">Patient</th>
-    </tr>
-  </table>
-
-
   <div class="liste-wrapper">
     <table class="liste">
-    {% for behverlauf in behandlungsverlaeufe %}
+      <tr>
+        <th width="2%">&nbsp;</th>
+
+        <th width="10%">Beh.Datum</th>
+
+        <th width="44%">Kunde</th>
+
+        <th width="44%">Patient</th>
+      </tr>
+    {%- for behverlauf in behandlungsverlaeufe -%}
       <tr>
         <td style="width: 2%; text-align: center">
           <input type="radio" name="option" value="{{- behverlauf.Behandlungsverlauf.id -}}">
@@ -55,21 +51,21 @@
 
         <td style="width: 44%">
           <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
-          {% with person=behverlauf.Person %}
-            {% include '_liste_person.html' %}
-          {% endwith %}  
+          {%- with person=behverlauf.Person -%}
+            {%- include '_liste_person.html'-%}
+          {%- endwith -%}  
           </a>
         </td>
 
         <td style="width: 44%">
           <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
-          {% with tier=behverlauf.Tier %}
-            {% include '_liste_tier.html' %}
-          {% endwith %} 
+          {%- with tier=behverlauf.Tier -%}
+            {%- include '_liste_tier.html' -%}
+          {%- endwith -%} 
           </a>
         </td>
       </tr>
-    {% endfor %}
+    {%- endfor -%}
     </table>
   </div>
 

@@ -30,11 +30,11 @@
   </head>
   <body>
     <header>
-      <h1 style="padding-left: 8px;">Ordi</h1>
+      <h1>Ordi</h1>
 
       <h2>{{ page_title }}</h2>
 
-      <p style="text-align: right; padding-right: 8px;">
+      <p style="text-align: right;">
       {% if g.user %}
         <span>{{- g.user.username -}} &nbsp;</span>
         <a href="{{ url_for('auth.logout') }}">abmelden</a>

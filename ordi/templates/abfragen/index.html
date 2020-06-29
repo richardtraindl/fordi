@@ -1,20 +1,20 @@
 
-{% extends 'base.html' %}
+{%- extends 'base.html' -%}
 
 
-{% block title %}
+{%- block title -%}
   Abfragen
-{% endblock %}
+{%- endblock -%}
 
 
-{% block content %}
+{%- block content -%}
     <div class="small-gap"></div>
 
     <form method="post" action="{{ url_for('abfrage.index') }}">
       <div class="flex-container">
         <div>
           <label for="abfrage">Abfrage</label>
-          {% include 'abfragen/_select_for_abfragen.html' %}
+          {%- include 'abfragen/_select_for_abfragen.html' -%}
         </div>
 
         <div>
@@ -22,11 +22,11 @@
         </div>
 
         <div>
-        {% if abfrage == "Behandlung" or abfrage == "Impfung" or abfrage == "Finanzamt" %}
+        {%- if abfrage == "Behandlung" or abfrage == "Impfung" or abfrage == "Finanzamt" -%}
           <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}">
-        {% else %}
+        {%- else -%}
           <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}" disabled>
-        {% endif %}
+        {%- endif -%}
         </div>
 
         <div id="kunde">
@@ -34,14 +34,14 @@
           <label for="kunde" class="grayed">Kunde</label>
 
           <input type="checkbox" name="kunde" value="1" checked disabled>
-        {% else %}
+        {%- else -%}
           <label for="kunde">Kunde</label>
-          {% if kunde == 0 %}
+          {%- if kunde == 0 -%}
             <input type="checkbox" name="kunde" value="0">
-          {% else %}
+          {%- else -%}
             <input type="checkbox" name="kunde" value="1" checked>
-          {% endif %}
-        {% endif %}
+          {%- endif -%}
+        {%- endif -%}
         </div>
 
         <div id="patient">
@@ -72,43 +72,39 @@
 
     <div class="small-gap"></div>
 
-    <table class="liste">
-      <tr>
-        <th width="2%">&nbsp;</th>
+    <div class="liste-wrapper">
+      <table class="liste">
+        <tr>
+          <th width="2%">&nbsp;</th>
 
-        <th width="49%">Kunde</th>
+          <th width="49%">Kunde</th>
 
-        <th width="49%">Patient</th>
-      </tr>
-    </table>
-  </div>
+          <th width="49%">Patient</th>
+        </tr>
+      {%- for th in tierhaltungen -%}
+        <tr>
+          <td style="width: 2%; text-align: center">
+            <input type="radio" name="option" value="{{ th.Tierhaltung.id }}">
+          </td>
 
-  <div class="liste-wrapper">
-    <table class="liste">
-    {% for th in tierhaltungen %}
-      <tr>
-        <td style="width: 2%; text-align: center">
-          <input type="radio" name="option" value="{{ th.Tierhaltung.id }}">
-        </td>
+          <td style="width: 49%">
+            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+            {%- with person=th.Person -%}
+              {%- include '_liste_person.html' -%}
+            {%- endwith -%}  
+            </a>
+          </td>
 
-        <td style="width: 49%">
-          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-          {% with person=th.Person %}
-            {% include '_liste_person.html' %}
-          {% endwith %}  
-          </a>
-        </td>
-
-        <td style="width: 49%">
-          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-          {% with tier=th.Tier %}
-            {% include '_liste_tier.html' %}
-          {% endwith %} 
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-    </table>
+          <td style="width: 49%">
+            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+            {%- with tier=th.Tier -%}
+              {%- include '_liste_tier.html' -%}
+            {%- endwith -%} 
+            </a>
+          </td>
+        </tr>
+      {%- endfor -%}
+      </table>
   </div>
 
   <div class="action">
@@ -116,17 +112,17 @@
 
     <p><a class="btn" id="bericht-drucken" href="#">Bericht drucken</a></p>
 
-    {% if abfrage == "Impfung" and tierhaltungen %}
+    {%- if abfrage == "Impfung" and tierhaltungen -%}
       <p><a class="btn" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
-    {% else %}
+    {%- else -%}
       <p><a class="btn grayed" id="etiketten-drucken" href="#">Etiketten drucken</a></p>
-    {% endif %}
+    {%- endif -%}
 
     {%- if abfrage == "Finanzamt" and tierhaltungen -%}
       <p><a class="btn" id="excel-exportieren" href="#">Finanzamt</a></p>
-    {% else %}
+    {%- else -%}
       <p><a class="btn grayed" id="excel-exportieren" href="#">Finanzamt</a></p>
-    {% endif %}        
+    {%- endif -%}        
   </div>
 
   <script>
@@ -255,5 +251,5 @@
       });
     });
   </script>
-{% endblock %}
+{%- endblock -%}
 

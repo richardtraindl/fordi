@@ -1,41 +1,41 @@
 
-{% extends 'base.html' %}
+{%- extends 'base.html' -%}
 
 
-{% block title %}
+{%- block title -%}
   Karteikarte
-{% endblock %}
+{%- endblock -%}
 
 
-{% block content %}
+{%- block content -%}
     <div class="row-grid" style="grid-template-columns: auto auto;">
       <p><a href="{{ url_for('patient.edit_person', id=tierhaltung.id, person_id=tierhaltung.person_id) }}">Person ändern</a></p>
 
       <p><a href="{{ url_for('patient.edit_tier', id=tierhaltung.id, tier_id=tierhaltung.tier_id) }}">Tier ändern</a></p>
 
-      {% with person=tierhaltung.person %}
-        {% include 'patient/_person.html' %}
-      {% endwith %}
+      {%- with person=tierhaltung.person -%}
+        {%- include 'patient/_person.html' -%}
+      {%- endwith -%}
 
-      {% with tier=tierhaltung.tier %}
-        {% include 'patient/_tier.html' %}
-      {% endwith %}
+      {%- with tier=tierhaltung.tier -%}
+        {%- include 'patient/_tier.html' -%}
+      {%- endwith -%}
     </div>
 
     <div class="gap"></div>
 
     <div class="flex-container ">
-      {% if termin %}
+      {%- if termin -%}
         <p>Nächster Termin: &nbsp; 
           <a href="{{ url_for('kalender.edit', id=termin.id, th='th') }}">
             {{- termin.thema -}} &nbsp; 
             {{- termin.beginn|dttm -}} &nbsp;
           </a>
         </p>
-      {% else %}
+      {%- else -%}
         <p>Kein Termin geplant.</p>        
         <p><a class="btn" href="{{ url_for('kalender.create', th='th', tierhaltung_id=tierhaltung.id) }}">neuer Termin</a>
-      {% endif %}
+      {%- endif -%}
     </div>
     
     <div class="gap"></div>
@@ -57,14 +57,14 @@
     </table>
 
     <form method="post" action="{{ url_for('patient.save_behandlungen', id=tierhaltung.id) }}">
-      <div id="scroller" style="max-height: 40vh; overflow-y: scroll; overflow-x: hidden;">
+      <div id="scroller" style="max-height: calc(100vh - 31.5em); overflow-y: scroll; overflow-x: hidden;">
         <table class="records">
           <tbody>
-          {% set ns = namespace(editerror=0) %}
+          {%- set ns = namespace(editerror=0) -%}
 
-          {% for behandlung in behandlungen %}
+          {%- for behandlung in behandlungen -%}
             <tr>
-            {% if behandlung.id %}
+            {%- if behandlung.id -%}
               <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}" disabled>
 
               <td style="width: 8%">
@@ -84,7 +84,7 @@
               <td style="width: 9%">
                 <textarea name="impfungen[]" class="impfungen" readonly disabled>
                 {%- for impfung in behandlung.impfungen -%}
-                  {% if loop.index > 1 %},{%- endif -%}
+                  {%- if loop.index > 1 %},{%- endif -%}
                   {{- impfung.impfungscode|mapimpfung -}}
                 {%- endfor -%}
                 </textarea>
@@ -97,19 +97,19 @@
 
                 <p><a href="#" onclick="delrow($(this));">löschen</a></p>
               </td>
-            {% else %}
-              {% set ns.editerror = ns.editerror + 1 %}
+            {%- else -%}
+              {%- set ns.editerror = ns.editerror + 1 -%}
 
               <input type="hidden" name="behandlung_id[]" value="{{- behandlung['behandlung_id'] -}}">
 
               <td style="width: 8%">
                 <input type="text" name="datum[]" class="date" value="{{- behandlung['datum'] -}}">
               </td>
-                {% if ns.editerror == 1 %}
+                {%- if ns.editerror == 1 -%}
                   <td style="width: 30%"><textarea name="diagnose[]" id="edit">{{- behandlung['diagnose'] -}}</textarea></td>
-                {% else %}
+                {%- else -%}
                   <td style="width: 30%"><textarea name="diagnose[]">{{- behandlung['diagnose'] -}}</textarea></td>
-                {% endif %}
+                {%- endif -%}
 
                 <td style="width: 11%"><textarea name="laborwerte1[]" class="labor">{{- behandlung['laborwerte1'] -}}</textarea></td>
 
@@ -128,11 +128,11 @@
 
                   <p><a href="#" onclick="delrow($(this));">löschen</a></p>  
                 </td>
-            {% endif %}
+            {%- endif -%}
             </tr>
-          {% endfor %}
+          {%- endfor -%}
 
-          {% if ns.editerror == 0 %}
+          {%- if ns.editerror == 0 -%}
             <tr>
               <td style="width: 8%">
                   <input type="hidden" name="behandlung_id[]" value="">
@@ -155,7 +155,7 @@
 
               <td style="width: 5%">&nbsp;</td>
             </tr>
-          {% endif %}
+          {%- endif -%}
 
           </tbody>
         </table>
@@ -365,4 +365,4 @@
 
       });
     </script>
-{% endblock %}
+{%- endblock -%}

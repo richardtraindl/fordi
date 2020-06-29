@@ -48,39 +48,38 @@
 
   <div class="small-gap"></div>
 
-  <table class="liste">
-    <tr>
-      <th width="2%">&nbsp;</th>
-
-      <th width="49%">Kunde</th>
-
-      <th width="49%">Patient</th>
-    </tr>
-  </table>
-  
   <div class="liste-wrapper">
     <table class="liste">
-      {% for th in tierhaltungen %}
-        <tr>
-          <td width="2%" style="text-align: center"><input type="radio" name="option" value="{{ th.Tierhaltung.id }}"></td>
+      <tr>
+        <th width="2%">&nbsp;</th>
 
-          <td width="49%">
-            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-            {% with person=th.Person %}
-              {% include '_liste_person.html' %}
-            {% endwith %}            
-            </a>
-          </td>
+        <th width="49%">Kunde</th>
 
-          <td width="49%">
-            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-            {% with tier=th.Tier %}
-              {% include '_liste_tier.html' %}
-            {% endwith %}
-            </a>
-          </td>
-        </tr>
-      {% endfor %}
+        <th width="49%">Patient</th>
+      </tr>
+    {%- for th in tierhaltungen -%}
+      <tr>
+        <td width="2%" style="text-align: center">
+          <input type="radio" name="option" value="{{ th.Tierhaltung.id }}">
+        </td>
+
+        <td width="49%">
+          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          {%- with person=th.Person -%}
+            {%- include '_liste_person.html' -%}
+          {%- endwith -%}            
+          </a>
+        </td>
+
+        <td width="49%">
+          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          {%- with tier=th.Tier -%}
+            {%- include '_liste_tier.html' -%}
+          {%- endwith -%}
+          </a>
+        </td>
+      </tr>
+    {%- endfor -%}
     </table>
   </div>
 

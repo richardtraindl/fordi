@@ -26,25 +26,22 @@
 
   <div class="small-gap"></div>
 
-  <table class="liste">
-    <tr>
-      <th width="2%">&nbsp;</th>
-
-      <th width="6%">Jahr</th>
-
-      <th width="6%">Lfnr.</th>
-
-      <th width="10%">Bto.Summe</th>
-
-      <th width="38%">Kunde</th>
-
-      <th width="38%">Patient</th>
-    </tr>
-  </table>
-
   <div class="liste-wrapper">
     <table class="liste">
-    {% for rechnung in rechnungen %}
+      <tr>
+        <th width="2%">&nbsp;</th>
+
+        <th width="6%">Jahr</th>
+
+        <th width="6%">Lfnr.</th>
+
+        <th width="10%">Bto.Summe</th>
+
+        <th width="38%">Kunde</th>
+
+        <th width="38%">Patient</th>
+      </tr>
+    {%- for rechnung in rechnungen -%}
       <tr>
         <td width="2%" style="text-align: center"><input type="radio" name="option" value="{{- rechnung.Rechnung.id -}}"></td>
 
@@ -56,21 +53,21 @@
 
         <td width="38%">
           <a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
-          {% with person=rechnung.Person %}
-            {% include '_liste_person.html' %}
-          {% endwith %}
+          {%- with person=rechnung.Person -%}
+            {%- include '_liste_person.html' -%}
+          {%- endwith -%}
           </a>
         </td>
 
         <td width="38%">
           <a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
-          {% with tier=rechnung.Tier %}
-            {% include '_liste_tier.html' %}
-          {% endwith %}
+          {%- with tier=rechnung.Tier -%}
+            {%- include '_liste_tier.html' -%}
+          {%- endwith -%}
           </a>
         </td>
       </tr>
-    {% endfor %}
+    {%- endfor -%}
     </table>
   </div>
 

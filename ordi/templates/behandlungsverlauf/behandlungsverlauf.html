@@ -43,7 +43,7 @@
         <input size="40" type="text" name="diagnose" id="diagnose" class="change" value="{{- request.form['diagnose'] or behandlungsverlauf.diagnose|sn -}}" required>
 
         <label style="align-items: top;" for="behandlung">Behandlung</label>
-        <textarea style="width: 640px; max-height: calc(100vh - 31.2em);" name="behandlung" id="behandlung" class="change" required>{{- request.form['behandlung'] or behandlungsverlauf.behandlung|sn -}}</textarea>
+        <textarea style="width: 640px; height: calc(100vh - 31.2em);" name="behandlung" id="behandlung" class="change" required>{{- request.form['behandlung'] or behandlungsverlauf.behandlung|sn -}}</textarea>
       </div>
 
       <div class="small-gap"></div>

@@ -48,18 +48,21 @@
 
   <div class="small-gap"></div>
 
+  <table class="liste">
+    <tr>
+      <th width="2%">&nbsp;</th>
+
+      <th width="48.5%">Kunde</th>
+
+      <th width="49.5%">Patient</th>
+    </tr>
+  </table>
+
   <div class="liste-wrapper">
     <table class="liste">
-      <tr>
-        <th width="2%">&nbsp;</th>
-
-        <th width="49%">Kunde</th>
-
-        <th width="49%">Patient</th>
-      </tr>
     {%- for th in tierhaltungen -%}
-      <tr>
-        <td width="2%" style="text-align: center">
+      <tr width="2%">
+        <td style="text-align: center">
           <input type="radio" name="option" value="{{ th.Tierhaltung.id }}">
         </td>
 

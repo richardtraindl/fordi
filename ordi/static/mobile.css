@@ -1,7 +1,7 @@
 
 * { 
     font-size: 16px; 
-    line-height: 16px;
+    line-height: 18px;
 }
 
 html { margin: 0px; padding: 0px; }
@@ -10,22 +10,32 @@ h1, h1 a { margin: 0; padding: 0; font-size: 2em; }
 h2, h2 a { margin: 0; padding: 0; font-size: 1.8em; }
 h3, h3 a { margin: 0; padding: 0; font-size: 1.6em; }
 
-#content-wrapper { padding: 0; }
+#content-wrapper { padding: 0.2em; }
 
-header {  } /* position: sticky; top: 0 */
+header { margin-top: 0; padding: 0.2em }
 header p, header p a { font-size: 1.4em; line-height: 1.5em; }
+header img { float: right; }
 
 nav a, nav a:link, nav a:visited, nav a:active { font-size: 1.4em; }
 
 #mobile-nav {
   text-align: right;
-  padding: 0;
+  padding: 0.2em;
   display: none;
 }
 #mobile-nav ul { list-style-type: none; }
 
-.mobile-behandlungen { border-top: 1px solid Black; }
+.mobile-liste { max-height: calc(100vh - 9em); overflow-y: scroll; }
 
-.mobile-behandlungen ul { list-style-type: none; margin: 0px; padding: 0px}
+.mobile { 
+  overflow-y: scroll; 
+  overflow-x: hidden; 
+  /* border: 1px solid black; */
+  background-color: Snow;
+}
 
-/* .liste-wrapper { height: 70vh; max-height: 70vh; } */
+.liste-wrapper {
+  max-height: calc(100vh - 9em); 
+}
+
+.tierhaltung { max-height: 10em; }

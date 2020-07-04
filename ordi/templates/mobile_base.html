@@ -18,37 +18,39 @@
 
     <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
 
-    {% if page_title == "Kalender" %}
+    {%- if page_title == "Kalender" -%}
       <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
-    {% endif %}
+    {%- endif -%}
 
-    {% if page_title == "Termin" %}
+    {%- if page_title == "Termin" -%}
       <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
 
       <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">
 
       <script src="{{ url_for('static', filename='jquery.timePicker.js') }}"></script>
-    {% endif %}
+    {%- endif -%}
 
   </head>
   <body>
     <header>
       <h1>Ordi</h1>
 
-      {% if page_title == "Behandlungsverläufe" %}
+      {%- if page_title == "Behandlungsverläufe" -%}
         <h2>Beh.Verläufe</h2>
-      {% elif page_title == "Behandlungsverlauf" %}
+      {%- elif page_title == "Behandlungsverlauf" -%}
         <h2>Beh.Verlauf</h2>
-      {% else %}
+      {%- else -%}
         <h2>{{ page_title }}</h2>
-      {% endif %}
+      {%- endif -%}
 
-      <p style="text-align: right;"><a id="nav-button" href="#">
-       <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}"></a>
+      <p>
+        <a id="nav-button" href="#">
+          <img id="nav-image" src="{{ url_for('static', filename='img/nav_black.png') }}">
+        </a>
       </p>
     </header>
 
-    {% if page_title != "Anmelden" %}
+    {%- if page_title != "Anmelden" -%}
       <div id="mobile-nav" class="flex-container">
         <ul>
           <li><a href="{{ url_for('patient.index') }}">Patienten</a></li>
@@ -66,13 +68,13 @@
 
     <div id="content-wrapper">
       <div id="msg">
-        {% for message in get_flashed_messages() %}
-          <div class="flash">{{ message }}</div>
-        {% endfor %}
+        {%- for message in get_flashed_messages() -%}
+          <div class="flash">{{- message -}}</div>
+        {%- endfor -%}
       </div>
 
       <section id="content">
-        {% block content %}{% endblock %}
+        {%- block content -%}{%- endblock -%}
       </section>
     </div>
 

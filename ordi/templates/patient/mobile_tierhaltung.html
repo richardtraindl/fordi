@@ -8,7 +8,7 @@
 
 
 {% block content %}
-  <div style="max-height: 24vh; overflow-y: scroll; overflow-x: hidden;">
+  <div class="tierhaltung">
     {% with tier=tierhaltung.tier %}
       {% include '_mobile_tier.html' %}
     {% endwith %}
@@ -20,81 +20,81 @@
     <div class="small-gap"></div>
   </div>
 
-  <div id="scroller" class="mobile-behandlungen" style="height: 72vh; max-height: 72vh; overflow-y: scroll; overflow-x: hidden;">
+  <div id="scroller" class="mobile" style="max-height: calc(100vh - 12.8em);">
     {% for behandlung in behandlungen %}
-        <ul style="border: 1px solid black; background-color: Snow";>
-          <li style="background-color: LightBlue">
-              <span style="font-weight: bold">{{- behandlung.datum|dt -}}</span>
-          </li>
+      <div>
+        <p style="background-color: LightBlue">
+          <span style="font-weight: bold">{{- behandlung.datum|dt -}}</span>
+        </p>
 
-          {%- if behandlung.diagnose|length > 0 -%}
-            <li>
-                <span style="font-weight: bold">Diagnose</span>
-                <br>
-                {{- behandlung.diagnose -}}
-            </li>
-          {%- endif -%}
+        {%- if behandlung.diagnose|length > 0 -%}
+          <p>
+            <span style="font-weight: bold">Diagnose</span>
+            <br>
+            {{- behandlung.diagnose -}}
+          </p>
+        {%- endif -%}
 
-          {%- if behandlung.laborwerte1|length > 0 -%}
-            <li>
-                <span style="font-weight: bold">Laborwerte1</span>
-                <br>
-                {{- behandlung.laborwerte1 -}}
-            </li>
-          {%- endif -%}
+        {%- if behandlung.laborwerte1|length > 0 -%}
+          <p>
+            <span style="font-weight: bold">Laborwerte1</span>
+            <br>
+            {{- behandlung.laborwerte1 -}}
+          </p>
+        {%- endif -%}
 
-          {%- if behandlung.laborwerte2|length > 0 -%}
-            <li>
-                <span style="font-weight: bold">Laborwerte2</span>
-                <br>
-                {{- behandlung.laborwerte2 -}}
-            </li>
-          {%- endif -%}
+        {%- if behandlung.laborwerte2|length > 0 -%}
+          <p>
+            <span style="font-weight: bold">Laborwerte2</span>
+            <br>
+            {{- behandlung.laborwerte2 -}}
+          </p>
+        {%- endif -%}
 
-          {%- if behandlung.arzneien|length > 0 -%}
-            <li>
-                <span style="font-weight: bold">Arzneien</span>
-                <br>
-                {{- behandlung.arzneien -}}
-            </li>
-          {%- endif -%}
+        {%- if behandlung.arzneien|length > 0 -%}
+          <p>
+            <span style="font-weight: bold">Arzneien</span>
+            <br>
+            {{- behandlung.arzneien -}}
+          </p>
+        {%- endif -%}
 
-          {%- if behandlung.arzneimittel|length > 0 -%}
-            <li>
-                <span style="font-weight: bold">Arzneimittel</span>
-                <br>
-                {{- behandlung.arzneimittel -}}
-            </li>
-          {%- endif -%}
+        {%- if behandlung.arzneimittel|length > 0 -%}
+          <p>
+            <span style="font-weight: bold">Arzneimittel</span>
+            <br>
+            {{- behandlung.arzneimittel -}}
+          </p>
+        {%- endif -%}
 
-          {%- if behandlung.impfungen -%}
-            <li>
-                <span style="font-weight: bold">Impfungen</span>
-                <br>
-                {%- for impfung in behandlung.impfungen -%}
-                  {% if loop.index > 1 %},{%- endif -%}
-                  {{- impfung.impfungscode|mapimpfung -}}
-                {%- endfor -%}
-            </li>
-          {%- endif -%}
+        {%- if behandlung.impfungen -%}
+          <p>
+            <span style="font-weight: bold">Impfungen</span>
+            <br>
+            {%- for impfung in behandlung.impfungen -%}
+              {% if loop.index > 1 %},{%- endif -%}
+              {{- impfung.impfungscode|mapimpfung -}}
+            {%- endfor -%}
+          </p>
+        {%- endif -%}
 
-          {%- if behandlung.gewicht|length > 0 -%}
-            <li>
-                <span style="font-weight: bold">Gewicht</span>
-                <br>
-                {{- behandlung.gewicht|sn -}}
-            </li>
-          {%- endif -%}
-        </ul>
-      {% endfor %}
-   </div>
+        {%- if behandlung.gewicht|length > 0 -%}
+          <p>
+            <span style="font-weight: bold">Gewicht</span>
+            <br>
+            {{- behandlung.gewicht|sn -}}
+          </p>
+        {%- endif -%}
+      </div>
+    {% endfor %}
+  </div>
 
-    <script>
-      $(document).ready(function(){
+  <script>
+    $(document).ready(function(){
 
-        var element = document.getElementById("scroller");
-        element.scrollTop = element.scrollHeight;
+      var element = document.getElementById("scroller");
+      element.scrollTop = element.scrollHeight;
 
-      });
-    </script>
+    });
+  </script>
 {% endblock %}

@@ -8,7 +8,7 @@
 
 
 {% block content %}
-  <div style="max-height: 24vh; overflow-y: scroll; overflow-x: hidden;">
+  <div class="tierhaltung">
     {% with tier=behandlungsverlauf.tier %}
       {% include '_mobile_tier.html' %}
     {% endwith %}
@@ -20,9 +20,10 @@
     <div class="small-gap"></div>
   </div>
 
-  <div id="scroller" class="mobile-behandlungen" style="max-height: 70vh; overflow-y: scroll; overflow-x: hidden; background-color: Snow;">
+  <div class="mobile" style="max-height: calc(100vh - 13em);">
     <p>
-        <span style="font-weight: bold">Datum:</span>&nbsp;{{- behandlungsverlauf.datum|dt -}}
+        <span style="font-weight: bold">Datum:</span>
+        &nbsp;{{- behandlungsverlauf.datum|dt -}}
     </p>
 
     <p>

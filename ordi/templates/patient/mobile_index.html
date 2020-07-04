@@ -1,42 +1,39 @@
 
-{% extends 'mobile_base.html' %}
+{%- extends 'mobile_base.html' -%}
 
 
-{% block title %}
+{%- block title -%}
   Karteikarten
-{% endblock %}
+{%- endblock -%}
 
 
-{% block content %}
-  <div style="position: sticky; top: 2em; background-color: LightBlue;">
-    <form method="post" action="{{ url_for('patient.index') }}">
-      <div class="row-grid" style="grid-template-columns: auto auto;"><!-- max-height: 35vh; -->
-        <label for="familienname">Familienname</label>
+{%- block content -%}
+  <form method="post" action="{{ url_for('patient.index') }}">
+    <div class="row-grid" style="grid-template-columns: auto auto;">
+      <label for="familienname">Familienname</label>
+      <input type="text" size="8" name="familienname" value="{{ familienname }}">
 
-        <input type="text" size="8" name="familienname" value="{{ familienname }}">
+      <label for="tiername">Tiername</label>
+      <input type="text" size="8" name="tiername" value="{{ tiername }}">
 
-        <label for="tiername">Tiername</label>
+      <label for="kunde">Kunde</label>
+      {%- if kunde == 0 -%}
+        <input type="checkbox" name="kunde" value="0">
+      {%- else -%}
+        <input type="checkbox" name="kunde" value="1" checked>
+      {%- endif -%}
 
-        <input type="text" size="8" name="tiername" value="{{ tiername }}">
+      <label for="patient">Patient</label>
+      {%- if patient == 0 -%}
+        <input type="checkbox" name="patient" value="0">
+      {%- else -%}
+        <input type="checkbox" name="patient" value="1" checked>
+      {%- endif -%}
 
-        <label for="kunde">Kunde</label>
-        {%- if kunde == 0 -%}
-          <input type="checkbox" name="kunde" value="0">
-        {%- else -%}
-          <input type="checkbox" name="kunde" value="1" checked>
-        {%- endif -%}
-
-        <label for="patient">Patient</label>
-        {%- if patient == 0 -%}
-          <input type="checkbox" name="patient" value="0">
-        {%- else -%}
-          <input type="checkbox" name="patient" value="1" checked>
-        {%- endif -%}
-
-        <input type="submit" value="suchen">
-        <div></div>
-      </div>
-    </form>
+      <input type="submit" value="suchen">
+      <div></div>
+    </div>
+  </form>
 
   <div class="small-gap"></div>
 
@@ -48,30 +45,28 @@
     </tr>
   </table>
 
-</div>  
-
-  <div><!-- class="liste-wrapper" style="max-height: 55vh;" --> 
+  <div class="liste-wrapper" style="max-height: calc(100vh - 13em);">
     <table class="liste">
-      {% for th in tierhaltungen %}
+      {%- for th in tierhaltungen -%}
         <tr>
           <td width="50%">
             <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-              {{ th.Person.titel }}
-              {{ th.Person.familienname }}
-              {{ th.Person.vorname }}
+              {{- th.Person.titel -}}
+              {{- th.Person.familienname -}}
+              {{- th.Person.vorname -}}
             </a>
           </td>
           <td width="50%">
             <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
-              {{ th.Tier.tiername }}
-              {{ th.Tier.tierart }}
-              {{ th.Tier.geschlechtscode|mapgeschlecht }}
-              {{ th.Tier.geburtsdatum|dt }}
+              {{- th.Tier.tiername -}}
+              {{- th.Tier.tierart -}}
+              {{- th.Tier.geschlechtscode|mapgeschlecht -}}
+              {{- th.Tier.geburtsdatum|dt -}}
             </a>
           </td>
         </tr>
-      {% endfor %}
+      {%- endfor -%}
     </table>
   </div>
-{% endblock %}
+{%- endblock -%}
 

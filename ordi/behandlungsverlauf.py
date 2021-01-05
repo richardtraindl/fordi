@@ -2,7 +2,7 @@
 
 from datetime import date, timedelta
 import os
-from io import BytesIO    
+from io import BytesIO
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, make_response
 from flask_mobility.decorators import mobile_template
@@ -14,7 +14,7 @@ from ordi.auth import login_required
 from ordi.models import *
 from ordi.reqhelper import *
 from ordi.values import *
-from ordi.createpdf import *
+from ordi.createpdf_new import *
 from ordi.util.helper import *
 
 bp = Blueprint('behandlungsverlauf', __name__, url_prefix='/behandlungsverlauf')
@@ -50,14 +50,6 @@ def index(template):
 
     return render_template(template, behandlungsverlaeufe=behandlungsverlaeufe, 
         jahr=str_jahr, page_title="Behandlungsverläufe")
-
-
-def create_pdf(behandlungsverlauf):
-    html = render_template('behandlungsverlauf/print.html', behandlungsverlauf=behandlungsverlauf)
-
-    byte_string = html2pdf(html)
-
-    return byte_string
 
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
@@ -123,7 +115,7 @@ def show(behandlungsverlauf_id):
 def download(behandlungsverlauf_id):
     behandlungsverlauf = db.session.query(Behandlungsverlauf).get(behandlungsverlauf_id)
 
-    byte_string = create_pdf(behandlungsverlauf)
+    byte_string = create_behandlungsverlauf_pdf(behandlungsverlauf)
 
     name = filter_bad_chars(behandlungsverlauf.person.familienname + \
                 "_" + behandlungsverlauf.person.vorname)

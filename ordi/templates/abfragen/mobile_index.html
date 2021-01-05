@@ -1,0 +1,172 @@
+
+{%- extends 'mobile_base.html' -%}
+
+
+{%- block title -%}
+  Abfragen
+{%- endblock -%}
+
+
+{%- block content -%}
+  <form method="post" action="{{ url_for('abfrage.index') }}">
+    <div class="row-grid" style="grid-template-columns: auto auto;">
+      <label for="abfrage">Abfrage</label>
+      {%- include 'abfragen/_select_for_abfragen.html' -%}
+
+      <input id="kriterium1" type="text" size="10" name="kriterium1" value="{{- kriterium1 -}}">
+      {%- if abfrage == "Behandlung" or abfrage == "Impfung" or abfrage == "Finanzamt" -%}
+        <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}">
+      {%- else -%}
+        <input id="kriterium2" type="text" size="10" name="kriterium2" value="{{- kriterium2 -}}" disabled>
+      {%- endif -%}
+
+      {%- if abfrage == "Finanzamt" -%}
+        <label for="kunde" class="grayed">Kunde</label>
+        <input type="checkbox" name="kunde" value="1" checked disabled>
+      {%- else -%}
+        <label for="kunde">Kunde</label>
+        {%- if kunde == 0 -%}
+          <input type="checkbox" name="kunde" value="0">
+        {%- else -%}
+          <input type="checkbox" name="kunde" value="1" checked>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if abfrage == "Finanzamt" -%}
+        <label for="patient" class="grayed">Patient</label>
+        <input type="checkbox" name="patient" value="1" checked disabled>
+      {% else %}
+        <label for="patient">Patient</label>
+        {% if patient == 0 %}
+          <input type="checkbox" name="patient" value="0">
+        {% else %}
+          <input type="checkbox" name="patient" value="1" checked>
+        {% endif %}
+      {% endif %}
+
+      <input type="submit" value="suchen">
+
+      <input id="output" type="hidden" name="output" value="">
+    </div>
+  </form>
+
+  <div class="small-gap"></div>
+
+  <table class="liste">
+    <tr>
+      <th width="50%">Kunde</th>
+
+      <th width="50%">Patient</th>
+    </tr>
+  </table>
+
+  <div class="liste-wrapper" style="max-height: calc(100vh - 14em);">
+    <table class="liste">
+    {%- for th in tierhaltungen -%}
+      <tr>
+        <td style="width: 50%">
+          <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          {%- with person=th.Person -%}
+            {%- include '_liste_person.html' -%}
+          {%- endwith -%}  
+          </a>
+        </td>
+
+        <td style="width: 50%">
+          <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          {%- with tier=th.Tier -%}
+            {%- include '_liste_tier.html' -%}
+          {%- endwith -%} 
+          </a>
+        </td>
+      </tr>
+    {%- endfor -%}
+    </table>
+  </div>
+
+  <script>
+    function resetdate(){ 
+      var kriterium1 = $('#kriterium1').val();
+      if(kriterium1.substring(0, 6) == "01.01."){
+        $('#kriterium1').val("");
+      }
+
+      return false; 
+    }
+
+
+    function setdates(){ 
+      var date2 = new Date();
+      var date1 = new Date(date2.getFullYear() - 1, 1, 1);
+
+      var kriterium1 = $('#kriterium1').val();
+      if(kriterium1.length == 0 || kriterium1.substring(0, 6) != "01.01."){
+        var d1 = "01.01." + date1.getFullYear();
+        $('#kriterium1').val(d1);
+      }
+
+      var kriterium2 = $('#kriterium2').val();
+      if(kriterium2.length == 0 || kriterium2.substring(0, 6) != "01.01."){
+      var d2 = "01.01." + date2.getFullYear();
+        $('#kriterium2').val(d2);
+      }
+
+      return false; 
+    }
+
+
+    $(document).ready(function(){
+
+      $('#abfrage').change(function () {
+        $("#output").val("");
+        var abfrage = $("select option:selected").text();
+
+        if(abfrage == "Finanzamt"){
+          $('#kriterium2').removeAttr('disabled');
+
+          $('#kunde').find('label').addClass('grayed');
+          $('#kunde').find('input').attr('disabled', 'disabled');
+          $('#patient').find('label').addClass('grayed');
+          $('#patient').find('input').attr('disabled', 'disabled');
+
+          $('#etiketten-drucken').addClass('grayed');
+          $('#excel-exportieren').removeClass('grayed');
+
+          setdates();
+        }
+        else{
+          $('#excel-exportieren').addClass('grayed');
+
+          $('#kunde').find('label').removeClass('grayed');
+          $('#kunde').find('input').removeAttr('disabled');
+          $('#patient').find('label').removeClass('grayed');
+          $('#patient').find('input').removeAttr('disabled');
+          
+          if(abfrage == "Impfung"){
+            $('#kriterium2').removeAttr('disabled');
+
+            $('#etiketten-drucken').removeClass('grayed');
+
+            setdates();
+          }
+          else if(abfrage == "Behandlung"){
+            $('#kriterium2').removeAttr('disabled');
+
+            $('#etiketten-drucken').addClass('grayed');
+
+            setdates();
+          }
+          else{
+            $('#kriterium2').attr('disabled', 'disabled');
+
+            $('#etiketten-drucken').addClass('grayed');
+            
+            resetdate();
+          }
+        }
+
+      });
+    });
+  </script>
+{%- endblock -%}
+

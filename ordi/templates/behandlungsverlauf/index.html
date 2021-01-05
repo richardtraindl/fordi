@@ -53,7 +53,7 @@
         </td>
 
         <td style="width: 44%">
-          <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+          <a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
           {%- with person=behverlauf.Person -%}
             {%- include '_liste_person.html'-%}
           {%- endwith -%}  
@@ -61,7 +61,7 @@
         </td>
 
         <td style="width: 44%">
-          <a target="_blank" href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
+          <a href="{{ url_for('behandlungsverlauf.edit', behandlungsverlauf_id=behverlauf.Behandlungsverlauf.id) }}">
           {%- with tier=behverlauf.Tier -%}
             {%- include '_liste_tier.html' -%}
           {%- endwith -%} 
@@ -87,8 +87,7 @@
                 alert("Bitte eine Karteikarte auswählen!");
             }
             else{
-                window.open("/behandlungsverlauf/" + id.toString() + "/edit", "_blank");
-                //window.location = "/behandlungsverlauf/" + id.toString() + "/edit";
+                window.location = "/behandlungsverlauf/" + id.toString() + "/edit";
             }
             return false; 
         });

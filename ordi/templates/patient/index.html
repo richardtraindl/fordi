@@ -67,7 +67,7 @@
         </td>
 
         <td width="49%">
-          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
           {%- with person=th.Person -%}
             {%- include '_liste_person.html' -%}
           {%- endwith -%}            
@@ -75,7 +75,7 @@
         </td>
 
         <td width="49%">
-          <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+          <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
           {%- with tier=th.Tier -%}
             {%- include '_liste_tier.html' -%}
           {%- endwith -%}
@@ -89,7 +89,7 @@
   <div class="action">
     <p><a class="btn" id="zur_karteikarte" href="#">zur Karteikarte</a></p>
 
-    <p><a target="_blank" class="btn" href="{{ url_for('patient.create') }}">neue Karteikarte</a></p>
+    <p><a class="btn" href="{{ url_for('patient.create') }}">neue Karteikarte</a></p>
 
     <p><a class="btn" id="neuer_termin" href="#">neuer Termin</a></p>
 
@@ -111,8 +111,8 @@
                 alert("Bitte eine Karteikarte auswählen!");
             }
             else{
-                window.open("/" + id.toString() + "/show", "_blank");
-                //window.location = "/" + id.toString() + "/show";
+                window.location = "/" + id.toString() + "/show";
+                //window.open("/" + id.toString() + "/show", "_blank");
             }
             return false; 
         });
@@ -122,8 +122,7 @@
                 alert("Bitte eine Karteikarte auswählen!");
             }
             else{
-                window.open("/kalender/tierhaltung/" + id.toString() + "/create", "_blank");
-                //window.location = "/kalender/tierhaltung/" + id.toString() + "/create";
+                window.location = "/kalender/tierhaltung/" + id.toString() + "/create";
             }
             return false; 
         });
@@ -133,8 +132,7 @@
                 alert("Bitte eine Karteikarte auswählen!");
             }
             else{
-                window.open("/" + id.toString() + "/create_tier", "_blank");
-                //window.location = "/" + id.toString() + "/create_tier";
+                window.location = "/" + id.toString() + "/create_tier";
             }
             return false; 
         });
@@ -160,8 +158,7 @@
                 alert("Bitte eine Karteikarte auswählen!");
             }
             else{
-                window.open("/behandlungsverlauf/" + id.toString() + "/create", "_blank");
-                //window.location = "/behandlungsverlauf/" + id.toString() + "/create";
+                window.location = "/behandlungsverlauf/" + id.toString() + "/create";
             }
             return false; 
         });
@@ -171,8 +168,7 @@
                 alert("Bitte eine Karteikarte auswählen!");
             }
             else{
-                window.open("/rechnung/" + id.toString() + "/create", "_blank");
-                //window.location = "/rechnung/" + id.toString() + "/create";
+                window.location = "/rechnung/" + id.toString() + "/create";
             }
             return false; 
         });

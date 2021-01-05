@@ -91,7 +91,7 @@
           </td>
 
           <td style="width: 49%">
-            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+            <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
             {%- with person=th.Person -%}
               {%- include '_liste_person.html' -%}
             {%- endwith -%}  
@@ -99,7 +99,7 @@
           </td>
 
           <td style="width: 49%">
-            <a target="_blank" href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
+            <a href="{{ url_for('patient.show', id=th.Tierhaltung.id) }}">
             {%- with tier=th.Tier -%}
               {%- include '_liste_tier.html' -%}
             {%- endwith -%} 
@@ -166,8 +166,7 @@
           alert("Bitte eine Karteikarte auswählen!");
         }
         else{
-          window.open("/" + id.toString() + "/show", "_blank");
-          //window.location = "/" + id.toString() + "/show";
+          window.location = "/" + id.toString() + "/show";
         }
         return false; 
       });

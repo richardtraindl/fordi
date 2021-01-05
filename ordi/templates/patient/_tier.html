@@ -1,41 +1,40 @@
 
-    <!--div class="twocols tier" !-->
-    <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
-        <p>Tiername</p>
-        <p>{{ tier.tiername }}</p>
+  <div class="row-grid" style="margin-right: 40px; grid-template-columns: auto auto;">
+    <p>Tiername</p>
+    <p>{{ tier.tiername }}</p>
 
-        <p>Tierart</p>
-        <p>{{ tier.tierart }}</p>
+    <p>Tierart</p>
+    <p>{{ tier.tierart }}</p>
 
-        <p>Rasse</p>
-        <p>{{ tier.rasse }}</p>
+    <p>Rasse</p>
+    <p>{{ tier.rasse }}</p>
 
-        <p>Farbe</p>
-        <p>{{ tier.farbe }}</p>
+    <p>Farbe</p>
+    <p>{{ tier.farbe }}</p>
 
-        <p>Geburtsdatum</p>
-        <p>{{ tier.geburtsdatum|dt }}</p>
+    <p>Geburtsdatum</p>
+    <p>{{ tier.geburtsdatum|dt }}</p>
 
-        <p>Geschlecht</p>
-        <p>{{tier.geschlechtscode|mapgeschlecht }}</p>
+    <p>Geschlecht</p>
+    <p>{{tier.geschlechtscode|mapgeschlecht }}</p>
 
-        <p>Chip Nummer</p>
-        <p>{{ tier.chip_nummer }}</p>
+    <p>Chip Nummer</p>
+    <p>{{ tier.chip_nummer }}</p>
 
-        <p>EU Passnummer</p>
-        <p>{{ tier.eu_passnummer }}</p>
+    <p>EU Passnummer</p>
+    <p>{{ tier.eu_passnummer }}</p>
 
-        <p>Patient</p>
-        {% if tier.patient == 0 %}
-          <input type="checkbox" name="patient" value="0" disabled>
-        {% else %}
-          <input type="checkbox" name="patient" value="1" checked disabled>
-        {% endif %}
+    <p>Patient</p>
+    {% if tier.patient == 0 %}
+      <input type="checkbox" name="patient" value="0" disabled>
+    {% else %}
+      <input type="checkbox" name="patient" value="1" checked disabled>
+    {% endif %}
 
-        <p>Viren</p>
-        <p>{{ tier.viren }}</p>
+    <p>Viren</p>
+    <p>{{ tier.viren }}</p>
 
-        <p>Merkmal</p>
-        <p>{{ tier.merkmal }}</p>
-    </div>
+    <p>Merkmal</p>
+    <p>{{ tier.merkmal }}</p>
+  </div>
 

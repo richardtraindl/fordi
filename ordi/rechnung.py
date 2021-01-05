@@ -14,7 +14,7 @@ from ordi.auth import login_required
 from ordi.models import *
 from ordi.reqhelper import *
 from ordi.values import *
-from ordi.createpdf import *
+from ordi.createpdf_new import *
 from ordi.util.helper import *
 
 bp = Blueprint('rechnung', __name__, url_prefix='/rechnung')
@@ -75,14 +75,6 @@ def calc_and_fill_rechnung(rechnung, rechnungszeilen):
 
     rechnung.netto_summe = rechnung.brutto_summe - (rechnung.steuerbetrag_zwanzig + rechnung.steuerbetrag_dreizehn + rechnung.steuerbetrag_zehn)
     return ""
-
-
-def create_pdf(rechnung, rechnungszeilen):
-    html = render_template('rechnung/print.html', rechnung=rechnung, rechnungszeilen=rechnungszeilen)
-
-    byte_string = html2pdf(html)
-
-    return byte_string
 
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
@@ -297,7 +289,7 @@ def download(rechnung_id):
 
     rechnungszeilen = db.session.query(Rechnungszeile).filter(Rechnungszeile.rechnung_id==rechnung_id).all()
 
-    byte_string = create_pdf(rechnung, rechnungszeilen)
+    byte_string = create_rechnung_pdf(rechnung, rechnungszeilen)
 
     name = filter_bad_chars(rechnung.person.familienname + "_" + rechnung.person.vorname)
     filename = str(rechnung.id) + "_rechnung_fuer_" + name + ".pdf"

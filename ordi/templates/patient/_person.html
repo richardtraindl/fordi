@@ -1,36 +1,36 @@
 
-    <div class="row-grid" style="margin-right: 60px; grid-template-columns: auto auto;">
-        <p>Anrede</p>
-        <p>{{ person.anredecode|mapanrede }}</p>
+  <div class="row-grid" style="margin-right: 60px; grid-template-columns: auto auto;">
+    <p>Anrede</p>
+    <p>{{ person.anredecode|mapanrede }}</p>
 
-        <p>Titel</p>
-        <p>{{ person.titel }}</p>
+    <p>Titel</p>
+    <p>{{ person.titel }}</p>
 
-        <p>Familienname</p>
-        <p>{{ person.familienname }}</p>
+    <p>Familienname</p>
+    <p>{{ person.familienname }}</p>
 
-        <p>Vorname</p>
-        <p>{{ person.vorname }}</p>
+    <p>Vorname</p>
+    <p>{{ person.vorname }}</p>
 
-        <p>Notiz</p>
-        <p>{{ person.notiz }}</p>
+    <p>Notiz</p>
+    <p>{{ person.notiz }}</p>
 
-        <p>Kunden Kennzeichen</p>
-        {% if person.kunde == 0 %}
-          <input type="checkbox" name="kunde" value="0" disabled>
-        {% else %}
-          <input type="checkbox" name="kunde" value="1" checked disabled>
-        {% endif %}
+    <p>Kunden Kennzeichen</p>
+    {% if person.kunde == 0 %}
+      <input type="checkbox" name="kunde" value="0" disabled>
+    {% else %}
+      <input type="checkbox" name="kunde" value="1" checked disabled>
+    {% endif %}
 
-        <p>Postleitzahl</p>
-        <p>{{ person.adr_plz }}</p>
+    <p>Postleitzahl</p>
+    <p>{{ person.adr_plz }}</p>
 
-        <p>Ort</p>
-        <p>{{ person.adr_ort }}</p>
+    <p>Ort</p>
+    <p>{{ person.adr_ort }}</p>
 
-        <p>Straße</p>
-        <p>{{ person.adr_strasse }}</p>
+    <p>Straße</p>
+    <p>{{ person.adr_strasse }}</p>
 
-        <p>Telefon, Fax, E-Mail</p>
-        <p style="width: 200px;">{{ person.kontakte }}</p>
-    </div>
+    <p>Telefon, Fax, E-Mail</p>
+    <p style="width: 200px;">{{ person.kontakte }}</p>
+  </div>

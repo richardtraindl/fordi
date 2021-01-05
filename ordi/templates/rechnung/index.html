@@ -55,7 +55,7 @@
         <td width="10%"><a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">{{- '{0:0.2f}'.format(rechnung.Rechnung.brutto_summe | float) -}}</a></td>
 
         <td width="38%">
-          <a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
+          <a href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
           {%- with person=rechnung.Person -%}
             {%- include '_liste_person.html' -%}
           {%- endwith -%}
@@ -63,7 +63,7 @@
         </td>
 
         <td width="38%">
-          <a target="_blank" href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
+          <a href="{{ url_for('rechnung.edit', rechnung_id=rechnung.Rechnung.id) }}">
           {%- with tier=rechnung.Tier -%}
             {%- include '_liste_tier.html' -%}
           {%- endwith -%}
@@ -89,8 +89,7 @@
                 alert("Bitte eine Karteikarte auswählen!");
             }
             else{
-                window.open("/rechnung/" + id.toString() + "/edit", "_blank");
-                //window.location = "/rechnung/" + id.toString() + "/edit";
+                window.location = "/rechnung/" + id.toString() + "/edit";
             }
             return false; 
         });

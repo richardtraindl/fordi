@@ -44,11 +44,12 @@
             </a>
           </td>
           <td width="38%">
+            <p>   
             <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">
-              {{ rechnung.Person.titel }}
-              {{ rechnung.Person.familienname }}
-              {{ rechnung.Person.vorname }}
-            </a>
+          {%- with person=rechnung.Person -%}
+            {%- include '_liste_person.html' -%}
+          {%- endwith -%}
+            </a></p>   
           </td>
           <td width="38%">
             <a href="{{ url_for('rechnung.show', rechnung_id=rechnung.Rechnung.id) }}">

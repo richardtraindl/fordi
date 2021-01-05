@@ -2,9 +2,10 @@
 
 from datetime import date, datetime
 import os
-from io import BytesIO  
+from io import BytesIO
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, make_response
+from flask_mobility.decorators import mobile_template
 from werkzeug.exceptions import abort
 from sqlalchemy import func, distinct, or_, and_
 
@@ -13,26 +14,9 @@ from ordi.auth import login_required
 from ordi.models import *
 from ordi.reqhelper import *
 from ordi.values import *
-from ordi.createpdf import *
+from ordi.createpdf_new import *
 
 bp = Blueprint('abfrage', __name__, url_prefix='/abfrage')
-
-
-def create_pdf_bericht(abfrage, tierhaltungen, kriterium1, kriterium2):
-    html = render_template('abfragen/print.html', abfrage=abfrage, kriterium1=kriterium1, 
-                            kriterium2=kriterium2, tierhaltungen=tierhaltungen)
-
-    byte_string = html2pdf_blank(html)
-
-    return byte_string
-
-
-def create_pdf_etiketten(abfrage, personen):
-    html = render_template('abfragen/print_etiketten.html', personen=personen)
-
-    byte_string = html2pdf_blank(html)
-
-    return byte_string
 
 
 def create_excel_finanzamt(abfrage, tierhaltungen):
@@ -70,8 +54,9 @@ lst_abfragen = ["", "Arzneien", "Arzneimittel", "Behandlung", "Chipnummer", \
                 "Merkmal", "Postleitzahl", "Rasse", "Straße", "Tierart"]
 
 @bp.route('/index', methods=('GET', 'POST'))
+@mobile_template('abfragen/{mobile_}index.html')
 @login_required
-def index():
+def index(template):
     output = ""
 
     if(request.method == 'POST'):
@@ -116,7 +101,7 @@ def index():
                 error += "Eingabe Textfeld2 fehlt. "
 
             flash(error)
-            return render_template('abfragen/index.html', abfragen=lst_abfragen, 
+            return render_template(template, abfragen=lst_abfragen, 
                 abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
                 kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, 
                 page_title="Abfragen")
@@ -135,7 +120,7 @@ def index():
 
             if(len(error) > 0):
                 flash(error)
-                return render_template('abfragen/index.html', abfragen=lst_abfragen, 
+                return render_template(template, abfragen=lst_abfragen, 
                     abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
                     kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, 
                     page_title="Abfragen")
@@ -175,7 +160,7 @@ def index():
                             Behandlung.datum >= von_datum, Behandlung.datum <= bis_datum) \
                     .order_by(Person.familienname.asc()).all()
 
-                byte_string = create_pdf_etiketten(abfrage, personen)
+                byte_string = create_etiketten_pdf(personen)
                 response = make_response(byte_string)
                 filename = abfrage + "_etiketten.pdf"
                 response.headers.set('Content-Disposition', 'attachment', filename=filename)
@@ -248,14 +233,14 @@ def index():
         tierhaltungen = []
 
     if(output == "bericht-drucken"):
-        byte_string = create_pdf_bericht(abfrage, tierhaltungen, kriterium1, kriterium2)
+        byte_string = create_abfrage_pdf(abfrage, kriterium1, kriterium2, tierhaltungen)
         response = make_response(byte_string)
         filename = abfrage + "_bericht.pdf"
         response.headers.set('Content-Disposition', 'attachment', filename=filename)
         response.headers.set('Content-Type', 'application/pdf')
         return response
     else:
-        return render_template('abfragen/index.html', abfragen=lst_abfragen, 
+        return render_template(template, abfragen=lst_abfragen, 
             abfrage=abfrage, kriterium1=kriterium1, kriterium2=kriterium2, 
             kunde=kunde, patient=patient, tierhaltungen=tierhaltungen, 
             page_title="Abfragen")

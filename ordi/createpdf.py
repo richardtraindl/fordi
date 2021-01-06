@@ -272,8 +272,8 @@ def write_etiketten_table(fpdf, personen, width, height, spacing):
         fpdf.ln(height*spacing)
         fpdf.x = startx + (col_width * (index % 3))
 
-        plz_ort = person.adr_plz + " " + person.adr_ort[0:30]
-        fpdf.cell(col_width, height*spacing, txt=plz_ort, border=0)
+        plz_ort = person.adr_plz + " " + person.adr_ort
+        fpdf.cell(col_width, height*spacing, txt=plz_ort[0:30], border=0)
 
         if(index % 3 != 2):
             fpdf.y = parenty

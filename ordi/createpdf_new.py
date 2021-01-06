@@ -110,7 +110,7 @@ def create_rechnung_pdf(rechnung, rechnungszeilen):
     fpdf.ln(5)
 
     diagnose = "Diagnose: " + rechnung.diagnose
-    fpdf.cell(width, height*spacing, txt=diagnose, border=0)
+    fpdf.multi_cell(width, height*spacing, txt=diagnose, border=0)
     fpdf.ln(10)
 
     rechnunglegung = "Für tierärztliche Leistung und Medikamente erlaube ich mir zu berechnen."
@@ -198,7 +198,7 @@ def create_behandlungsverlauf_pdf(behandlungsverlauf):
     fpdf.cell(width, height*spacing, txt=diagnose, border=0)
     fpdf.ln(20)
 
-    fpdf.cell(width, height*spacing, txt=behandlungsverlauf.behandlung, border=0)
+    fpdf.multi_cell(width, height*spacing, txt=behandlungsverlauf.behandlung, border=0)
     fpdf.ln(height*spacing)
 
     byte_string = fpdf.output(dest="S").encode('latin-1')

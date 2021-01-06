@@ -14,7 +14,6 @@ from ordi.auth import login_required
 from ordi.models import *
 from ordi.reqhelper import *
 from ordi.values import *
-from ordi.createpdf import *
 from ordi.util.helper import *
 
 bp = Blueprint('patient', __name__)

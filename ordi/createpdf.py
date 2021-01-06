@@ -1,5 +1,5 @@
 
-import os, copy
+import os
 from fpdf import FPDF
 from ordi.util.filters import *
 

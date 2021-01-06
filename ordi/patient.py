@@ -1,8 +1,5 @@
 
-
-from datetime import date, timedelta
-from operator import attrgetter
-import re, os
+from datetime import datetime, timedelta
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, send_file
 from flask_mobility.decorators import mobile_template

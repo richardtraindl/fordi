@@ -1,7 +1,5 @@
 
-
 from datetime import datetime
-import os, types
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, make_response
 from flask_mobility.decorators import mobile_template

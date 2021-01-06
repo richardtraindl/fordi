@@ -371,12 +371,12 @@ def import_kontakt(filename):
 
     personen = db.session.query(Person).all()
 
-    for line in lines:
-        line = line.replace('§', '\n')
-        arrline = line.split(";")
+    for index, line in enumerate(lines):
+        newline = line.replace('§', '\n')
+        arrline = newline.split(";")
 
         if(len(arrline) != 5):
-            print(arrline[0], end="error", flush=True)
+            print(str(index) + " " + line, end="error1", flush=True)
             continue
 
         if(len(arrline[3]) == 0):
@@ -394,7 +394,7 @@ def import_kontakt(filename):
                     break
         except:
             ok = False
-            print("error", end=" ", flush=True)
+            print("error2", end=" ", flush=True)
             print(arrline, flush=True)
             break
 

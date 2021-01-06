@@ -4,7 +4,7 @@ from fpdf import FPDF
 from ordi.util.filters import *
 
 
-class CustomPDF(FPDF):
+class PDF_WITH_H(FPDF):
     def header(self):
         self.image(name=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'img', 'logo.png'), 
                    x=160, y=25, w=25, h=25) 
@@ -38,7 +38,8 @@ class CustomPDF(FPDF):
 
         self.ln(20)
  
- 
+
+class PDF_WITH_H_AND_F(PDF_WITH_H):
     def footer(self):
         self.set_y(-17)
 
@@ -59,7 +60,7 @@ def write_rechnung_table(fpdf, rechnungszeilen, width, height, spacing):
         fpdf.ln(height*spacing)
 
 def create_rechnung_pdf(rechnung, rechnungszeilen):
-    fpdf = CustomPDF()
+    fpdf = PDF_WITH_H_AND_F()
     fpdf.t_margin = 25
     fpdf.r_margin = 25
     fpdf.b_margin = 25
@@ -122,6 +123,9 @@ def create_rechnung_pdf(rechnung, rechnungszeilen):
     fpdf.line(fpdf.x, fpdf.y, fpdf.x + 163, fpdf.y)
     fpdf.ln(1)
 
+    if(fpdf.y + 25 + (height * 5) + 1 > 297):
+        fpdf.add_page()
+
     fpdf.cell(width * 0.7, height*spacing, txt="Summe netto EUR", border=0)
     fpdf.cell(width * 0.3, height*spacing, txt='{0:0.2f}'.format(float(rechnung.netto_summe)), border=0, align='R')
     fpdf.ln(5)
@@ -156,7 +160,7 @@ def create_rechnung_pdf(rechnung, rechnungszeilen):
 
 
 def create_behandlungsverlauf_pdf(behandlungsverlauf):
-    fpdf = CustomPDF()
+    fpdf = PDF_WITH_H()
     fpdf.t_margin = 25
     fpdf.r_margin = 25
     fpdf.b_margin = 25
@@ -232,9 +236,12 @@ def create_abfrage_pdf(abfrage, kriterium1, kriterium2, tierhaltungen):
     width = 184 #210 - (16 + 10) = 184
     height = fpdf.font_size
 
-    fpdf.set_font('Arial', '', 18)
+    fpdf.set_font('Arial', '', 14)
     topic_height = fpdf.font_size
-    abfrage = "Abfrage " + abfrage + " " + kriterium1 + " " + kriterium2
+    if(kriterium2 and len(kriterium2) > 0):
+        abfrage = "Abfrage " + abfrage + ", " + kriterium1 + " - " + kriterium2
+    else:
+        abfrage = "Abfrage " + abfrage + ", " + kriterium1
     fpdf.cell(width, topic_height*spacing, txt=abfrage, border=0)
     fpdf.ln(10)
 
@@ -252,26 +259,29 @@ def write_etiketten_table(fpdf, personen, width, height, spacing):
         parenty = fpdf.y
 
         anrede = mapanrede(person.anredecode) + " " + person.titel
-        fpdf.cell(col_width, height*spacing, txt=anrede, border=0)
+        fpdf.cell(col_width, height*spacing, txt=anrede[0:30], border=0)
         fpdf.ln(height*spacing)
         fpdf.x = startx + (col_width * (index % 3))
 
-        name = person.familienname + " " + person.vorname
-        fpdf.cell(col_width, height*spacing, txt=name, border=0)
+        name = (person.familienname + " " + person.vorname)
+        fpdf.cell(col_width, height*spacing, txt=name[0:30], border=0)
         fpdf.ln(height*spacing)
         fpdf.x = startx + (col_width * (index % 3))
 
-        fpdf.cell(col_width, height*spacing, txt=person.adr_strasse, border=0)
+        fpdf.cell(col_width, height*spacing, txt=person.adr_strasse[0:30], border=0)
         fpdf.ln(height*spacing)
         fpdf.x = startx + (col_width * (index % 3))
 
-        plz_ort = person.adr_plz + " " + person.adr_ort
+        plz_ort = person.adr_plz + " " + person.adr_ort[0:30]
         fpdf.cell(col_width, height*spacing, txt=plz_ort, border=0)
 
         if(index % 3 != 2):
             fpdf.y = parenty
         if(index % 3 == 2):
-            fpdf.ln(10)
+            if(fpdf.y + 26 + (height * 4) > 297):
+                fpdf.add_page()
+            else:
+                fpdf.ln(10)
 
 def create_etiketten_pdf(personen):
     fpdf = FPDF()
@@ -284,7 +294,7 @@ def create_etiketten_pdf(personen):
     fpdf.set_font('Arial', '', 11)
     fpdf.add_page()
 
-    spacing = 1.2
+    spacing = 1.0
     width = 184 #210 - (16 + 10) = 184
     height = fpdf.font_size
 

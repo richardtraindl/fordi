@@ -13,8 +13,8 @@ from . import db
 from ordi.auth import login_required
 from ordi.models import *
 from ordi.reqhelper import *
+from ordi.createpdf import *
 from ordi.values import *
-from ordi.createpdf_new import *
 from ordi.util.helper import *
 
 bp = Blueprint('rechnung', __name__, url_prefix='/rechnung')

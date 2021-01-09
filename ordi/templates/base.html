@@ -10,12 +10,6 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui-1.12.1.min.css') }}">
 
-    <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='jquery-ui-1.12.1.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
-
     {% if page_title == "Kalender" %}
       <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
     {% endif %}
@@ -24,9 +18,23 @@
       <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
 
       <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='jquery-ui-1.12.1.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
+
+    {%- if page_title == "Kalender" -%}
+      <script src="{{ url_for('static', filename='platziere_termine.js') }}"></script>
+    {%- endif -%}
+
+    {% if page_title == "Termin" %}
+      <script src="{{ url_for('static', filename='platziere_termine.js') }}"></script>
 
       <script src="{{ url_for('static', filename='jquery.timePicker.js') }}"></script>
-    {% endif %}
+    {% endif %}    
   </head>
   <body>
     <header>
@@ -45,18 +53,21 @@
     </header>
 
     <nav class="flex-container">
-      {% if page_title != "Anmelden" %}
-        <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
+      {% if page_title != "Termin" %}
 
-        <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
+        {% if page_title != "Anmelden" %}
+          <p><a href="{{ url_for('patient.index') }}">Patienten</a></p>
 
-        <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
+          <p><a href="{{ url_for('rechnung.index') }}">Rechnungen</a></p>
 
-        <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
+          <p><a href="{{ url_for('behandlungsverlauf.index') }}">Behandlungsverläufe</a></p>
 
-        <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
-      {% else %}
-        <p>&nbsp;</p>
+          <p><a href="{{ url_for('abfrage.index') }}">Abfragen</a></p>
+
+          <p><a href="{{ url_for('kalender.index') }}">Kalender</a></p>
+        {% else %}
+          <p>&nbsp;</p>
+        {% endif %}
       {% endif %}
     </nav>
 

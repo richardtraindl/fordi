@@ -365,6 +365,7 @@ def import_kontakt(filename):
     ok = True
 
     new = clean_str_file(str_file, ';', 4)
+    print(new)
 
     lines = new.split('\n')
 
@@ -375,7 +376,7 @@ def import_kontakt(filename):
         arrline = newline.split(";")
 
         if(len(arrline) != 5):
-            print(str(index) + " " + line, end="error1", flush=True)
+            print(str(index) + " " + newline + " # " + line, end="error1", flush=True)
             continue
 
         if(len(arrline[3]) == 0):

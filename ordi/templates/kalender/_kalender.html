@@ -1,11 +1,7 @@
 
-{% if preview == 0 %} 
 <div class="search">
   <form id="mainform" method="post" action="{{ url_for('kalender.index') }}">
-{% else %}
-<div class="search" style="top: 10em;">
-  <form id="mainform" method="post" action="{{ url_for('kalender.preview') }}">
-{% endif %}
+   {% if mobile == 0 %}
     <div class="kal-nav">
       <div>
         <label for="kjahr">Jahr:</label>
@@ -27,12 +23,7 @@
       </div>
 
       <div style="text-align:right">
-      {% if preview == 0 %} 
         <a id="aktdatum" style="color:red;" href="{{ url_for('kalender.index') }}">
-      {% else %}
-         {% set now = aktdatum.strftime('%Y-%m-%d %H:%M:00') %}
-        <a id="aktdatum" style="color:red;" href="#" onclick="post_aktdatum(' {{- now -}} ');">
-      {% endif %}
           Tagesdatum: &nbsp;
           {{- aktdatum.strftime("%d.") -}}
           {{- monate[aktdatum.month - 1][0] -}} &nbsp;
@@ -40,6 +31,37 @@
         </a>
       </div>
     </div>
+    {% else %}    
+     <div>
+      <p style="padding-bottom: 5px">
+        <label for="kjahr">Jahr:</label>
+        {% include 'kalender/_select_for_jahre.html' %}
+
+        <label for="kmonat">Monat:</label>
+        {% include 'kalender/_select_for_monate.html' %}
+
+        <input type="hidden" name="ktag" value="{{- kaldatum.day -}}">
+        <input type="hidden" id="kwadjust" name="kwadjust" value="0">
+      </p>
+
+      <p style="padding-bottom: 5px">
+        <label>KW:&nbsp; {{- kaldatum|calc_kw -}}</label>
+
+        <input id="kwadd" class="btn" size="2" name="kwadd" value="+">
+
+        <input id="kwsub" class="btn" size="2" name="kwsub" value="-">
+      </p>
+
+      <p style="padding-bottom: 5px">
+        <a id="aktdatum" style="color:red;" href="{{ url_for('kalender.index') }}">
+          Tagesdatum: &nbsp;
+          {{- aktdatum.strftime("%d.") -}}
+          {{- monate[aktdatum.month - 1][0] -}} &nbsp;
+          {{- aktdatum.strftime("%Y") -}}, KW:&nbsp; {{- aktdatum|calc_kw -}}
+        </a>
+      </p>
+     </div>
+    {% endif %}
   </form>
 </div>
 
@@ -64,11 +86,19 @@
 
         {% if (tagesdatum|feiertag)|length > 0 or tag == 6 %}
           <span class="feiertag" style="font-size:24px">{{- tagesdatum.day -}}</span>
-          {{- wochentage[tag] -}} &nbsp;
+          {% if mobile == 0 %}
+           {{- wochentage[tag] -}} &nbsp;
+          {% else %}
+           {{- wtage[tag] -}} &nbsp;
+          {% endif %}          
           <span style="font-size:10px">{{- tagesdatum|feiertag -}}</span>
         {% else %}
           <span style="font-size:24px">{{- tagesdatum.day -}}</span>
-          {{- wochentage[tag] -}}
+          {% if mobile == 0 %}
+           {{- wochentage[tag] -}}
+          {% else %}
+           {{- wtage[tag] -}} &nbsp;
+          {% endif %}
         {% endif %}
           </td>
       {% endfor %}
@@ -94,13 +124,13 @@
         <div class="div-table">
           <div class="div-row">
             <div class="div-cell inner">
-              {% if preview == 0 %} 
-                <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=stddatum.strftime('%Y-%m-%d %H:%M:00')) }}">
-              {% else %} 
-                <a class="{{- klasse -}}" href="#" beginn="{{- stddatum.strftime('%Y-%m-%d %H:%M:00') -}}">
-              {% endif %} 
-                {{- stddatum.strftime("%H:%M") -}}
-                </a>
+              <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=stddatum.strftime('%Y-%m-%d %H:%M:00')) }}">
+                {% if mobile == 0 %}
+                 {{- stddatum.strftime("%H:%M") -}}
+                {% else %}
+                 {{- stddatum.strftime("%H") -}}
+                {% endif %}
+              </a>
               {% set klasse = "stunde1" %}
             </div>
           </div>
@@ -109,12 +139,8 @@
           {% set mindatum = stddatum|add_mins(min) %}
           <div class="div-row">
             <div class="div-cell inner">
-            {% if std >= 14 and std <= 19 %}
-              {% if preview == 0 %} 
-                <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=mindatum.strftime('%Y-%m-%d %H:%M:00')) }}">
-              {% else %} 
-                <a class="{{- klasse -}}" href="#" beginn="{{- mindatum.strftime('%Y-%m-%d %H:%M:00') -}}">
-              {% endif %} 
+            {% if mobile == 0 and std >= 14 and std <= 19 %}
+              <a class="{{- klasse -}}" href="{{ url_for('kalender.create', beginn=mindatum.strftime('%Y-%m-%d %H:%M:00')) }}">
                 {{- mindatum.strftime("%H:%M") -}}
               </a>
             {% else %}
@@ -183,23 +209,24 @@
         {% if termin.beginn.date() < termin.ende.date() and termin.beginn.date() != ugrenze.date() and termin.autor != "TP" %}
           <div class="termin" data-autor="{{- termin.autor -}}" data-wtag="{{- mytag -}}" 
             data-stunde="7" data-viertel="0" data-dauer_viertel="3">
-            <p>{{- termin.beginn.strftime("%d.%m %H:%M") -}}
-               <br>
-               {{- termin.ende.strftime("%d.%m %H:%M") -}}
-            </p>
+            <a class="termin" href="{{- url_for('kalender.edit', id=termin.id) -}}">
+              {{- termin.beginn.strftime("%d.%m %H:%M") -}}
+              <br>
+              {{- termin.ende.strftime("%d.%m %H:%M") -}}
+            </a>
         {% else %}
           <div class="termin" data-autor="{{- termin.autor -}}" data-wtag="{{- mytag -}}" 
             data-stunde="{{- stunde -}}" data-viertel="{{- myviertel -}}" data-dauer_viertel="{{- mydauer_viertel -}}">
         {% endif %}
-          {% if preview == 0 %} 
             <a class="termin" href="{{- url_for('kalender.edit', id=termin.id) -}}">
-          {% else %}
-            <a class="termin" href="#">
-          {% endif %}
             {% if termin.autor == "TP" %}
-              {{- termin.beginn.strftime("%d.%m.") + "-" + termin.ende.strftime("%d.%m.") + ' ' + termin.thema -}}
+              {{- termin.beginn.strftime("%d.%m.") + "-" + termin.ende.strftime("%d.%m.") -}}
+              <br>
+              {{- termin.thema -}}
             {% else %}
-              {{- termin.beginn.strftime("%H:%M") + "-" + termin.ende.strftime("%H:%M") + ' ' + termin.thema -}}
+              {{- termin.beginn.strftime("%H:%M") + "-" + termin.ende.strftime("%H:%M") -}}
+              <br>
+              {{- termin.thema -}}
             {% endif %}
             </a>
           </div>
@@ -212,135 +239,6 @@
   </div>
 
   <script>
-    // var zindexmax = 9;
-
-    function platziere_termine(){
-        var dwtagvor = -1;
-        var schedule = [(24*4)]; // [(24*2)]
-
-        $('div.termin').each( function(){
-            var dautor = $(this).attr( "data-autor");
-            var dwtag = $(this).attr( "data-wtag");
-            var dstunde = $(this).attr( "data-stunde");
-            var dviertel = $(this).attr( "data-viertel");
-            var ddauer_viertel = $(this).attr( "data-dauer_viertel");
-
-            var vwidth = 100;
-            var vheight = 10;
-            var vtop = -1;
-            var border = 0;
-            var borderheight = 0;
-            var vstageleft = 1;
-
-            // farbe für autoren setzen
-            if( dautor == "Elfi"){
-                var bg = "#BBE4F3";
-            }
-
-            if( dautor == "Ordi" || dautor == "Gerold" ){
-                var bg = "#FBFBB1";
-            }
-
-            if( dautor == "TP"){
-                var bg = "#EDA9D5";
-                vwidth = 50; // 30
-            }
-
-            // 1) clear schedule wenn neuer tag: alle viertel stunden auf null setzen
-            if( dwtag != dwtagvor){
-                for( var i = (7 * 4); i < (24 * 4); i++ ){
-                    schedule[i] = [15];
-                    schedule[i][0] = 0;
-                    schedule[i][1] = 0;
-                    schedule[i][2] = 0;
-                    schedule[i][3] = 0;
-                    schedule[i][4] = 0;
-                    schedule[i][5] = 0;
-                    schedule[i][6] = 0;
-                    schedule[i][7] = 0;
-                    schedule[i][8] = 0;
-                    schedule[i][9] = 0;
-                    schedule[i][10] = 0;
-                    schedule[i][11] = 0;
-                    schedule[i][12] = 0;
-                    schedule[i][13] = 0;
-                    schedule[i][14] = 0;
-                }
-            }
-
-            // 2) strutur befuellen (pro viertel stunden)
-            var startzeit = Number(dstunde) * 4 + Number(dviertel);
-            var endzeit = startzeit + Number(ddauer_viertel);
-            var index = 0;
-            for( var j = 0; j < 15; j++ ){
-                if(schedule[startzeit][j] == 0){
-                    index = j;
-                    break;
-                }
-            }
-            for( var i = startzeit; i < endzeit; i++ ){
-                schedule[i][index] = 1;
-            }
-
-            if(dwtag < 10){
-              leadingtag = "0";
-            }
-            else{
-              leadingtag = "";
-            }
-            if(dstunde < 10){
-              leadingstd = "0";
-            }
-            else{
-              leadingstd = "";
-            }
-            var caltdid = '#c' + leadingtag + dwtag + "_" + leadingstd + dstunde;
-            console.log( "caltdid=" + caltdid );
-            var caltd = $( caltdid );
-            var px_pro_viertelstunde = 16 // caltd.height() / 4 + 0; // + 2
-            dwtagvor = dwtag;
-            dstundevor = dstunde;
-            ddauervor = ddauer_viertel;
-            // position (top und left) setzen
-            if(index < 5){
-                vstageleft = index;
-            }
-            if(index > 4 && index < 10){
-                vtop = 19;
-                vstageleft = (index - 5);
-            }
-            if(index > 9 && index < 15){
-                vtop = 39;
-                vstageleft = (index - 10);
-            }
-            // height setzen
-            if( dautor == "TP"){
-                vheight = 40; // 20
-            }
-            else{
-                vheight = (px_pro_viertelstunde * Number(ddauer_viertel));
-            }
-
-            border = Number(dviertel) / 4;
-
-            borderheight = Number(dviertel) / 4;
-
-            var cssprops = {
-                'background' : bg,
-                'border' : '1px solid black',
-                'position' : 'absolute',
-                'width' : vwidth + 'px',
-                'height' : vheight + 'px', // + borderheight
-                'top' : (caltd.offset().top + 68 / 4 * Number(dviertel) + vtop) + 'px', // + border
-                'left' : (caltd.offset().left + 36 + 20 * vstageleft) + 'px',
-                'overflow' : 'hidden'
-            }
-
-            $(this).css( cssprops );
-
-        });
-    }
-
     function handle_mouseover(){
       var moveLeft = 20;
       var moveDown = 10;
@@ -358,73 +256,35 @@
       });
     }
 
-    function post_aktdatum(aktdatum){
-      var url = "/kalender/preview";
-      var posting = $.post( url, { aktdatum: aktdatum } );
-
-      posting.done(function(data){
-        if(data != "error"){
-          $("#kalender-wrapper").empty().html(data);
-        }
-      });
-    }
-     
-    function post_data(){
-      var kjahr = $("#kjahr").find("option:selected").val();
-      var kmonat = $("#kmonat").find("option:selected").val();
-      var ktag = $("input:hidden[name=ktag]").val();
-      var kwadjust = $("#kwadjust").val();
-      var url = "/kalender/preview";
-      var posting = $.post( url, { kjahr: kjahr, kmonat: kmonat, ktag: ktag, kwadjust: kwadjust } );
-
-      posting.done(function(data){
-        if(data != "error"){
-          $("#kalender-wrapper").empty().html(data);
-        }
-      });
-    }
-
     $(document).ready(function() {
-      platziere_termine();
+      {% if mobile == 0 %}
+       platziere_termine(100, 50);
+      {% else %}
+       platziere_termine(30, 30);
+      {% endif %}
 
       handle_mouseover();
 
       $(window).resize(platziere_termine);
 
       $("#kjahr").change(function() {
-        {% if preview == 1 %}
-          post_data();
-        {% else %}
-          $("#mainform").submit();
-        {% endif %}
+        $("#mainform").submit();
       });
 
       $("#kmonat").change(function() {
-        {% if preview == 1 %}
-          post_data();
-        {% else %}
-          $("#mainform").submit();
-        {% endif %}
+        $("#mainform").submit();
       });
 
       $("#kwadd").click(function() {
         $("#kwadjust").val(1);
 
-        {% if preview == 1 %}
-          post_data();
-        {% else %}
-          $("#mainform").submit();
-        {% endif %}
+        $("#mainform").submit();
       });
 
       $("#kwsub").click(function() {
         $("#kwadjust").val(-1);
 
-        {% if preview == 1 %}
-          post_data();
-        {% else %}
-          $("#mainform").submit();
-        {% endif %}
+        $("#mainform").submit();
       });
 
     });

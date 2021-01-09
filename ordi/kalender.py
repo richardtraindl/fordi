@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
+from flask_mobility.decorators import mobile_template
 from werkzeug.exceptions import abort
 
 from . import db
@@ -16,6 +17,7 @@ AUTOREN = ["Ordi", "Elfi", "TP"]
 jahre = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 monate = [["Jänner", 1], ["Februar", 2], ["März", 3], ["April", 4], ["Mai", 5], ["Juni", 6], ["Juli", 7], ["August", 8], ["September", 9], ["Oktober", 10], ["November", 11], ["Dezember", 12]]
 wochentage = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
+wtage = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
 def calc_kaldatum(datum):
     aktdatum = datetime(year=datum.year, month=datum.month, day=datum.day)
@@ -35,45 +37,12 @@ def read_termine(kaldatum):
             .order_by(Termin.beginn.asc()).all()
 
 
-@bp.route('/preview', methods=('GET', 'POST'))
-@login_required
-def preview():
-    aktdatum = adjust_datum(datetime.now())
-
-    try:
-        str_aktdatum = request.form['aktdatum']
-        kaldatum = calc_kaldatum(aktdatum)
-    except:
-        try:
-            str_kjahr = request.form['kjahr']
-            kjahr = int(str_kjahr)
-            str_kmonat = request.form['kmonat']
-            kmonat = int(str_kmonat)
-            str_ktag = request.form['ktag']
-            ktag = int(str_ktag)
-            str_kwadjust = request.form['kwadjust']
-            kwadjust = int(str_kwadjust)
-
-            datum = datetime(year=kjahr, month=kmonat, day=ktag)
-            kaldatum = calc_kaldatum(datum)
-            kaldatum += timedelta(weeks=kwadjust)
-        except:
-            ret = "error"
-            return ret
-
-    termine = read_termine(kaldatum)
-
-    ret = render_template('kalender/_kalender.html', termine=termine, aktdatum=aktdatum, 
-                            kaldatum=kaldatum, jahre=jahre, monate=monate, 
-                            wochentage=wochentage, preview=1)
-    return ret
-
-
 @bp.route('/', methods=('GET', 'POST'))
 @bp.route('/index', methods=('GET', 'POST'))
 @bp.route('/<kaldatum>/index', methods=('GET', 'POST'))
+@mobile_template('kalender/{mobile_}index.html')
 @login_required
-def index(kaldatum=None):
+def index(template, kaldatum=None):
     aktdatum = adjust_datum(datetime.now())
 
     if(kaldatum):
@@ -93,26 +62,26 @@ def index(kaldatum=None):
                 kaldatum = calc_kaldatum(datum)
             except:
                 flash("error")
-                return render_template('kalender/index.html', aktdatum=aktdatum, 
+                return render_template(template, aktdatum=aktdatum, 
                                         kaldatum=kaldatum, jahre=jahre, monate=monate, 
-                                        wochentage=wochentage, page_title="Kalender")
+                                        wochentage=wochentage, wtage=wtage, page_title="Kalender")
 
         if(len(request.form['kwadjust']) > 0):
             try:
                 adjust = int(request.form['kwadjust'])
             except:
                 flash("error")
-                return render_template('kalender/index.html', aktdatum=aktdatum, 
+                return render_template(template, aktdatum=aktdatum, 
                                         kaldatum=kaldatum, jahre=jahre, monate=monate, 
-                                        wochentage=wochentage, page_title="Kalender")
+                                        wochentage=wochentage, wtage=wtage, page_title="Kalender")
 
             kaldatum += timedelta(weeks=adjust)
 
     termine = read_termine(kaldatum)
 
-    return render_template('kalender/index.html', termine=termine, aktdatum=aktdatum, 
+    return render_template(template, termine=termine, aktdatum=aktdatum, 
                             kaldatum=kaldatum, jahre=jahre, monate=monate, 
-                            wochentage=wochentage, page_title="Kalender")
+                            wochentage=wochentage, wtage=wtage, page_title="Kalender")
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -147,7 +116,7 @@ def create(beginn=None, tierhaltung_id=None):
             return render_template('kalender/termin.html', termin=None, 
                                    tierhaltung=tierhaltung, autoren=AUTOREN, 
                                    termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
-                                   jahre=jahre, monate=monate, wochentage=wochentage,                                   
+                                   jahre=jahre, monate=monate, wochentage=wochentage, 
                                    th=th, page_title="Termin")
 
         thema = request.form['thema']
@@ -178,13 +147,14 @@ def create(beginn=None, tierhaltung_id=None):
         return render_template('kalender/termin.html', termin=termin, 
                                tierhaltung=tierhaltung, autoren=AUTOREN, 
                                termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
-                               jahre=jahre, monate=monate, wochentage=wochentage,
+                               jahre=jahre, monate=monate, wochentage=wochentage, 
                                th=th, page_title="Termin")
 
 
 @bp.route('/<int:id>/edit', methods=('GET','POST'))
+@mobile_template('kalender/{mobile_}termin.html')
 @login_required
-def edit(id):
+def edit(template, id):
     aktdatum = adjust_datum(datetime.now())
 
     termin = db.session.query(Termin).get(id)
@@ -211,10 +181,10 @@ def edit(id):
             flash("Ende liegt vor oder auf Beginn.")
             kaldatum = calc_kaldatum(termin.beginn)
             termine = read_termine(kaldatum)
-            return render_template('kalender/termin.html', termin=termin, 
+            return render_template(template, termin=termin, 
                                tierhaltung=tierhaltung, autoren=AUTOREN, 
                                termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
-                               jahre=jahre, monate=monate, wochentage=wochentage,
+                               jahre=jahre, monate=monate, wochentage=wochentage, 
                                th=th, page_title="Termin")
 
         termin.thema = request.form['thema']
@@ -228,7 +198,7 @@ def edit(id):
     else:
         kaldatum = calc_kaldatum(termin.beginn)
         termine = read_termine(kaldatum)
-        return render_template('kalender/termin.html', termin=termin, 
+        return render_template(template, termin=termin, 
                                tierhaltung=tierhaltung, autoren=AUTOREN, 
                                termine=termine, aktdatum=aktdatum, kaldatum=kaldatum, 
                                jahre=jahre, monate=monate, wochentage=wochentage,

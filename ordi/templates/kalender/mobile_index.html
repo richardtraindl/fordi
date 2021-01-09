@@ -1,5 +1,5 @@
 
-{% extends 'base.html' %}
+{% extends 'mobile_base.html' %}
 
 
 {% block title %}
@@ -8,6 +8,7 @@
 
 
 {% block content %}
-  {% set mobile = 0 %}
+  {% set mobile = 1 %}
   {% include 'kalender/_kalender.html' %}
 {% endblock %}
+

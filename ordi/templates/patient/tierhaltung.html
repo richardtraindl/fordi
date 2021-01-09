@@ -64,7 +64,7 @@
 
           {%- for behandlung in behandlungen -%}
             <tr>
-            {%- if behandlung.id -%}
+            {%- if behandlung and behandlung.id -%}
               <input type="hidden" name="behandlung_id[]" value="{{- behandlung.id -}}" disabled>
 
               <td style="width: 8%">

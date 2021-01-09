@@ -10,6 +10,20 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
 
+    {%- if page_title == "Kalender" -%}
+      <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+
+      <link rel="stylesheet" href="{{ url_for('static', filename='mobile_kalender.css') }}">
+    {%- endif -%}    
+
+    {%- if page_title == "Termin" -%}
+      <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+
+      <link rel="stylesheet" href="{{ url_for('static', filename='mobile_kalender.css') }}">
+
+      <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">
+    {%- endif -%}
+
     <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui-1.12.1.min.css') }}">
 
     <script src="{{ url_for('static', filename='jquery-3.4.1.min.js') }}"></script>
@@ -19,17 +33,12 @@
     <script src="{{ url_for('static', filename='datepicker-de.js') }}"></script>
 
     {%- if page_title == "Kalender" -%}
-      <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
+      <script src="{{ url_for('static', filename='platziere_termine.js') }}"></script>
     {%- endif -%}
 
     {%- if page_title == "Termin" -%}
-      <link rel="stylesheet" href="{{ url_for('static', filename='kalender.css') }}">
-
-      <link rel="stylesheet" href="{{ url_for('static', filename='jquery.timepicker.css') }}">
-
       <script src="{{ url_for('static', filename='jquery.timePicker.js') }}"></script>
     {%- endif -%}
-
   </head>
   <body>
     <header>

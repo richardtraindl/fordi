@@ -1,0 +1,8 @@
+
+
+.kal-nav { 
+  display: flex; 
+  flex-direction: row; 
+  justify-content: flex-start;
+}
+.kal-nav div { vertical-align: left; padding: 6px 0; }

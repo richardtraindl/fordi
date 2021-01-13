@@ -25,6 +25,8 @@
       <div>
         <p style="background-color: LightBlue">
           <span style="font-weight: bold">{{- behandlung.datum|dt -}}</span>
+          &nbsp;
+          <a class="btn" href="{{ url_for('patient.edit_mobile_behandlung', id=tierhaltung.id, behandlung_id=behandlung.id) }}">Ändern</a>
         </p>
 
         {%- if behandlung.diagnose|length > 0 -%}
@@ -87,6 +89,10 @@
         {%- endif -%}
       </div>
     {% endfor %}
+    
+    <div class="action">
+      <p><a class="btn" href="{{ url_for('patient.create_mobile_behandlung', id=tierhaltung.id) }}">neue Behandlung</a></p>
+    </div>
   </div>
 
   <script>

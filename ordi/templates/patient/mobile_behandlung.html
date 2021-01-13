@@ -1,0 +1,162 @@
+
+{% extends 'mobile_base.html' %}
+
+
+{% block title %}
+  Behandlung
+{% endblock %}
+
+
+{% block content %}
+  <div class="tierhaltung">
+    {% with tier=tierhaltung.tier %}
+      {% include '_mobile_tier.html' %}
+    {% endwith %}
+
+    <div class="small-gap"></div>
+  </div>
+
+  <div id="scroller" class="mobile-scroll" style="height: calc(100vh - 5.0em); max-height: calc(100vh - 5.0em);">
+  {% if behandlung and behandlung.id %}
+    <form method="post" action="{{ url_for('patient.edit_mobile_behandlung', id=tierhaltung.id, behandlung_id=behandlung.id) }}">
+  {% else %}
+    <form method="post" action="{{ url_for('patient.create_mobile_behandlung', id=tierhaltung.id) }}">
+  {% endif %}
+      <div>
+        <p class="row-grid" style="grid-template-columns: 50% 50%;">
+          <label for="datum">Datum</label>
+
+          <input type="text" size=10 name="datum" value="{{- request.form['datum'] or behandlung.datum|dt or datum|dt -}}" required>
+        </p>
+
+        <div class="small-gap"></div>
+
+        <p>
+            <label for="diagnose">Diagnose</label>
+            <textarea style="height: 5em;" name="diagnose">
+              {{- request.form['diagnose'] or behandlung.diagnose|sn -}}
+            </textarea>
+        </p>
+
+        <div class="small-gap"></div>
+
+        <p>
+            <label for="laborwerte1">Laborwerte1</label>
+            <textarea name="laborwerte1">
+              {{- request.form['laborwerte1'] or behandlung.laborwerte1|sn -}}
+            </textarea> 
+        </p>
+
+        <div class="small-gap"></div>
+
+        <p>
+            <label for="laborwerte2">Laborwerte2</label>
+            <textarea name="laborwerte2">
+              {{- request.form['laborwerte2'] or behandlung.laborwerte2|sn -}}
+            </textarea>
+        </p>
+
+        <p>
+            <label for="arzneien">Arzneien</label>
+            <textarea name="arzneien">
+              {{- request.form['arzneien'] or behandlung.arzneien|sn -}}
+            </textarea>
+        </p>
+
+        <div class="small-gap"></div>
+
+        <p>
+            <label for="arzneimittel">Arzneimittel</label>
+            <textarea name="arzneimittel">
+              {{- request.form['arzneimittel'] or behandlung.arzneimittel|sn -}}
+            </textarea>
+        </p>
+        
+        <div class="small-gap"></div>
+
+        <p>
+          <label for="impfungen">Impfungen (Entfernen durch Klick auf Impfung):</label>
+          {%- set ns = namespace(impfungen='') -%}
+          {%- for impfung in behandlung.impfungen -%}
+            {%- if ns.impfungen|length > 0 -%}
+              {%- set ns.impfungen = ns.impfungen + ',' + impfung.impfungscode|mapimpfung -%}
+            {%- else -%}
+              {%- set ns.impfungen = impfung.impfungscode|mapimpfung -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <input id="impfungen" type="hidden" name="impfungen" value="{{- ns.impfungen -}}">
+
+          <div id="used-impfungen" style="height: 2em">
+          {%- for impfung in behandlung.impfungen -%}
+            <a id="{{- impfung.impfungscode|mapimpfung -}}" href="#" onclick="change_to_unused($(this));">{{- impfung.impfungscode|mapimpfung -}}&nbsp;</a>
+          {%- endfor -%}
+          </div>
+
+          <div id="unused-impfungen">
+            Impfungsauswahl (Auswahl durch Klick auf Impfung):<br>
+            {%- for impfungswert in unused_impfungswerte -%}
+             {%- if loop.index % 8 == 0 -%}
+               <br>
+             {%- endif -%}
+              <a id="{{- impfungswert[0] -}}" href="#" onclick="change_to_used($(this));">{{- impfungswert[0] -}}&nbsp;</a>
+            {%- endfor -%}
+          </div>
+        </p>
+
+        <div class="small-gap"></div>
+
+        <p class="row-grid" style="grid-template-columns: 50% 50%;">
+            <label for="gewicht">Gewicht</label>
+            <input type="text" size=10 name="gewicht" value="{{- request.form['gewicht'] or behandlung.gewicht|sn -}}">
+        </p>
+
+        <div class="small-gap"></div>
+      </div>
+
+      <div class="flex-container">
+        <input type="submit" value="Speichern" style="margin-right: 20px;">
+
+        <p><a class="btn" href="{{ url_for('patient.show', id=tierhaltung.id) }}">Abbrechen</a></p>
+      </div>
+    </form>
+
+  <script>
+    function change_to_unused($obj){
+      var id = $obj.attr("id");
+      var element = '<a id="' + id + '" href="#" onclick="change_to_used($(this));">' + id + ' &nbsp;</a>'
+      $("#unused-impfungen").append( element );
+      $obj.remove();
+      update_impfungen();
+    }
+
+    function change_to_used($obj){
+      var id = $obj.attr("id");
+      var element = '<a id="' + id + '" href="#" onclick="change_to_unused($(this));">' + id + '&nbsp;</a>'
+      $("#used-impfungen").append( element );
+      $obj.remove();
+      update_impfungen();
+    }
+
+    function update_impfungen(){
+      var new_impfungen = ""
+      $("#used-impfungen").children().each( (index, element) => {
+        if(index == 0){
+          new_impfungen = $(element).attr("id");
+        }
+        else{
+          new_impfungen += "," + $(element).attr("id");
+        }
+       });
+      console.log(new_impfungen);
+      $("#impfungen").val(new_impfungen);
+    }
+
+    $(document).ready(function(){
+        
+
+      var element = document.getElementById("scroller");
+      element.scrollTop = element.scrollHeight;
+
+    });
+  </script>
+{% endblock %}

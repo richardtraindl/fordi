@@ -37,3 +37,18 @@ nav a, nav a:link, nav a:visited, nav a:active { font-size: 1.4em; }
   overflow-x: hidden; 
   background-color: Snow;
 }
+
+textarea {
+  width: 100%;
+  height: 2em;
+  box-sizing: border-box;
+  border: 0.1em solid #ccc;
+  border-radius: 0.3em;
+  background-color: #f8f8f8;
+  resize: none;
+}
+
+.btn {
+  padding: 0.0em;
+  border-radius: 0.4em;
+}

@@ -113,7 +113,7 @@ def show(template, id=id):
     for key, value in IMPFUNG.items():
         impfungswerte.append([key, value])
 
-    tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
+    tierhaltung = Tierhaltung.query.get(id)
     behandlungen = db.session.query(Behandlung) \
         .filter(Behandlung.tier_id == tierhaltung.tier.id) \
         .order_by(Behandlung.datum.asc()).all()
@@ -132,7 +132,7 @@ def show(template, id=id):
 @bp.route('/<int:id>/delete', methods=('GET',))
 @login_required
 def delete(id):
-    tierhaltung = db.session.query(Tierhaltung).get(id)
+    tierhaltung = Tierhaltung.query.get(id)
     if(tierhaltung):
         if(db.session.query(Tierhaltung).filter(Tierhaltung.person_id == tierhaltung.person_id).count() == 1):
             person = db.session.query(Person).get(tierhaltung.person_id)
@@ -201,7 +201,7 @@ def edit_tier(id, tier_id):
         geschlechtswerte.append([key, value])
 
     if(request.method == 'POST'):
-        tier = db.session.query(Tier).get(tier_id)
+        tier = Tier.query.get(tier_id)
         tier, error = fill_and_validate_tier(tier, request)
         if(len(error) > 0):
             flash(error)
@@ -211,7 +211,7 @@ def edit_tier(id, tier_id):
             db.session.commit()
             return redirect(url_for('patient.show', id=id))
     else:
-        tier = db.session.query(Tier).get(tier_id)
+        tier = Tier.query.get(tier_id)
         return render_template('patient/edit_tier.html', id=id, tier=tier, 
             geschlechtswerte=geschlechtswerte, page_title="Tier ändern")
 # tier
@@ -226,7 +226,7 @@ def edit_person(id, person_id):
         anredewerte.append([key, value])
 
     if(request.method == 'POST'):
-        person = db.session.query(Person).get(person_id)
+        person = Person.query.get(person_id)
         person, error = fill_and_validate_person(person, request)
         if(len(error) > 0):
             flash(error)
@@ -367,10 +367,135 @@ def save_behandlungen(id):
     return redirect(url_for('patient.show', id=id))
 
 
+@bp.route('/<int:id>/create_mobile_behandlung', methods=('GET', 'POST'))
+@login_required
+def create_mobile_behandlung(id):
+    unused_impfungswerte = []
+    for key, value in IMPFUNG.items():
+        unused_impfungswerte.append([key, value])
+
+    if(request.method == 'POST'):
+        tierhaltung = Tierhaltung.query.get(id)
+
+        behandlung = Behandlung()
+        behandlung.tier_id = tierhaltung.tier_id
+
+        if(len(request.form['datum']) > 10):
+            str_datum = request.form['datum'].split()[0]
+        else:
+            str_datum = request.form['datum']
+        try:
+            datum = datetime.strptime(str_datum, "%d.%m.%Y")
+        except:
+            datum = datetime.now()
+
+        if(len(request.form['gewicht']) == 0 and
+           len(request.form['diagnose']) == 0 and
+           len(request.form['laborwerte1']) == 0 and
+           len(request.form['laborwerte2']) == 0 and
+           len(request.form['arzneien']) == 0 and
+           len(request.form['arzneimittel']) == 0 and
+           len(request.form['impfungen']) == 0):
+            flash("Eingabe fehlt")
+            return render_template('patient/mobile_behandlung.html', 
+                tierhaltung=tierhaltung, behandlung=behandlung, 
+                unused_impfungswerte=unused_impfungswerte, page_title="Neue Behandlung")
+
+        behandlung.datum=datum 
+        behandlung.gewicht=request.form['gewicht'] 
+        behandlung.diagnose=request.form['diagnose']
+        behandlung.laborwerte1=request.form['laborwerte1'] 
+        behandlung.laborwerte2=request.form['laborwerte2']
+        behandlung.arzneien=request.form['arzneien']
+        behandlung.arzneimittel=request.form['arzneimittel']
+
+        db.session.add(behandlung)
+        db.session.commit()
+
+        if(len(request.form['impfungen']) > 0):
+            impfungstexte = request.form['impfungen'].split(',')
+            save_or_delete_impfungen(behandlung, impfungstexte)
+
+        return redirect(url_for('patient.show', id=id))
+    else:
+        behandlung = Behandlung()
+        tierhaltung = db.session.query(Tierhaltung).filter(Tierhaltung.id == id).first()
+        """behandlungen = db.session.query(Behandlung) \
+            .filter(Behandlung.tier_id == tierhaltung.tier.id) \
+            .order_by(Behandlung.datum.asc()).all()"""
+        datum = datetime.today()
+        return render_template('patient/mobile_behandlung.html', tierhaltung=tierhaltung, 
+            behandlung=behandlung, datum=datum, 
+            unused_impfungswerte=unused_impfungswerte, page_title="Neue Behandlung")
+
+
+@bp.route('/<int:id>/<int:behandlung_id>/edit_mobile_behandlung', methods=('GET', 'POST'))
+@login_required
+def edit_mobile_behandlung(id, behandlung_id):
+    tierhaltung = Tierhaltung.query.get(id)
+    behandlung = Behandlung.query.get(behandlung_id)
+
+    unused_impfungswerte = []
+    for key, value in IMPFUNG.items():
+        found = False
+        for impfung in behandlung.impfungen:
+            if(impfung.impfungscode == value):
+                found = True
+                break
+        if(found == False):
+            unused_impfungswerte.append([key, value])
+
+    if(request.method == 'POST'):
+        if(len(request.form['datum']) > 10):
+            str_datum = request.form['datum'].split()[0]
+        else:
+            str_datum = request.form['datum']
+        try:
+            datum = datetime.strptime(str_datum, "%d.%m.%Y")
+        except:
+            datum = datetime.now()
+
+        if(len(request.form['gewicht']) == 0 and
+           len(request.form['diagnose']) == 0 and
+           len(request.form['laborwerte1']) == 0 and
+           len(request.form['laborwerte2']) == 0 and
+           len(request.form['arzneien']) == 0 and
+           len(request.form['arzneimittel']) == 0 and
+           len(request.form['impfungen']) == 0):
+            flash("Eingabe fehlt")
+            return render_template('patient/mobile_behandlung.html', 
+                tierhaltung=tierhaltung, behandlung=behandlung, 
+                unused_impfungswerte=unused_impfungswerte, page_title="Neue Behandlung")
+
+        behandlung.datum=datum 
+        behandlung.gewicht=request.form['gewicht'] 
+        behandlung.diagnose=request.form['diagnose']
+        behandlung.laborwerte1=request.form['laborwerte1'] 
+        behandlung.laborwerte2=request.form['laborwerte2']
+        behandlung.arzneien=request.form['arzneien']
+        behandlung.arzneimittel=request.form['arzneimittel']
+
+        db.session.add(behandlung)
+        db.session.commit()
+
+        if(len(request.form['impfungen']) > 0):
+            impfungstexte = request.form['impfungen'].split(',')
+        else:
+            impfungstexte = []
+        save_or_delete_impfungen(behandlung, impfungstexte)
+
+        return redirect(url_for('patient.show', id=id))
+    else:
+        datum = datetime.today()
+        return render_template('patient/mobile_behandlung.html', tierhaltung=tierhaltung, 
+            behandlung=behandlung, datum=datum, 
+            unused_impfungswerte=unused_impfungswerte, page_title="Behandlung ändern")
+
+
 @bp.route('/<int:behandlung_id>/delete_behandlung', methods=('GET',))
 @login_required
 def delete_behandlung(behandlung_id):
-    behandlung = db.session.query(Behandlung).get(behandlung_id)
+    behandlung = Behandlung.query.get(behandlung_id)
     if(behandlung):
         tierhaltung = db.session.query(Tierhaltung) \
             .filter(Tierhaltung.tier_id==behandlung.tier_id).first()
@@ -385,7 +510,7 @@ def delete_behandlung(behandlung_id):
 @bp.route('/<int:behandlung_id>/async_delete_behandlung', methods=('GET',))
 @login_required
 def async_delete_behandlung(behandlung_id):
-    behandlung = db.session.query(Behandlung).get(behandlung_id)
+    behandlung = Behandlung.query.get(behandlung_id)
     if(behandlung):
         db.session.delete(behandlung)
         db.session.commit()
@@ -396,8 +521,7 @@ def async_delete_behandlung(behandlung_id):
 @bp.route('/<int:behandlung_id>/async_read_behandlung', methods=('GET',))
 @login_required
 def async_read_behandlung(behandlung_id):
-    print(behandlung_id)
-    behandlung = db.session.query(Behandlung).get(behandlung_id)
+    behandlung = Behandlung.query.get(behandlung_id)
     if(behandlung):
         str_impfungen = ""
         for impfung in behandlung.impfungen:
